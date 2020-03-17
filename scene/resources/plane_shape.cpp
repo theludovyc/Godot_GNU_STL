@@ -32,10 +32,11 @@
 
 #include "servers/physics_server.h"
 
-Vector<Vector3> PlaneShape::get_debug_mesh_lines() {
+std::vector<Vector3> PlaneShape::get_debug_mesh_lines() {
 
 	Plane p = get_plane();
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
+	points.reserve(10);
 
 	Vector3 n1 = p.get_any_perpendicular_normal();
 	Vector3 n2 = p.normal.cross(n1).normalized();

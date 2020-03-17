@@ -32,27 +32,27 @@
 #include "core/math/quick_hull.h"
 #include "servers/physics_server.h"
 
-Vector<Vector3> ConvexPolygonShape::get_debug_mesh_lines() {
+std::vector<Vector3> ConvexPolygonShape::get_debug_mesh_lines() {
 
 	PoolVector<Vector3> points = get_points();
 
 	if (points.size() > 3) {
 
-		Vector<Vector3> varr = Variant(points);
+		std::vector<Vector3> varr = Variant(points);
 		Geometry::MeshData md;
 		Error err = QuickHull::build(varr, md);
 		if (err == OK) {
-			Vector<Vector3> lines;
+			std::vector<Vector3> lines;
 			lines.resize(md.edges.size() * 2);
-			for (int i = 0; i < md.edges.size(); i++) {
-				lines.write[i * 2 + 0] = md.vertices[md.edges[i].a];
-				lines.write[i * 2 + 1] = md.vertices[md.edges[i].b];
+			for (decltype(md.edges.size()) i = 0; i < md.edges.size(); ++i) {
+				lines[i * 2 + 0] = md.vertices[md.edges[i].a];
+				lines[i * 2 + 1] = md.vertices[md.edges[i].b];
 			}
 			return lines;
 		}
 	}
 
-	return Vector<Vector3>();
+	return std::vector<Vector3>{};
 }
 
 void ConvexPolygonShape::_update_shape() {

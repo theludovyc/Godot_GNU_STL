@@ -47,7 +47,7 @@ public:
 	void set_points(const PoolVector<Vector3> &p_points);
 	PoolVector<Vector3> get_points() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines();
+	virtual std::vector<Vector3> get_debug_mesh_lines();
 
 	ConvexPolygonShape();
 };

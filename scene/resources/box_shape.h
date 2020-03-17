@@ -47,7 +47,7 @@ public:
 	void set_extents(const Vector3 &p_extents);
 	Vector3 get_extents() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines();
+	virtual std::vector<Vector3> get_debug_mesh_lines();
 
 	BoxShape();
 };

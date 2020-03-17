@@ -31,14 +31,14 @@
 #include "box_shape.h"
 #include "servers/physics_server.h"
 
-Vector<Vector3> BoxShape::get_debug_mesh_lines() {
+std::vector<Vector3> BoxShape::get_debug_mesh_lines() {
 
-	Vector<Vector3> lines;
+	std::vector<Vector3> lines;
 	AABB aabb;
 	aabb.position = -get_extents();
 	aabb.size = aabb.position * -2;
 
-	for (int i = 0; i < 12; i++) {
+	for (uint8_t i = 0; i < 12u; ++i) {
 		Vector3 a, b;
 		aabb.get_edge(i, a, b);
 		lines.push_back(a);

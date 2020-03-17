@@ -31,13 +31,13 @@
 #include "sphere_shape.h"
 #include "servers/physics_server.h"
 
-Vector<Vector3> SphereShape::get_debug_mesh_lines() {
+std::vector<Vector3> SphereShape::get_debug_mesh_lines() {
 
 	float r = get_radius();
 
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
 
-	for (int i = 0; i <= 360; i++) {
+	for (uint16_t i = 0; i <= 360u; ++i) {
 
 		float ra = Math::deg2rad((float)i);
 		float rb = Math::deg2rad((float)i + 1);
