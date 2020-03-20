@@ -194,7 +194,9 @@ protected:
 
 	virtual void _gui_input(const Ref<InputEvent> &p_event);
 
-	void extract_args_from_dictionnary(const Dictionary&, String*);
+	// need update : replace String* with String&
+	void extract_args_from_dictionnary(const Dictionary &, String *) const;
+
 public:
 	virtual Variant get_drag_data(const Point2 &p_point);
 	virtual bool can_drop_data(const Point2 &p_point, const Variant &p_data) const;
@@ -265,9 +267,6 @@ class AnimationTrackEditGroup : public Control {
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
-
-	void update_track_edits();
-	void update_groups();
 
 public:
 	void set_type_and_name(const Ref<Texture> &p_type, const String &p_name, const NodePath &p_node);
@@ -383,6 +382,8 @@ class AnimationTrackEditor : public VBoxContainer {
 	void _insert_delay();
 
 	void _root_removed(Node *p_root);
+	void update_track_edits();
+	void update_groups();
 
 	PropertyInfo _find_hint_for_track(int p_idx, NodePath &r_base_path, Variant *r_current_val = NULL);
 

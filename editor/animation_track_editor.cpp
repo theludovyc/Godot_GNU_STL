@@ -603,15 +603,13 @@ public:
 				ERR_FAIL_COND(!d.has("args"));
 				std::vector<Variant> args = d["args"];
 				String vtypes;
-				for (int i = 0; i < Variant::VARIANT_MAX; i++) {
-
+				for (uint8_t i = 0; i < Variant::VARIANT_MAX; ++i) {
 					if (i > 0)
 						vtypes += ",";
 					vtypes += Variant::get_type_name(Variant::Type(i));
 				}
 
-				for (int i = 0; i < args.size(); i++) {
-
+				for (decltype(args.size()) i = 0; i < args.size(); ++i) {
 					p_list->push_back(PropertyInfo(Variant::INT, "args/" + itos(i) + "/type", PROPERTY_HINT_ENUM, vtypes));
 					if (args[i].get_type() != Variant::NIL)
 						p_list->push_back(PropertyInfo(args[i].get_type(), "args/" + itos(i) + "/value"));
@@ -696,7 +694,7 @@ public:
 		key_ofs = 0;
 		track = -1;
 		setting = false;
-		root_path = NULL;
+		root_path = nullptr;
 	}
 };
 
@@ -1304,14 +1302,12 @@ public:
 					std::vector<Variant> args = d["args"];
 					String vtypes;
 					for (int i = 0; i < Variant::VARIANT_MAX; i++) {
-
 						if (i > 0)
 							vtypes += ",";
 						vtypes += Variant::get_type_name(Variant::Type(i));
 					}
 
-					for (int i = 0; i < args.size(); i++) {
-
+					for (decltype(args.size()) i = 0; i < args.size(); ++i) {
 						p_list->push_back(PropertyInfo(Variant::INT, "args/" + itos(i) + "/type", PROPERTY_HINT_ENUM, vtypes));
 						if (args[i].get_type() != Variant::NIL)
 							p_list->push_back(PropertyInfo(args[i].get_type(), "args/" + itos(i) + "/value"));
@@ -2266,7 +2262,7 @@ void AnimationTrackEdit::draw_key_link(int p_index, float p_pixels_sec, int p_x,
 	draw_line(Point2(from_x + 1, get_size().height / 2), Point2(to_x, get_size().height / 2), color, Math::round(2 * EDSCALE));
 }
 
-void AnimationTrackEdit::extract_args_from_dictionnary(const Dictionary& d, String* text){
+void AnimationTrackEdit::extract_args_from_dictionnary(const Dictionary &d, String *text) const {
 	if (d.has("method"))
 		*text += String(d["method"]);
 
@@ -2289,7 +2285,7 @@ void AnimationTrackEdit::extract_args_from_dictionnary(const Dictionary& d, Stri
 		}
 	}
 
-	text += ")";
+	*text += ")";
 }
 
 void AnimationTrackEdit::draw_key(int p_index, float p_pixels_sec, int p_x, bool p_selected, int p_clip_left, int p_clip_right) {
@@ -3250,14 +3246,16 @@ AnimationTrackEditGroup::AnimationTrackEditGroup() {
 
 void AnimationTrackEditor::add_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin) {
 
-	if (track_edit_plugins.find(p_plugin) != -1)
+	if (std::find(track_edit_plugins.begin(), track_edit_plugins.end(), p_plugin) != track_edit_plugins.end())
 		return;
 	track_edit_plugins.push_back(p_plugin);
 }
 
 void AnimationTrackEditor::remove_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin) {
-
-	track_edit_plugins.erase(p_plugin);
+	auto it_find = std::find(track_edit_plugins.begin(), track_edit_plugins.end(), p_plugin);
+	if (it_find != track_edit_plugins.end()) {
+		track_edit_plugins.erase(it_find);
+	}
 }
 
 void AnimationTrackEditor::set_animation(const Ref<Animation> &p_anim) {
@@ -3392,12 +3390,14 @@ void AnimationTrackEditor::cleanup() {
 	set_animation(Ref<Animation>());
 }
 
-void AnimationTrackEditor::update_track_edits(){
-	update_track_edits()
+void AnimationTrackEditor::update_track_edits() {
+	for (auto &&edit : track_edits) {
+		edit->update();
+	}
 }
 
 void AnimationTrackEditor::_name_limit_changed() {
-	update_track_edits()
+	update_track_edits();
 }
 
 void AnimationTrackEditor::_timeline_changed(float p_new_pos, bool p_drag) {
@@ -4371,7 +4371,7 @@ void AnimationTrackEditor::_animation_update() {
 	}
 
 	if (same) {
-		update_track_edits()
+		update_track_edits();
 
 		update_groups();
 	} else {
@@ -4414,7 +4414,7 @@ void AnimationTrackEditor::_notification(int p_what) {
 }
 
 void AnimationTrackEditor::_update_scroll(double) {
-	update_track_edits()
+	update_track_edits();
 
 	update_groups();
 }
@@ -4603,7 +4603,7 @@ void AnimationTrackEditor::_new_track_property_selected(String p_name) {
 
 		undo_redo->create_action(TTR("Add Bezier Track"));
 		int base_track = animation->get_track_count();
-		for (int i = 0; i < subindices.size(); i++) {
+		for (decltype(subindices.size()) i = 0; i < subindices.size(); ++i) {
 			undo_redo->add_do_method(animation.ptr(), "add_track", adding_track_type);
 			undo_redo->add_do_method(animation.ptr(), "track_set_path", base_track + i, full_path + subindices[i]);
 			undo_redo->add_undo_method(animation.ptr(), "remove_track", base_track);
@@ -4628,15 +4628,14 @@ void AnimationTrackEditor::_timeline_value_changed(double) {
 
 int AnimationTrackEditor::_get_track_selected() {
 	auto it = std::find_if(track_edits.begin(), track_edits.end(),
-		[](const AnimationTrackEdit& track_edit){
-			if(track_edit->has_focus() ){
-				return true;
-			}
-			return false;
-		}
-	);
+			[](const AnimationTrackEdit *track_edit) {
+				if (track_edit->has_focus()) {
+					return true;
+				}
+				return false;
+			});
 
-	if(it!=track_edits.end()){
+	if (it != track_edits.end()) {
 		return std::distance(track_edits.begin(), it);
 	}
 
@@ -5121,7 +5120,7 @@ void AnimationTrackEditor::_scroll_input(const Ref<InputEvent> &p_event) {
 				}
 
 				if (_get_track_selected() == -1 && !track_edits.empty() ) { //minimal hack to make shortcuts work
-					*(track_edits.rbegin() )->grab_focus();
+					(*track_edits.rbegin())->grab_focus();
 				}
 			} else {
 				_clear_selection(); //clear it
@@ -5389,29 +5388,29 @@ void AnimationTrackEditor::_edit_menu_pressed(int p_option) {
 
 			int base_track = animation->get_track_count();
 			undo_redo->create_action(TTR("Paste Tracks"));
-			for (int i = 0; i < track_clipboard.size(); i++) {
-				undo_redo->add_do_method(animation.ptr(), "add_track", track_clipboard[i].track_type);
-				Node *exists = NULL;
-				NodePath path = track_clipboard[i].base_path;
+			for (auto &&clipboard : track_clipboard) {
+				undo_redo->add_do_method(animation.ptr(), "add_track", clipboard.track_type);
+				Node *exists = nullptr;
+				NodePath path = clipboard.base_path;
 
 				if (root) {
-					NodePath np = track_clipboard[i].full_path;
+					NodePath np = clipboard.full_path;
 					exists = root->get_node(np);
 					if (exists) {
-						path = NodePath(root->get_path_to(exists).get_names(), track_clipboard[i].full_path.get_subnames(), false);
+						path = NodePath(root->get_path_to(exists).get_names(), clipboard.full_path.get_subnames(), false);
 					}
 				}
 
 				undo_redo->add_do_method(animation.ptr(), "track_set_path", base_track, path);
-				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_type", base_track, track_clipboard[i].interp_type);
-				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_loop_wrap", base_track, track_clipboard[i].loop_wrap);
-				undo_redo->add_do_method(animation.ptr(), "track_set_enabled", base_track, track_clipboard[i].enabled);
-				if (track_clipboard[i].track_type == Animation::TYPE_VALUE) {
-					undo_redo->add_do_method(animation.ptr(), "value_track_set_update_mode", base_track, track_clipboard[i].update_mode);
+				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_type", base_track, clipboard.interp_type);
+				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_loop_wrap", base_track, clipboard.loop_wrap);
+				undo_redo->add_do_method(animation.ptr(), "track_set_enabled", base_track, clipboard.enabled);
+				if (clipboard.track_type == Animation::TYPE_VALUE) {
+					undo_redo->add_do_method(animation.ptr(), "value_track_set_update_mode", base_track, clipboard.update_mode);
 				}
 
-				for (int j = 0; j < track_clipboard[i].keys.size(); j++) {
-					undo_redo->add_do_method(animation.ptr(), "track_insert_key", base_track, track_clipboard[i].keys[j].time, track_clipboard[i].keys[j].value, track_clipboard[i].keys[j].transition);
+				for (auto &&key : clipboard.keys) {
+					undo_redo->add_do_method(animation.ptr(), "track_insert_key", base_track, key.time, key.value, key.transition);
 				}
 
 				undo_redo->add_undo_method(animation.ptr(), "remove_track", animation->get_track_count());
