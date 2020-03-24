@@ -125,14 +125,13 @@ bool AnimationPlayer::_get(const StringName &p_name, Variant &r_ret) const {
 			keys.push_back(E->key() );
 		}
 
-		std::sort(keys.begin(), keys.end() );
+		std::sort(keys.begin(), keys.end());
 
-		std::vector<BlendKey> keys0;
-
-		for(const BlendKey& key : keys){
-			keys0.push_back(key.from);
-			keys0.push_back(key.to);
-			keys0.push_back(blend_times[key]);
+		Array array;
+		for (const BlendKey &key : keys) {
+			array.push_back(key.from);
+			array.push_back(key.to);
+			array.push_back(blend_times[key]);
 		}
 
 		r_ret = array;
@@ -249,7 +248,7 @@ void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim) {
 
 	for (int i = 0; i < a->get_track_count(); i++) {
 
-		p_anim->node_cache.write[i] = NULL;
+		p_anim->node_cache[i] = NULL;
 		RES resource;
 		std::vector<StringName> leftover_path;
 		Node *child = parent->get_node_and_resource(a->track_get_path(i), resource, leftover_path);
@@ -279,7 +278,7 @@ void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim) {
 		if (!node_cache_map.has(key))
 			node_cache_map[key] = TrackNodeCache();
 
-		p_anim->node_cache.write[i] = &node_cache_map[key];
+		p_anim->node_cache[i] = &node_cache_map[key];
 		p_anim->node_cache[i]->path = a->track_get_path(i);
 		p_anim->node_cache[i]->node = child;
 		p_anim->node_cache[i]->resource = resource;
@@ -1569,8 +1568,7 @@ AnimatedValuesBackup AnimationPlayer::backup_animated_values() {
 
 	AnimatedValuesBackup backup;
 
-	for (int i = 0; i < playback.current.from->node_cache.size(); i++) {
-		TrackNodeCache *nc = playback.current.from->node_cache[i];
+	for (auto &&nc : playback.current.from->node_cache) {
 		if (!nc)
 			continue;
 
@@ -1610,10 +1608,10 @@ AnimatedValuesBackup AnimationPlayer::backup_animated_values() {
 }
 
 void AnimationPlayer::restore_animated_values(const AnimatedValuesBackup &p_backup){
-	for(const Entry& c_entry : entries){
-		if(c_entry.bone_idx == -1){
+	for (auto &&c_entry : p_backup.entries) {
+		if (c_entry.bone_idx == -1) {
 			c_entry.object->set_indexed(c_entry.subpath, c_entry.value);
-		}else{
+		} else {
 			Object::cast_to<Skeleton>(c_entry.object)->set_bone_pose(c_entry.bone_idx, c_entry.value);
 		}
 	}
