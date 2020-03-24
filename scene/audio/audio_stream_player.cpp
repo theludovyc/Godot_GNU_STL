@@ -182,7 +182,7 @@ void AudioStreamPlayer::set_stream(Ref<AudioStream> p_stream) {
 		//lets try to somehow avoid a click
 		auto buffer_size = fadeout_buffer.size();
 
-		stream_playback->mix(buffer, pitch_scale, buffer_size);
+		stream_playback->mix(fadeout_buffer.data(), pitch_scale, buffer_size);
 
 		//multiply volume interpolating to avoid clicks if this changes
 		float target_volume = -80.0;
