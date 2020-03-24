@@ -1157,7 +1157,7 @@ void AnimationTreePlayer::transition_node_set_input_auto_advance(const StringNam
 	GET_NODE(NODE_TRANSITION, TransitionNode);
 	ERR_FAIL_INDEX(p_input, n->input_data.size());
 
-	n->input_data.write[p_input].auto_advance = p_auto_advance;
+	n->input_data[p_input].auto_advance = p_auto_advance;
 }
 void AnimationTreePlayer::transition_node_set_xfade_time(const StringName &p_node, float p_time) {
 
@@ -1319,8 +1319,8 @@ void AnimationTreePlayer::transition_node_delete_input(const StringName &p_node,
 	if (n->inputs.size() <= 1)
 		return;
 
-	n->inputs.remove(p_input);
-	n->input_data.remove(p_input);
+	n->inputs.erase(n->inputs.begin() + p_input);
+	n->input_data.erase(n->input_data.begin() + p_input);
 	last_error = _cycle_test(out_name);
 }
 
