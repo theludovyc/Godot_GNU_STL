@@ -50,13 +50,12 @@ void AnimationNodeAnimation::_validate_property(PropertyInfo &property) const {
 	if (property.name == "animation" && get_editable_animation_list) {
 		std::vector<String> names = get_editable_animation_list();
 		String anims;
-		for (int i = 0; i < names.size(); i++) {
+		anims += String(names.front());
+		std::for_each(names.begin() + 1, names.end(), [&](auto &&name) {
+			anims += ",";
+			anims += String(name);
+		});
 
-			if (i > 0) {
-				anims += ",";
-			}
-			anims += String(names[i]);
-		}
 		if (anims != String()) {
 			property.hint = PROPERTY_HINT_ENUM;
 			property.hint_string = anims;
@@ -936,11 +935,11 @@ void AnimationNodeBlendTree::get_child_nodes(List<ChildNode> *r_child_nodes) {
 		ns.push_back(E->key());
 	}
 
-	ns.sort_custom<StringName::AlphCompare>();
+	std::sort(ns.begin(), ns.end(), StringName::AlphCompare{});
 
-	for (int i = 0; i < ns.size(); i++) {
+	for (auto &&str : ns) {
 		ChildNode cn;
-		cn.name = ns[i];
+		cn.name = str;
 		cn.node = nodes[cn.name].node;
 		r_child_nodes->push_back(cn);
 	}
@@ -969,9 +968,9 @@ void AnimationNodeBlendTree::remove_node(const StringName &p_name) {
 
 	//erase connections to name
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
-			if (E->get().connections[i] == p_name) {
-				E->get().connections.write[i] = StringName();
+		for (auto &&connection : E->get().connections) {
+			if (connection == p_name) {
+				connection = StringName();
 			}
 		}
 	}
@@ -995,9 +994,9 @@ void AnimationNodeBlendTree::rename_node(const StringName &p_name, const StringN
 	//rename connections
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
 
-		for (int i = 0; i < E->get().connections.size(); i++) {
-			if (E->get().connections[i] == p_name) {
-				E->get().connections.write[i] = p_new_name;
+		for (auto &&connection : E->get().connections) {
+			if (connection == p_name) {
+				connection = p_new_name;
 			}
 		}
 	}
@@ -1063,8 +1062,7 @@ AnimationNodeBlendTree::ConnectionError AnimationNodeBlendTree::can_connect_node
 	}
 
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
-			StringName output = E->get().connections[i];
+		for (auto &&output : E->get().connections) {
 			if (output == p_output_node) {
 				return CONNECTION_ERROR_CONNECTION_EXISTS;
 			}
@@ -1076,7 +1074,7 @@ AnimationNodeBlendTree::ConnectionError AnimationNodeBlendTree::can_connect_node
 void AnimationNodeBlendTree::get_node_connections(List<NodeConnection> *r_connections) const {
 
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); ++i) {
 			StringName output = E->get().connections[i];
 			if (output != StringName()) {
 				NodeConnection nc;
