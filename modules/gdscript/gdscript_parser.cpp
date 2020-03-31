@@ -3076,7 +3076,7 @@ void GDScriptParser::_parse_block(BlockNode *p_block, bool p_static) {
 
 						bool constant = false;
 
-						for (auto &&arg : op->arguments) {
+						std::for_each(op->arguments.begin() + 1, op->arguments.end(), [&](auto &&arg) {
 							args.push_back(arg);
 							if (constant && arg->type == Node::TYPE_CONSTANT) {
 								ConstantNode *c = static_cast<ConstantNode *>(arg);
@@ -3087,7 +3087,7 @@ void GDScriptParser::_parse_block(BlockNode *p_block, bool p_static) {
 							} else {
 								constant = false;
 							}
-						}
+						});
 
 						if (args.size() > 0 && args.size() < 4) {
 
