@@ -853,7 +853,7 @@ Error GDScript::load_source_code(const String &p_path) {
 
 	int len = f->get_len();
 	sourcef.resize(len + 1);
-	uint8_t *w = sourcef.ptrw();
+	uint8_t *w = sourcef.data();
 	int r = f->get_buffer(w, len);
 	f->close();
 	memdelete(f);
@@ -1005,7 +1005,7 @@ void GDScript::_init_rpc_methods_properties() {
 				ScriptNetData nd;
 				nd.name = E->key();
 				nd.mode = E->get()->get_rpc_mode();
-				if (-1 == rpc_functions.find(nd)) {
+				if (std::find(rpc_functions.begin(), rpc_functions.end(), nd) == rpc_functions.end()) {
 					rpc_functions.push_back(nd);
 				}
 			}
@@ -1016,7 +1016,7 @@ void GDScript::_init_rpc_methods_properties() {
 				ScriptNetData nd;
 				nd.name = E->key();
 				nd.mode = E->get().rpc_mode;
-				if (-1 == rpc_variables.find(nd)) {
+				if (std::find(rpc_variables.begin(), rpc_variables.end(), nd) == rpc_variables.end()) {
 					rpc_variables.push_back(nd);
 				}
 			}
@@ -1032,8 +1032,9 @@ void GDScript::_init_rpc_methods_properties() {
 	}
 
 	// Sort so we are 100% that they are always the same.
-	rpc_functions.sort_custom<SortNetData>();
-	rpc_variables.sort_custom<SortNetData>();
+	std::sort(rpc_functions.begin(), rpc_functions.end(), SortNetData);
+
+	std::sort(rpc_variables.begin(), rpc_variables.end(), SortNetData);
 }
 
 GDScript::~GDScript() {
@@ -1077,7 +1078,7 @@ bool GDScriptInstance::set(const StringName &p_name, const Variant &p_value) {
 					const Variant *value = &p_value;
 					Variant converted = Variant::construct(member->data_type.builtin_type, &value, 1, ce);
 					if (ce.error == Callable::CallError::CALL_OK) {
-						members.write[member->index] = converted;
+						members[member->index] = converted;
 						return true;
 					} else {
 						return false;
