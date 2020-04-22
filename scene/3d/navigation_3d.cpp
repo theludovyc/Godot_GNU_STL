@@ -32,7 +32,7 @@
 
 #include "servers/navigation_server_3d.h"
 
-Vector<Vector3> Navigation3D::get_simple_path(const Vector3 &p_start, const Vector3 &p_end, bool p_optimize) const {
+std::vector<Vector3> Navigation3D::get_simple_path(const Vector3 &p_start, const Vector3 &p_end, bool p_optimize) const {
 
 	return NavigationServer3D::get_singleton()->map_get_path(map, p_start, p_end, p_optimize);
 }
