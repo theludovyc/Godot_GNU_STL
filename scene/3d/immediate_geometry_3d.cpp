@@ -90,9 +90,9 @@ AABB ImmediateGeometry3D::get_aabb() const {
 
 	return aabb;
 }
-Vector<Face3> ImmediateGeometry3D::get_faces(uint32_t p_usage_flags) const {
+std::vector<Face3> ImmediateGeometry3D::get_faces(uint32_t p_usage_flags) const {
 
-	return Vector<Face3>();
+	return std::vector<Face3>();
 }
 
 void ImmediateGeometry3D::add_sphere(int p_lats, int p_lons, float p_radius, bool p_add_uv) {
