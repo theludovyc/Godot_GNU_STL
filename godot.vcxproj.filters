@@ -921,9 +921,6 @@
     <Filter Include="Source Files\thirdparty\glad">
       <UniqueIdentifier>{C076B335-2EB4-AD81-7ABF-6BE6F2ACC71F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\thirdparty\jpeg-compressor">
-      <UniqueIdentifier>{2E0FEA63-ACE5-7ED5-EED4-C0EA5A5F5A5F}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\thirdparty\libpng">
       <UniqueIdentifier>{F60ED271-97FF-AA2B-1112-C65ADBDDC795}</UniqueIdentifier>
     </Filter>
@@ -8023,9 +8020,6 @@
     <ClCompile Include="thirdparty\glad\glad.c">
       <Filter>Source Files\thirdparty\glad</Filter>
     </ClCompile>
-    <ClCompile Include="thirdparty\jpeg-compressor\jpgd.cpp">
-      <Filter>Source Files\thirdparty\jpeg-compressor</Filter>
-    </ClCompile>
     <ClCompile Include="thirdparty\libpng\png.c">
       <Filter>Source Files\thirdparty\libpng</Filter>
     </ClCompile>
@@ -10434,6 +10428,9 @@
     </ClCompile>
     <ClCompile Include="modules\mbedtls\stream_peer_mbedtls.cpp">
       <Filter>Header Files\modules\mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\jpeg-compressor\jpgd.cpp">
+      <Filter>Header Files\thirdparty\jpeg-compressor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
