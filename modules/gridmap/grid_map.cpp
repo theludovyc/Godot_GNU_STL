@@ -51,7 +51,7 @@ bool GridMap::_set(const StringName &p_name, const Variant &p_value) {
 
 			std::vector<int> cells = d["cells"];
 			int amount = cells.size();
-			const int *r = cells.ptr();
+			const int *r = cells.data();
 			ERR_FAIL_COND_V(amount % 3, false); // not even
 			cell_map.clear();
 			for (int i = 0; i < amount / 3; ++i) {
@@ -106,7 +106,7 @@ bool GridMap::_get(const StringName &p_name, Variant &r_ret) const {
 		std::vector<int> cells;
 		cells.resize(cell_map.size() * 3);
 		{
-			int *w = cells.ptrw();
+			int *w = cells.data();
 			int i = 0;
 			for (Map<IndexKey, Cell>::Element *E = cell_map.front(); E; E = E->next(), i++) {
 
@@ -425,7 +425,7 @@ bool GridMap::_octant_update(const OctantKey &p_key) {
 
 	//erase multimeshes
 
-	for (auto &&multimesh_instance : g.multimesh_instances) {
+	for (int i = 0; i < g.multimesh_instances.size(); i++) {
 
 		RS::get_singleton()->free(g.multimesh_instances[i].instance);
 		RS::get_singleton()->free(g.multimesh_instances[i].multimesh);
@@ -479,13 +479,13 @@ bool GridMap::_octant_update(const OctantKey &p_key) {
 
 		std::vector<MeshLibrary::ShapeData> shapes = mesh_library->get_item_shapes(c.item);
 		// add the item's shape at given xform to octant's static_body
-		for (auto &&sh : shapes) {
+		for (int i = 0; i < shapes.size(); i++) {
 			// add the item's shape
-			if (!sh.shape.is_valid())
+			if (!shapes[i].shape.is_valid())
 				continue;
 			PhysicsServer3D::get_singleton()->body_add_shape(g.static_body, shapes[i].shape->get_rid(), xform * shapes[i].local_transform);
 			if (g.collision_debug.is_valid()) {
-				sh.shape->add_vertices_to_array(col_debug, xform * sh.local_transform);
+				shapes[i].shape->add_vertices_to_array(col_debug, xform * shapes[i].local_transform);
 			}
 		}
 
@@ -652,7 +652,7 @@ void GridMap::_octant_clean_up(const OctantKey &p_key) {
 
 	//erase multimeshes
 
-	for (auto &&multimesh_instance : g.multimesh_instances) {
+	for (int i = 0; i < g.multimesh_instances.size(); i++) {
 
 		RS::get_singleton()->free(g.multimesh_instances[i].instance);
 		RS::get_singleton()->free(g.multimesh_instances[i].multimesh);
