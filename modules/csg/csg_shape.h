@@ -82,10 +82,10 @@ private:
 	};
 
 	struct ShapeUpdateSurface {
-		Vector<Vector3> vertices;
-		Vector<Vector3> normals;
-		Vector<Vector2> uvs;
-		Vector<float> tans;
+		std::vector<Vector3> vertices;
+		std::vector<Vector3> normals;
+		std::vector<Vector2> uvs;
+		std::vector<float> tans;
 		Ref<Material> material;
 		int last_added;
 
@@ -124,10 +124,10 @@ public:
 	void set_operation(Operation p_operation);
 	Operation get_operation() const;
 
-	virtual Vector<Vector3> get_brush_faces();
+	virtual std::vector<Vector3> get_brush_faces();
 
 	virtual AABB get_aabb() const;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const;
 
 	void set_use_collision(bool p_enable);
 	bool is_using_collision() const;
@@ -174,7 +174,7 @@ private:
 	bool invert_faces;
 
 protected:
-	CSGBrush *_create_brush_from_arrays(const Vector<Vector3> &p_vertices, const Vector<Vector2> &p_uv, const Vector<bool> &p_smooth, const Vector<Ref<Material>> &p_materials);
+	CSGBrush *_create_brush_from_arrays(const std::vector<Vector3> &p_vertices, const std::vector<Vector2> &p_uv, const std::vector<bool> &p_smooth, const std::vector<Ref<Material>> &p_materials);
 	static void _bind_methods();
 
 public:
