@@ -142,9 +142,9 @@ static const TBuiltInResource default_builtin_resource = {
 	}
 };
 
-static Vector<uint8_t> _compile_shader_glsl(RenderingDevice::ShaderStage p_stage, const String &p_source_code, RenderingDevice::ShaderLanguage p_language, String *r_error) {
+static std::vector<uint8_t> _compile_shader_glsl(RenderingDevice::ShaderStage p_stage, const String &p_source_code, RenderingDevice::ShaderLanguage p_language, String *r_error) {
 
-	Vector<uint8_t> ret;
+	std::vector<uint8_t> ret;
 
 	ERR_FAIL_COND_V(p_language == RenderingDevice::SHADER_LANGUAGE_HLSL, ret);
 
@@ -224,7 +224,7 @@ static Vector<uint8_t> _compile_shader_glsl(RenderingDevice::ShaderStage p_stage
 
 	ret.resize(SpirV.size() * sizeof(uint32_t));
 	{
-		uint8_t *w = ret.ptrw();
+		uint8_t *w = ret.data();
 		copymem(w, &SpirV[0], SpirV.size() * sizeof(uint32_t));
 	}
 
