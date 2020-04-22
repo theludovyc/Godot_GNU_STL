@@ -1104,6 +1104,15 @@
     <Filter Include="Header Files\modules\glslang">
       <UniqueIdentifier>{50090eec-b277-4476-9553-6e3951715693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\thirdparty\glslang">
+      <UniqueIdentifier>{a4d58ae9-583f-49bd-a07d-cd902424ad4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty\glslang\SPIRV">
+      <UniqueIdentifier>{91547165-9c94-404b-9a5c-70b17cef102e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty\glslang\Include">
+      <UniqueIdentifier>{61a67282-bb3c-4e16-a972-3cb42b5187cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bind\core_bind.h">
@@ -5458,6 +5467,93 @@
     </ClInclude>
     <ClInclude Include="modules\glslang\register_types.h">
       <Filter>Header Files\modules\glslang</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\bitutils.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\disassemble.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\doc.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GLSL.ext.AMD.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GLSL.ext.EXT.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GLSL.ext.KHR.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GLSL.ext.NV.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GLSL.std.450.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\GlslangToSpv.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\hex_float.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\Logger.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\spirv.hpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\SpvBuilder.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\spvIR.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\SPVRemapper.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\SPIRV\SpvTools.h">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\arrays.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\BaseTypes.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\Common.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\ConstantUnion.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\InfoSink.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\InitializeGlobals.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\intermediate.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\PoolAlloc.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\ResourceLimits.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\revision.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\ShHandle.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Include\Types.h">
+      <Filter>Header Files\thirdparty\glslang\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glslang\glslang\Public\ShaderLang.h">
+      <Filter>Header Files\thirdparty\glslang</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -10518,6 +10614,33 @@
     </ClCompile>
     <ClCompile Include="modules\glslang\register_types.cpp">
       <Filter>Header Files\modules\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\disassemble.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\doc.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\GlslangToSpv.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\InReadableOrder.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\Logger.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\SpvBuilder.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\SpvPostProcess.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\SPVRemapper.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glslang\SPIRV\SpvTools.cpp">
+      <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
