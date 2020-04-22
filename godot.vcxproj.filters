@@ -5414,6 +5414,45 @@
     <ClInclude Include="modules\mbedtls\packet_peer_mbed_dtls.h">
       <Filter>Header Files\modules\mbedtls</Filter>
     </ClInclude>
+    <ClInclude Include="editor\plugins\camera_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\collision_polygon_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\cpu_particles_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\debugger_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\gpu_particles_2d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\gpu_particles_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\mesh_instance_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\node_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\path_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\physical_bone_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\skeleton_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\skeleton_ik_3d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\plugins\sprite_2d_editor_plugin.h">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\io\compression.cpp">
@@ -10431,6 +10470,45 @@
     </ClCompile>
     <ClCompile Include="thirdparty\jpeg-compressor\jpgd.cpp">
       <Filter>Header Files\thirdparty\jpeg-compressor</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\camera_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\collision_polygon_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\cpu_particles_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\debugger_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\gpu_particles_2d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\gpu_particles_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\mesh_instance_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\node_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\path_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\physical_bone_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\skeleton_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\skeleton_ik_3d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\plugins\sprite_2d_editor_plugin.cpp">
+      <Filter>Header Files\editor\plugins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
