@@ -78,7 +78,7 @@ public:
 		void create_instance(Node3D *p_base, bool p_hidden = false);
 	};
 
-	Vector<Vector3> collision_segments;
+	std::vector<Vector3> collision_segments;
 	Ref<TriangleMesh> collision_mesh;
 
 	struct Handle {
@@ -86,15 +86,15 @@ public:
 		bool billboard;
 	};
 
-	Vector<Vector3> handles;
-	Vector<Vector3> secondary_handles;
+	std::vector<Vector3> handles;
+	std::vector<Vector3> secondary_handles;
 	float selectable_icon_size;
 	bool billboard_handle;
 
 	bool valid;
 	bool hidden;
 	Node3D *base;
-	Vector<Instance> instances;
+	std::vector<Instance> instances;
 	Node3D *spatial_node;
 	EditorNode3DGizmoPlugin *gizmo_plugin;
 
@@ -104,12 +104,12 @@ protected:
 	static void _bind_methods();
 
 public:
-	void add_lines(const Vector<Vector3> &p_lines, const Ref<Material> &p_material, bool p_billboard = false, const Color &p_modulate = Color(1, 1, 1));
+	void add_lines(const std::vector<Vector3> &p_lines, const Ref<Material> &p_material, bool p_billboard = false, const Color &p_modulate = Color(1, 1, 1));
 	void add_mesh(const Ref<ArrayMesh> &p_mesh, bool p_billboard = false, const Ref<SkinReference> &p_skin_reference = Ref<SkinReference>(), const Ref<Material> &p_material = Ref<Material>());
-	void add_collision_segments(const Vector<Vector3> &p_lines);
+	void add_collision_segments(const std::vector<Vector3> &p_lines);
 	void add_collision_triangles(const Ref<TriangleMesh> &p_tmesh);
 	void add_unscaled_billboard(const Ref<Material> &p_material, float p_scale = 1, const Color &p_modulate = Color(1, 1, 1));
-	void add_handles(const Vector<Vector3> &p_handles, const Ref<Material> &p_material, bool p_billboard = false, bool p_secondary = false);
+	void add_handles(const std::vector<Vector3> &p_handles, const Ref<Material> &p_material, bool p_billboard = false, bool p_secondary = false);
 	void add_solid_box(Ref<Material> &p_material, Vector3 p_size, Vector3 p_position = Vector3());
 
 	virtual bool is_handle_highlighted(int p_idx) const;
@@ -122,7 +122,7 @@ public:
 	Node3D *get_spatial_node() const { return spatial_node; }
 	Ref<EditorNode3DGizmoPlugin> get_plugin() const { return gizmo_plugin; }
 	Vector3 get_handle_pos(int p_idx) const;
-	bool intersect_frustum(const Camera3D *p_camera, const Vector<Plane> &p_frustum);
+	bool intersect_frustum(const Camera3D *p_camera, const std::vector<Plane> &p_frustum);
 	bool intersect_ray(Camera3D *p_camera, const Point2 &p_point, Vector3 &r_pos, Vector3 &r_normal, int *r_gizmo_handle = nullptr, bool p_sec_first = false);
 
 	virtual void clear();
@@ -153,11 +153,11 @@ class ViewportRotationControl : public Control {
 		_FORCE_INLINE_ bool operator()(const Axis2D &l, const Axis2D &r) const {
 			return l.z_axis < r.z_axis;
 		}
-	};
+	} Axis2DCompare;
 
 	Node3DEditorViewport *viewport = nullptr;
-	Vector<Color> axis_colors;
-	Vector<int> axis_menu_options;
+	std::vector<Color> axis_colors;
+	std::vector<int> axis_menu_options;
 	bool orbiting = false;
 	int focused_axis = -2;
 
@@ -169,7 +169,7 @@ protected:
 	void _gui_input(Ref<InputEvent> p_event);
 	void _draw();
 	void _draw_axis(const Axis2D &p_axis);
-	void _get_sorted_axis(Vector<Axis2D> &r_axis);
+	void _get_sorted_axis(std::vector<Axis2D> &r_axis);
 	void _update_focus();
 	void _on_mouse_exited();
 
@@ -244,7 +244,7 @@ private:
 	void _set_auto_orthogonal();
 	Node3D *preview_node;
 	AABB *preview_bounds;
-	Vector<String> selected_files;
+	std::vector<String> selected_files;
 	AcceptDialog *accept;
 
 	Node *target_node;
@@ -296,7 +296,7 @@ private:
 	void _select_clicked(bool p_append, bool p_single, bool p_allow_locked = false);
 	void _select(Node *p_node, bool p_append, bool p_single);
 	ObjectID _select_ray(const Point2 &p_pos, bool p_append, bool &r_includes_current, int *r_gizmo_handle = nullptr, bool p_alt_select = false);
-	void _find_items_at_pos(const Point2 &p_pos, bool &r_includes_current, Vector<_RayResult> &results, bool p_alt_select = false);
+	void _find_items_at_pos(const Point2 &p_pos, bool &r_includes_current, std::vector<_RayResult> &results, bool p_alt_select = false);
 	Vector3 _get_ray_pos(const Vector2 &p_pos) const;
 	Vector3 _get_ray(const Vector2 &p_pos) const;
 	Point2 _point_to_screen(const Vector3 &p_point);
@@ -320,7 +320,7 @@ private:
 	float get_fov() const;
 
 	ObjectID clicked;
-	Vector<_RayResult> selection_results;
+	std::vector<_RayResult> selection_results;
 	bool clicked_includes_current;
 	bool clicked_wants_append;
 
@@ -437,7 +437,7 @@ private:
 
 	Vector3 _get_instance_position(const Point2 &p_pos) const;
 	static AABB _calculate_spatial_bounds(const Node3D *p_parent, bool p_exclude_toplevel_transform = true);
-	void _create_preview(const Vector<String> &files) const;
+	void _create_preview(const std::vector<String> &files) const;
 	void _remove_preview();
 	bool _cyclical_dependency_exists(const String &p_target_scene_path, Node *p_desired_node);
 	bool _create_instance(Node *parent, String &path, const Point2 &p_point);
@@ -716,8 +716,8 @@ private:
 	static Node3DEditor *singleton;
 
 	void _node_removed(Node *p_node);
-	Vector<Ref<EditorNode3DGizmoPlugin>> gizmo_plugins_by_priority;
-	Vector<Ref<EditorNode3DGizmoPlugin>> gizmo_plugins_by_name;
+	std::vector<Ref<EditorNode3DGizmoPlugin>> gizmo_plugins_by_priority;
+	std::vector<Ref<EditorNode3DGizmoPlugin>> gizmo_plugins_by_name;
 
 	void _register_all_gizmos();
 
@@ -844,7 +844,7 @@ public:
 private:
 	int current_state;
 	List<EditorNode3DGizmo *> current_gizmos;
-	HashMap<String, Vector<Ref<StandardMaterial3D>>> materials;
+	HashMap<String, std::vector<Ref<StandardMaterial3D>>> materials;
 
 protected:
 	static void _bind_methods();
