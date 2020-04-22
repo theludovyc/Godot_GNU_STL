@@ -568,6 +568,7 @@
     <ClInclude Include="modules\gdscript\gdscript_parser.h" />
     <ClInclude Include="modules\gdscript\gdscript_tokenizer.h" />
     <ClInclude Include="modules\gdscript\register_types.h" />
+    <ClInclude Include="modules\glslang\register_types.h" />
     <ClInclude Include="modules\gridmap\grid_map.h" />
     <ClInclude Include="modules\gridmap\grid_map_editor_plugin.h" />
     <ClInclude Include="modules\gridmap\register_types.h" />
@@ -2036,6 +2037,7 @@
     <ClCompile Include="modules\gdscript\gdscript_parser.cpp" />
     <ClCompile Include="modules\gdscript\gdscript_tokenizer.cpp" />
     <ClCompile Include="modules\gdscript\register_types.cpp" />
+    <ClCompile Include="modules\glslang\register_types.cpp" />
     <ClCompile Include="modules\gridmap\grid_map.cpp" />
     <ClCompile Include="modules\gridmap\grid_map_editor_plugin.cpp" />
     <ClCompile Include="modules\gridmap\register_types.cpp" />

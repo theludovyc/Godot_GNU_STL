@@ -1101,6 +1101,9 @@
     <Filter Include="Header Files\thirdparty\mbedtls">
       <UniqueIdentifier>{4d381bc2-eb2d-4517-a953-38aee9a34e74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\modules\glslang">
+      <UniqueIdentifier>{50090eec-b277-4476-9553-6e3951715693}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bind\core_bind.h">
@@ -5452,6 +5455,9 @@
     </ClInclude>
     <ClInclude Include="editor\plugins\sprite_2d_editor_plugin.h">
       <Filter>Header Files\editor\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\glslang\register_types.h">
+      <Filter>Header Files\modules\glslang</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -10509,6 +10515,9 @@
     </ClCompile>
     <ClCompile Include="editor\plugins\sprite_2d_editor_plugin.cpp">
       <Filter>Header Files\editor\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\glslang\register_types.cpp">
+      <Filter>Header Files\modules\glslang</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
