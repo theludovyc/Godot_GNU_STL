@@ -869,7 +869,7 @@ void GDScriptFunctions::call(Function p_func, const Variant **p_args, int p_arg_
 
 			barr.resize(len);
 			{
-				uint8_t *w = barr.ptrw();
+				uint8_t *w = barr.data();
 				encode_variant(*p_args[0], w, len, full_objects);
 			}
 			r_ret = barr;
@@ -907,7 +907,7 @@ void GDScriptFunctions::call(Function p_func, const Variant **p_args, int p_arg_
 			PackedByteArray varr = *p_args[0];
 			Variant ret;
 			{
-				const uint8_t *r = varr.ptr();
+				const uint8_t *r = varr.data();
 				Error err = decode_variant(ret, r, varr.size(), nullptr, allow_objects);
 				if (err != OK) {
 					r_ret = RTR("Not enough bytes for decoding bytes, or invalid format.");
@@ -1392,47 +1392,47 @@ void GDScriptFunctions::call(Function p_func, const Variant **p_args, int p_arg_
 				} break;
 				case Variant::PACKED_BYTE_ARRAY: {
 
-					Vector<uint8_t> d = *p_args[0];
+					std::vector<uint8_t> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_INT32_ARRAY: {
 
-					Vector<int32_t> d = *p_args[0];
+					std::vector<int32_t> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_INT64_ARRAY: {
 
-					Vector<int64_t> d = *p_args[0];
+					std::vector<int64_t> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_FLOAT32_ARRAY: {
 
-					Vector<float> d = *p_args[0];
+					std::vector<float> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_FLOAT64_ARRAY: {
 
-					Vector<double> d = *p_args[0];
+					std::vector<double> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_STRING_ARRAY: {
 
-					Vector<String> d = *p_args[0];
+					std::vector<String> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_VECTOR2_ARRAY: {
 
-					Vector<Vector2> d = *p_args[0];
+					std::vector<Vector2> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_VECTOR3_ARRAY: {
 
-					Vector<Vector3> d = *p_args[0];
+					std::vector<Vector3> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				case Variant::PACKED_COLOR_ARRAY: {
 
-					Vector<Color> d = *p_args[0];
+					std::vector<Color> d = *p_args[0];
 					r_ret = d.size();
 				} break;
 				default: {
