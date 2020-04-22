@@ -63,13 +63,13 @@ Error ImageLoaderHDR::load_image(Ref<Image> p_image, FileAccess *f, bool p_force
 
 	int width = f->get_line().to_int();
 
-	Vector<uint8_t> imgdata;
+	std::vector<uint8_t> imgdata;
 
 	imgdata.resize(height * width * sizeof(uint32_t));
 
 	{
 
-		uint8_t *w = imgdata.ptrw();
+		uint8_t *w = imgdata.data();
 
 		uint8_t *ptr = (uint8_t *)w;
 
