@@ -35,6 +35,7 @@
 #include "pluginscript_script.h"
 
 #include <stdint.h>
+#include <algorithm>
 
 #ifdef DEBUG_ENABLED
 #define __ASSERT_SCRIPT_REASON "Cannot retrieve PluginScript class for this script, is your code correct?"
@@ -316,14 +317,14 @@ Error PluginScript::reload(bool p_keep_state) {
 			ScriptNetData nd;
 			nd.name = mi.name;
 			nd.mode = MultiplayerAPI::RPCMode(int(var));
-			if (_rpc_methods.find(nd) == -1) {
+			if (std::find(_rpc_methods.begin(), _rpc_methods.end(), nd) == _rpc_methods.end()) {
 				_rpc_methods.push_back(nd);
 			}
 		}
 	}
 
 	// Sort so we are 100% that they are always the same.
-	_rpc_methods.sort_custom<SortNetData>();
+	std::sort(_rpc_methods.begin(), _rpc_methods.end(), SortNetData);
 
 	Array *signals = (Array *)&manifest.signals;
 	for (int i = 0; i < signals->size(); ++i) {
@@ -343,14 +344,14 @@ Error PluginScript::reload(bool p_keep_state) {
 			ScriptNetData nd;
 			nd.name = pi.name;
 			nd.mode = MultiplayerAPI::RPCMode(int(var));
-			if (_rpc_variables.find(nd) == -1) {
+			if (std::find(_rpc_variables.begin(), _rpc_variables.end(), nd) == _rpc_variables.end()) {
 				_rpc_variables.push_back(nd);
 			}
 		}
 	}
 
 	// Sort so we are 100% that they are always the same.
-	_rpc_variables.sort_custom<SortNetData>();
+	std::sort(_rpc_variables.begin(), _rpc_variables.end(), SortNetData);
 
 #ifdef TOOLS_ENABLED
 /*for (Set<PlaceHolderScriptInstance*>::Element *E=placeholders.front();E;E=E->next()) {
@@ -428,14 +429,14 @@ ScriptLanguage *PluginScript::get_language() const {
 
 Error PluginScript::load_source_code(const String &p_path) {
 
-	Vector<uint8_t> sourcef;
+	std::vector<uint8_t> sourcef;
 	Error err;
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ, &err);
 	ERR_FAIL_COND_V_MSG(err, err, "Cannot open file '" + p_path + "'.");
 
 	int len = f->get_len();
 	sourcef.resize(len + 1);
-	uint8_t *w = sourcef.ptrw();
+	uint8_t *w = sourcef.data();
 	int r = f->get_buffer(w, len);
 	f->close();
 	memdelete(f);
@@ -476,7 +477,7 @@ int PluginScript::get_member_line(const StringName &p_member) const {
 		return -1;
 }
 
-Vector<ScriptNetData> PluginScript::get_rpc_methods() const {
+std::vector<ScriptNetData> PluginScript::get_rpc_methods() const {
 	return _rpc_methods;
 }
 
@@ -509,7 +510,7 @@ MultiplayerAPI::RPCMode PluginScript::get_rpc_mode(const StringName &p_method) c
 	return get_rpc_mode_by_id(get_rpc_method_id(p_method));
 }
 
-Vector<ScriptNetData> PluginScript::get_rset_properties() const {
+std::vector<ScriptNetData> PluginScript::get_rset_properties() const {
 	return _rpc_variables;
 }
 
