@@ -382,14 +382,14 @@ public:
 				PackedByteArray arr;
 				uint32_t size = tex->mWidth * tex->mHeight;
 				arr.resize(size);
-				memcpy(arr.ptrw(), tex->pcData, size);
+				memcpy(arr.data(), tex->pcData, size);
 				ERR_FAIL_COND_V(arr.size() % 4 != 0, Ref<Image>());
 				//ARGB8888 to RGBA8888
 				for (int32_t i = 0; i < arr.size() / 4; i++) {
-					arr.ptrw()[(4 * i) + 3] = arr[(4 * i) + 0];
-					arr.ptrw()[(4 * i) + 0] = arr[(4 * i) + 1];
-					arr.ptrw()[(4 * i) + 1] = arr[(4 * i) + 2];
-					arr.ptrw()[(4 * i) + 2] = arr[(4 * i) + 3];
+					arr.data()[(4 * i) + 3] = arr[(4 * i) + 0];
+					arr.data()[(4 * i) + 0] = arr[(4 * i) + 1];
+					arr.data()[(4 * i) + 1] = arr[(4 * i) + 2];
+					arr.data()[(4 * i) + 2] = arr[(4 * i) + 3];
 				}
 				img->create(tex->mWidth, tex->mHeight, true, Image::FORMAT_RGBA8, arr);
 				ERR_FAIL_COND_V(img.is_null(), Ref<Image>());
