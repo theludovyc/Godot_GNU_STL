@@ -186,7 +186,7 @@ void SoftBodyBullet::get_node_offset(int p_node_index, Vector3 &r_offset) const 
 		return;
 
 	Array arrays = soft_mesh->surface_get_arrays(0);
-	std::vector<Vector3> vertices(arrays[RS::ARRAY_VERTEX]);
+	std::vector<Vector3> vertices = arrays[RS::ARRAY_VERTEX];
 
 	if (0 <= p_node_index && vertices.size() > p_node_index) {
 		r_offset = vertices[p_node_index];
@@ -232,7 +232,7 @@ void SoftBodyBullet::reset_all_node_positions() {
 		return;
 
 	Array arrays = soft_mesh->surface_get_arrays(0);
-	std::vector<Vector3> vs_vertices(arrays[RS::ARRAY_VERTEX]);
+	std::vector<Vector3> vs_vertices = arrays[RS::ARRAY_VERTEX];
 	const Vector3 *vs_vertices_read = vs_vertices.data();
 
 	for (int vertex_index = bt_soft_body->m_nodes.size() - 1; 0 <= vertex_index; --vertex_index) {
