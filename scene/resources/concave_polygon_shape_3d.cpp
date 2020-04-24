@@ -32,15 +32,15 @@
 
 #include "servers/physics_server_3d.h"
 
-Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() {
+std::vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() {
 
 	Set<DrawEdge> edges;
 
-	Vector<Vector3> data = get_faces();
+	std::vector<Vector3> data = get_faces();
 	int datalen = data.size();
-	ERR_FAIL_COND_V((datalen % 3) != 0, Vector<Vector3>());
+	ERR_FAIL_COND_V((datalen % 3) != 0, std::vector<Vector3>());
 
-	const Vector3 *r = data.ptr();
+	const Vector3 *r = data.data();
 
 	for (int i = 0; i < datalen; i += 3) {
 
@@ -51,13 +51,13 @@ Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() {
 		}
 	}
 
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
 	points.resize(edges.size() * 2);
 	int idx = 0;
 	for (Set<DrawEdge>::Element *E = edges.front(); E; E = E->next()) {
 
-		points.write[idx + 0] = E->get().a;
-		points.write[idx + 1] = E->get().b;
+		points[idx + 0] = E->get().a;
+		points[idx + 1] = E->get().b;
 		idx += 2;
 	}
 
@@ -65,8 +65,8 @@ Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() {
 }
 
 real_t ConcavePolygonShape3D::get_enclosing_radius() const {
-	Vector<Vector3> data = get_faces();
-	const Vector3 *read = data.ptr();
+	std::vector<Vector3> data = get_faces();
+	const Vector3 *read = data.data();
 	real_t r = 0;
 	for (int i(0); i < data.size(); i++) {
 		r = MAX(read[i].length_squared(), r);
@@ -78,13 +78,13 @@ void ConcavePolygonShape3D::_update_shape() {
 	Shape3D::_update_shape();
 }
 
-void ConcavePolygonShape3D::set_faces(const Vector<Vector3> &p_faces) {
+void ConcavePolygonShape3D::set_faces(const std::vector<Vector3> &p_faces) {
 
 	PhysicsServer3D::get_singleton()->shape_set_data(get_shape(), p_faces);
 	notify_change_to_owners();
 }
 
-Vector<Vector3> ConcavePolygonShape3D::get_faces() const {
+std::vector<Vector3> ConcavePolygonShape3D::get_faces() const {
 
 	return PhysicsServer3D::get_singleton()->shape_get_data(get_shape());
 }
