@@ -49,7 +49,7 @@ public:
 	void set_height(float p_height);
 	float get_height() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines();
+	virtual std::vector<Vector3> get_debug_mesh_lines();
 	virtual real_t get_enclosing_radius() const;
 
 	CylinderShape3D();
