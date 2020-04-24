@@ -46,7 +46,7 @@ public:
 	void set_plane(Plane p_plane);
 	Plane get_plane() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines();
+	virtual std::vector<Vector3> get_debug_mesh_lines();
 	virtual real_t get_enclosing_radius() const {
 		// Should be infinite?
 		return 0;
