@@ -1455,7 +1455,7 @@ struct SignatureInformation {
 	/**
 	 * The parameters of this signature.
 	 */
-	Vector<ParameterInformation> parameters;
+	std::vector<ParameterInformation> parameters;
 
 	Dictionary to_json() const {
 		Dictionary dict;
@@ -1479,7 +1479,7 @@ struct SignatureHelp {
 	/**
 	 * One or more signatures.
 	 */
-	Vector<SignatureInformation> signatures;
+	std::vector<SignatureInformation> signatures;
 
 	/**
 	 * The active signature. If omitted or the value lies outside the
