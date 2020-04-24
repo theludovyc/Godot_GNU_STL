@@ -98,20 +98,13 @@ void AreaBullet::dispatch_callbacks() {
 			case OVERLAP_STATE_EXIT:
 				call_event(otherObj.object, PhysicsServer3D::AREA_BODY_REMOVED);
 				otherObj.object->on_exit_area(this);
-				overlappingObjects.remove(i); // Remove after callback
+				overlappingObjects.erase(overlappingObjects.begin() + i); // Remove after callback
 				break;
 			case OVERLAP_STATE_DIRTY:
 			case OVERLAP_STATE_INSIDE:
 				break;
-
-				case OVERLAP_STATE_EXIT:
-					call_event(overlappingObject.object, PhysicsServer::AREA_BODY_REMOVED);
-					overlappingObject.object->on_exit_area(this);
-				return true;
-			}
-			return false;
 		}
-	), overlappingObjects.end() );
+	}
 }
 
 void AreaBullet::call_event(CollisionObjectBullet *p_otherObject, PhysicsServer3D::AreaBodyStatus p_status) {
@@ -141,10 +134,10 @@ void AreaBullet::scratch() {
 }
 
 void AreaBullet::clear_overlaps(bool p_notify) {
-	for(auto it = overlappingObjects.rbegin(); it != overlappingObjects.rend(); ++it){
+	for (auto it = overlappingObjects.rbegin(); it != overlappingObjects.rend(); ++it) {
 		if (p_notify)
-			call_event(overlappingObjects[i].object, PhysicsServer3D::AREA_BODY_REMOVED);
-		overlappingObjects[i].object->on_exit_area(this);
+			call_event(it->object, PhysicsServer3D::AREA_BODY_REMOVED);
+		it->object->on_exit_area(this);
 	}
 
 	overlappingObjects.clear();
@@ -156,13 +149,9 @@ void AreaBullet::remove_overlap(CollisionObjectBullet *p_object, bool p_notify) 
 			if (p_notify)
 				call_event(overlappingObjects[i].object, PhysicsServer3D::AREA_BODY_REMOVED);
 			overlappingObjects[i].object->on_exit_area(this);
-			overlappingObjects.remove(i);
+			overlappingObjects.erase(overlappingObjects.begin() + i);
 			break;
 		}
-	);
-
-	if(it != overlappingObjects.end() ){
-		overlappingObjects.erase(it);
 	}
 }
 
@@ -176,7 +165,7 @@ int AreaBullet::find_overlapping_object(CollisionObjectBullet *p_colObj) {
 		}
 	);
 
-	if(it != overlappingObjects.end() ){
+	if (it != overlappingObjects.end()) {
 		return std::distance(overlappingObjects.begin(), it);
 	}
 	return -1;
