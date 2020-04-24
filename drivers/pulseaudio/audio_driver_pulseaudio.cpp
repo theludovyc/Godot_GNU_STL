@@ -385,7 +385,7 @@ void AudioDriverPulseAudio::thread_func(void *p_udata) {
 			if (bytes > 0) {
 				size_t bytes_to_write = MIN(bytes, avail_bytes);
 				const void *ptr = ad->samples_out.data();
-				ret = pa_stream_write(ad->pa_str, (char *)data + write_ofs, bytes_to_write, nullptr, 0LL, PA_SEEK_RELATIVE);
+				ret = pa_stream_write(ad->pa_str, (char *)ptr + write_ofs, bytes_to_write, nullptr, 0LL, PA_SEEK_RELATIVE);
 				if (ret != 0) {
 					ERR_PRINT("PulseAudio: pa_stream_write error: " + String(pa_strerror(ret)));
 				} else {
