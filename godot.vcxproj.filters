@@ -5534,6 +5534,12 @@
     <ClInclude Include="thirdparty\glslang\glslang\Public\ShaderLang.h">
       <Filter>Header Files\thirdparty\glslang</Filter>
     </ClInclude>
+    <ClInclude Include="thirdparty\bullet\btBulletCollisionCommon.h">
+      <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\bullet\btBulletDynamicsCommon.h">
+      <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\io\compression.cpp">
@@ -10566,6 +10572,15 @@
     </ClCompile>
     <ClCompile Include="modules\gdnative\videodecoder\video_stream_gdnative.cpp">
       <Filter>Header Files\modules\gdnative\videodecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\bullet\btBulletCollisionAll.cpp">
+      <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\bullet\btBulletDynamicsAll.cpp">
+      <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\bullet\btLinearMathAll.cpp">
+      <Filter>Header Files\thirdparty\bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
