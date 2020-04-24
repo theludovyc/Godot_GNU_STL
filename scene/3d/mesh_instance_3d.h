@@ -58,7 +58,7 @@ protected:
 	};
 
 	Map<StringName, BlendShapeTrack> blend_shape_tracks;
-	Vector<Ref<Material>> materials;
+	std::vector<Ref<Material>> materials;
 
 	void _mesh_changed();
 	void _resolve_skeleton_path();
@@ -95,7 +95,7 @@ public:
 	void create_debug_tangents();
 
 	virtual AABB get_aabb() const;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const;
 
 	MeshInstance3D();
 	~MeshInstance3D();
