@@ -35,8 +35,8 @@
 
 class ImageLoaderPNG : public ImageFormatLoader {
 private:
-	static Vector<uint8_t> lossless_pack_png(const Ref<Image> &p_image);
-	static Ref<Image> lossless_unpack_png(const Vector<uint8_t> &p_data);
+	static std::vector<uint8_t> lossless_pack_png(const Ref<Image> &p_image);
+	static Ref<Image> lossless_unpack_png(const std::vector<uint8_t> &p_data);
 	static Ref<Image> load_mem_png(const uint8_t *p_png, int p_size);
 
 public:

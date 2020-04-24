@@ -90,11 +90,11 @@ RES _ResourceLoader::load(const String &p_path, const String &p_type_hint, bool 
 	return ret;
 }
 
-Vector<String> _ResourceLoader::get_recognized_extensions_for_type(const String &p_type) {
+std::vector<String> _ResourceLoader::get_recognized_extensions_for_type(const String &p_type) {
 
 	List<String> exts;
 	ResourceLoader::get_recognized_extensions_for_type(p_type, &exts);
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<String>::Element *E = exts.front(); E; E = E->next()) {
 
 		ret.push_back(E->get());
@@ -160,12 +160,12 @@ Error _ResourceSaver::save(const String &p_path, const RES &p_resource, SaverFla
 	return ResourceSaver::save(p_path, p_resource, p_flags);
 }
 
-Vector<String> _ResourceSaver::get_recognized_extensions(const RES &p_resource) {
+std::vector<String> _ResourceSaver::get_recognized_extensions(const RES &p_resource) {
 
-	ERR_FAIL_COND_V_MSG(p_resource.is_null(), Vector<String>(), "It's not a reference to a valid Resource object.");
+	ERR_FAIL_COND_V_MSG(p_resource.is_null(), std::vector<String>(), "It's not a reference to a valid Resource object.");
 	List<String> exts;
 	ResourceSaver::get_recognized_extensions(p_resource, &exts);
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<String>::Element *E = exts.front(); E; E = E->next()) {
 
 		ret.push_back(E->get());
@@ -782,7 +782,7 @@ bool _OS::request_permissions() {
 	return OS::get_singleton()->request_permissions();
 }
 
-Vector<String> _OS::get_granted_permissions() const {
+std::vector<String> _OS::get_granted_permissions() const {
 
 	return OS::get_singleton()->get_granted_permissions();
 }
@@ -935,16 +935,16 @@ _Geometry *_Geometry::get_singleton() {
 	return singleton;
 }
 
-Vector<Plane> _Geometry::build_box_planes(const Vector3 &p_extents) {
+std::vector<Plane> _Geometry::build_box_planes(const Vector3 &p_extents) {
 
 	return Geometry::build_box_planes(p_extents);
 }
 
-Vector<Plane> _Geometry::build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis) {
+std::vector<Plane> _Geometry::build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis) {
 
 	return Geometry::build_cylinder_planes(p_radius, p_height, p_sides, p_axis);
 }
-Vector<Plane> _Geometry::build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
+std::vector<Plane> _Geometry::build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
 
 	return Geometry::build_capsule_planes(p_radius, p_height, p_sides, p_lats, p_axis);
 }
@@ -980,25 +980,25 @@ Variant _Geometry::line_intersects_line_2d(const Vector2 &p_from_a, const Vector
 	}
 }
 
-Vector<Vector2> _Geometry::get_closest_points_between_segments_2d(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2) {
+std::vector<Vector2> _Geometry::get_closest_points_between_segments_2d(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2) {
 
 	Vector2 r1, r2;
 	Geometry::get_closest_points_between_segments(p1, q1, p2, q2, r1, r2);
-	Vector<Vector2> r;
+	std::vector<Vector2> r;
 	r.resize(2);
-	r.set(0, r1);
-	r.set(1, r2);
+	r[0] = r1;
+	r[1] = r2;
 	return r;
 }
 
-Vector<Vector3> _Geometry::get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2) {
+std::vector<Vector3> _Geometry::get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2) {
 
 	Vector3 r1, r2;
 	Geometry::get_closest_points_between_segments(p1, p2, q1, q2, r1, r2);
-	Vector<Vector3> r;
+	std::vector<Vector3> r;
 	r.resize(2);
-	r.set(0, r1);
-	r.set(1, r2);
+	r[0] = r1;
+	r[1] = r2;
 	return r;
 }
 Vector2 _Geometry::get_closest_point_to_segment_2d(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b) {
@@ -1461,21 +1461,24 @@ real_t _File::get_real() const {
 	return f->get_real();
 }
 
-Vector<uint8_t> _File::get_buffer(int p_length) const {
+std::vector<uint8_t> _File::get_buffer(int p_length) const {
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	ERR_FAIL_COND_V_MSG(!f, data, "File must be opened before use.");
 
 	ERR_FAIL_COND_V_MSG(p_length < 0, data, "Length of buffer cannot be smaller than 0.");
 	if (p_length == 0)
 		return data;
 
-	Error err = data.resize(p_length);
-	ERR_FAIL_COND_V_MSG(err != OK, data, "Can't resize data to " + itos(p_length) + " elements.");
+	try {
+		data.resize(p_length);
+	} catch (const std::exception &x) {
+		ERR_FAIL_COND_V_MSG(true, data, "Can't resize data to " + itos(p_length) + " elements.");
+	}
 
-	uint8_t *w = data.ptrw();
+	uint8_t *w = data.data();
 	int len = f->get_buffer(&w[0], p_length);
-	ERR_FAIL_COND_V(len < 0, Vector<uint8_t>());
+	ERR_FAIL_COND_V(len < 0, std::vector<uint8_t>());
 
 	if (len < p_length)
 		data.resize(p_length);
@@ -1623,7 +1626,7 @@ void _File::store_csv_line(const std::vector<String> &p_values, const String &p_
 	f->store_csv_line(p_values, p_delim);
 }
 
-void _File::store_buffer(const Vector<uint8_t> &p_buffer) {
+void _File::store_buffer(const std::vector<uint8_t> &p_buffer) {
 
 	ERR_FAIL_COND_MSG(!f, "File must be opened before use.");
 
@@ -1631,7 +1634,7 @@ void _File::store_buffer(const Vector<uint8_t> &p_buffer) {
 	if (len == 0)
 		return;
 
-	const uint8_t *r = p_buffer.ptr();
+	const uint8_t *r = p_buffer.data();
 
 	f->store_buffer(&r[0], len);
 }
@@ -1993,25 +1996,25 @@ Variant _Marshalls::base64_to_variant(const String &p_str, bool p_allow_objects)
 	return v;
 };
 
-String _Marshalls::raw_to_base64(const Vector<uint8_t> &p_arr) {
+String _Marshalls::raw_to_base64(const std::vector<uint8_t> &p_arr) {
 
 	String ret = CryptoCore::b64_encode_str(p_arr.ptr(), p_arr.size());
 	ERR_FAIL_COND_V(ret == "", ret);
 	return ret;
 };
 
-Vector<uint8_t> _Marshalls::base64_to_raw(const String &p_str) {
+std::vector<uint8_t> _Marshalls::base64_to_raw(const String &p_str) {
 
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
 	size_t arr_len = 0;
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	{
 		buf.resize(strlen / 4 * 3 + 1);
-		uint8_t *w = buf.ptrw();
+		uint8_t *w = buf.data();
 
-		ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &arr_len, (unsigned char *)cstr.get_data(), strlen) != OK, Vector<uint8_t>());
+		ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &arr_len, (unsigned char *)cstr.get_data(), strlen) != OK, std::vector<uint8_t>());
 	}
 	buf.resize(arr_len);
 
@@ -2031,9 +2034,9 @@ String _Marshalls::base64_to_utf8(const String &p_str) {
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	buf.resize(strlen / 4 * 3 + 1 + 1);
-	uint8_t *w = buf.ptrw();
+	uint8_t *w = buf.data();
 
 	size_t len = 0;
 	ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &len, (unsigned char *)cstr.get_data(), strlen) != OK, String());

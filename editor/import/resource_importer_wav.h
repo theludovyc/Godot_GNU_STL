@@ -76,9 +76,9 @@ public:
 			++datalen;
 
 		dst_data.resize(datalen / 2 + 4);
-		uint8_t *w = dst_data.ptrw();
+		uint8_t *w = dst_data.data();
 
-		int i, step_idx = 0, prev = 0;
+		int step_idx = 0, prev = 0;
 		uint8_t *out = w;
 		//int16_t xm_prev=0;
 		const float *in = p_data.data();

@@ -689,7 +689,7 @@ EditorExportPlatform::ExportNotifier::~ExportNotifier() {
 		if (export_plugins[i]->get_script_instance()) {
 			export_plugins[i]->_export_end_script();
 		}
-		plugin->_export_end();
+		export_plugins[i]->_export_end();
 	}
 }
 
@@ -723,18 +723,18 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	std::vector<Ref<EditorExportPlugin>> export_plugins = EditorExport::get_singleton()->get_export_plugins();
 	for (int i = 0; i < export_plugins.size(); i++) {
 
-		plugin->set_export_preset(p_preset);
+		export_plugins[i]->set_export_preset(p_preset);
 
 		if (p_so_func) {
-			for (auto &&obj : plugin->shared_objects) {
+			for (auto &&obj : export_plugins[i]->shared_objects) {
 				p_so_func(p_udata, obj);
 			}
 		}
-		for (auto &&file : plugin->extra_files) {
+		for (auto &&file : export_plugins[i]->extra_files) {
 			p_func(p_udata, file.path, file.data, 0, paths.size());
 		}
 
-		plugin->_clear();
+		export_plugins[i]->_clear();
 	}
 
 	FeatureContainers feature_containers = get_feature_containers(p_preset);

@@ -42,7 +42,7 @@ class CollisionPolygon3D : public Node3D {
 protected:
 	float depth;
 	AABB aabb;
-	Vector<Point2> polygon;
+	std::vector<Point2> polygon;
 
 	uint32_t owner_id;
 	CollisionObject3D *parent;
@@ -63,8 +63,8 @@ public:
 	void set_depth(float p_depth);
 	float get_depth() const;
 
-	void set_polygon(const Vector<Point2> &p_polygon);
-	Vector<Point2> get_polygon() const;
+	void set_polygon(const std::vector<Point2> &p_polygon);
+	std::vector<Point2> get_polygon() const;
 
 	void set_disabled(bool p_disabled);
 	bool is_disabled() const;

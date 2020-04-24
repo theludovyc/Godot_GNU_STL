@@ -35,7 +35,7 @@
 #include "scene/3d/cpu_particles_3d.h"
 #include "scene/resources/particles_material.h"
 
-bool GPUParticles3DEditorBase::_generate(Vector<Vector3> &points, Vector<Vector3> &normals) {
+bool GPUParticles3DEditorBase::_generate(std::vector<Vector3> &points, std::vector<Vector3> &normals) {
 
 	bool use_normals = emission_fill->get_selected() == 1;
 
@@ -349,8 +349,8 @@ void GPUParticles3DEditor::edit(GPUParticles3D *p_particles) {
 void GPUParticles3DEditor::_generate_emission_points() {
 
 	/// hacer codigo aca
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
 
 	if (!_generate(points, normals)) {
 		return;
@@ -361,7 +361,7 @@ void GPUParticles3DEditor::_generate_emission_points() {
 	int w = 2048;
 	int h = (point_count / 2048) + 1;
 
-	Vector<uint8_t> point_img;
+	std::vector<uint8_t> point_img;
 	point_img.resize(w * h * 3 * sizeof(float));
 
 	{
@@ -390,7 +390,7 @@ void GPUParticles3DEditor::_generate_emission_points() {
 		material->set_emission_point_count(point_count);
 		material->set_emission_point_texture(tex);
 
-		Vector<uint8_t> point_img2;
+		std::vector<uint8_t> point_img2;
 		point_img2.resize(w * h * 3 * sizeof(float));
 
 		{

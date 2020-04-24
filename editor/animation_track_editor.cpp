@@ -5370,27 +5370,27 @@ void AnimationTrackEditor::_edit_menu_pressed(int p_option) {
 			int base_track = animation->get_track_count();
 			undo_redo->create_action(TTR("Paste Tracks"));
 			for (int i = 0; i < track_clipboard.size(); i++) {
-				undo_redo->add_do_method(animation.data(), "add_track", track_clipboard[i].track_type);
+				undo_redo->add_do_method(animation.ptr(), "add_track", track_clipboard[i].track_type);
 				Node *exists = nullptr;
 				NodePath path = track_clipboard[i].base_path;
 
 				if (root) {
-					NodePath np = clipboard.full_path;
+					NodePath np = track_clipboard[i].full_path;
 					exists = root->get_node(np);
 					if (exists) {
-						path = NodePath(root->get_path_to(exists).get_names(), clipboard.full_path.get_subnames(), false);
+						path = NodePath(root->get_path_to(exists).get_names(), track_clipboard[i].full_path.get_subnames(), false);
 					}
 				}
 
 				undo_redo->add_do_method(animation.ptr(), "track_set_path", base_track, path);
-				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_type", base_track, clipboard.interp_type);
-				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_loop_wrap", base_track, clipboard.loop_wrap);
-				undo_redo->add_do_method(animation.ptr(), "track_set_enabled", base_track, clipboard.enabled);
-				if (clipboard.track_type == Animation::TYPE_VALUE) {
-					undo_redo->add_do_method(animation.ptr(), "value_track_set_update_mode", base_track, clipboard.update_mode);
+				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_type", base_track, track_clipboard[i].interp_type);
+				undo_redo->add_do_method(animation.ptr(), "track_set_interpolation_loop_wrap", base_track, track_clipboard[i].loop_wrap);
+				undo_redo->add_do_method(animation.ptr(), "track_set_enabled", base_track, track_clipboard[i].enabled);
+				if (track_clipboard[i].track_type == Animation::TYPE_VALUE) {
+					undo_redo->add_do_method(animation.ptr(), "value_track_set_update_mode", base_track, track_clipboard[i].update_mode);
 				}
 
-				for (auto &&key : clipboard.keys) {
+				for (auto &&key : track_clipboard[i].keys) {
 					undo_redo->add_do_method(animation.ptr(), "track_insert_key", base_track, key.time, key.value, key.transition);
 				}
 

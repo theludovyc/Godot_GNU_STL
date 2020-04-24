@@ -853,7 +853,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 						if (tname == "meta-data" && attrname == "value" && value == "custom_template_plugins_value") {
 							// Update the meta-data 'android:value' attribute with the list of enabled plugins.
-							string_table.write[attr_value] = plugins;
+							string_table[attr_value] = plugins;
 						}
 
 						iofs += 20;
@@ -887,7 +887,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 								feature_required_list.push_back(hand_tracking_index == 2);
 								feature_versions.push_back(-1); // no version attribute should be added.
 
-								if (perms.find("oculus.permission.handtracking") == -1) {
+								if (std::find(perms.begin(), perms.end(), "oculus.permission.handtracking") == perms.end()) {
 									perms.push_back("oculus.permission.handtracking");
 								}
 							}
@@ -901,27 +901,37 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 							uint32_t manifest_cur_size = p_manifest.size();
 
 							manifest_end.resize(p_manifest.size() - ofs);
-							memcpy(manifest_end.ptrw(), &p_manifest[ofs], manifest_end.size());
+							memcpy(manifest_end.data(), &p_manifest[ofs], manifest_end.size());
 
-							int32_t attr_name_string = string_table.find("name");
-							ERR_FAIL_COND_MSG(attr_name_string == -1, "Template does not have 'name' attribute.");
+							auto it_name_string = std::find(string_table.begin(), string_table.end(), "name");
+							ERR_FAIL_COND_MSG(it_name_string == string_table.end(), "Template does not have 'name' attribute.");
+							int32_t attr_name_string = std::distance(string_table.begin(), it_name_string);
 
-							int32_t ns_android_string = string_table.find("http://schemas.android.com/apk/res/android");
-							if (ns_android_string == -1) {
+							int32_t ns_android_string;
+							auto it_android_string = std::find(string_table.begin(), string_table.end(), "http://schemas.android.com/apk/res/android");
+							if (it_android_string == string_table.end()) {
 								string_table.push_back("http://schemas.android.com/apk/res/android");
 								ns_android_string = string_table.size() - 1;
+							} else {
+								ns_android_string = std::distance(string_table.begin(), it_android_string);
 							}
 
-							int32_t attr_uses_feature_string = string_table.find("uses-feature");
-							if (attr_uses_feature_string == -1) {
+							int32_t attr_uses_feature_string;
+							auto it_uses_feature_string = std::find(string_table.begin(), string_table.end(), "uses-feature");
+							if (it_uses_feature_string == string_table.end()) {
 								string_table.push_back("uses-feature");
 								attr_uses_feature_string = string_table.size() - 1;
+							} else {
+								attr_uses_feature_string = std::distance(string_table.begin(), it_uses_feature_string);
 							}
 
-							int32_t attr_required_string = string_table.find("required");
-							if (attr_required_string == -1) {
+							int32_t attr_required_string;
+							auto it_required_string = std::find(string_table.begin(), string_table.end(), "required");
+							if (it_required_string == string_table.end()) {
 								string_table.push_back("required");
 								attr_required_string = string_table.size() - 1;
+							} else {
+								attr_required_string = std::distance(string_table.begin(), it_required_string);
 							}
 
 							for (int i = 0; i < feature_names.size(); i++) {
@@ -932,34 +942,44 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 								print_line("Adding feature " + feature_name);
 
-								int32_t feature_string = string_table.find(feature_name);
-								if (feature_string == -1) {
+								int32_t feature_string;
+								auto it_feature_string = std::find(string_table.begin(), string_table.end(), feature_name);
+								if (it_feature_string == string_table.end()) {
 									string_table.push_back(feature_name);
 									feature_string = string_table.size() - 1;
+								} else {
+									feature_string = std::distance(string_table.begin(), it_feature_string);
 								}
 
 								String required_value_string = feature_required ? "true" : "false";
-								int32_t required_value = string_table.find(required_value_string);
-								if (required_value == -1) {
+								int32_t required_value;
+								auto it_required_value = std::find(string_table.begin(), string_table.end(), required_value_string);
+								if (it_required_value == string_table.end()) {
 									string_table.push_back(required_value_string);
 									required_value = string_table.size() - 1;
+								} else {
+									required_value = std::distance(string_table.begin(), it_required_value);
 								}
 
-								int32_t attr_version_string = -1;
-								int32_t version_value = -1;
+								int32_t attr_version_string;
+								int32_t version_value;
 								int tag_size;
 								int attr_count;
 								if (has_version_attribute) {
-									attr_version_string = string_table.find("version");
-									if (attr_version_string == -1) {
+									auto it_version_string = std::find(string_table.begin(), string_table.end(), "version");
+									if (it_version_string == string_table.end()) {
 										string_table.push_back("version");
 										attr_version_string = string_table.size() - 1;
+									} else {
+										attr_version_string = std::distance(string_table.begin(), it_version_string);
 									}
 
-									version_value = string_table.find(itos(feature_version));
-									if (version_value == -1) {
+									auto it_version_value = std::find(string_table.begin(), string_table.end(), itos(feature_version));
+									if (it_version_value == string_table.end()) {
 										string_table.push_back(itos(feature_version));
 										version_value = string_table.size() - 1;
+									} else {
+										version_value = std::distance(string_table.begin(), it_version_value);
 									}
 
 									// need_update : number in code
@@ -973,19 +993,19 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 								p_manifest.resize(manifest_cur_size);
 
 								// start tag
-								encode_uint16(0x102, &p_manifest.write[ofs]); // type
-								encode_uint16(16, &p_manifest.write[ofs + 2]); // headersize
-								encode_uint32(tag_size, &p_manifest.write[ofs + 4]); // size
-								encode_uint32(0, &p_manifest.write[ofs + 8]); // lineno
-								encode_uint32(-1, &p_manifest.write[ofs + 12]); // comment
-								encode_uint32(-1, &p_manifest.write[ofs + 16]); // ns
-								encode_uint32(attr_uses_feature_string, &p_manifest.write[ofs + 20]); // name
-								encode_uint16(20, &p_manifest.write[ofs + 24]); // attr_start
-								encode_uint16(20, &p_manifest.write[ofs + 26]); // attr_size
-								encode_uint16(attr_count, &p_manifest.write[ofs + 28]); // num_attrs
-								encode_uint16(0, &p_manifest.write[ofs + 30]); // id_index
-								encode_uint16(0, &p_manifest.write[ofs + 32]); // class_index
-								encode_uint16(0, &p_manifest.write[ofs + 34]); // style_index
+								encode_uint16(0x102, &p_manifest[ofs]); // type
+								encode_uint16(16, &p_manifest[ofs + 2]); // headersize
+								encode_uint32(tag_size, &p_manifest[ofs + 4]); // size
+								encode_uint32(0, &p_manifest[ofs + 8]); // lineno
+								encode_uint32(-1, &p_manifest[ofs + 12]); // comment
+								encode_uint32(-1, &p_manifest[ofs + 16]); // ns
+								encode_uint32(attr_uses_feature_string, &p_manifest[ofs + 20]); // name
+								encode_uint16(20, &p_manifest[ofs + 24]); // attr_start
+								encode_uint16(20, &p_manifest[ofs + 26]); // attr_size
+								encode_uint16(attr_count, &p_manifest[ofs + 28]); // num_attrs
+								encode_uint16(0, &p_manifest[ofs + 30]); // id_index
+								encode_uint16(0, &p_manifest[ofs + 32]); // class_index
+								encode_uint16(0, &p_manifest[ofs + 34]); // style_index
 
 								// android:name attribute
 								encode_uint32(ns_android_string, &p_manifest[ofs + 36]); // ns
@@ -1330,7 +1350,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		for (int i = 0; i < abis.size(); ++i) {
 			bool is_enabled = p_preset->get("architectures/" + abis[i]);
 			if (is_enabled) {
-				enabled_abis.push_back(abi);
+				enabled_abis.push_back(abis[i]);
 			}
 		}
 		return enabled_abis;

@@ -594,9 +594,9 @@ void DependencyErrorDialog::show(Mode p_mode, const String &p_for_file, const st
 
 		String dep;
 		String type = "Object";
-		dep = r.get_slice("::", 0);
-		if (r.get_slice_count("::") > 0)
-			type = r.get_slice("::", 1);
+		dep = report[i].get_slice("::", 0);
+		if (report[i].get_slice_count("::") > 0)
+			type = report[i].get_slice("::", 1);
 
 		Ref<Texture2D> icon = EditorNode::get_singleton()->get_class_icon(type);
 
