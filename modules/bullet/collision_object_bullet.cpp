@@ -285,38 +285,25 @@ int RigidCollisionObjectBullet::find_shape(ShapeBullet *p_shape) const {
 	return -1;
 }
 
-void RigidCollisionObjectBullet::internal_shape_destroy_0(ShapeWrapper& shapeW, const bool& p_permanentlyFromThisBody){
-	shapeW.shape->remove_owner(this, p_permanentlyFromThisBody);
-
-	if (shapeW.bt_shape == mainShape) {
-		mainShape = NULL;
-	}
-
-	delete shapeW.bt_shape;
-
-	shapeW.bt_shape = NULL;
-}
-
 void RigidCollisionObjectBullet::remove_shape_full(ShapeBullet *p_shape) {
 	// Remove the shape, all the times it appears
 	// Reverse order required for delete.
-	shapes.erase(
-		std::remove_if(shapes.begin(), shapes.end(),
-			[&](ShapeWrapper& shapeW){
-				if(shapeW.shape == p_shape){
-					internal_shape_destroy_0(shapeW);
-					return true;
-				}
-				return false;
-			}
-		)
-	,shapes.end() );
-
+	for (int i = shapes.size() - 1; 0 <= i; --i) {
+		if (p_shape == shapes[i].shape) {
+			internal_shape_destroy(i);
+			shapes.erase(shapes.begin() + i);
+		}
+	}
 	reload_shapes();
 }
 
-void RigidCollisionObjectBullet::internal_shape_destroy(int p_index, bool p_permanentlyFromThisBody){
-	internal_shape_destroy_0(shapes[p_index], p_permanentlyFromThisBody);
+void RigidCollisionObjectBullet::internal_shape_destroy(int p_index, bool p_permanentlyFromThisBody) {
+	ShapeWrapper &shp = shapes[p_index];
+	shp.shape->remove_owner(this, p_permanentlyFromThisBody);
+	if (shp.bt_shape == mainShape) {
+		mainShape = nullptr;
+	}
+	bulletdelete(shp.bt_shape);
 }
 
 void RigidCollisionObjectBullet::remove_shape_full(int p_index) {
@@ -324,19 +311,17 @@ void RigidCollisionObjectBullet::remove_shape_full(int p_index) {
 
 	internal_shape_destroy(p_index);
 
-	shapes.erase(shapes.begin()+p_index);
+	shapes.erase(shapes.begin() + p_index);
 
 	reload_shapes();
 }
 
 void RigidCollisionObjectBullet::remove_all_shapes(bool p_permanentlyFromThisBody, bool p_force_not_reload) {
 	// Reverse order required for delete.
-	for(auto&& shapeW : shapes){
-		internal_shape_destroy_0(shapeW, p_permanentlyFromThisBody);
+	for (int i = shapes.size() - 1; 0 <= i; --i) {
+		internal_shape_destroy(i, p_permanentlyFromThisBody);
 	}
-
 	shapes.clear();
-
 	if (!p_force_not_reload)
 		reload_shapes();
 }
@@ -447,11 +432,4 @@ void RigidCollisionObjectBullet::body_scale_changed() {
 	reload_shapes();
 }
 
-void RigidCollisionObjectBullet::internal_shape_destroy(int p_index, bool p_permanentlyFromThisBody) {
-	ShapeWrapper &shp = shapes[p_index];
-	shp.shape->remove_owner(this, p_permanentlyFromThisBody);
-	if (shp.bt_shape == mainShape) {
-		mainShape = nullptr;
-	}
-	bulletdelete(shp.bt_shape);
-}
+
