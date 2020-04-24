@@ -142,11 +142,11 @@ btScaledBvhTriangleMeshShape *ShapeBullet::create_shape_concave(btBvhTriangleMes
 	}
 }
 
-btHeightfieldTerrainShape *ShapeBullet::create_shape_height_field(Vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height) {
+btHeightfieldTerrainShape *ShapeBullet::create_shape_height_field(std::vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height) {
 	const btScalar ignoredHeightScale(1);
 	const int YAxis = 1; // 0=X, 1=Y, 2=Z
 	const bool flipQuadEdges = false;
-	const void *heightsPtr = p_heights.ptr();
+	const void *heightsPtr = p_heights.data();
 
 	btHeightfieldTerrainShape *heightfield = bulletnew(btHeightfieldTerrainShape(p_width, p_depth, heightsPtr, ignoredHeightScale, p_min_height, p_max_height, YAxis, PHY_FLOAT, flipQuadEdges));
 
@@ -370,7 +370,7 @@ ConcavePolygonShapeBullet::~ConcavePolygonShapeBullet() {
 		delete meshShape->getTriangleInfoMap();
 		bulletdelete(meshShape);
 	}
-	faces = Vector<Vector3>();
+	faces = std::vector<Vector3>();
 }
 
 void ConcavePolygonShapeBullet::set_data(const Variant &p_data) {
@@ -385,7 +385,7 @@ PhysicsServer3D::ShapeType ConcavePolygonShapeBullet::get_type() const {
 	return PhysicsServer3D::SHAPE_CONCAVE_POLYGON;
 }
 
-void ConcavePolygonShapeBullet::setup(Vector<Vector3> p_faces) {
+void ConcavePolygonShapeBullet::setup(std::vector<Vector3> p_faces) {
 	faces = p_faces;
 	if (meshShape) {
 		/// Clear previous created shape
@@ -401,7 +401,7 @@ void ConcavePolygonShapeBullet::setup(Vector<Vector3> p_faces) {
 
 		btTriangleMesh *shapeInterface = bulletnew(btTriangleMesh);
 		src_face_count /= 3;
-		const Vector3 *r = p_faces.ptr();
+		const Vector3 *r = p_faces.data();
 		const Vector3 *facesr = r;
 
 		btVector3 supVec_0;
@@ -471,7 +471,7 @@ void HeightMapShapeBullet::set_data(const Variant &p_data) {
 	// TODO This code will need adjustments if real_t is set to `double`,
 	// because that precision is unnecessary for a heightmap and Bullet doesn't support it...
 
-	Vector<real_t> l_heights;
+	std::vector<real_t> l_heights;
 	Variant l_heights_v = d["heights"];
 
 	if (l_heights_v.get_type() == Variant::PACKED_FLOAT32_ARRAY) {
@@ -495,8 +495,8 @@ void HeightMapShapeBullet::set_data(const Variant &p_data) {
 
 		l_heights.resize(l_image->get_width() * l_image->get_height());
 
-		real_t *w = l_heights.ptrw();
-		const uint8_t *r = im_data.ptr();
+		real_t *w = l_heights.data();
+		const uint8_t *r = im_data.data();
 		float *rp = (float *)r;
 		// At this point, `rp` could be used directly for Bullet, but I don't know how safe it would be.
 
@@ -515,7 +515,7 @@ void HeightMapShapeBullet::set_data(const Variant &p_data) {
 	// Compute min and max heights if not specified.
 	if (!d.has("min_height") && !d.has("max_height")) {
 
-		const real_t *r = l_heights.ptr();
+		const real_t *r = l_heights.data();
 		int heights_size = l_heights.size();
 
 		for (int i = 0; i < heights_size; ++i) {
@@ -540,7 +540,7 @@ PhysicsServer3D::ShapeType HeightMapShapeBullet::get_type() const {
 	return PhysicsServer3D::SHAPE_HEIGHTMAP;
 }
 
-void HeightMapShapeBullet::setup(Vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height) {
+void HeightMapShapeBullet::setup(std::vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height) {
 	// TODO cell size must be tweaked using localScaling, which is a shared property for all Bullet shapes
 
 	// If this array is resized outside of here, it should be preserved due to CoW
