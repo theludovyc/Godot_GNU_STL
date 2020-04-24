@@ -44,7 +44,7 @@ void CollisionPolygon3D::_build_polygon() {
 	if (polygon.size() == 0)
 		return;
 
-	Vector<Vector<Vector2>> decomp = Geometry::decompose_polygon_in_convex(polygon);
+	std::vector<std::vector<Vector2>> decomp = Geometry::decompose_polygon_in_convex(polygon);
 	if (decomp.size() == 0)
 		return;
 
@@ -53,11 +53,11 @@ void CollisionPolygon3D::_build_polygon() {
 
 	for (int i = 0; i < decomp.size(); i++) {
 		Ref<ConvexPolygonShape3D> convex = memnew(ConvexPolygonShape3D);
-		Vector<Vector3> cp;
+		std::vector<Vector3> cp;
 		int cs = decomp[i].size();
 		cp.resize(cs * 2);
 		{
-			Vector3 *w = cp.ptrw();
+			Vector3 *w = cp.data();
 			int idx = 0;
 			for (int j = 0; j < cs; j++) {
 
@@ -117,7 +117,7 @@ void CollisionPolygon3D::_notification(int p_what) {
 	}
 }
 
-void CollisionPolygon3D::set_polygon(const Vector<Point2> &p_polygon) {
+void CollisionPolygon3D::set_polygon(const std::vector<Point2> &p_polygon) {
 
 	polygon = p_polygon;
 	if (parent) {
@@ -127,7 +127,7 @@ void CollisionPolygon3D::set_polygon(const Vector<Point2> &p_polygon) {
 	update_gizmo();
 }
 
-Vector<Point2> CollisionPolygon3D::get_polygon() const {
+std::vector<Point2> CollisionPolygon3D::get_polygon() const {
 
 	return polygon;
 }
