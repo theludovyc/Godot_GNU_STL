@@ -75,11 +75,11 @@ public:
 	}
 
 	void _send_response() {
-		Vector<String> psa = String((char *)req_buf).split("\r\n");
+		std::vector<String> psa = String((char *)req_buf).split("\r\n");
 		int len = psa.size();
 		ERR_FAIL_COND_MSG(len < 4, "Not enough response headers, got: " + itos(len) + ", expected >= 4.");
 
-		Vector<String> req = psa[0].split(" ", false);
+		std::vector<String> req = psa[0].split(" ", false);
 		ERR_FAIL_COND_MSG(req.size() < 2, "Invalid protocol or status code.");
 
 		// Wrong protocol
