@@ -89,7 +89,7 @@ private:
 		float weight;
 	};
 
-	Ref<Mesh> _generate_mesh_from_surface_indices(ImportState &state, const Vector<int> &p_surface_indices,
+	Ref<Mesh> _generate_mesh_from_surface_indices(ImportState &state, const std::vector<int> &p_surface_indices,
 			const aiNode *assimp_node, Ref<Skin> &skin,
 			Skeleton3D *&skeleton_assigned);
 
