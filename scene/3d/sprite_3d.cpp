@@ -196,18 +196,19 @@ AABB SpriteBase3D::get_aabb() const {
 
 	return aabb;
 }
-Vector<Face3> SpriteBase3D::get_faces(uint32_t p_usage_flags) const {
 
-	return Vector<Face3>();
+std::vector<Face3> SpriteBase3D::get_faces(uint32_t p_usage_flags) const {
+
+	return std::vector<Face3>();
 }
 
 Ref<TriangleMesh> SpriteBase3D::generate_triangle_mesh() const {
 	if (triangle_mesh.is_valid())
 		return triangle_mesh;
 
-	Vector<Vector3> faces;
+	std::vector<Vector3> faces;
 	faces.resize(6);
-	Vector3 *facesw = faces.ptrw();
+	Vector3 *facesw = faces.data();
 
 	Rect2 final_rect = get_item_rect();
 
