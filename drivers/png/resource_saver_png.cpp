@@ -51,13 +51,13 @@ Error ResourceSaverPNG::save(const String &p_path, const RES &p_resource, uint32
 
 Error ResourceSaverPNG::save_image(const String &p_path, const Ref<Image> &p_img) {
 
-	Vector<uint8_t> buffer;
+	std::vector<uint8_t> buffer;
 	Error err = PNGDriverCommon::image_to_png(p_img, buffer);
 	ERR_FAIL_COND_V_MSG(err, err, "Can't convert image to PNG.");
 	FileAccess *file = FileAccess::open(p_path, FileAccess::WRITE, &err);
 	ERR_FAIL_COND_V_MSG(err, err, vformat("Can't save PNG at path: '%s'.", p_path));
 
-	const uint8_t *reader = buffer.ptr();
+	const uint8_t *reader = buffer.data();
 
 	file->store_buffer(reader, buffer.size());
 	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {
@@ -71,11 +71,11 @@ Error ResourceSaverPNG::save_image(const String &p_path, const Ref<Image> &p_img
 	return OK;
 }
 
-Vector<uint8_t> ResourceSaverPNG::save_image_to_buffer(const Ref<Image> &p_img) {
+std::vector<uint8_t> ResourceSaverPNG::save_image_to_buffer(const Ref<Image> &p_img) {
 
-	Vector<uint8_t> buffer;
+	std::vector<uint8_t> buffer;
 	Error err = PNGDriverCommon::image_to_png(p_img, buffer);
-	ERR_FAIL_COND_V_MSG(err, Vector<uint8_t>(), "Can't convert image to PNG.");
+	ERR_FAIL_COND_V_MSG(err, std::vector<uint8_t>(), "Can't convert image to PNG.");
 	return buffer;
 }
 
