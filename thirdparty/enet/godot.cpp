@@ -307,7 +307,7 @@ public:
 					continue;
 				}
 
-				Vector<String> s = E->key().rsplit(":", false, 1);
+				std::vector<String> s = E->key().rsplit(":", false, 1);
 				ERR_CONTINUE(s.size() != 2); // BUG!
 
 				copymem(p_buffer, buffer, r_read);
@@ -443,7 +443,7 @@ int enet_socket_send(ENetSocket socket, const ENetAddress *address, const ENetBu
 	dest.set_ipv6(address->host);
 
 	// Create a single packet.
-	Vector<uint8_t> out;
+	std::vector<uint8_t> out;
 	uint8_t* w;
 	int size = 0;
 	int pos = 0;
@@ -452,7 +452,7 @@ int enet_socket_send(ENetSocket socket, const ENetAddress *address, const ENetBu
 	}
 
 	out.resize(size);
-	w = out.ptrw();
+	w = out.data();
 	for (i = 0; i < bufferCount; i++) {
 		memcpy(&w[pos], buffers[i].data, buffers[i].dataLength);
 		pos += buffers[i].dataLength;
