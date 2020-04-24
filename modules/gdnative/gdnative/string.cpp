@@ -1127,7 +1127,7 @@ godot_packed_byte_array GDAPI godot_string_md5_buffer(const godot_string *p_self
 	godot_packed_byte_array result;
 	memnew_placement(&result, PackedByteArray);
 	PackedByteArray *proxy = (PackedByteArray *)&result;
-	uint8_t *proxy_writer = proxy->ptrw();
+	uint8_t *proxy_writer = proxy->data();
 	proxy->resize(tmp_result.size());
 
 	for (decltype(tmp_result.size() ) i = 0; i < tmp_result.size(); i++) {
@@ -1153,7 +1153,7 @@ godot_packed_byte_array GDAPI godot_string_sha256_buffer(const godot_string *p_s
 	godot_packed_byte_array result;
 	memnew_placement(&result, PackedByteArray);
 	PackedByteArray *proxy = (PackedByteArray *)&result;
-	uint8_t *proxy_writer = proxy->ptrw();
+	uint8_t *proxy_writer = proxy->data();
 	proxy->resize(tmp_result.size());
 
 	for (decltype(tmp_result.size() ) i = 0; i < tmp_result.size(); i++) {
@@ -1443,7 +1443,7 @@ godot_packed_string_array GDAPI godot_string_rsplit(const godot_string *p_self, 
 	godot_packed_string_array result;
 	memnew_placement(&result, PackedStringArray);
 	PackedStringArray *proxy = (PackedStringArray *)&result;
-	String *proxy_writer = proxy->ptrw();
+	String *proxy_writer = proxy->data();
 	std::vector<String> tmp_result = self->rsplit(*divisor, p_allow_empty, p_maxsplit);
 	proxy->resize(tmp_result.size());
 
