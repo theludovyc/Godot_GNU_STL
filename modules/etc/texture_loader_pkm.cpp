@@ -71,11 +71,11 @@ RES ResourceFormatPKM::load(const String &p_path, const String &p_original_path,
 	h.origWidth = f->get_16();
 	h.origHeight = f->get_16();
 
-	Vector<uint8_t> src_data;
+	std::vector<uint8_t> src_data;
 
 	uint32_t size = h.texWidth * h.texHeight / 2;
 	src_data.resize(size);
-	uint8_t *wb = src_data.ptrw();
+	uint8_t *wb = src_data.data();
 	f->get_buffer(wb, size);
 
 	int mipmaps = h.format;
