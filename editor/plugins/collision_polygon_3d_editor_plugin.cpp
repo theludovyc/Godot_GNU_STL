@@ -141,7 +141,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 		//Let the snap happen when the point is being moved, instead.
 		//cpoint = CanvasItemEditor::get_singleton()->snap_point(cpoint);
 
-		Vector<Vector2> poly = node->call("get_polygon");
+		std::vector<Vector2> poly = node->call("get_polygon");
 
 		//first check if a point is to be added (segment split)
 		real_t grab_threshold = EDITOR_GET("editors/poly_editor/point_grab_radius");
@@ -373,7 +373,7 @@ void CollisionPolygon3DEditor::_polygon_draw() {
 	if (!node)
 		return;
 
-	Vector<Vector2> poly;
+	std::vector<Vector2> poly;
 
 	if (wip_active)
 		poly = wip;
@@ -470,7 +470,7 @@ void CollisionPolygon3DEditor::_polygon_draw() {
 
 	Array a;
 	a.resize(Mesh::ARRAY_MAX);
-	Vector<Vector3> va;
+	std::vector<Vector3> va;
 	{
 
 		va.resize(poly.size());
@@ -495,7 +495,7 @@ void CollisionPolygon3DEditor::edit(Node *p_collision_polygon) {
 
 		node = Object::cast_to<Node3D>(p_collision_polygon);
 		//Enable the pencil tool if the polygon is empty
-		if (Vector<Vector2>(node->call("get_polygon")).size() == 0) {
+		if (std::vector<Vector2>(node->call("get_polygon")).size() == 0) {
 			_menu_option(MODE_CREATE);
 		}
 		wip.clear();
