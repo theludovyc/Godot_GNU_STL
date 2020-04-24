@@ -175,9 +175,9 @@ void SpriteFrames::rename_animation(const StringName &p_prev, const StringName &
 	animations[p_next].specular_name = String(p_next) + SPECULAR_SUFFIX;
 }
 
-Vector<String> SpriteFrames::_get_animation_list() const {
+std::vector<String> SpriteFrames::_get_animation_list() const {
 
-	Vector<String> ret;
+	std::vector<String> ret;
 	List<StringName> al;
 	get_animation_list(&al);
 	for (List<StringName>::Element *E = al.front(); E; E = E->next()) {
@@ -195,13 +195,13 @@ void SpriteFrames::get_animation_list(List<StringName> *r_animations) const {
 	}
 }
 
-Vector<String> SpriteFrames::get_animation_names() const {
+std::vector<String> SpriteFrames::get_animation_names() const {
 
-	Vector<String> names;
+	std::vector<String> names;
 	for (const Map<StringName, Anim>::Element *E = animations.front(); E; E = E->next()) {
 		names.push_back(E->key());
 	}
-	names.sort();
+	std::sort(names.begin(), names.end());
 	return names;
 }
 
