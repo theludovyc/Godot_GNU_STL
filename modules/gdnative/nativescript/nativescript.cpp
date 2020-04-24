@@ -1507,7 +1507,7 @@ int NativeScriptLanguage::register_binding_functions(godot_instance_binding_func
 	return std::distance(binding_functions.begin(), it_binding_functions);
 }
 
-void NativeScriptLanguage::unregister_binding_functions(size_t p_idx) {
+void NativeScriptLanguage::unregister_binding_functions(int p_idx) {
 	ERR_FAIL_INDEX(p_idx, binding_functions.size());
 
 	for (Set<std::vector<void *> *>::Element *E = binding_instances.front(); E; E = E->next()) {
