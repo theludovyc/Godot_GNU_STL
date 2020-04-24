@@ -160,11 +160,11 @@ void _rgba8_to_packbits_encode(int p_ch, int p_size, std::vector<uint8_t> &p_sou
 
 	int i = 0;
 	while (i < src_len) {
-		uint8_t cur = p_source.ptr()[i * 4 + p_ch];
+		uint8_t cur = p_source[i * 4 + p_ch];
 
 		if (i < src_len - 2) {
 
-			if ((p_source.ptr()[(i + 1) * 4 + p_ch] == cur) && (p_source.ptr()[(i + 2) * 4 + p_ch] == cur)) {
+			if ((p_source[(i + 1) * 4 + p_ch] == cur) && (p_source[(i + 2) * 4 + p_ch] == cur)) {
 				if (buf_size > 0) {
 					result[res_size++] = (uint8_t)(buf_size - 1);
 					copymem(&result[res_size], &buf, buf_size);
@@ -351,7 +351,7 @@ void EditorExportPlatformOSX::_fix_plist(const Ref<EditorExportPreset> &p_preset
 			String description = p_preset->get("privacy/microphone_usage_description");
 			strnew += lines[i].replace("$microphone_usage_description", description) + "\n";
 		} else {
-			strnew += line + "\n";
+			strnew += lines[i] + "\n";
 		}
 	}
 
@@ -790,7 +790,7 @@ Error EditorExportPlatformOSX::export_project(const Ref<EditorExportPreset> &p_p
 					ERR_CONTINUE(file.empty());
 
 					zipOpenNewFileInZip(dst_pkg_zip,
-							(pkg_name + ".app/Contents/Frameworks/").plus_file(shared_objects[i].path.get_file()).utf8().get_data(),
+							(pkg_name + ".app/Contents/Frameworks/").plus_file(object.path.get_file()).utf8().get_data(),
 							nullptr,
 							nullptr,
 							0,
