@@ -189,7 +189,7 @@ Error save_exr(const String &p_path, const Ref<Image> &p_img, bool p_grayscale) 
 
 	{
 		PackedByteArray src_data = p_img->get_data();
-		const uint8_t *src_r = src_data.ptr();
+		const uint8_t *src_r = src_data.data();
 
 		for (int channel_index = 0; channel_index < channel_count; ++channel_index) {
 
@@ -198,7 +198,7 @@ Error save_exr(const String &p_path, const Ref<Image> &p_img, bool p_grayscale) 
 			PackedByteArray &dst = channels[channel_index];
 			dst.resize(pixel_count * target_pixel_type_size);
 
-			uint8_t *dst_w = dst.ptrw();
+			uint8_t *dst_w = dst.data();
 
 			if (src_pixel_type == SRC_FLOAT && target_pixel_type == TINYEXR_PIXELTYPE_FLOAT) {
 
