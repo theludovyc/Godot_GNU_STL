@@ -759,21 +759,6 @@
     <Filter Include="Source Files\platform\x11\export">
       <UniqueIdentifier>{A73C3017-0E6D-4DED-F819-227F350EE1D5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\scene">
-      <UniqueIdentifier>{1DA0F1F1-7D0B-E440-BEB3-04ABCD5F8147}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\scene\animation">
-      <UniqueIdentifier>{8E57AF15-F126-06EA-4E21-FA27C954F0AB}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\scene\audio">
-      <UniqueIdentifier>{4EE31E8A-F612-6602-F309-1B1AB3484E63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\scene\gui">
-      <UniqueIdentifier>{DEFBF191-4973-6940-377A-966185B40338}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\scene\main">
-      <UniqueIdentifier>{B124D51B-AE2F-2302-F48E-A579C0C6AA44}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\servers">
       <UniqueIdentifier>{BB9451A6-BD26-3468-D418-62FFDCCE1BFE}</UniqueIdentifier>
     </Filter>
@@ -4745,45 +4730,6 @@
     <ClInclude Include="core\os\threaded_array_processor.h">
       <Filter>Header Files\core\os</Filter>
     </ClInclude>
-    <ClInclude Include="scene\resources\box_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\capsule_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\concave_polygon_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\convex_polygon_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\cylinder_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\default_theme\theme_data.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\height_map_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\ray_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\sky_material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\sphere_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\world_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene\resources\world_margin_shape_3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scene\resources\navigation_mesh.h">
       <Filter>Header Files\scene\resources</Filter>
     </ClInclude>
@@ -5548,6 +5494,45 @@
     </ClInclude>
     <ClInclude Include="drivers\vulkan\vulkan_context.h">
       <Filter>Header Files\drivers\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\box_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\capsule_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\concave_polygon_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\convex_polygon_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\cylinder_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\height_map_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\sphere_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\ray_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\sky_material.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\world_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\world_margin_shape_3d.h">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\resources\default_theme\theme_data.h">
+      <Filter>Header Files\scene\resources\default_theme</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -6792,222 +6777,6 @@
     </ClCompile>
     <ClCompile Include="platform\x11\export\export.cpp">
       <Filter>Source Files\platform\x11\export</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_blend_space_1d.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_blend_space_2d.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_blend_tree.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_cache.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_node_state_machine.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_player.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_tree.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\animation_tree_player.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\root_motion_view.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\skeleton_ik.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\animation\tween.cpp">
-      <Filter>Source Files\scene\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\audio\audio_stream_player.cpp">
-      <Filter>Source Files\scene\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\base_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\box_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\center_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\check_box.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\check_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\color_picker.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\color_rect.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\control.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\dialogs.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\file_dialog.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\gradient_edit.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\graph_edit.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\graph_node.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\grid_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\item_list.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\label.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\line_edit.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\link_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\margin_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\menu_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\nine_patch_rect.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\option_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\panel.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\panel_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\popup.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\popup_menu.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\progress_bar.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\range.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\reference_rect.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\rich_text_effect.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\rich_text_label.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\scroll_bar.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\scroll_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\separator.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\shortcut.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\slider.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\spin_box.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\split_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\tab_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\tabs.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\text_edit.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\texture_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\texture_progress.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\texture_rect.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\tool_button.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\tree.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\video_player.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\gui\viewport_container.cpp">
-      <Filter>Source Files\scene\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\canvas_layer.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\http_request.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\instance_placeholder.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\node.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\resource_preloader.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\scene_tree.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\timer.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\main\viewport.cpp">
-      <Filter>Source Files\scene\main</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\register_scene_types.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\scene_string_names.cpp">
-      <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="servers\arvr\arvr_interface.cpp">
       <Filter>Source Files\servers\arvr</Filter>
@@ -9700,42 +9469,6 @@
     <ClCompile Include="core\os\thread_dummy.cpp">
       <Filter>Header Files\core\os</Filter>
     </ClCompile>
-    <ClCompile Include="scene\resources\box_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\capsule_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\concave_polygon_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\convex_polygon_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\cylinder_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\height_map_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\ray_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\sky_material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\sphere_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\world_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scene\resources\world_margin_shape_3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scene\resources\animation.cpp">
       <Filter>Header Files\scene\resources</Filter>
     </ClCompile>
@@ -10596,6 +10329,258 @@
     </ClCompile>
     <ClCompile Include="drivers\vulkan\vulkan_context.cpp">
       <Filter>Header Files\drivers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\box_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\capsule_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\concave_polygon_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\convex_polygon_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\cylinder_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\height_map_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\ray_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\sky_material.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\sphere_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\world_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\resources\world_margin_shape_3d.cpp">
+      <Filter>Header Files\scene\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\register_scene_types.cpp">
+      <Filter>Header Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\scene_string_names.cpp">
+      <Filter>Header Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_blend_space_1d.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_blend_space_2d.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_blend_tree.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_cache.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_node_state_machine.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_player.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_tree.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\animation_tree_player.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\root_motion_view.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\skeleton_ik.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\animation\tween.cpp">
+      <Filter>Header Files\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\audio\audio_stream_player.cpp">
+      <Filter>Header Files\scene\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\viewport_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\base_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\box_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\center_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\check_box.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\check_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\color_picker.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\color_rect.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\control.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\dialogs.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\file_dialog.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\gradient_edit.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\graph_edit.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\graph_node.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\grid_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\item_list.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\label.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\line_edit.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\link_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\margin_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\menu_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\nine_patch_rect.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\option_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\panel.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\panel_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\popup.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\popup_menu.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\progress_bar.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\range.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\reference_rect.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\rich_text_effect.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\rich_text_label.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\scroll_bar.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\scroll_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\separator.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\shortcut.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\slider.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\spin_box.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\split_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\tab_container.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\tabs.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\text_edit.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\texture_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\texture_progress.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\texture_rect.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\tool_button.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\tree.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\gui\video_player.cpp">
+      <Filter>Header Files\scene\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\canvas_layer.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\http_request.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\instance_placeholder.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\node.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\resource_preloader.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\scene_tree.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\timer.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\viewport.cpp">
+      <Filter>Header Files\scene\main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
