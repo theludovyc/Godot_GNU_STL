@@ -384,7 +384,7 @@ void GDScriptWorkspace::_get_owners(EditorFileSystemDirectory *efsd, String p_pa
 
 	for (int i = 0; i < efsd->get_file_count(); i++) {
 
-		Vector<String> deps = efsd->get_file_deps(i);
+		std::vector<String> deps = efsd->get_file_deps(i);
 		bool found = false;
 		for (int j = 0; j < deps.size(); j++) {
 			if (deps[j] == p_path) {
