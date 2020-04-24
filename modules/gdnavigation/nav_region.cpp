@@ -78,12 +78,12 @@ void NavRegion::update_polygons() {
 	if (mesh.is_null())
 		return;
 
-	Vector<Vector3> vertices = mesh->get_vertices();
+	std::vector<Vector3> vertices = mesh->get_vertices();
 	int len = vertices.size();
 	if (len == 0)
 		return;
 
-	const Vector3 *vertices_r = vertices.ptr();
+	const Vector3 *vertices_r = vertices.data();
 
 	polygons.resize(mesh->get_polygon_count());
 
@@ -93,8 +93,8 @@ void NavRegion::update_polygons() {
 		gd::Polygon &p = polygons[i];
 		p.owner = this;
 
-		Vector<int> mesh_poly = mesh->get_polygon(i);
-		const int *indices = mesh_poly.ptr();
+		std::vector<int> mesh_poly = mesh->get_polygon(i);
+		const int *indices = mesh_poly.data();
 		bool valid(true);
 		p.points.resize(mesh_poly.size());
 		p.edges.resize(mesh_poly.size());
