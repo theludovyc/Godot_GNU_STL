@@ -648,30 +648,6 @@
     <Filter Include="Source Files\modules\freetype">
       <UniqueIdentifier>{F71C6DF3-613B-91B5-5A8D-89842FE427C4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\modules\gdnative">
-      <UniqueIdentifier>{C6BA7834-B2B3-36A1-BE36-F0DBA0DB4412}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\android">
-      <UniqueIdentifier>{7EAEDBB5-1618-FA38-F975-C436B5193591}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\arvr">
-      <UniqueIdentifier>{DFD9DB42-40FE-6226-8528-DBFFEF34AAE7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\gdnative">
-      <UniqueIdentifier>{B806E832-8E4E-4FD3-42D4-7A5564AB342F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\nativescript">
-      <UniqueIdentifier>{D53119F5-A2A4-E929-5A74-9FF4D217BED6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\net">
-      <UniqueIdentifier>{A8A7C3FF-B1F7-97CB-7586-7055E0347686}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\pluginscript">
-      <UniqueIdentifier>{266C5A2E-B214-E381-7F04-B4B099C3927A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\modules\gdnative\videodecoder">
-      <UniqueIdentifier>{61D61AA1-BA07-07C0-FBAD-C88DFEB24C06}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\modules\gdscript">
       <UniqueIdentifier>{284EAFC6-9D38-5627-8332-982227936494}</UniqueIdentifier>
     </Filter>
@@ -1112,6 +1088,9 @@
     </Filter>
     <Filter Include="Header Files\thirdparty\glslang\Include">
       <UniqueIdentifier>{61a67282-bb3c-4e16-a972-3cb42b5187cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\modules\gdnative\android">
+      <UniqueIdentifier>{9d928a73-e092-4d8f-96ac-e4832fbdb51a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -6541,132 +6520,6 @@
     <ClCompile Include="modules\freetype\register_types.cpp">
       <Filter>Source Files\modules\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="modules\gdnative\android\android_gdn.cpp">
-      <Filter>Source Files\modules\gdnative\android</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\arvr\arvr_interface_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\arvr</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\arvr\register_types.cpp">
-      <Filter>Source Files\modules\gdnative\arvr</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\aabb.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\array.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\basis.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\color.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\dictionary.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\node_path.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\plane.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\pool_arrays.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\quat.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\rect2.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\rid.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\string.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\string_name.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\transform.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\transform2d.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\variant.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\vector2.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative\vector3.cpp">
-      <Filter>Source Files\modules\gdnative\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\nativescript\api_generator.cpp">
-      <Filter>Source Files\modules\gdnative\nativescript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\nativescript\godot_nativescript.cpp">
-      <Filter>Source Files\modules\gdnative\nativescript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\nativescript\nativescript.cpp">
-      <Filter>Source Files\modules\gdnative\nativescript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\nativescript\register_types.cpp">
-      <Filter>Source Files\modules\gdnative\nativescript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\net\multiplayer_peer_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\net</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\net\packet_peer_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\net</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\net\register_types.cpp">
-      <Filter>Source Files\modules\gdnative\net</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\net\stream_peer_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\net</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\net\webrtc_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\net</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_instance.cpp">
-      <Filter>Source Files\modules\gdnative\pluginscript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_language.cpp">
-      <Filter>Source Files\modules\gdnative\pluginscript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_loader.cpp">
-      <Filter>Source Files\modules\gdnative\pluginscript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_script.cpp">
-      <Filter>Source Files\modules\gdnative\pluginscript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\pluginscript\register_types.cpp">
-      <Filter>Source Files\modules\gdnative\pluginscript</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\videodecoder\register_types.cpp">
-      <Filter>Source Files\modules\gdnative\videodecoder</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\videodecoder\video_stream_gdnative.cpp">
-      <Filter>Source Files\modules\gdnative\videodecoder</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative.cpp">
-      <Filter>Source Files\modules\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative_library_editor_plugin.cpp">
-      <Filter>Source Files\modules\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\gdnative_library_singleton_editor.cpp">
-      <Filter>Source Files\modules\gdnative</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\gdnative\register_types.cpp">
-      <Filter>Source Files\modules\gdnative</Filter>
-    </ClCompile>
     <ClCompile Include="modules\gdscript\editor\gdscript_highlighter.cpp">
       <Filter>Source Files\modules\gdscript\editor</Filter>
     </ClCompile>
@@ -10641,6 +10494,78 @@
     </ClCompile>
     <ClCompile Include="thirdparty\glslang\SPIRV\SpvTools.cpp">
       <Filter>Header Files\thirdparty\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\gdnative.cpp">
+      <Filter>Header Files\modules\gdnative</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\gdnative_api_struct.gen.cpp">
+      <Filter>Header Files\modules\gdnative</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\gdnative_library_editor_plugin.cpp">
+      <Filter>Header Files\modules\gdnative</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\gdnative_library_singleton_editor.cpp">
+      <Filter>Header Files\modules\gdnative</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\register_types.cpp">
+      <Filter>Header Files\modules\gdnative</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\arvr\arvr_interface_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\arvr</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\arvr\register_types.cpp">
+      <Filter>Header Files\modules\gdnative\arvr</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\android\android_gdn.cpp">
+      <Filter>Header Files\modules\gdnative\android</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\nativescript\api_generator.cpp">
+      <Filter>Header Files\modules\gdnative\nativescript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\nativescript\godot_nativescript.cpp">
+      <Filter>Header Files\modules\gdnative\nativescript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\nativescript\nativescript.cpp">
+      <Filter>Header Files\modules\gdnative\nativescript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\nativescript\register_types.cpp">
+      <Filter>Header Files\modules\gdnative\nativescript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\net\multiplayer_peer_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\net</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\net\packet_peer_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\net</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\net\register_types.cpp">
+      <Filter>Header Files\modules\gdnative\net</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\net\stream_peer_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\net</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\net\webrtc_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\net</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_instance.cpp">
+      <Filter>Header Files\modules\gdnative\pluginscript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_language.cpp">
+      <Filter>Header Files\modules\gdnative\pluginscript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_loader.cpp">
+      <Filter>Header Files\modules\gdnative\pluginscript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\pluginscript\pluginscript_script.cpp">
+      <Filter>Header Files\modules\gdnative\pluginscript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\pluginscript\register_types.cpp">
+      <Filter>Header Files\modules\gdnative\pluginscript</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\videodecoder\register_types.cpp">
+      <Filter>Header Files\modules\gdnative\videodecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\gdnative\videodecoder\video_stream_gdnative.cpp">
+      <Filter>Header Files\modules\gdnative\videodecoder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
