@@ -318,6 +318,8 @@
     <ClInclude Include="drivers\unix\semaphore_posix.h" />
     <ClInclude Include="drivers\unix\syslog_logger.h" />
     <ClInclude Include="drivers\unix\thread_posix.h" />
+    <ClInclude Include="drivers\vulkan\rendering_device_vulkan.h" />
+    <ClInclude Include="drivers\vulkan\vulkan_context.h" />
     <ClInclude Include="drivers\wasapi\audio_driver_wasapi.h" />
     <ClInclude Include="drivers\windows\dir_access_windows.h" />
     <ClInclude Include="drivers\windows\file_access_windows.h" />
@@ -1798,6 +1800,8 @@
     <ClCompile Include="drivers\unix\semaphore_posix.cpp" />
     <ClCompile Include="drivers\unix\syslog_logger.cpp" />
     <ClCompile Include="drivers\unix\thread_posix.cpp" />
+    <ClCompile Include="drivers\vulkan\rendering_device_vulkan.cpp" />
+    <ClCompile Include="drivers\vulkan\vulkan_context.cpp" />
     <ClCompile Include="drivers\wasapi\audio_driver_wasapi.cpp" />
     <ClCompile Include="drivers\windows\dir_access_windows.cpp" />
     <ClCompile Include="drivers\windows\file_access_windows.cpp" />

@@ -1092,6 +1092,9 @@
     <Filter Include="Header Files\modules\gdnative\android">
       <UniqueIdentifier>{9d928a73-e092-4d8f-96ac-e4832fbdb51a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\drivers\vulkan">
+      <UniqueIdentifier>{2445f0bd-340d-4e93-90ee-8d9fa9bcb83f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bind\core_bind.h">
@@ -5539,6 +5542,12 @@
     </ClInclude>
     <ClInclude Include="thirdparty\bullet\btBulletDynamicsCommon.h">
       <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\vulkan\rendering_device_vulkan.h">
+      <Filter>Header Files\drivers\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\vulkan\vulkan_context.h">
+      <Filter>Header Files\drivers\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -10581,6 +10590,12 @@
     </ClCompile>
     <ClCompile Include="thirdparty\bullet\btLinearMathAll.cpp">
       <Filter>Header Files\thirdparty\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="drivers\vulkan\rendering_device_vulkan.cpp">
+      <Filter>Header Files\drivers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="drivers\vulkan\vulkan_context.cpp">
+      <Filter>Header Files\drivers\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
