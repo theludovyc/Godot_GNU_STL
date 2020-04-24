@@ -86,6 +86,7 @@ void SoftBodyBullet::update_rendering_server(SoftBodyRenderingServerHandler *p_r
 	const btSoftBody::tNodeArray &nodes(bt_soft_body->m_nodes);
 	const int nodes_count = nodes.size();
 
+	const std::vector<int> *vs_indices;
 	const void *vertex_position;
 	const void *vertex_normal;
 
@@ -93,8 +94,7 @@ void SoftBodyBullet::update_rendering_server(SoftBodyRenderingServerHandler *p_r
 		vertex_position = reinterpret_cast<const void *>(&nodes[vertex_index].m_x);
 		vertex_normal = reinterpret_cast<const void *>(&nodes[vertex_index].m_n);
 
-		for(auto&& vs_indices : indices_table[vertex_index]){
-			p_visual_server_handler->set_vertex(vs_indices, vertex_position);
+		vs_indices = &indices_table[vertex_index];
 
 		const int vs_indices_size(vs_indices->size());
 		for (int x = 0; x < vs_indices_size; ++x) {
@@ -233,7 +233,7 @@ void SoftBodyBullet::reset_all_node_positions() {
 
 	Array arrays = soft_mesh->surface_get_arrays(0);
 	std::vector<Vector3> vs_vertices(arrays[RS::ARRAY_VERTEX]);
-	const Vector3 *vs_vertices_read = vs_vertices.ptr();
+	const Vector3 *vs_vertices_read = vs_vertices.data();
 
 	for (int vertex_index = bt_soft_body->m_nodes.size() - 1; 0 <= vertex_index; --vertex_index) {
 
@@ -341,7 +341,7 @@ void SoftBodyBullet::set_trimesh_body_shape(std::vector<int> p_indices, std::vec
 
 			const int vs_vertices_size(p_vertices.size());
 
-			const Vector3 *p_vertices_read = p_vertices.ptr();
+			const Vector3 *p_vertices_read = p_vertices.data();
 
 			for (int vs_vertex_index = 0; vs_vertex_index < vs_vertices_size; ++vs_vertex_index) {
 
@@ -368,7 +368,7 @@ void SoftBodyBullet::set_trimesh_body_shape(std::vector<int> p_indices, std::vec
 		{ // Parse vertices to bullet
 
 			bt_vertices.resize(indices_map_size * 3);
-			const Vector3 *p_vertices_read = p_vertices.ptr();
+			const Vector3 *p_vertices_read = p_vertices.data();
 
 			for (int i = 0; i < indices_map_size; ++i) {
 				bt_vertices[3 * i + 0] = p_vertices_read[indices_table[i][0]].x;
@@ -384,7 +384,7 @@ void SoftBodyBullet::set_trimesh_body_shape(std::vector<int> p_indices, std::vec
 
 			bt_triangles.resize(triangles_size * 3);
 
-			const int *p_indices_read = p_indices.ptr();
+			const int *p_indices_read = p_indices.data();
 
 			for (int i = 0; i < triangles_size; ++i) {
 				bt_triangles[3 * i + 0] = vs_indices_to_physics_table[p_indices_read[3 * i + 2]];
