@@ -1138,7 +1138,7 @@ Error VulkanContext::initialize() {
 }
 
 void VulkanContext::set_setup_buffer(const VkCommandBuffer &pCommandBuffer) {
-	command_buffer_queue.write[0] = pCommandBuffer;
+	command_buffer_queue[0] = pCommandBuffer;
 }
 
 void VulkanContext::append_command_buffer(const VkCommandBuffer &pCommandBuffer) {
@@ -1147,7 +1147,7 @@ void VulkanContext::append_command_buffer(const VkCommandBuffer &pCommandBuffer)
 		command_buffer_queue.resize(command_buffer_count + 1);
 	}
 
-	command_buffer_queue.write[command_buffer_count] = pCommandBuffer;
+	command_buffer_queue[command_buffer_count] = pCommandBuffer;
 	command_buffer_count++;
 }
 
@@ -1168,11 +1168,11 @@ void VulkanContext::flush(bool p_flush_setup, bool p_flush_pending) {
 		submit_info.waitSemaphoreCount = 0;
 		submit_info.pWaitSemaphores = nullptr;
 		submit_info.commandBufferCount = 1;
-		submit_info.pCommandBuffers = command_buffer_queue.ptr();
+		submit_info.pCommandBuffers = command_buffer_queue.data();
 		submit_info.signalSemaphoreCount = 0;
 		submit_info.pSignalSemaphores = nullptr;
 		VkResult err = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
-		command_buffer_queue.write[0] = nullptr;
+		command_buffer_queue[0] = nullptr;
 		ERR_FAIL_COND(err);
 		vkDeviceWaitIdle(device);
 	}
@@ -1188,7 +1188,7 @@ void VulkanContext::flush(bool p_flush_setup, bool p_flush_pending) {
 		submit_info.waitSemaphoreCount = 0;
 		submit_info.pWaitSemaphores = nullptr;
 		submit_info.commandBufferCount = command_buffer_count - 1;
-		submit_info.pCommandBuffers = command_buffer_queue.ptr() + 1;
+		submit_info.pCommandBuffers = command_buffer_queue.data() + 1;
 		submit_info.signalSemaphoreCount = 0;
 		submit_info.pSignalSemaphores = nullptr;
 		VkResult err = vkQueueSubmit(graphics_queue, 1, &submit_info, VK_NULL_HANDLE);
@@ -1280,11 +1280,11 @@ Error VulkanContext::swap_buffers() {
 	if (command_buffer_queue[0] == nullptr) {
 		//no setup command, but commands to submit, submit from the first and skip command
 		if (command_buffer_count > 1) {
-			commands_ptr = command_buffer_queue.ptr() + 1;
+			commands_ptr = command_buffer_queue.data() + 1;
 			commands_to_submit = command_buffer_count - 1;
 		}
 	} else {
-		commands_ptr = command_buffer_queue.ptr();
+		commands_ptr = command_buffer_queue.data();
 		commands_to_submit = command_buffer_count;
 	}
 
@@ -1303,7 +1303,7 @@ Error VulkanContext::swap_buffers() {
 	err = vkQueueSubmit(graphics_queue, 1, &submit_info, fences[frame_index]);
 	ERR_FAIL_COND_V(err, ERR_CANT_CREATE);
 
-	command_buffer_queue.write[0] = nullptr;
+	command_buffer_queue[0] = nullptr;
 	command_buffer_count = 1;
 
 	if (separate_present_queue) {
@@ -1491,7 +1491,7 @@ VulkanContext::VulkanContext() {
 	VK_GOOGLE_display_timing_enabled = true;
 
 	command_buffer_queue.resize(1); //first one is the setup command always
-	command_buffer_queue.write[0] = nullptr;
+	command_buffer_queue[0] = nullptr;
 	command_buffer_count = 1;
 	queues_initialized = false;
 
