@@ -285,7 +285,7 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 	};
 	String str;
 	String strnew;
-	str.parse_utf8((const char *)pfile.ptr(), pfile.size());
+	str.parse_utf8((const char *)pfile.data(), pfile.size());
 	std::vector<String> lines = str.split("\n");
 	for (int i = 0; i < lines.size(); i++) {
 		if (lines[i].find("$binary") != -1) {
@@ -316,12 +316,12 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 			strnew += lines[i].replace("$team_id", p_preset->get("application/app_store_team_id")) + "\n";
 		} else if (lines[i].find("$export_method") != -1) {
 			int export_method = p_preset->get(p_debug ? "application/export_method_debug" : "application/export_method_release");
-			strnew += line.replace("$export_method", export_method_string[export_method]) + "\n";
-		} else if (line.find("$provisioning_profile_uuid_release") != -1) {
-			strnew += line.replace("$provisioning_profile_uuid_release", p_preset->get("application/provisioning_profile_uuid_release")) + "\n";
-		} else if (line.find("$provisioning_profile_uuid_debug") != -1) {
-			strnew += line.replace("$provisioning_profile_uuid_debug", p_preset->get("application/provisioning_profile_uuid_debug")) + "\n";
-		} else if (line.find("$provisioning_profile_uuid") != -1) {
+			strnew += lines[i].replace("$export_method", export_method_string[export_method]) + "\n";
+		} else if (lines[i].find("$provisioning_profile_uuid_release") != -1) {
+			strnew += lines[i].replace("$provisioning_profile_uuid_release", p_preset->get("application/provisioning_profile_uuid_release")) + "\n";
+		} else if (lines[i].find("$provisioning_profile_uuid_debug") != -1) {
+			strnew += lines[i].replace("$provisioning_profile_uuid_debug", p_preset->get("application/provisioning_profile_uuid_debug")) + "\n";
+		} else if (lines[i].find("$provisioning_profile_uuid") != -1) {
 			String uuid = p_debug ? p_preset->get("application/provisioning_profile_uuid_debug") : p_preset->get("application/provisioning_profile_uuid_release");
 			strnew += lines[i].replace("$provisioning_profile_uuid", uuid) + "\n";
 		} else if (lines[i].find("$code_sign_identity_debug") != -1) {
@@ -342,17 +342,17 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 			strnew += lines[i].replace("$docs_sharing", ((bool)p_preset->get("user_data/accessible_from_itunes_sharing")) ? "<true/>" : "<false/>") + "\n";
 		} else if (lines[i].find("$access_wifi") != -1) {
 			bool is_on = p_preset->get("capabilities/access_wifi");
-			strnew += line.replace("$access_wifi", is_on ? "1" : "0") + "\n";
-		} else if (line.find("$game_center") != -1) {
+			strnew += lines[i].replace("$access_wifi", is_on ? "1" : "0") + "\n";
+		} else if (lines[i].find("$game_center") != -1) {
 			bool is_on = p_preset->get("capabilities/game_center");
-			strnew += line.replace("$game_center", is_on ? "1" : "0") + "\n";
-		} else if (line.find("$in_app_purchases") != -1) {
+			strnew += lines[i].replace("$game_center", is_on ? "1" : "0") + "\n";
+		} else if (lines[i].find("$in_app_purchases") != -1) {
 			bool is_on = p_preset->get("capabilities/in_app_purchases");
-			strnew += line.replace("$in_app_purchases", is_on ? "1" : "0") + "\n";
-		} else if (line.find("$push_notifications") != -1) {
+			strnew += lines[i].replace("$in_app_purchases", is_on ? "1" : "0") + "\n";
+		} else if (lines[i].find("$push_notifications") != -1) {
 			bool is_on = p_preset->get("capabilities/push_notifications");
-			strnew += line.replace("$push_notifications", is_on ? "1" : "0") + "\n";
-		} else if (line.find("$required_device_capabilities") != -1) {
+			strnew += lines[i].replace("$push_notifications", is_on ? "1" : "0") + "\n";
+		} else if (lines[i].find("$required_device_capabilities") != -1) {
 			String capabilities;
 
 			// I've removed armv7 as we can run on 64bit only devices
@@ -369,8 +369,8 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 				capabilities += "<string>wifi</string>\n";
 			}
 
-			strnew += line.replace("$required_device_capabilities", capabilities);
-		} else if (line.find("$interface_orientations") != -1) {
+			strnew += lines[i].replace("$required_device_capabilities", capabilities);
+		} else if (lines[i].find("$interface_orientations") != -1) {
 			String orientations;
 
 			if ((bool)p_preset->get("orientation/portrait")) {
@@ -386,18 +386,18 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 				orientations += "<string>UIInterfaceOrientationPortraitUpsideDown</string>\n";
 			}
 
-			strnew += line.replace("$interface_orientations", orientations);
-		} else if (line.find("$camera_usage_description") != -1) {
+			strnew += lines[i].replace("$interface_orientations", orientations);
+		} else if (lines[i].find("$camera_usage_description") != -1) {
 			String description = p_preset->get("privacy/camera_usage_description");
-			strnew += line.replace("$camera_usage_description", description) + "\n";
-		} else if (line.find("$microphone_usage_description") != -1) {
+			strnew += lines[i].replace("$camera_usage_description", description) + "\n";
+		} else if (lines[i].find("$microphone_usage_description") != -1) {
 			String description = p_preset->get("privacy/microphone_usage_description");
-			strnew += line.replace("$microphone_usage_description", description) + "\n";
-		} else if (line.find("$photolibrary_usage_description") != -1) {
+			strnew += lines[i].replace("$microphone_usage_description", description) + "\n";
+		} else if (lines[i].find("$photolibrary_usage_description") != -1) {
 			String description = p_preset->get("privacy/photolibrary_usage_description");
-			strnew += line.replace("$photolibrary_usage_description", description) + "\n";
+			strnew += lines[i].replace("$photolibrary_usage_description", description) + "\n";
 		} else {
-			strnew += line + "\n";
+			strnew += lines[i] + "\n";
 		}
 	}
 
@@ -799,6 +799,7 @@ void EditorExportPlatformIOS::_add_assets_to_project(const Ref<EditorExportPrese
 	for (int i = 0; i < p_additional_assets.size(); ++i) {
 		String build_id = (++current_id).str();
 		String ref_id = (++current_id).str();
+		const IOSExportAsset &asset = p_additional_assets[i];
 
 		String type;
 		if (asset.exported_path.ends_with(".framework")) {
