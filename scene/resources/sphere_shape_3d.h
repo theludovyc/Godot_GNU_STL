@@ -47,7 +47,7 @@ public:
 	void set_radius(float p_radius);
 	float get_radius() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines();
+	virtual std::vector<Vector3> get_debug_mesh_lines();
 	virtual real_t get_enclosing_radius() const;
 
 	SphereShape3D();
