@@ -680,8 +680,6 @@ bool EditorFileDialog::_is_open_should_be_disabled() {
 	for (auto &&item : items) {
 		Dictionary d = item_list->get_item_metadata(item);
 
-		Dictionary d = item_list->get_item_metadata(items.get(i));
-
 		if (((mode == FILE_MODE_OPEN_FILE || mode == FILE_MODE_OPEN_FILES) && d["dir"]) || (mode == FILE_MODE_OPEN_DIR && !d["dir"]))
 			return true;
 	}
