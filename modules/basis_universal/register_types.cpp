@@ -53,9 +53,9 @@ enum BasisDecompressFormat {
 basist::etc1_global_selector_codebook *sel_codebook = nullptr;
 
 #ifdef TOOLS_ENABLED
-static Vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::UsedChannels p_channels) {
+static std::vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::UsedChannels p_channels) {
 
-	Vector<uint8_t> budata;
+	std::vector<uint8_t> budata;
 
 	{
 		Ref<Image> image = p_image->duplicate();
@@ -73,8 +73,8 @@ static Vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::
 		basisu::image buimg(image->get_width(), image->get_height());
 
 		{
-			Vector<uint8_t> vec = image->get_data();
-			const uint8_t *r = vec.ptr();
+			std::vector<uint8_t> vec = image->get_data();
+			const uint8_t *r = vec.data();
 
 			memcpy(buimg.get_ptr(), r, vec.size());
 		}
@@ -140,7 +140,7 @@ static Vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::
 		budata.resize(buvec.size() + 4);
 
 		{
-			uint8_t *w = budata.ptrw();
+			uint8_t *w = budata.data();
 			uint32_t *decf = (uint32_t *)w;
 			*decf = decompress_format;
 			memcpy(w + 4, &buvec[0], buvec.size());
@@ -151,10 +151,10 @@ static Vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::
 }
 #endif // TOOLS_ENABLED
 
-static Ref<Image> basis_universal_unpacker(const Vector<uint8_t> &p_buffer) {
+static Ref<Image> basis_universal_unpacker(const std::vector<uint8_t> &p_buffer) {
 	Ref<Image> image;
 
-	const uint8_t *r = p_buffer.ptr();
+	const uint8_t *r = p_buffer.data();
 	const uint8_t *ptr = r;
 	int size = p_buffer.size();
 
@@ -237,11 +237,11 @@ static Ref<Image> basis_universal_unpacker(const Vector<uint8_t> &p_buffer) {
 	tr.get_image_info(ptr, size, info, 0);
 
 	int block_size = basist::basis_get_bytes_per_block(format);
-	Vector<uint8_t> gpudata;
+	std::vector<uint8_t> gpudata;
 	gpudata.resize(info.m_total_blocks * block_size);
 
 	{
-		uint8_t *w = gpudata.ptrw();
+		uint8_t *w = gpudata.data();
 		uint8_t *dst = w;
 		for (int i = 0; i < gpudata.size(); i++)
 			dst[i] = 0x00;
