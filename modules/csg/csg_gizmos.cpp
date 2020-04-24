@@ -336,13 +336,13 @@ void CSGShapeNode3DGizmoPlugin::redraw(EditorNode3DGizmo *p_gizmo) {
 
 	Ref<Material> handles_material = get_material("handles");
 
-	Vector<Vector3> faces = cs->get_brush_faces();
+	std::vector<Vector3> faces = cs->get_brush_faces();
 
 	std::vector<Vector3> lines;
 
 	lines.resize(faces.size() * 2);
 	{
-		const Vector3 *r = faces.ptr();
+		const Vector3 *r = faces.data();
 
 		for(unsigned i = 0; i < lines.size(); i += 6){
 			for(unsigned j = 0; j < 3; j++){
