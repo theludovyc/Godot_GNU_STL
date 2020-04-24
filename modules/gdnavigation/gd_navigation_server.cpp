@@ -148,7 +148,12 @@ COMMAND_2(map_set_active, RID, p_map, bool, p_active) {
 			active_maps.push_back(map);
 		}
 	} else {
-		active_maps.erase(map);
+
+		auto it_find = std::find(active_maps.begin(), active_maps.end(), map);
+
+		if (it_find != active_maps.end()) {
+			active_maps.erase(it_find);
+		}
 	}
 }
 
@@ -156,7 +161,7 @@ bool GdNavigationServer::map_is_active(RID p_map) const {
 	NavMap *map = map_owner.getornull(p_map);
 	ERR_FAIL_COND_V(map == nullptr, false);
 
-	return active_maps.find(map) >= 0;
+	return std::find(active_maps.begin(), active_maps.end(), map) != active_maps.end();
 }
 
 COMMAND_2(map_set_up, RID, p_map, Vector3, p_up) {
@@ -201,9 +206,9 @@ real_t GdNavigationServer::map_get_edge_connection_margin(RID p_map) const {
 	return map->get_edge_connection_margin();
 }
 
-Vector<Vector3> GdNavigationServer::map_get_path(RID p_map, Vector3 p_origin, Vector3 p_destination, bool p_optimize) const {
+std::vector<Vector3> GdNavigationServer::map_get_path(RID p_map, Vector3 p_origin, Vector3 p_destination, bool p_optimize) const {
 	const NavMap *map = map_owner.getornull(p_map);
-	ERR_FAIL_COND_V(map == nullptr, Vector<Vector3>());
+	ERR_FAIL_COND_V(map == nullptr, std::vector<Vector3>());
 
 	return map->get_path(p_origin, p_destination, p_optimize);
 }
@@ -429,7 +434,11 @@ COMMAND_1(free, RID, p_object) {
 			agents[i]->set_map(nullptr);
 		}
 
-		active_maps.erase(map);
+		auto it_map = std::find(active_maps.begin(), active_maps.end(), map);
+
+		if (it_map != active_maps.end()) {
+			active_maps.erase(it_map);
+		}
 		map_owner.free(p_object);
 		memdelete(map);
 

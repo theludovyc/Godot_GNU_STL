@@ -863,8 +863,10 @@ GDScriptParser::Node *GDScriptParser::_parse_expression(Node *p_parent, bool p_s
 			if (!bfn) {
 #ifdef DEBUG_ENABLED
 				if (current_function) {
-					int arg_idx = current_function->arguments.find(identifier);
-					if (arg_idx != -1) {
+
+					auto it_arg = std::find(current_function->arguments.begin(), current_function->arguments.end(), identifier);
+
+					if (it_arg != current_function->arguments.end()) {
 						switch (tokenizer->get_token()) {
 							case GDScriptTokenizer::TK_OP_ASSIGN_ADD:
 							case GDScriptTokenizer::TK_OP_ASSIGN_BIT_AND:
@@ -880,7 +882,8 @@ GDScriptParser::Node *GDScriptParser::_parse_expression(Node *p_parent, bool p_s
 								// Assignment is not really usage
 							} break;
 							default: {
-								current_function->arguments_usage.write[arg_idx] = current_function->arguments_usage[arg_idx] + 1;
+								auto arg_idx = std::distance(current_function->arguments.begin(), it_arg);
+								current_function->arguments_usage[arg_idx] = current_function->arguments_usage[arg_idx] + 1;
 							}
 						}
 					}

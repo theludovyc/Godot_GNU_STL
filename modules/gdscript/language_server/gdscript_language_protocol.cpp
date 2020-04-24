@@ -113,7 +113,7 @@ Error GDScriptLanguageProtocol::LSPeer::send_data() {
 		// Response sent
 		if (res_sent >= c_res.size() - 1) {
 			res_sent = 0;
-			res_queue.remove(0);
+			res_queue.erase(res_queue.begin());
 		}
 	}
 	return OK;

@@ -54,7 +54,7 @@ private:
 		bool has_header = false;
 		bool has_content = false;
 		int content_length = 0;
-		Vector<CharString> res_queue;
+		std::vector<CharString> res_queue;
 		int res_sent = 0;
 
 		Error handle_data();

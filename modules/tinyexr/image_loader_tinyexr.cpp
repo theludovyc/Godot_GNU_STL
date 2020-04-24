@@ -37,12 +37,12 @@
 
 Error ImageLoaderTinyEXR::load_image(Ref<Image> p_image, FileAccess *f, bool p_force_linear, float p_scale) {
 
-	Vector<uint8_t> src_image;
+	std::vector<uint8_t> src_image;
 	int src_image_len = f->get_len();
 	ERR_FAIL_COND_V(src_image_len == 0, ERR_FILE_CORRUPT);
 	src_image.resize(src_image_len);
 
-	uint8_t *w = src_image.ptrw();
+	uint8_t *w = src_image.data();
 
 	f->get_buffer(&w[0], src_image_len);
 
@@ -136,7 +136,7 @@ Error ImageLoaderTinyEXR::load_image(Ref<Image> p_image, FileAccess *f, bool p_f
 
 	// EXR image data loaded, now parse it into Godot-friendly image data
 
-	Vector<uint8_t> imgdata;
+	std::vector<uint8_t> imgdata;
 	Image::Format format;
 	int output_channels = 0;
 
@@ -180,7 +180,7 @@ Error ImageLoaderTinyEXR::load_image(Ref<Image> p_image, FileAccess *f, bool p_f
 	}
 
 	{
-		uint8_t *wd = imgdata.ptrw();
+		uint8_t *wd = imgdata.data();
 		uint16_t *iw = (uint16_t *)wd;
 
 		// Assume `out_rgba` have enough memory allocated.

@@ -32,10 +32,10 @@
 
 #include "servers/physics_server_3d.h"
 
-Vector<Vector3> WorldMarginShape3D::get_debug_mesh_lines() {
+std::vector<Vector3> WorldMarginShape3D::get_debug_mesh_lines() {
 
 	Plane p = get_plane();
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
 
 	Vector3 n1 = p.get_any_perpendicular_normal();
 	Vector3 n2 = p.normal.cross(n1).normalized();

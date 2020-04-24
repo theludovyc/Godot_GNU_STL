@@ -51,7 +51,7 @@ class CollisionObject3D : public Node3D {
 			int index;
 		};
 
-		Vector<ShapeBase> shapes;
+		std::vector<ShapeBase> shapes;
 		bool disabled;
 
 		ShapeData() {

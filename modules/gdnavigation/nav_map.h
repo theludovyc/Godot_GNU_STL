@@ -103,7 +103,7 @@ public:
 
 	gd::PointKey get_point_key(const Vector3 &p_pos) const;
 
-	Vector<Vector3> get_path(Vector3 p_origin, Vector3 p_destination, bool p_optimize) const;
+	std::vector<Vector3> get_path(Vector3 p_origin, Vector3 p_destination, bool p_optimize) const;
 	Vector3 get_closest_point_to_segment(const Vector3 &p_from, const Vector3 &p_to, const bool p_use_collision) const;
 	Vector3 get_closest_point(const Vector3 &p_point) const;
 	Vector3 get_closest_point_normal(const Vector3 &p_point) const;
@@ -135,7 +135,7 @@ public:
 
 private:
 	void compute_single_step(uint32_t index, RvoAgent **agent);
-	void clip_path(const std::vector<gd::NavigationPoly> &p_navigation_polys, Vector<Vector3> &path, const gd::NavigationPoly *from_poly, const Vector3 &p_to_point, const gd::NavigationPoly *p_to_poly) const;
+	void clip_path(const std::vector<gd::NavigationPoly> &p_navigation_polys, std::vector<Vector3> &path, const gd::NavigationPoly *from_poly, const Vector3 &p_to_point, const gd::NavigationPoly *p_to_poly) const;
 };
 
 #endif // RVO_SPACE_H

@@ -38,6 +38,8 @@
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
 
+#include <algorithm>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,618 +49,618 @@ extern "C" {
 // byte
 
 void GDAPI godot_packed_byte_array_new(godot_packed_byte_array *r_dest) {
-	Vector<uint8_t> *dest = (Vector<uint8_t> *)r_dest;
-	memnew_placement(dest, Vector<uint8_t>);
+	std::vector<uint8_t> *dest = (std::vector<uint8_t> *)r_dest;
+	memnew_placement(dest, std::vector<uint8_t>);
 }
 
 void GDAPI godot_packed_byte_array_new_copy(godot_packed_byte_array *r_dest, const godot_packed_byte_array *p_src) {
-	Vector<uint8_t> *dest = (Vector<uint8_t> *)r_dest;
-	const Vector<uint8_t> *src = (const Vector<uint8_t> *)p_src;
-	memnew_placement(dest, Vector<uint8_t>(*src));
+	std::vector<uint8_t> *dest = (std::vector<uint8_t> *)r_dest;
+	const std::vector<uint8_t> *src = (const std::vector<uint8_t> *)p_src;
+	memnew_placement(dest, std::vector<uint8_t>(*src));
 }
 
 void GDAPI godot_packed_byte_array_new_with_array(godot_packed_byte_array *r_dest, const godot_array *p_a) {
-	Vector<uint8_t> *dest = (Vector<uint8_t> *)r_dest;
+	std::vector<uint8_t> *dest = (std::vector<uint8_t> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<uint8_t>);
+	memnew_placement(dest, std::vector<uint8_t>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_byte_array_append(godot_packed_byte_array *p_self, const uint8_t p_data) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_byte_array_append_array(godot_packed_byte_array *p_self, const godot_packed_byte_array *p_array) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
-	Vector<uint8_t> *array = (Vector<uint8_t> *)p_array;
-	self->append_array(*array);
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
+	std::vector<uint8_t> *array = (std::vector<uint8_t> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_byte_array_insert(godot_packed_byte_array *p_self, const godot_int p_idx, const uint8_t p_data) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
-	return (godot_error)self->insert(p_idx, p_data);
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, p_data));
 }
 
 void GDAPI godot_packed_byte_array_invert(godot_packed_byte_array *p_self) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
-	self->invert();
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_byte_array_push_back(godot_packed_byte_array *p_self, const uint8_t p_data) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_byte_array_remove(godot_packed_byte_array *p_self, const godot_int p_idx) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
-	self->remove(p_idx);
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_byte_array_resize(godot_packed_byte_array *p_self, const godot_int p_size) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_byte_array_set(godot_packed_byte_array *p_self, const godot_int p_idx, const uint8_t p_data) {
-	Vector<uint8_t> *self = (Vector<uint8_t> *)p_self;
-	self->set(p_idx, p_data);
+	std::vector<uint8_t> *self = (std::vector<uint8_t> *)p_self;
+	self->at(p_idx) = p_data;
 }
 
 uint8_t GDAPI godot_packed_byte_array_get(const godot_packed_byte_array *p_self, const godot_int p_idx) {
-	const Vector<uint8_t> *self = (const Vector<uint8_t> *)p_self;
-	return self->get(p_idx);
+	const std::vector<uint8_t> *self = (const std::vector<uint8_t> *)p_self;
+	return self->at(p_idx);
 }
 
 godot_int GDAPI godot_packed_byte_array_size(const godot_packed_byte_array *p_self) {
-	const Vector<uint8_t> *self = (const Vector<uint8_t> *)p_self;
+	const std::vector<uint8_t> *self = (const std::vector<uint8_t> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_byte_array_empty(const godot_packed_byte_array *p_self) {
-	const Vector<uint8_t> *self = (const Vector<uint8_t> *)p_self;
+	const std::vector<uint8_t> *self = (const std::vector<uint8_t> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_byte_array_destroy(godot_packed_byte_array *p_self) {
-	((Vector<uint8_t> *)p_self)->~Vector();
+	delete ((std::vector<uint8_t> *)p_self);
 }
 
 // int
 
 void GDAPI godot_packed_int_array_new(godot_packed_int_array *r_dest) {
-	Vector<godot_int> *dest = (Vector<godot_int> *)r_dest;
-	memnew_placement(dest, Vector<godot_int>);
+	std::vector<godot_int> *dest = (std::vector<godot_int> *)r_dest;
+	memnew_placement(dest, std::vector<godot_int>);
 }
 
 void GDAPI godot_packed_int_array_new_copy(godot_packed_int_array *r_dest, const godot_packed_int_array *p_src) {
-	Vector<godot_int> *dest = (Vector<godot_int> *)r_dest;
-	const Vector<godot_int> *src = (const Vector<godot_int> *)p_src;
-	memnew_placement(dest, Vector<godot_int>(*src));
+	std::vector<godot_int> *dest = (std::vector<godot_int> *)r_dest;
+	const std::vector<godot_int> *src = (const std::vector<godot_int> *)p_src;
+	memnew_placement(dest, std::vector<godot_int>(*src));
 }
 
 void GDAPI godot_packed_int_array_new_with_array(godot_packed_int_array *r_dest, const godot_array *p_a) {
-	Vector<godot_int> *dest = (Vector<godot_int> *)r_dest;
+	std::vector<godot_int> *dest = (std::vector<godot_int> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<godot_int>);
+	memnew_placement(dest, std::vector<godot_int>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_int_array_append(godot_packed_int_array *p_self, const godot_int p_data) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_int_array_append_array(godot_packed_int_array *p_self, const godot_packed_int_array *p_array) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
-	Vector<godot_int> *array = (Vector<godot_int> *)p_array;
-	self->append_array(*array);
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
+	std::vector<godot_int> *array = (std::vector<godot_int> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_int_array_insert(godot_packed_int_array *p_self, const godot_int p_idx, const godot_int p_data) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
-	return (godot_error)self->insert(p_idx, p_data);
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, p_data));
 }
 
 void GDAPI godot_packed_int_array_invert(godot_packed_int_array *p_self) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
-	self->invert();
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_int_array_push_back(godot_packed_int_array *p_self, const godot_int p_data) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_int_array_remove(godot_packed_int_array *p_self, const godot_int p_idx) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
-	self->remove(p_idx);
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_int_array_resize(godot_packed_int_array *p_self, const godot_int p_size) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_int_array_set(godot_packed_int_array *p_self, const godot_int p_idx, const godot_int p_data) {
-	Vector<godot_int> *self = (Vector<godot_int> *)p_self;
-	self->set(p_idx, p_data);
+	std::vector<godot_int> *self = (std::vector<godot_int> *)p_self;
+	self->at(p_idx) = p_data;
 }
 
 godot_int GDAPI godot_packed_int_array_get(const godot_packed_int_array *p_self, const godot_int p_idx) {
-	const Vector<godot_int> *self = (const Vector<godot_int> *)p_self;
-	return self->get(p_idx);
+	const std::vector<godot_int> *self = (const std::vector<godot_int> *)p_self;
+	return self->at(p_idx);
 }
 
 godot_int GDAPI godot_packed_int_array_size(const godot_packed_int_array *p_self) {
-	const Vector<godot_int> *self = (const Vector<godot_int> *)p_self;
+	const std::vector<godot_int> *self = (const std::vector<godot_int> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_int_array_empty(const godot_packed_int_array *p_self) {
-	const Vector<godot_int> *self = (const Vector<godot_int> *)p_self;
+	const std::vector<godot_int> *self = (const std::vector<godot_int> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_int_array_destroy(godot_packed_int_array *p_self) {
-	((Vector<godot_int> *)p_self)->~Vector();
+	delete ((std::vector<godot_int> *)p_self);
 }
 
 // real
 
 void GDAPI godot_packed_real_array_new(godot_packed_real_array *r_dest) {
-	Vector<godot_real> *dest = (Vector<godot_real> *)r_dest;
-	memnew_placement(dest, Vector<godot_real>);
+	std::vector<godot_real> *dest = (std::vector<godot_real> *)r_dest;
+	memnew_placement(dest, std::vector<godot_real>);
 }
 
 void GDAPI godot_packed_real_array_new_copy(godot_packed_real_array *r_dest, const godot_packed_real_array *p_src) {
-	Vector<godot_real> *dest = (Vector<godot_real> *)r_dest;
-	const Vector<godot_real> *src = (const Vector<godot_real> *)p_src;
-	memnew_placement(dest, Vector<godot_real>(*src));
+	std::vector<godot_real> *dest = (std::vector<godot_real> *)r_dest;
+	const std::vector<godot_real> *src = (const std::vector<godot_real> *)p_src;
+	memnew_placement(dest, std::vector<godot_real>(*src));
 }
 
 void GDAPI godot_packed_real_array_new_with_array(godot_packed_real_array *r_dest, const godot_array *p_a) {
-	Vector<godot_real> *dest = (Vector<godot_real> *)r_dest;
+	std::vector<godot_real> *dest = (std::vector<godot_real> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<godot_real>);
+	memnew_placement(dest, std::vector<godot_real>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_real_array_append(godot_packed_real_array *p_self, const godot_real p_data) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_real_array_append_array(godot_packed_real_array *p_self, const godot_packed_real_array *p_array) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
-	Vector<godot_real> *array = (Vector<godot_real> *)p_array;
-	self->append_array(*array);
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
+	std::vector<godot_real> *array = (std::vector<godot_real> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_real_array_insert(godot_packed_real_array *p_self, const godot_int p_idx, const godot_real p_data) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
-	return (godot_error)self->insert(p_idx, p_data);
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, p_data));
 }
 
 void GDAPI godot_packed_real_array_invert(godot_packed_real_array *p_self) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
-	self->invert();
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_real_array_push_back(godot_packed_real_array *p_self, const godot_real p_data) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
 	self->push_back(p_data);
 }
 
 void GDAPI godot_packed_real_array_remove(godot_packed_real_array *p_self, const godot_int p_idx) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
-	self->remove(p_idx);
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_real_array_resize(godot_packed_real_array *p_self, const godot_int p_size) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_real_array_set(godot_packed_real_array *p_self, const godot_int p_idx, const godot_real p_data) {
-	Vector<godot_real> *self = (Vector<godot_real> *)p_self;
-	self->set(p_idx, p_data);
+	std::vector<godot_real> *self = (std::vector<godot_real> *)p_self;
+	self->at(p_idx) = p_data;
 }
 
 godot_real GDAPI godot_packed_real_array_get(const godot_packed_real_array *p_self, const godot_int p_idx) {
-	const Vector<godot_real> *self = (const Vector<godot_real> *)p_self;
-	return self->get(p_idx);
+	const std::vector<godot_real> *self = (const std::vector<godot_real> *)p_self;
+	return self->at(p_idx);
 }
 
 godot_int GDAPI godot_packed_real_array_size(const godot_packed_real_array *p_self) {
-	const Vector<godot_real> *self = (const Vector<godot_real> *)p_self;
+	const std::vector<godot_real> *self = (const std::vector<godot_real> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_real_array_empty(const godot_packed_real_array *p_self) {
-	const Vector<godot_real> *self = (const Vector<godot_real> *)p_self;
+	const std::vector<godot_real> *self = (const std::vector<godot_real> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_real_array_destroy(godot_packed_real_array *p_self) {
-	((Vector<godot_real> *)p_self)->~Vector();
+	delete ((std::vector<godot_real> *)p_self);
 }
 
 // string
 
 void GDAPI godot_packed_string_array_new(godot_packed_string_array *r_dest) {
-	Vector<String> *dest = (Vector<String> *)r_dest;
-	memnew_placement(dest, Vector<String>);
+	std::vector<String> *dest = (std::vector<String> *)r_dest;
+	memnew_placement(dest, std::vector<String>);
 }
 
 void GDAPI godot_packed_string_array_new_copy(godot_packed_string_array *r_dest, const godot_packed_string_array *p_src) {
-	Vector<String> *dest = (Vector<String> *)r_dest;
-	const Vector<String> *src = (const Vector<String> *)p_src;
-	memnew_placement(dest, Vector<String>(*src));
+	std::vector<String> *dest = (std::vector<String> *)r_dest;
+	const std::vector<String> *src = (const std::vector<String> *)p_src;
+	memnew_placement(dest, std::vector<String>(*src));
 }
 
 void GDAPI godot_packed_string_array_new_with_array(godot_packed_string_array *r_dest, const godot_array *p_a) {
-	Vector<String> *dest = (Vector<String> *)r_dest;
+	std::vector<String> *dest = (std::vector<String> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<String>);
+	memnew_placement(dest, std::vector<String>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_string_array_append(godot_packed_string_array *p_self, const godot_string *p_data) {
-	Vector<String> *self = (Vector<String> *)p_self;
+	std::vector<String> *self = (std::vector<String> *)p_self;
 	String &s = *(String *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_string_array_append_array(godot_packed_string_array *p_self, const godot_packed_string_array *p_array) {
-	Vector<String> *self = (Vector<String> *)p_self;
-	Vector<String> *array = (Vector<String> *)p_array;
-	self->append_array(*array);
+	std::vector<String> *self = (std::vector<String> *)p_self;
+	std::vector<String> *array = (std::vector<String> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_string_array_insert(godot_packed_string_array *p_self, const godot_int p_idx, const godot_string *p_data) {
-	Vector<String> *self = (Vector<String> *)p_self;
+	std::vector<String> *self = (std::vector<String> *)p_self;
 	String &s = *(String *)p_data;
-	return (godot_error)self->insert(p_idx, s);
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, s));
 }
 
 void GDAPI godot_packed_string_array_invert(godot_packed_string_array *p_self) {
-	Vector<String> *self = (Vector<String> *)p_self;
-	self->invert();
+	std::vector<String> *self = (std::vector<String> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_string_array_push_back(godot_packed_string_array *p_self, const godot_string *p_data) {
-	Vector<String> *self = (Vector<String> *)p_self;
+	std::vector<String> *self = (std::vector<String> *)p_self;
 	String &s = *(String *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_string_array_remove(godot_packed_string_array *p_self, const godot_int p_idx) {
-	Vector<String> *self = (Vector<String> *)p_self;
-	self->remove(p_idx);
+	std::vector<String> *self = (std::vector<String> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_string_array_resize(godot_packed_string_array *p_self, const godot_int p_size) {
-	Vector<String> *self = (Vector<String> *)p_self;
+	std::vector<String> *self = (std::vector<String> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_string_array_set(godot_packed_string_array *p_self, const godot_int p_idx, const godot_string *p_data) {
-	Vector<String> *self = (Vector<String> *)p_self;
+	std::vector<String> *self = (std::vector<String> *)p_self;
 	String &s = *(String *)p_data;
-	self->set(p_idx, s);
+	self->at(p_idx) = s;
 }
 
 godot_string GDAPI godot_packed_string_array_get(const godot_packed_string_array *p_self, const godot_int p_idx) {
-	const Vector<String> *self = (const Vector<String> *)p_self;
+	const std::vector<String> *self = (const std::vector<String> *)p_self;
 	godot_string str;
 	String *s = (String *)&str;
 	memnew_placement(s, String);
-	*s = self->get(p_idx);
+	*s = self->at(p_idx);
 	return str;
 }
 
 godot_int GDAPI godot_packed_string_array_size(const godot_packed_string_array *p_self) {
-	const Vector<String> *self = (const Vector<String> *)p_self;
+	const std::vector<String> *self = (const std::vector<String> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_string_array_empty(const godot_packed_string_array *p_self) {
-	const Vector<String> *self = (const Vector<String> *)p_self;
+	const std::vector<String> *self = (const std::vector<String> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_string_array_destroy(godot_packed_string_array *p_self) {
-	((Vector<String> *)p_self)->~Vector();
+	delete ((std::vector<String> *)p_self);
 }
 
 // vector2
 
 void GDAPI godot_packed_vector2_array_new(godot_packed_vector2_array *r_dest) {
-	Vector<Vector2> *dest = (Vector<Vector2> *)r_dest;
-	memnew_placement(dest, Vector<Vector2>);
+	std::vector<Vector2> *dest = (std::vector<Vector2> *)r_dest;
+	memnew_placement(dest, std::vector<Vector2>);
 }
 
 void GDAPI godot_packed_vector2_array_new_copy(godot_packed_vector2_array *r_dest, const godot_packed_vector2_array *p_src) {
-	Vector<Vector2> *dest = (Vector<Vector2> *)r_dest;
-	const Vector<Vector2> *src = (const Vector<Vector2> *)p_src;
-	memnew_placement(dest, Vector<Vector2>(*src));
+	std::vector<Vector2> *dest = (std::vector<Vector2> *)r_dest;
+	const std::vector<Vector2> *src = (const std::vector<Vector2> *)p_src;
+	memnew_placement(dest, std::vector<Vector2>(*src));
 }
 
 void GDAPI godot_packed_vector2_array_new_with_array(godot_packed_vector2_array *r_dest, const godot_array *p_a) {
-	Vector<Vector2> *dest = (Vector<Vector2> *)r_dest;
+	std::vector<Vector2> *dest = (std::vector<Vector2> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<Vector2>);
+	memnew_placement(dest, std::vector<Vector2>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_vector2_array_append(godot_packed_vector2_array *p_self, const godot_vector2 *p_data) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
 	Vector2 &s = *(Vector2 *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_vector2_array_append_array(godot_packed_vector2_array *p_self, const godot_packed_vector2_array *p_array) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
-	Vector<Vector2> *array = (Vector<Vector2> *)p_array;
-	self->append_array(*array);
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
+	std::vector<Vector2> *array = (std::vector<Vector2> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_vector2_array_insert(godot_packed_vector2_array *p_self, const godot_int p_idx, const godot_vector2 *p_data) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
 	Vector2 &s = *(Vector2 *)p_data;
-	return (godot_error)self->insert(p_idx, s);
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, s));
 }
 
 void GDAPI godot_packed_vector2_array_invert(godot_packed_vector2_array *p_self) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
-	self->invert();
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_vector2_array_push_back(godot_packed_vector2_array *p_self, const godot_vector2 *p_data) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
 	Vector2 &s = *(Vector2 *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_vector2_array_remove(godot_packed_vector2_array *p_self, const godot_int p_idx) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
-	self->remove(p_idx);
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_vector2_array_resize(godot_packed_vector2_array *p_self, const godot_int p_size) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_vector2_array_set(godot_packed_vector2_array *p_self, const godot_int p_idx, const godot_vector2 *p_data) {
-	Vector<Vector2> *self = (Vector<Vector2> *)p_self;
+	std::vector<Vector2> *self = (std::vector<Vector2> *)p_self;
 	Vector2 &s = *(Vector2 *)p_data;
-	self->set(p_idx, s);
+	self->at(p_idx) = s;
 }
 
 godot_vector2 GDAPI godot_packed_vector2_array_get(const godot_packed_vector2_array *p_self, const godot_int p_idx) {
-	const Vector<Vector2> *self = (const Vector<Vector2> *)p_self;
+	const std::vector<Vector2> *self = (const std::vector<Vector2> *)p_self;
 	godot_vector2 v;
 	Vector2 *s = (Vector2 *)&v;
-	*s = self->get(p_idx);
+	*s = self->at(p_idx);
 	return v;
 }
 
 godot_int GDAPI godot_packed_vector2_array_size(const godot_packed_vector2_array *p_self) {
-	const Vector<Vector2> *self = (const Vector<Vector2> *)p_self;
+	const std::vector<Vector2> *self = (const std::vector<Vector2> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_vector2_array_empty(const godot_packed_vector2_array *p_self) {
-	const Vector<Vector2> *self = (const Vector<Vector2> *)p_self;
+	const std::vector<Vector2> *self = (const std::vector<Vector2> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_vector2_array_destroy(godot_packed_vector2_array *p_self) {
-	((Vector<Vector2> *)p_self)->~Vector();
+	delete ((std::vector<Vector2> *)p_self);
 }
 
 // vector3
 
 void GDAPI godot_packed_vector3_array_new(godot_packed_vector3_array *r_dest) {
-	Vector<Vector3> *dest = (Vector<Vector3> *)r_dest;
-	memnew_placement(dest, Vector<Vector3>);
+	std::vector<Vector3> *dest = (std::vector<Vector3> *)r_dest;
+	memnew_placement(dest, std::vector<Vector3>);
 }
 
 void GDAPI godot_packed_vector3_array_new_copy(godot_packed_vector3_array *r_dest, const godot_packed_vector3_array *p_src) {
-	Vector<Vector3> *dest = (Vector<Vector3> *)r_dest;
-	const Vector<Vector3> *src = (const Vector<Vector3> *)p_src;
-	memnew_placement(dest, Vector<Vector3>(*src));
+	std::vector<Vector3> *dest = (std::vector<Vector3> *)r_dest;
+	const std::vector<Vector3> *src = (const std::vector<Vector3> *)p_src;
+	memnew_placement(dest, std::vector<Vector3>(*src));
 }
 
 void GDAPI godot_packed_vector3_array_new_with_array(godot_packed_vector3_array *r_dest, const godot_array *p_a) {
-	Vector<Vector3> *dest = (Vector<Vector3> *)r_dest;
+	std::vector<Vector3> *dest = (std::vector<Vector3> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<Vector3>);
+	memnew_placement(dest, std::vector<Vector3>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_vector3_array_append(godot_packed_vector3_array *p_self, const godot_vector3 *p_data) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
 	Vector3 &s = *(Vector3 *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_vector3_array_append_array(godot_packed_vector3_array *p_self, const godot_packed_vector3_array *p_array) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
-	Vector<Vector3> *array = (Vector<Vector3> *)p_array;
-	self->append_array(*array);
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
+	std::vector<Vector3> *array = (std::vector<Vector3> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_vector3_array_insert(godot_packed_vector3_array *p_self, const godot_int p_idx, const godot_vector3 *p_data) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
 	Vector3 &s = *(Vector3 *)p_data;
-	return (godot_error)self->insert(p_idx, s);
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, s));
 }
 
 void GDAPI godot_packed_vector3_array_invert(godot_packed_vector3_array *p_self) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
-	self->invert();
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_vector3_array_push_back(godot_packed_vector3_array *p_self, const godot_vector3 *p_data) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
 	Vector3 &s = *(Vector3 *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_vector3_array_remove(godot_packed_vector3_array *p_self, const godot_int p_idx) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
-	self->remove(p_idx);
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_vector3_array_resize(godot_packed_vector3_array *p_self, const godot_int p_size) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_vector3_array_set(godot_packed_vector3_array *p_self, const godot_int p_idx, const godot_vector3 *p_data) {
-	Vector<Vector3> *self = (Vector<Vector3> *)p_self;
+	std::vector<Vector3> *self = (std::vector<Vector3> *)p_self;
 	Vector3 &s = *(Vector3 *)p_data;
-	self->set(p_idx, s);
+	self->at(p_idx) = s;
 }
 
 godot_vector3 GDAPI godot_packed_vector3_array_get(const godot_packed_vector3_array *p_self, const godot_int p_idx) {
-	const Vector<Vector3> *self = (const Vector<Vector3> *)p_self;
+	const std::vector<Vector3> *self = (const std::vector<Vector3> *)p_self;
 	godot_vector3 v;
 	Vector3 *s = (Vector3 *)&v;
-	*s = self->get(p_idx);
+	*s = self->at(p_idx);
 	return v;
 }
 
 godot_int GDAPI godot_packed_vector3_array_size(const godot_packed_vector3_array *p_self) {
-	const Vector<Vector3> *self = (const Vector<Vector3> *)p_self;
+	const std::vector<Vector3> *self = (const std::vector<Vector3> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_vector3_array_empty(const godot_packed_vector3_array *p_self) {
-	const Vector<Vector3> *self = (const Vector<Vector3> *)p_self;
+	const std::vector<Vector3> *self = (const std::vector<Vector3> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_vector3_array_destroy(godot_packed_vector3_array *p_self) {
-	((Vector<Vector3> *)p_self)->~Vector();
+	delete ((std::vector<Vector3> *)p_self);
 }
 
 // color
 
 void GDAPI godot_packed_color_array_new(godot_packed_color_array *r_dest) {
-	Vector<Color> *dest = (Vector<Color> *)r_dest;
-	memnew_placement(dest, Vector<Color>);
+	std::vector<Color> *dest = (std::vector<Color> *)r_dest;
+	memnew_placement(dest, std::vector<Color>);
 }
 
 void GDAPI godot_packed_color_array_new_copy(godot_packed_color_array *r_dest, const godot_packed_color_array *p_src) {
-	Vector<Color> *dest = (Vector<Color> *)r_dest;
-	const Vector<Color> *src = (const Vector<Color> *)p_src;
-	memnew_placement(dest, Vector<Color>(*src));
+	std::vector<Color> *dest = (std::vector<Color> *)r_dest;
+	const std::vector<Color> *src = (const std::vector<Color> *)p_src;
+	memnew_placement(dest, std::vector<Color>(*src));
 }
 
 void GDAPI godot_packed_color_array_new_with_array(godot_packed_color_array *r_dest, const godot_array *p_a) {
-	Vector<Color> *dest = (Vector<Color> *)r_dest;
+	std::vector<Color> *dest = (std::vector<Color> *)r_dest;
 	Array *a = (Array *)p_a;
-	memnew_placement(dest, Vector<Color>);
+	memnew_placement(dest, std::vector<Color>);
 
 	dest->resize(a->size());
 	for (int i = 0; i < a->size(); i++) {
-		dest->set(i, (*a)[i]);
+		dest->at(i) = (*a)[i];
 	}
 }
 
 void GDAPI godot_packed_color_array_append(godot_packed_color_array *p_self, const godot_color *p_data) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
 	Color &s = *(Color *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_color_array_append_array(godot_packed_color_array *p_self, const godot_packed_color_array *p_array) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
-	Vector<Color> *array = (Vector<Color> *)p_array;
-	self->append_array(*array);
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
+	std::vector<Color> *array = (std::vector<Color> *)p_array;
+	self->insert(self->end(), array->begin(), array->end());
 }
 
 godot_error GDAPI godot_packed_color_array_insert(godot_packed_color_array *p_self, const godot_int p_idx, const godot_color *p_data) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
 	Color &s = *(Color *)p_data;
-	return (godot_error)self->insert(p_idx, s);
+	return (godot_error)std::distance(self->begin(), self->insert(self->begin() + p_idx, s));
 }
 
 void GDAPI godot_packed_color_array_invert(godot_packed_color_array *p_self) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
-	self->invert();
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
+	std::reverse(self->begin(), self->end());
 }
 
 void GDAPI godot_packed_color_array_push_back(godot_packed_color_array *p_self, const godot_color *p_data) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
 	Color &s = *(Color *)p_data;
 	self->push_back(s);
 }
 
 void GDAPI godot_packed_color_array_remove(godot_packed_color_array *p_self, const godot_int p_idx) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
-	self->remove(p_idx);
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
+	self->erase(self->begin() + p_idx);
 }
 
 void GDAPI godot_packed_color_array_resize(godot_packed_color_array *p_self, const godot_int p_size) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
 	self->resize(p_size);
 }
 
 void GDAPI godot_packed_color_array_set(godot_packed_color_array *p_self, const godot_int p_idx, const godot_color *p_data) {
-	Vector<Color> *self = (Vector<Color> *)p_self;
+	std::vector<Color> *self = (std::vector<Color> *)p_self;
 	Color &s = *(Color *)p_data;
-	self->set(p_idx, s);
+	self->at(p_idx) = s;
 }
 
 godot_color GDAPI godot_packed_color_array_get(const godot_packed_color_array *p_self, const godot_int p_idx) {
-	const Vector<Color> *self = (const Vector<Color> *)p_self;
+	const std::vector<Color> *self = (const std::vector<Color> *)p_self;
 	godot_color v;
 	Color *s = (Color *)&v;
-	*s = self->get(p_idx);
+	*s = self->at(p_idx);
 	return v;
 }
 
 godot_int GDAPI godot_packed_color_array_size(const godot_packed_color_array *p_self) {
-	const Vector<Color> *self = (const Vector<Color> *)p_self;
+	const std::vector<Color> *self = (const std::vector<Color> *)p_self;
 	return self->size();
 }
 
 godot_bool GDAPI godot_packed_color_array_empty(const godot_packed_color_array *p_self) {
-	const Vector<Color> *self = (const Vector<Color> *)p_self;
+	const std::vector<Color> *self = (const std::vector<Color> *)p_self;
 	return self->empty();
 }
 
 void GDAPI godot_packed_color_array_destroy(godot_packed_color_array *p_self) {
-	((Vector<Color> *)p_self)->~Vector();
+	delete ((std::vector<Color> *)p_self);
 }
 
 #ifdef __cplusplus

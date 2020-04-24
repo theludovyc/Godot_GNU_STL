@@ -42,7 +42,6 @@
 #include "core/math/vector3.h"
 #include "core/oa_hash_map.h"
 #include "core/reference.h"
-#include "core/vector.h"
 #include "scene/resources/material.h"
 
 struct CSGBrush {

@@ -92,7 +92,7 @@ public:
 	/// IMPORTANT: Remember to delete the shape interface by calling: delete my_shape->getMeshInterface();
 	static class btConvexPointCloudShape *create_shape_convex(btAlignedObjectArray<btVector3> &p_vertices, const btVector3 &p_local_scaling = btVector3(1, 1, 1));
 	static class btScaledBvhTriangleMeshShape *create_shape_concave(btBvhTriangleMeshShape *p_mesh_shape, const btVector3 &p_local_scaling = btVector3(1, 1, 1));
-	static class btHeightfieldTerrainShape *create_shape_height_field(Vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height);
+	static class btHeightfieldTerrainShape *create_shape_height_field(std::vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height);
 	static class btRayShape *create_shape_ray(real_t p_length, bool p_slips_on_slope);
 };
 
@@ -205,7 +205,7 @@ class ConcavePolygonShapeBullet : public ShapeBullet {
 	class btBvhTriangleMeshShape *meshShape;
 
 public:
-	Vector<Vector3> faces;
+	std::vector<Vector3> faces;
 
 	ConcavePolygonShapeBullet();
 	virtual ~ConcavePolygonShapeBullet();
@@ -216,13 +216,13 @@ public:
 	virtual btCollisionShape *create_bt_shape(const btVector3 &p_implicit_scale, real_t p_extra_edge = 0);
 
 private:
-	void setup(Vector<Vector3> p_faces);
+	void setup(std::vector<Vector3> p_faces);
 };
 
 class HeightMapShapeBullet : public ShapeBullet {
 
 public:
-	Vector<real_t> heights;
+	std::vector<real_t> heights;
 	int width;
 	int depth;
 	real_t min_height;
@@ -236,7 +236,7 @@ public:
 	virtual btCollisionShape *create_bt_shape(const btVector3 &p_implicit_scale, real_t p_extra_edge = 0);
 
 private:
-	void setup(Vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height);
+	void setup(std::vector<real_t> &p_heights, int p_width, int p_depth, real_t p_min_height, real_t p_max_height);
 };
 
 class RayShapeBullet : public ShapeBullet {

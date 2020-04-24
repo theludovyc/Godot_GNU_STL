@@ -79,7 +79,7 @@ gd::PointKey NavMap::get_point_key(const Vector3 &p_pos) const {
 	return p;
 }
 
-Vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p_optimize) const {
+std::vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p_optimize) const {
 
 	const gd::Polygon *begin_poly = nullptr;
 	const gd::Polygon *end_poly = nullptr;
@@ -116,15 +116,15 @@ Vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p
 
 	if (!begin_poly || !end_poly) {
 		// No path
-		return Vector<Vector3>();
+		return std::vector<Vector3>();
 	}
 
 	if (begin_poly == end_poly) {
 
-		Vector<Vector3> path;
+		std::vector<Vector3> path;
 		path.resize(2);
-		path.write[0] = begin_point;
-		path.write[1] = end_point;
+		path[0] = begin_point;
+		path[1] = end_point;
 		return path;
 	}
 
@@ -284,7 +284,7 @@ Vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p
 
 	if (found_route) {
 
-		Vector<Vector3> path;
+		std::vector<Vector3> path;
 		if (p_optimize) {
 
 			// String pulling
@@ -372,7 +372,7 @@ Vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p
 			if (path[path.size() - 1] != begin_point)
 				path.push_back(begin_point);
 
-			path.invert();
+			std::reverse(path.begin(), path.end());
 
 		} else {
 			path.push_back(end_point);
@@ -393,12 +393,12 @@ Vector<Vector3> NavMap::get_path(Vector3 p_origin, Vector3 p_destination, bool p
 				np_id = navigation_polys[np_id].prev_navigation_poly_id;
 			}
 
-			path.invert();
+			std::reverse(path.begin(), path.end());
 		}
 
 		return path;
 	}
-	return Vector<Vector3>();
+	return std::vector<Vector3>();
 }
 
 Vector3 NavMap::get_closest_point_to_segment(const Vector3 &p_from, const Vector3 &p_to, const bool p_use_collision) const {
@@ -773,7 +773,7 @@ void NavMap::dispatch_callbacks() {
 	}
 }
 
-void NavMap::clip_path(const std::vector<gd::NavigationPoly> &p_navigation_polys, Vector<Vector3> &path, const gd::NavigationPoly *from_poly, const Vector3 &p_to_point, const gd::NavigationPoly *p_to_poly) const {
+void NavMap::clip_path(const std::vector<gd::NavigationPoly> &p_navigation_polys, std::vector<Vector3> &path, const gd::NavigationPoly *from_poly, const Vector3 &p_to_point, const gd::NavigationPoly *p_to_poly) const {
 	Vector3 from = path[path.size() - 1];
 
 	if (from.distance_to(p_to_point) < CMP_EPSILON)

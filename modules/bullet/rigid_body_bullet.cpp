@@ -183,7 +183,7 @@ int BulletPhysicsDirectBodyState3D::get_contact_collider_shape(int p_contact_idx
 }
 
 Vector3 BulletPhysicsDirectBodyState3D::get_contact_collider_velocity_at_position(int p_contact_idx) const {
-	RigidBodyBullet::CollisionData &colDat = body->collisions.write[p_contact_idx];
+	RigidBodyBullet::CollisionData &colDat = body->collisions[p_contact_idx];
 
 	btVector3 hitLocation;
 	G_TO_B(colDat.hitLocalLocation, hitLocation);
@@ -214,17 +214,17 @@ void RigidBodyBullet::KinematicUtilities::setSafeMargin(btScalar p_margin) {
 
 void RigidBodyBullet::KinematicUtilities::copyAllOwnerShapes() {
 	const std::vector<CollisionObjectBullet::ShapeWrapper>& shapes_wrappers(owner->get_shapes_wrappers());
+	auto shapes_count = shapes_wrappers.size();
 
-	just_delete_shapes(shapes_wrappers.size() );
+	just_delete_shapes(shapes_count);
+
+	const CollisionObjectBullet::ShapeWrapper *shape_wrapper;
 
 	const btVector3 owner_scale(owner->get_bt_body_scale());
 
-	auto it0 = shapes.rbegin();
-
-	auto it1 = shapes_wrappers.rbegin();
-
-	for(; it1 != shapes_wrappers.rend(); ++it0, ++it1 ){
-		if (!(*it1).active) {
+	for (int i = shapes_count - 1; 0 <= i; --i) {
+		shape_wrapper = &shapes_wrappers[i];
+		if (!shape_wrapper->active) {
 			continue;
 		}
 
@@ -248,8 +248,8 @@ void RigidBodyBullet::KinematicUtilities::copyAllOwnerShapes() {
 
 void RigidBodyBullet::KinematicUtilities::just_delete_shapes(int new_size) {
 	for(auto it = shapes.rbegin(); it != shapes.rend(); ++it){
-		if( (*it).shape ){
-			bulletdelete( (*it).shape );
+		if (it->shape) {
+			bulletdelete(it->shape);
 		}
 	}
 
@@ -851,6 +851,8 @@ void RigidBodyBullet::on_enter_area(AreaBullet *p_area) {
 		--areaWhereIamCount;
 		return;
 	}
+
+	for (int i = 0; i < areaWhereIamCount; ++i) {
 
 		if (nullptr == areasWhereIam[i]) {
 			// This area has the highest priority

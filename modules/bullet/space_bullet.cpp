@@ -666,9 +666,10 @@ void SpaceBullet::destroy_world() {
 
 void SpaceBullet::check_ghost_overlaps() {
 	/// Algorithm support variables
+	btCollisionShape *other_body_shape;
 	btGjkPairDetector::ClosestPointInput gjk_input;
 
-	int indexOverlap(-1);
+	int z(-1), indexOverlap(-1);
 
 	/// For each areas
 	for (auto it_areas = areas.rbegin(); it_areas != areas.rend(); ++it_areas) {
@@ -730,12 +731,12 @@ void SpaceBullet::check_ghost_overlaps() {
 
 					gjk_input.m_transformB = otherObject->get_transform__bullet() * other_shape_transform;
 
-					if (it_other_body_shape->bt_shape->isConvex()) {
+					if (other_body_shape->isConvex()) {
 						btPointCollector result;
 
 						btGjkPairDetector gjk_pair_detector(
 								static_cast<btConvexShape *>(it_area_shape->bt_shape),
-								static_cast<btConvexShape *>(it_other_body_shape->bt_shape),
+								static_cast<btConvexShape *>(other_body_shape),
 								gjk_simplex_solver,
 								gjk_epa_pen_solver);
 						gjk_pair_detector.getClosestPoints(gjk_input, result, nullptr);
@@ -747,9 +748,7 @@ void SpaceBullet::check_ghost_overlaps() {
 						}
 					} else {
 						// need_update : try to remove std::distance
-						btCollisionObjectWrapper obA(NULL, it_area_shape->bt_shape, (*it_areas)->get_bt_ghost(), gjk_input.m_transformA, -1, std::distance((*it_areas)->shapes.begin(), it_area_shape.base()) - 1);
-
-						btCollisionObjectWrapper obA(nullptr, area_shape, area->get_bt_ghost(), gjk_input.m_transformA, -1, y);
+						btCollisionObjectWrapper obA(nullptr, it_area_shape->bt_shape, (*it_areas)->get_bt_ghost(), gjk_input.m_transformA, -1, std::distance((*it_areas)->shapes.begin(), it_area_shape.base()) - 1);
 						btCollisionObjectWrapper obB(nullptr, other_body_shape, otherObject->get_bt_collision_object(), gjk_input.m_transformB, -1, z);
 
 						btCollisionAlgorithm *algorithm = dispatcher->findAlgorithm(&obA, &obB, nullptr, BT_CONTACT_POINT_ALGORITHMS);

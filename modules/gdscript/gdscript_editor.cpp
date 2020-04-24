@@ -908,7 +908,7 @@ static bool _guess_expression_type(GDScriptCompletionContext &p_context, const G
 										}
 
 										Callable::CallError ce;
-										Variant ret = mb->call(baseptr, (const Variant **)argptr.ptr(), argptr.size(), ce);
+										Variant ret = mb->call(baseptr, (const Variant **)argptr.data(), argptr.size(), ce);
 
 										if (ce.error == Callable::CallError::CALL_OK && ret.get_type() != Variant::NIL) {
 											if (ret.get_type() != Variant::OBJECT || ret.operator Object *() != nullptr) {

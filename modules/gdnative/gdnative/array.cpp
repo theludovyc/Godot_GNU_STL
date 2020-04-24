@@ -54,7 +54,7 @@ void GDAPI godot_array_new_copy(godot_array *r_dest, const godot_array *p_src) {
 
 void GDAPI godot_array_new_packed_color_array(godot_array *r_dest, const godot_packed_color_array *p_pca) {
 	Array *dest = (Array *)r_dest;
-	Vector<Color> *pca = (Vector<Color> *)p_pca;
+	std::vector<Color> *pca = (std::vector<Color> *)p_pca;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -66,7 +66,7 @@ void GDAPI godot_array_new_packed_color_array(godot_array *r_dest, const godot_p
 
 void GDAPI godot_array_new_packed_vector3_array(godot_array *r_dest, const godot_packed_vector3_array *p_pv3a) {
 	Array *dest = (Array *)r_dest;
-	Vector<Vector3> *pca = (Vector<Vector3> *)p_pv3a;
+	std::vector<Vector3> *pca = (std::vector<Vector3> *)p_pv3a;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -78,7 +78,7 @@ void GDAPI godot_array_new_packed_vector3_array(godot_array *r_dest, const godot
 
 void GDAPI godot_array_new_packed_vector2_array(godot_array *r_dest, const godot_packed_vector2_array *p_pv2a) {
 	Array *dest = (Array *)r_dest;
-	Vector<Vector2> *pca = (Vector<Vector2> *)p_pv2a;
+	std::vector<Vector2> *pca = (std::vector<Vector2> *)p_pv2a;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -90,7 +90,7 @@ void GDAPI godot_array_new_packed_vector2_array(godot_array *r_dest, const godot
 
 void GDAPI godot_array_new_packed_string_array(godot_array *r_dest, const godot_packed_string_array *p_psa) {
 	Array *dest = (Array *)r_dest;
-	Vector<String> *pca = (Vector<String> *)p_psa;
+	std::vector<String> *pca = (std::vector<String> *)p_psa;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -102,7 +102,7 @@ void GDAPI godot_array_new_packed_string_array(godot_array *r_dest, const godot_
 
 void GDAPI godot_array_new_packed_real_array(godot_array *r_dest, const godot_packed_real_array *p_pra) {
 	Array *dest = (Array *)r_dest;
-	Vector<godot_real> *pca = (Vector<godot_real> *)p_pra;
+	std::vector<godot_real> *pca = (std::vector<godot_real> *)p_pra;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -114,7 +114,7 @@ void GDAPI godot_array_new_packed_real_array(godot_array *r_dest, const godot_pa
 
 void GDAPI godot_array_new_packed_int_array(godot_array *r_dest, const godot_packed_int_array *p_pia) {
 	Array *dest = (Array *)r_dest;
-	Vector<godot_int> *pca = (Vector<godot_int> *)p_pia;
+	std::vector<godot_int> *pca = (std::vector<godot_int> *)p_pia;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 
@@ -126,7 +126,7 @@ void GDAPI godot_array_new_packed_int_array(godot_array *r_dest, const godot_pac
 
 void GDAPI godot_array_new_packed_byte_array(godot_array *r_dest, const godot_packed_byte_array *p_pba) {
 	Array *dest = (Array *)r_dest;
-	Vector<uint8_t> *pca = (Vector<uint8_t> *)p_pba;
+	std::vector<uint8_t> *pca = (std::vector<uint8_t> *)p_pba;
 	memnew_placement(dest, Array);
 	dest->resize(pca->size());
 

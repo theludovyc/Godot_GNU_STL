@@ -93,7 +93,7 @@ void PluginScriptInstance::notification(int p_notification) {
 	_desc->notification(_data, p_notification);
 }
 
-Vector<ScriptNetData> PluginScriptInstance::get_rpc_methods() const {
+std::vector<ScriptNetData> PluginScriptInstance::get_rpc_methods() const {
 	return _script->get_rpc_methods();
 }
 
@@ -113,7 +113,7 @@ MultiplayerAPI::RPCMode PluginScriptInstance::get_rpc_mode(const StringName &p_m
 	return _script->get_rpc_mode(p_method);
 }
 
-Vector<ScriptNetData> PluginScriptInstance::get_rset_properties() const {
+std::vector<ScriptNetData> PluginScriptInstance::get_rset_properties() const {
 	return _script->get_rset_properties();
 }
 
