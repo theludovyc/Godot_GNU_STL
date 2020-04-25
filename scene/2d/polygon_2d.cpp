@@ -315,7 +315,7 @@ void Polygon2D::_notification(int p_what) {
 					int ic = src_indices.size();
 					if (ic < 3)
 						continue;
-					const int *r = src_indices.ptr();
+					const int *r = src_indices.data();
 
 					std::vector<Vector2> tmp_points;
 					tmp_points.resize(ic);
