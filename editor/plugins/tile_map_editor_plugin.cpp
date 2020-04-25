@@ -481,7 +481,7 @@ void TileMapEditor::_update_palette() {
 			palette->add_item(String());
 		}
 
-		Ref<Texture2D> tex = tileset->tile_get_texture(entries[i].id);
+		Ref<Texture2D> tex = tileset->tile_get_texture(entry.id);
 
 		if (tex.is_valid()) {
 			Rect2 region = tileset->tile_get_region(entry.id);
@@ -522,7 +522,7 @@ void TileMapEditor::_update_palette() {
 		sel_tile = selected[Math::rand() % selected.size()];
 	} else if (palette->get_item_count() > 0) {
 		palette->select(0);
-		sel_tile = palette->get_selected_items().get(0);
+		sel_tile = palette->get_selected_items().front();
 	}
 
 	if (sel_tile != TileMap::INVALID_CELL && ((manual_autotile && tileset->tile_get_tile_mode(sel_tile) == TileSet::AUTO_TILE) || (!priority_atlastile && tileset->tile_get_tile_mode(sel_tile) == TileSet::ATLAS_TILE))) {
