@@ -271,7 +271,7 @@ void TextEdit::Text::clear_wrap_cache() {
 
 void TextEdit::Text::clear_info_icons() {
 	for (int i = 0; i < text.size(); i++) {
-		text.write[i].has_info = false;
+		text[i].has_info = false;
 	}
 }
 
@@ -5505,8 +5505,8 @@ std::vector<int> TextEdit::_search_bind(const String &p_key, uint32_t p_search_f
 	if (search(p_key, p_search_flags, p_from_line, p_from_column, line, col)) {
 		std::vector<int> result;
 		result.resize(2);
-		result.set(SEARCH_RESULT_COLUMN, col);
-		result.set(SEARCH_RESULT_LINE, line);
+		result[SEARCH_RESULT_COLUMN] = col;
+		result[SEARCH_RESULT_LINE] = line;
 		return result;
 
 	} else {
@@ -6659,9 +6659,9 @@ void TextEdit::_update_completion_candidates() {
 		}
 	}
 
-	completion_options.append_array(completion_options_casei);
-	completion_options.append_array(completion_options_subseq);
-	completion_options.append_array(completion_options_subseq_casei);
+	completion_options.insert(completion_options.end(), completion_options_casei.begin(), completion_options_casei.end());
+	completion_options.insert(completion_options.end(), completion_options_subseq.begin(), completion_options_subseq.end());
+	completion_options.insert(completion_options.end(), completion_options_subseq_casei.begin(), completion_options_subseq_casei.end());
 
 	if (completion_options.size() == 0) {
 		// No options to complete, cancel.
