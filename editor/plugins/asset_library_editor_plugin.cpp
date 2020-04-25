@@ -172,7 +172,7 @@ void EditorAssetLibraryItemDescription::set_image(int p_type, int p_index, const
 						tex.instance();
 						tex->create_from_image(thumbnail);
 
-						preview_image.button->set_icon(tex);
+						preview_images[i].button->set_icon(tex);
 						// Make it clearer that clicking it will open an external link
 						preview_images[i].button->set_default_cursor_shape(Control::CURSOR_POINTING_HAND);
 					} else {
@@ -226,10 +226,10 @@ void EditorAssetLibraryItemDescription::_preview_click(int p_id) {
 					child_controls_changed();
 				}
 			}else{
-				_link_click(preview_image.video_link);
+				_link_click(preview_images[i].video_link);
 			}
 		}else{
-			preview_image.button->set_pressed(false);
+			preview_images[i].button->set_pressed(false);
 		}
 	}
 }
@@ -720,7 +720,7 @@ void EditorAssetLibrary::_image_update(bool use_cache, bool final, const PackedB
 				int len = file->get_32();
 				cached_data.resize(len);
 
-				uint8_t *w = cached_data.ptrw();
+				uint8_t *w = cached_data.data();
 				file->get_buffer(w, len);
 
 				image_data = cached_data;
@@ -730,7 +730,7 @@ void EditorAssetLibrary::_image_update(bool use_cache, bool final, const PackedB
 		}
 
 		int len = image_data.size();
-		const uint8_t *r = image_data.ptr();
+		const uint8_t *r = image_data.data();
 		Ref<Image> image = Ref<Image>(memnew(Image));
 
 		uint8_t png_signature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
@@ -804,7 +804,7 @@ void EditorAssetLibrary::_image_request_completed(int p_status, int p_code, cons
 					}
 
 					int len = p_data.size();
-					const uint8_t *r = p_data.ptr();
+					const uint8_t *r = p_data.data();
 					file = FileAccess::open(cache_filename_base + ".data", FileAccess::WRITE);
 					if (file) {
 						file->store_32(len);
@@ -1067,7 +1067,7 @@ void EditorAssetLibrary::_http_request_completed(int p_status, int p_code, const
 
 	{
 		int datalen = p_data.size();
-		const uint8_t *r = p_data.ptr();
+		const uint8_t *r = p_data.data();
 		str.parse_utf8((const char *)r, datalen);
 	}
 

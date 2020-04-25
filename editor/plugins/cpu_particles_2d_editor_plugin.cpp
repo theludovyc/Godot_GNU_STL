@@ -117,7 +117,7 @@ void CPUParticles2DEditorPlugin::_generate_emission_mask() {
 
 	{
 		std::vector<uint8_t> data = img->get_data();
-		const uint8_t *r = data.ptr();
+		const uint8_t *r = data.data();
 
 		for (int i = 0; i < s.width; i++) {
 			for (int j = 0; j < s.height; j++) {
@@ -198,7 +198,7 @@ void CPUParticles2DEditorPlugin::_generate_emission_mask() {
 	if (capture_colors) {
 		PackedColorArray pca;
 		pca.resize(vpc);
-		Color *pcaw = pca.ptrw();
+		Color *pcaw = pca.data();
 		for (int i = 0; i < vpc; i += 1) {
 			Color color;
 			color.r = valid_colors[i * 4 + 0] / 255.0f;
