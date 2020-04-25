@@ -1603,7 +1603,7 @@ void TileSetEditor::_on_workspace_input(const Ref<InputEvent> &p_ie) {
 
 										std::vector<Vector2> polygon;
 										polygon.resize(current_shape.size());
-										Vector2 *w = polygon.ptrw();
+										Vector2 *w = polygon.data();
 
 										for (int i = 0; i < current_shape.size(); i++) {
 											w[i] = current_shape[i] - shape_anchor;
@@ -1623,7 +1623,7 @@ void TileSetEditor::_on_workspace_input(const Ref<InputEvent> &p_ie) {
 										std::vector<Vector2> polygon;
 										std::vector<int> indices;
 										polygon.resize(current_shape.size());
-										Vector2 *w = polygon.ptrw();
+										Vector2 *w = polygon.data();
 
 										for (int i = 0; i < current_shape.size(); i++) {
 											w[i] = current_shape[i] - shape_anchor;
@@ -1645,7 +1645,7 @@ void TileSetEditor::_on_workspace_input(const Ref<InputEvent> &p_ie) {
 							}
 						} else if (mm.is_valid()) {
 							if (dragging_point >= 0) {
-								current_shape.set(dragging_point, snap_point(mm->get_position()));
+								current_shape[dragging_point] = snap_point(mm->get_position());
 								workspace->update();
 							}
 						}
@@ -1709,10 +1709,10 @@ void TileSetEditor::_on_workspace_input(const Ref<InputEvent> &p_ie) {
 
 									// if the first two corners are within grabbing distance of one another, expand the rect to fill the tile
 									if (is_within_grabbing_distance_of_first_point(current_shape[1], grab_threshold)) {
-										current_shape.set(0, snap_point(shape_anchor));
-										current_shape.set(1, snap_point(shape_anchor + Vector2(current_tile_region.size.x, 0)));
-										current_shape.set(2, snap_point(shape_anchor + current_tile_region.size));
-										current_shape.set(3, snap_point(shape_anchor + Vector2(0, current_tile_region.size.y)));
+										current_shape[0] = snap_point(shape_anchor);
+										current_shape[1] = snap_point(shape_anchor + Vector2(current_tile_region.size.x, 0));
+										current_shape[2] = snap_point(shape_anchor + current_tile_region.size);
+										current_shape[3] = snap_point(shape_anchor + Vector2(0, current_tile_region.size.y));
 									}
 
 									close_shape(shape_anchor);
@@ -1725,9 +1725,9 @@ void TileSetEditor::_on_workspace_input(const Ref<InputEvent> &p_ie) {
 								Vector2 pos = mm->get_position();
 								pos = snap_point(pos);
 								Vector2 p = current_shape[2];
-								current_shape.set(3, snap_point(Vector2(pos.x, p.y)));
-								current_shape.set(0, snap_point(pos));
-								current_shape.set(1, snap_point(Vector2(p.x, pos.y)));
+								current_shape[3] = snap_point(Vector2(pos.x, p.y));
+								current_shape[0] = snap_point(pos);
+								current_shape[1] = snap_point(Vector2(p.x, pos.y));
 								workspace->update();
 							}
 						}
@@ -2898,7 +2898,7 @@ void TileSetEditor::close_shape(const Vector2 &shape_anchor) {
 
 		std::vector<Vector2> polygon;
 		polygon.resize(current_shape.size());
-		Vector2 *w = polygon.ptrw();
+		Vector2 *w = polygon.data();
 
 		for (int i = 0; i < current_shape.size(); i++) {
 			w[i] = current_shape[i] - shape_anchor;
