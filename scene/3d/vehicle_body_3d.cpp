@@ -712,8 +712,8 @@ void VehicleBody3D::_update_friction(PhysicsDirectBodyState3D *s) {
 
 	//collapse all those loops into one!
 	for (int i = 0; i < wheels.size(); i++) {
-		m_sideImpulse.write[i] = real_t(0.);
-		m_forwardImpulse.write[i] = real_t(0.);
+		m_sideImpulse[i] = real_t(0.);
+		m_forwardImpulse[i] = real_t(0.);
 	}
 
 	{
@@ -728,22 +728,22 @@ void VehicleBody3D::_update_friction(PhysicsDirectBodyState3D *s) {
 
 				Basis wheelBasis0 = wheelInfo.m_worldTransform.basis; //get_global_transform().basis;
 
-				m_axle.write[i] = wheelBasis0.get_axis(Vector3::AXIS_X);
+				m_axle[i] = wheelBasis0.get_axis(Vector3::AXIS_X);
 				//m_axle[i] = wheelInfo.m_raycastInfo.m_wheelAxleWS;
 
 				const Vector3 &surfNormalWS = wheelInfo.m_raycastInfo.m_contactNormalWS;
 				real_t proj = m_axle[i].dot(surfNormalWS);
-				m_axle.write[i] -= surfNormalWS * proj;
-				m_axle.write[i] = m_axle[i].normalized();
+				m_axle[i] -= surfNormalWS * proj;
+				m_axle[i] = m_axle[i].normalized();
 
-				m_forwardWS.write[i] = surfNormalWS.cross(m_axle[i]);
-				m_forwardWS.write[i].normalize();
+				m_forwardWS[i] = surfNormalWS.cross(m_axle[i]);
+				m_forwardWS[i].normalize();
 
 				_resolve_single_bilateral(s, wheelInfo.m_raycastInfo.m_contactPointWS,
 						wheelInfo.m_raycastInfo.m_groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
-						m_axle[i], m_sideImpulse.write[i], wheelInfo.m_rollInfluence);
+						m_axle[i], m_sideImpulse[i], wheelInfo.m_rollInfluence);
 
-				m_sideImpulse.write[i] *= sideFrictionStiffness2;
+				m_sideImpulse[i] *= sideFrictionStiffness2;
 			}
 		}
 	}
@@ -773,7 +773,7 @@ void VehicleBody3D::_update_friction(PhysicsDirectBodyState3D *s) {
 
 			//switch between active rolling (throttle), braking and non-active rolling friction (no throttle/break)
 
-			m_forwardImpulse.write[wheel] = real_t(0.);
+			m_forwardImpulse[wheel] = real_t(0.);
 			wheelInfo.m_skidInfo = real_t(1.);
 
 			if (wheelInfo.m_raycastInfo.m_isInContact) {
@@ -784,7 +784,7 @@ void VehicleBody3D::_update_friction(PhysicsDirectBodyState3D *s) {
 
 				real_t maximpSquared = maximp * maximpSide;
 
-				m_forwardImpulse.write[wheel] = rollingFriction; //wheelInfo.m_engineForce* timeStep;
+				m_forwardImpulse[wheel] = rollingFriction; //wheelInfo.m_engineForce* timeStep;
 
 				real_t x = (m_forwardImpulse[wheel]) * fwdFactor;
 				real_t y = (m_sideImpulse[wheel]) * sideFactor;
@@ -806,8 +806,8 @@ void VehicleBody3D::_update_friction(PhysicsDirectBodyState3D *s) {
 		for (int wheel = 0; wheel < wheels.size(); wheel++) {
 			if (m_sideImpulse[wheel] != real_t(0.)) {
 				if (wheels[wheel]->m_skidInfo < real_t(1.)) {
-					m_forwardImpulse.write[wheel] *= wheels[wheel]->m_skidInfo;
-					m_sideImpulse.write[wheel] *= wheels[wheel]->m_skidInfo;
+					m_forwardImpulse[wheel] *= wheels[wheel]->m_skidInfo;
+					m_sideImpulse[wheel] *= wheels[wheel]->m_skidInfo;
 				}
 			}
 		}

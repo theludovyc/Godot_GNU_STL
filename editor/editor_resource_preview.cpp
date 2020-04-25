@@ -171,7 +171,7 @@ void EditorResourcePreview::_generate_preview(Ref<ImageTexture> &r_texture, Ref<
 		int small_thumbnail_size = EditorNode::get_singleton()->get_theme_base()->get_theme_icon("Object", "EditorIcons")->get_width(); // Kind of a workaround to retrieve the default icon size
 		small_thumbnail_size *= EDSCALE;
 
-		if (preview_generators[i]->can_generate_small_preview()) {
+		if (p_generator->can_generate_small_preview()) {
 			Ref<Texture2D> generated_small;
 			if (p_item.resource.is_valid()) {
 				generated_small = p_generator->generate(p_item.resource, Vector2(small_thumbnail_size, small_thumbnail_size));

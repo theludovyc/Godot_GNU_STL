@@ -451,7 +451,11 @@ UndoRedo &EditorData::get_undo_redo() {
 void EditorData::remove_editor_plugin(EditorPlugin *p_plugin) {
 
 	p_plugin->undo_redo = nullptr;
-	editor_plugins.erase(p_plugin);
+
+	auto it_plugin = std::find(editor_plugins.begin(), editor_plugins.end(), p_plugin);
+	if (it_plugin != editor_plugins.end()) {
+		editor_plugins.erase(it_plugin);
+	}
 }
 
 void EditorData::add_editor_plugin(EditorPlugin *p_plugin) {
@@ -507,7 +511,7 @@ Object *EditorData::instance_custom_type(const String &p_type, const String &p_i
 
 void EditorData::remove_custom_type(const String &p_type) {
 
-	for (Map<String, Vector<CustomType>>::Element *E = custom_types.front(); E; E = E->next()) {
+	for (Map<String, std::vector<CustomType>>::Element *E = custom_types.front(); E; E = E->next()) {
 
 		for (decltype(E->get().size()) i = 0; i < E->get().size(); ++i) {
 			if (E->get()[i].name == p_type) {

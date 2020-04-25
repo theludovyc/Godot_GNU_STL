@@ -225,7 +225,6 @@ class EditorPropertyFlags : public EditorProperty {
 
 protected:
 	static void _bind_methods();
-	CheckBox* setup_add_checkbox(String p_option);
 
 public:
 	void setup(const std::vector<String> &p_options);

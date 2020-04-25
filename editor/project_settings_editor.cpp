@@ -1259,7 +1259,7 @@ void ProjectSettingsEditor::_translation_delete(Object *p_item, int p_column, in
 
 	ERR_FAIL_INDEX(idx, translations.size());
 
-	translations.remove(idx);
+	translations.erase(translations.begin() + idx);
 
 	undo_redo->create_action(TTR("Remove Translation"));
 	undo_redo->add_do_property(ProjectSettings::get_singleton(), "locale/translations", translations);
@@ -1367,9 +1367,9 @@ void ProjectSettingsEditor::_translation_res_option_changed() {
 	PackedStringArray r = remaps[key];
 	ERR_FAIL_INDEX(idx, r.size());
 	if (translation_locales_idxs_remap.size() > which) {
-		r.set(idx, path + ":" + langs[translation_locales_idxs_remap[which]]);
+		r.at(idx) = path + ":" + langs[translation_locales_idxs_remap[which]];
 	} else {
-		r.set(idx, path + ":" + langs[which]);
+		r.at(idx) = path + ":" + langs[which];
 	}
 	remaps[key] = r;
 
@@ -1433,7 +1433,7 @@ void ProjectSettingsEditor::_translation_res_option_delete(Object *p_item, int p
 	ERR_FAIL_COND(!remaps.has(key));
 	PackedStringArray r = remaps[key];
 	ERR_FAIL_INDEX(idx, r.size());
-	r.remove(idx);
+	r.erase(r.begin() + idx);
 	remaps[key] = r;
 
 	undo_redo->create_action(TTR("Remove Resource Remap Option"));
@@ -1673,16 +1673,16 @@ void ProjectSettingsEditor::_update_translations() {
 			TreeItem *t = translation_remap->create_item(root);
 
 			t->set_editable(0, false);
-			t->set_text(0, keys[i].replace_first("res://", ""));
-			t->set_tooltip(0, keys[i]);
-			t->set_metadata(0, keys[i]);
+			t->set_text(0, key.replace_first("res://", ""));
+			t->set_tooltip(0, key);
+			t->set_metadata(0, key);
 			t->add_button(0, input_editor->get_theme_icon("Remove", "EditorIcons"), 0, false, TTR("Remove"));
-			if (keys[i] == remap_selected) {
+			if (key == remap_selected) {
 				t->select(0);
 
 				translation_res_option_add_button->set_disabled(false);
 
-				PackedStringArray selected = remaps[keys[i]];
+				PackedStringArray selected = remaps[key];
 				for (int j = 0; j < selected.size(); j++) {
 					String s2 = selected[j];
 

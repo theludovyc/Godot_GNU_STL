@@ -69,7 +69,7 @@ private:
 
 	DrawOrder draw_order;
 
-	Vector<Ref<Mesh>> draw_passes;
+	std::vector<Ref<Mesh>> draw_passes;
 
 protected:
 	static void _bind_methods();
@@ -78,7 +78,7 @@ protected:
 
 public:
 	AABB get_aabb() const;
-	Vector<Face3> get_faces(uint32_t p_usage_flags) const;
+	std::vector<Face3> get_faces(uint32_t p_usage_flags) const;
 
 	void set_emitting(bool p_emitting);
 	void set_amount(int p_amount);

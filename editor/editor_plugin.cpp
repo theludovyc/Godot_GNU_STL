@@ -749,7 +749,7 @@ void EditorPlugin::remove_scene_import_plugin(const Ref<EditorSceneImporter> &p_
 }
 
 int find(const PackedStringArray &a, const String &v) {
-	const String *r = a.ptr();
+	const String *r = a.data();
 	for (int j = 0; j < a.size(); ++j) {
 		if (r[j] == v) {
 			return j;

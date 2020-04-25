@@ -101,7 +101,7 @@ void Skeleton3DEditor::create_physical_skeleton() {
 	}
 }
 
-PhysicalBone3D *Skeleton3DEditor::create_physical_bone(int bone_id, int bone_child_id, const Vector<BoneInfo> &bones_infos) {
+PhysicalBone3D *Skeleton3DEditor::create_physical_bone(int bone_id, int bone_child_id, const std::vector<BoneInfo> &bones_infos) {
 
 	const Transform child_rest = skeleton->get_bone_rest(bone_child_id);
 

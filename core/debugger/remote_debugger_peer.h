@@ -63,10 +63,10 @@ private:
 	List<Array> out_queue;
 	int out_left = 0;
 	int out_pos = 0;
-	Vector<uint8_t> out_buf;
+	std::vector<uint8_t> out_buf;
 	int in_left = 0;
 	int in_pos = 0;
-	Vector<uint8_t> in_buf;
+	std::vector<uint8_t> in_buf;
 	bool connected = false;
 	bool running = false;
 

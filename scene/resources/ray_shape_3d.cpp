@@ -32,9 +32,9 @@
 
 #include "servers/physics_server_3d.h"
 
-Vector<Vector3> RayShape3D::get_debug_mesh_lines() {
-
-	Vector<Vector3> points;
+std::vector<Vector3> RayShape3D::get_debug_mesh_lines() {
+	// need_update : maybe return array instead vector
+	std::vector<Vector3> points;
 	points.push_back(Vector3());
 	points.push_back(Vector3(0, 0, get_length()));
 

@@ -39,9 +39,9 @@ AABB CPUParticles3D::get_aabb() const {
 
 	return AABB();
 }
-Vector<Face3> CPUParticles3D::get_faces(uint32_t p_usage_flags) const {
+std::vector<Face3> CPUParticles3D::get_faces(uint32_t p_usage_flags) const {
 
-	return Vector<Face3>();
+	return std::vector<Face3>();
 }
 
 void CPUParticles3D::set_emitting(bool p_emitting) {
@@ -419,17 +419,17 @@ void CPUParticles3D::set_emission_box_extents(Vector3 p_extents) {
 	emission_box_extents = p_extents;
 }
 
-void CPUParticles3D::set_emission_points(const Vector<Vector3> &p_points) {
+void CPUParticles3D::set_emission_points(const std::vector<Vector3> &p_points) {
 
 	emission_points = p_points;
 }
 
-void CPUParticles3D::set_emission_normals(const Vector<Vector3> &p_normals) {
+void CPUParticles3D::set_emission_normals(const std::vector<Vector3> &p_normals) {
 
 	emission_normals = p_normals;
 }
 
-void CPUParticles3D::set_emission_colors(const Vector<Color> &p_colors) {
+void CPUParticles3D::set_emission_colors(const std::vector<Color> &p_colors) {
 
 	emission_colors = p_colors;
 }
@@ -442,16 +442,16 @@ Vector3 CPUParticles3D::get_emission_box_extents() const {
 
 	return emission_box_extents;
 }
-Vector<Vector3> CPUParticles3D::get_emission_points() const {
+std::vector<Vector3> CPUParticles3D::get_emission_points() const {
 
 	return emission_points;
 }
-Vector<Vector3> CPUParticles3D::get_emission_normals() const {
+std::vector<Vector3> CPUParticles3D::get_emission_normals() const {
 
 	return emission_normals;
 }
 
-Vector<Color> CPUParticles3D::get_emission_colors() const {
+std::vector<Color> CPUParticles3D::get_emission_colors() const {
 
 	return emission_colors;
 }

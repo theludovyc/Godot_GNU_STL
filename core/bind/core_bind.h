@@ -65,7 +65,7 @@ public:
 	RES load_threaded_get(const String &p_path);
 
 	RES load(const String &p_path, const String &p_type_hint = "", bool p_no_cache = false);
-	Vector<String> get_recognized_extensions_for_type(const String &p_type);
+	std::vector<String> get_recognized_extensions_for_type(const String &p_type);
 	void set_abort_on_missing_resources(bool p_abort);
 	PackedStringArray get_dependencies(const String &p_path);
 	bool has_cached(const String &p_path);
@@ -98,7 +98,7 @@ public:
 	static _ResourceSaver *get_singleton() { return singleton; }
 
 	Error save(const String &p_path, const RES &p_resource, SaverFlags p_flags);
-	Vector<String> get_recognized_extensions(const RES &p_resource);
+	std::vector<String> get_recognized_extensions(const RES &p_resource);
 
 	_ResourceSaver();
 };
@@ -243,7 +243,7 @@ public:
 
 	bool request_permission(const String &p_name);
 	bool request_permissions();
-	Vector<String> get_granted_permissions() const;
+	std::vector<String> get_granted_permissions() const;
 
 	static _OS *get_singleton() { return singleton; }
 
@@ -266,13 +266,13 @@ protected:
 
 public:
 	static _Geometry *get_singleton();
-	Vector<Plane> build_box_planes(const Vector3 &p_extents);
-	Vector<Plane> build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
-	Vector<Plane> build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	std::vector<Plane> build_box_planes(const Vector3 &p_extents);
+	std::vector<Plane> build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	std::vector<Plane> build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
 	Variant segment_intersects_segment_2d(const Vector2 &p_from_a, const Vector2 &p_to_a, const Vector2 &p_from_b, const Vector2 &p_to_b);
 	Variant line_intersects_line_2d(const Vector2 &p_from_a, const Vector2 &p_dir_a, const Vector2 &p_from_b, const Vector2 &p_dir_b);
-	Vector<Vector2> get_closest_points_between_segments_2d(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2);
-	Vector<Vector3> get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2);
+	std::vector<Vector2> get_closest_points_between_segments_2d(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2);
+	std::vector<Vector3> get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2);
 	Vector2 get_closest_point_to_segment_2d(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
 	Vector3 get_closest_point_to_segment(const Vector3 &p_point, const Vector3 &p_a, const Vector3 &p_b);
 	Vector2 get_closest_point_to_segment_uncapped_2d(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
@@ -390,7 +390,7 @@ public:
 
 	Variant get_var(bool p_allow_objects = false) const;
 
-	Vector<uint8_t> get_buffer(int p_length) const; // Get an array of bytes.
+	std::vector<uint8_t> get_buffer(int p_length) const; // Get an array of bytes.
 	String get_line() const;
 	std::vector<String> get_csv_line(const String &p_delim = ",") const;
 	String get_as_text() const;
@@ -423,7 +423,7 @@ public:
 	virtual void store_pascal_string(const String &p_string);
 	virtual String get_pascal_string();
 
-	void store_buffer(const Vector<uint8_t> &p_buffer); // Store an array of bytes.
+	void store_buffer(const std::vector<uint8_t> &p_buffer); // Store an array of bytes.
 
 	void store_var(const Variant &p_var, bool p_full_objects = false);
 
@@ -497,8 +497,8 @@ public:
 	String variant_to_base64(const Variant &p_var, bool p_full_objects = false);
 	Variant base64_to_variant(const String &p_str, bool p_allow_objects = false);
 
-	String raw_to_base64(const Vector<uint8_t> &p_arr);
-	Vector<uint8_t> base64_to_raw(const String &p_str);
+	String raw_to_base64(const std::vector<uint8_t> &p_arr);
+	std::vector<uint8_t> base64_to_raw(const String &p_str);
 
 	String utf8_to_base64(const String &p_str);
 	String base64_to_utf8(const String &p_str);
