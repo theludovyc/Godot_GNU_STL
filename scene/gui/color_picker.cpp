@@ -324,7 +324,7 @@ PackedColorArray ColorPicker::get_presets() const {
 	PackedColorArray arr;
 	arr.resize(presets.size());
 	for (int i = 0; i < presets.size(); i++) {
-		arr.set(i, presets[i]);
+		arr[i] = presets[i];
 	}
 	return arr;
 }
