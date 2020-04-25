@@ -1014,10 +1014,10 @@ void EditorSettings::setup_language() {
 		if (dtl->lang == lang) {
 			std::vector<uint8_t> data;
 			data.resize(dtl->uncomp_size);
-			Compression::decompress(data.ptrw(), dtl->uncomp_size, dtl->data, dtl->comp_size, Compression::MODE_DEFLATE);
+			Compression::decompress(data.data(), dtl->uncomp_size, dtl->data, dtl->comp_size, Compression::MODE_DEFLATE);
 
 			FileAccessMemory *fa = memnew(FileAccessMemory);
-			fa->open_custom(data.ptr(), data.size());
+			fa->open_custom(data.data(), data.size());
 
 			Ref<Translation> tr = TranslationLoaderPO::load_translation(fa);
 
