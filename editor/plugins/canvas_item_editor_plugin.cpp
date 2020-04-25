@@ -656,7 +656,7 @@ void CanvasItemEditor::_get_canvas_items_at_pos(const Point2 &p_pos, std::vector
 
 		//Remove the item if invalid
 		if (!canvas_item || duplicate || (canvas_item != scene && canvas_item->get_owner() != scene && !scene->is_editable_instance(canvas_item->get_owner())) || (!p_allow_locked && _is_node_locked(canvas_item))) {
-			r_items.remove(i);
+			r_items.erase(r_items.begin() + i);
 			i--;
 		} else {
 			r_items[i].item = canvas_item;
@@ -3566,7 +3566,7 @@ void CanvasItemEditor::_draw_hover() {
 
 	for (auto &&h_result : hovering_results) {
 
-		Ref<Texture> node_icon = h_result.icon;
+		Ref<Texture2D> node_icon = h_result.icon;
 		String node_name = h_result.name;
 
 		Ref<Font> font = get_theme_font("font", "Label");
@@ -6290,7 +6290,7 @@ CanvasItemEditorViewport::CanvasItemEditorViewport(EditorNode *p_node, CanvasIte
 	for (auto &&type : types) {
 		CheckBox *check = memnew(CheckBox);
 		btn_group->add_child(check);
-		check->set_text(types[i]);
+		check->set_text(type);
 		check->connect("button_down", callable_mp(this, &CanvasItemEditorViewport::_on_select_type), varray(check));
 		check->set_button_group(button_group);
 	}
