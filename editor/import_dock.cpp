@@ -212,7 +212,7 @@ void ImportDock::set_edit_multiple_paths(const std::vector<String> &p_paths) {
 			set_edit_multiple_paths0(config, value_frequency);
 		}else{
 			// need_update : maybe error can be handle better
-			WARN_PRINT("Condition ' " _STR(err != OK) " ' is true. Continuing..:")
+			WARN_PRINT("Condition ' " _STR(err != OK) " ' is true. Continuing..:");
 		}
 
 		it++;

@@ -123,7 +123,7 @@ class TileMapEditor : public VBoxContainer {
 	bool *bucket_cache_visited;
 	Rect2i bucket_cache_rect;
 	int bucket_cache_tile;
-	Vector<Vector2> bucket_cache;
+	std::vector<Vector2> bucket_cache;
 	List<Point2i> bucket_queue;
 
 	struct CellOp {
@@ -164,10 +164,10 @@ class TileMapEditor : public VBoxContainer {
 
 	void _pick_tile(const Point2 &p_pos);
 
-	Vector<Vector2> _bucket_fill(const Point2i &p_start, bool erase = false, bool preview = false);
+	std::vector<Vector2> _bucket_fill(const Point2i &p_start, bool erase = false, bool preview = false);
 
-	void _fill_points(const Vector<Vector2> &p_points, const Dictionary &p_op);
-	void _erase_points(const Vector<Vector2> &p_points);
+	void _fill_points(const std::vector<Vector2> &p_points, const Dictionary &p_op);
+	void _erase_points(const std::vector<Vector2> &p_points);
 
 	void _select(const Point2i &p_from, const Point2i &p_to);
 	void _erase_selection();

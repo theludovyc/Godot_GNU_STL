@@ -37,9 +37,9 @@
 void EditorProfiler::_make_metric_ptrs(Metric &m) {
 
 	for (int i = 0; i < m.categories.size(); i++) {
-		m.category_ptrs[m.categories[i].signature] = &m.categories.write[i];
+		m.category_ptrs[m.categories[i].signature] = &m.categories[i];
 		for (int j = 0; j < m.categories[i].items.size(); j++) {
-			m.item_ptrs[m.categories[i].items[j].signature] = &m.categories.write[i].items.write[j];
+			m.item_ptrs[m.categories[i].items[j].signature] = &m.categories[i].items[j];
 		}
 	}
 }
@@ -50,8 +50,8 @@ void EditorProfiler::add_frame_metric(const Metric &p_metric, bool p_final) {
 	if (last_metric >= frame_metrics.size())
 		last_metric = 0;
 
-	frame_metrics.write[last_metric] = p_metric;
-	_make_metric_ptrs(frame_metrics.write[last_metric]);
+	frame_metrics[last_metric] = p_metric;
+	_make_metric_ptrs(frame_metrics[last_metric]);
 
 	updating_frame = true;
 	cursor_metric_edit->set_max(frame_metrics[last_metric].frame_number);
@@ -175,7 +175,7 @@ void EditorProfiler::_update_plot() {
 		graph_image.resize(desired_len);
 	}
 
-	uint8_t *wr = graph_image.ptrw();
+	uint8_t *wr = graph_image.data();
 	const Color background_color = get_theme_color("dark_color_2", "Editor");
 
 	// Clear the previous frame and set the background color.
@@ -219,10 +219,10 @@ void EditorProfiler::_update_plot() {
 		highest *= 1.2; //leave some upper room
 		graph_height = highest;
 
-		Vector<int> columnv;
+		std::vector<int> columnv;
 		columnv.resize(h * 4);
 
-		int *column = columnv.ptrw();
+		int *column = columnv.data();
 
 		Map<StringName, int> plot_prev;
 		//Map<StringName,int> plot_max;
@@ -611,16 +611,16 @@ bool EditorProfiler::is_profiling() {
 	return activate->is_pressed();
 }
 
-Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
-	Vector<Vector<String>> res;
+std::vector<std::vector<String>> EditorProfiler::get_data_as_csv() const {
+	std::vector<std::vector<String>> res;
 
 	if (frame_metrics.empty()) {
 		return res;
 	}
 
 	// signatures
-	Vector<String> signatures;
-	const Vector<EditorProfiler::Metric::Category> &categories = frame_metrics[0].categories;
+	std::vector<String> signatures;
+	const std::vector<EditorProfiler::Metric::Category> &categories = frame_metrics[0].categories;
 
 	for (int j = 0; j < categories.size(); j++) {
 
@@ -634,7 +634,7 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 	res.push_back(signatures);
 
 	// values
-	Vector<String> values;
+	std::vector<String> values;
 	values.resize(signatures.size());
 
 	int index = last_metric;
@@ -651,15 +651,15 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 			continue;
 		}
 		int it = 0;
-		const Vector<EditorProfiler::Metric::Category> &frame_cat = frame_metrics[index].categories;
+		const std::vector<EditorProfiler::Metric::Category> &frame_cat = frame_metrics[index].categories;
 
 		for (int j = 0; j < frame_cat.size(); j++) {
 
 			const EditorProfiler::Metric::Category &c = frame_cat[j];
-			values.write[it++] = String::num_real(c.total_time);
+			values[it++] = String::num_real(c.total_time);
 
 			for (int k = 0; k < c.items.size(); k++) {
-				values.write[it++] = String::num_real(c.items[k].total);
+				values[it++] = String::num_real(c.items[k].total);
 			}
 		}
 		res.push_back(values);

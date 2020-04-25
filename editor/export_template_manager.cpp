@@ -359,7 +359,7 @@ void ExportTemplateManager::_http_download_mirror_completed(int p_status, int p_
 
 	String mirror_str;
 	{
-		const uint8_t *r = p_data.ptr();
+		const uint8_t *r = p_data.data();
 		mirror_str.parse_utf8((const char *)r, p_data.size());
 	}
 

@@ -1206,12 +1206,12 @@ void TileMap::clear() {
 	used_size_cache_dirty = true;
 }
 
-void TileMap::_set_tile_data(const Vector<int> &p_data) {
+void TileMap::_set_tile_data(const std::vector<int> &p_data) {
 
 	ERR_FAIL_COND(format > FORMAT_2);
 
 	int c = p_data.size();
-	const int *r = p_data.ptr();
+	const int *r = p_data.data();
 
 	int offset = (format == FORMAT_2) ? 3 : 2;
 
@@ -1254,11 +1254,11 @@ void TileMap::_set_tile_data(const Vector<int> &p_data) {
 	}
 }
 
-Vector<int> TileMap::_get_tile_data() const {
+std::vector<int> TileMap::_get_tile_data() const {
 
-	Vector<int> data;
+	std::vector<int> data;
 	data.resize(tile_map.size() * 3);
-	int *w = data.ptrw();
+	int *w = data.data();
 
 	// Save in highest format
 

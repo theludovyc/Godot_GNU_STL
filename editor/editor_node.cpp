@@ -567,7 +567,7 @@ void EditorNode::_resources_changed(const std::vector<String> &p_resources) {
 	int rc = p_resources.size();
 	for (int i = 0; i < rc; i++) {
 
-		Ref<Resource> res(ResourceCache::get(p_resources.get(i)));
+		Ref<Resource> res(ResourceCache::get(p_resources.at(i)));
 		if (res.is_null()) {
 			continue;
 		}
@@ -3007,8 +3007,8 @@ void EditorNode::set_addon_plugin_enabled(const String &p_addon, bool p_enabled,
 		ProjectSettings *ps = ProjectSettings::get_singleton();
 		PackedStringArray enabled_plugins = ps->get("editor_plugins/enabled");
 		for (int i = 0; i < enabled_plugins.size(); ++i) {
-			if (enabled_plugins.get(i) == p_addon) {
-				enabled_plugins.remove(i);
+			if (enabled_plugins[i] == p_addon) {
+				enabled_plugins.erase(enabled_plugins.begin() + i);
 				break;
 			}
 		}
@@ -4032,7 +4032,10 @@ void EditorNode::_dock_floating_close_request(Control *p_control) {
 
 	_update_dock_containers();
 
-	floating_docks.erase(p_control);
+	auto it_dock = std::find(floating_docks.begin(), floating_docks.end(), p_control);
+	if (it_dock != floating_docks.end()) {
+		floating_docks.erase(it_dock);
+	}
 }
 
 void EditorNode::_dock_make_float() {
@@ -5055,11 +5058,6 @@ void EditorNode::remove_control_from_dock(Control *p_control) {
 			dock = dock_slot[i];
 			break;
 		}
-		return false;
-	});
-
-	if (it_find != std::end(dock_slot)) {
-		dock = *it_find;
 	}
 
 	ERR_FAIL_COND_MSG(!dock, "Control was not in dock.");
@@ -5133,33 +5131,25 @@ Variant EditorNode::drag_files_and_dirs(const std::vector<String> &p_paths, Cont
 	auto num_rows = p_paths.size() > max_rows ? (p_paths.begin() + max_rows) : p_paths.end();
 
 	VBoxContainer *vbox = memnew(VBoxContainer);
+	HBoxContainer *hbox;
 
-	{
-		HBoxContainer *hbox;
+	TextureRect *icon;
 
-		TextureRect *icon;
+	Label *label;
 
-		Label *label;
+	for (auto it_p_paths = p_paths.begin(); it_p_paths != num_rows; ++it_p_paths) {
+		hbox = memnew(HBoxContainer);
+		icon = memnew(TextureRect);
+		label = memnew(Label);
 
-		for(auto it_p_paths = p_paths.begin(); it_p_paths != num_rows; ++it_p_paths){
-			hbox = memnew(HBoxContainer);
-			icon = memnew(TextureRect);
-			label = memnew(Label);
-
-			if( (*it_p_paths).ends_with("/") ){
-				label->set_text( (*it_p_paths).substr(0, (*it_p_paths).length() - 1).get_file() );
-
-				icon->set_texture(gui_base->get_icon("Folder", "EditorIcons") );
-			}else{
-				label->set_text( (*it_p_paths).get_file() );
-
-		if (p_paths[i].ends_with("/")) {
-			label->set_text(p_paths[i].substr(0, p_paths[i].length() - 1).get_file());
+		if (it_p_paths->ends_with("/")) {
+			label->set_text(it_p_paths->substr(0, it_p_paths->length() - 1).get_file());
 			icon->set_texture(gui_base->get_theme_icon("Folder", "EditorIcons"));
 		} else {
-			label->set_text(p_paths[i].get_file());
+			label->set_text(it_p_paths->get_file());
 			icon->set_texture(gui_base->get_theme_icon("File", "EditorIcons"));
 		}
+
 		icon->set_stretch_mode(TextureRect::STRETCH_KEEP_CENTERED);
 		icon->set_size(Size2(16, 16));
 		hbox->add_child(icon);

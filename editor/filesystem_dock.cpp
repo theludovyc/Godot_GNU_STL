@@ -2083,7 +2083,7 @@ void FileSystemDock::drop_data_fw(const Point2 &p_point, const Variant &p_data, 
 			std::vector<String> fnames = drag_data["files"];
 			std::vector<String> favorites = EditorSettings::get_singleton()->get_favorites();
 			for (int i = 0; i < fnames.size(); i++) {
-				if (favorites.find(fnames[i]) == -1) {
+				if (std::find(favorites.begin(), favorites.end(), fnames[i]) == favorites.end()) {
 					favorites.push_back(fnames[i]);
 				}
 			}

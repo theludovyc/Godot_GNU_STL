@@ -54,9 +54,9 @@ void Sprite2DEditor::edit(Sprite2D *p_sprite) {
 
 #define PRECISION 10.0
 
-Vector<Vector2> expand(const Vector<Vector2> &points, const Rect2i &rect, float epsilon = 2.0) {
+std::vector<Vector2> expand(const std::vector<Vector2> &points, const Rect2i &rect, float epsilon = 2.0) {
 	int size = points.size();
-	ERR_FAIL_COND_V(size < 2, Vector<Vector2>());
+	ERR_FAIL_COND_V(size < 2, std::vector<Vector2>());
 
 	ClipperLib::Path subj;
 	ClipperLib::PolyTree solution;
@@ -93,7 +93,7 @@ Vector<Vector2> expand(const Vector<Vector2> &points, const Rect2i &rect, float 
 	cl.AddPath(clamp, ClipperLib::ptClip, true);
 	cl.Execute(ClipperLib::ctIntersection, out);
 
-	Vector<Vector2> outPoints;
+	std::vector<Vector2> outPoints;
 	ClipperLib::PolyNode *p2 = out.GetFirst();
 	ERR_FAIL_COND_V(!p2, points);
 
@@ -204,7 +204,7 @@ void Sprite2DEditor::_update_mesh_data() {
 
 	float epsilon = simplification->get_value();
 
-	Vector<Vector<Vector2>> lines = bm->clip_opaque_to_polygons(rect, epsilon);
+	std::vector<std::vector<Vector2>> lines = bm->clip_opaque_to_polygons(rect, epsilon);
 
 	uv_lines.clear();
 
@@ -214,7 +214,7 @@ void Sprite2DEditor::_update_mesh_data() {
 
 	Size2 img_size = Vector2(image->get_width(), image->get_height());
 	for (int i = 0; i < lines.size(); i++) {
-		lines.write[i] = expand(lines[i], rect, epsilon);
+		lines[i] = expand(lines[i], rect, epsilon);
 	}
 
 	if (selected_menu_item == MENU_OPTION_CONVERT_TO_MESH_2D) {
@@ -240,7 +240,7 @@ void Sprite2DEditor::_update_mesh_data() {
 				computed_vertices.push_back(vtx);
 			}
 
-			Vector<int> poly = Geometry::triangulate_polygon(lines[j]);
+			std::vector<int> poly = Geometry::triangulate_polygon(lines[j]);
 
 			for (int i = 0; i < poly.size(); i += 3) {
 				for (int k = 0; k < 3; k++) {
@@ -263,8 +263,8 @@ void Sprite2DEditor::_update_mesh_data() {
 		computed_outline_lines.resize(lines.size());
 		for (int pi = 0; pi < lines.size(); pi++) {
 
-			Vector<Vector2> ol;
-			Vector<Vector2> col;
+			std::vector<Vector2> ol;
+			std::vector<Vector2> col;
 
 			ol.resize(lines[pi].size());
 			col.resize(lines[pi].size());
@@ -272,7 +272,7 @@ void Sprite2DEditor::_update_mesh_data() {
 			for (int i = 0; i < lines[pi].size(); i++) {
 				Vector2 vtx = lines[pi][i];
 
-				ol.write[i] = vtx;
+				ol[i] = vtx;
 
 				vtx -= rect.position; //offset by rect position
 
@@ -285,11 +285,11 @@ void Sprite2DEditor::_update_mesh_data() {
 				if (node->is_centered())
 					vtx -= rect.size / 2.0;
 
-				col.write[i] = vtx;
+				col[i] = vtx;
 			}
 
-			outline_lines.write[pi] = ol;
-			computed_outline_lines.write[pi] = col;
+			outline_lines[pi] = ol;
+			computed_outline_lines[pi] = col;
 		}
 	}
 
@@ -360,11 +360,11 @@ void Sprite2DEditor::_convert_to_polygon_2d_node() {
 
 	PackedVector2Array polygon;
 	polygon.resize(total_point_count);
-	Vector2 *polygon_write = polygon.ptrw();
+	Vector2 *polygon_write = polygon.data();
 
 	PackedVector2Array uvs;
 	uvs.resize(total_point_count);
-	Vector2 *uvs_write = uvs.ptrw();
+	Vector2 *uvs_write = uvs.data();
 
 	int current_point_index = 0;
 
@@ -373,12 +373,12 @@ void Sprite2DEditor::_convert_to_polygon_2d_node() {
 
 	for (int i = 0; i < computed_outline_lines.size(); i++) {
 
-		Vector<Vector2> outline = computed_outline_lines[i];
-		Vector<Vector2> uv_outline = outline_lines[i];
+		std::vector<Vector2> outline = computed_outline_lines[i];
+		std::vector<Vector2> uv_outline = outline_lines[i];
 
 		PackedInt32Array pia;
 		pia.resize(outline.size());
-		int *pia_write = pia.ptrw();
+		int *pia_write = pia.data();
 
 		for (int pi = 0; pi < outline.size(); pi++) {
 			polygon_write[current_point_index] = outline[pi];
@@ -413,7 +413,7 @@ void Sprite2DEditor::_create_collision_polygon_2d_node() {
 
 	for (int i = 0; i < computed_outline_lines.size(); i++) {
 
-		Vector<Vector2> outline = computed_outline_lines[i];
+		std::vector<Vector2> outline = computed_outline_lines[i];
 
 		CollisionPolygon2D *collision_polygon_2d_instance = memnew(CollisionPolygon2D);
 		collision_polygon_2d_instance->set_polygon(outline);
@@ -437,14 +437,14 @@ void Sprite2DEditor::_create_light_occluder_2d_node() {
 
 	for (int i = 0; i < computed_outline_lines.size(); i++) {
 
-		Vector<Vector2> outline = computed_outline_lines[i];
+		std::vector<Vector2> outline = computed_outline_lines[i];
 
 		Ref<OccluderPolygon2D> polygon;
 		polygon.instance();
 
 		PackedVector2Array a;
 		a.resize(outline.size());
-		Vector2 *aw = a.ptrw();
+		Vector2 *aw = a.data();
 		for (int io = 0; io < outline.size(); io++) {
 			aw[io] = outline[io];
 		}
@@ -494,7 +494,7 @@ void Sprite2DEditor::_debug_uv_draw() {
 
 	} else if ((selected_menu_item == MENU_OPTION_CONVERT_TO_POLYGON_2D || selected_menu_item == MENU_OPTION_CREATE_COLLISION_POLY_2D || selected_menu_item == MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D) && outline_lines.size() > 0) {
 		for (int i = 0; i < outline_lines.size(); i++) {
-			Vector<Vector2> outline = outline_lines[i];
+			std::vector<Vector2> outline = outline_lines[i];
 
 			debug_uv->draw_polyline(outline, color);
 			debug_uv->draw_line(outline[0], outline[outline.size() - 1], color);
