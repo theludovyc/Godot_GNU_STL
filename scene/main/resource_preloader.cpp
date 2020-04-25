@@ -67,7 +67,7 @@ Array ResourcePreloader::_get_resources() const {
 	int i = 0;
 	for (Set<String>::Element *E = sorted_names.front(); E; E = E->next()) {
 
-		names.set(i, E->get());
+		names[i] = E->get();
 		arr[i] = resources[E->get()];
 		i++;
 	}
@@ -135,7 +135,7 @@ std::vector<String> ResourcePreloader::_get_resource_list() const {
 	res.resize(resources.size());
 	int i = 0;
 	for (Map<StringName, RES>::Element *E = resources.front(); E; E = E->next(), i++) {
-		res.set(i, E->key());
+		res[i] = E->key();
 	}
 
 	return res;
