@@ -822,8 +822,10 @@ void SceneTree::_notify_group_pause(const StringName &p_group, int p_notificatio
 
 	//copy, so copy on write happens in case something is removed from process while being called
 	//performance is not lost because only if something is added/removed the vector is copied.
+	std::vector<Node *> nodes_copy = g.nodes;
 
-	call_lock++;
+	int node_count = nodes_copy.size();
+	Node **nodes = nodes_copy.data();
 
 	for (int i = 0; i < node_count; i++) {
 
@@ -831,7 +833,7 @@ void SceneTree::_notify_group_pause(const StringName &p_group, int p_notificatio
 		if (call_lock && call_skip.has(n))
 			continue;
 
-		if (!(*it_nodes)->can_process())
+		if (!n->can_process())
 			continue;
 		if (!n->can_process_notification(p_notification))
 			continue;
@@ -871,6 +873,9 @@ void SceneTree::_call_input_pause(const StringName &p_group, const StringName &p
 	//copy, so copy on write happens in case something is removed from process while being called
 	//performance is not lost because only if something is added/removed the vector is copied.
 	std::vector<Node *> nodes_copy = g.nodes;
+
+	int node_count = nodes_copy.size();
+	Node **nodes = nodes_copy.data();
 
 	Variant arg = p_input;
 	const Variant *v[1] = { &arg };
