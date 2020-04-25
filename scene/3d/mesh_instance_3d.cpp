@@ -290,7 +290,7 @@ void MeshInstance3D::set_surface_material(int p_surface, const Ref<Material> &p_
 
 	ERR_FAIL_INDEX(p_surface, materials.size());
 
-	materials.write[p_surface] = p_material;
+	materials[p_surface] = p_material;
 
 	if (materials[p_surface].is_valid())
 		RS::get_singleton()->instance_set_surface_material(get_instance(), p_surface, materials[p_surface]->get_rid());
@@ -329,8 +329,8 @@ void MeshInstance3D::_mesh_changed() {
 
 void MeshInstance3D::create_debug_tangents() {
 
-	Vector<Vector3> lines;
-	Vector<Color> colors;
+	std::vector<Vector3> lines;
+	std::vector<Color> colors;
 
 	Ref<Mesh> mesh = get_mesh();
 	if (!mesh.is_valid())
@@ -338,11 +338,11 @@ void MeshInstance3D::create_debug_tangents() {
 
 	for (int i = 0; i < mesh->get_surface_count(); i++) {
 		Array arrays = mesh->surface_get_arrays(i);
-		Vector<Vector3> verts = arrays[Mesh::ARRAY_VERTEX];
-		Vector<Vector3> norms = arrays[Mesh::ARRAY_NORMAL];
+		std::vector<Vector3> verts = arrays[Mesh::ARRAY_VERTEX];
+		std::vector<Vector3> norms = arrays[Mesh::ARRAY_NORMAL];
 		if (norms.size() == 0)
 			continue;
-		Vector<float> tangents = arrays[Mesh::ARRAY_TANGENT];
+		std::vector<float> tangents = arrays[Mesh::ARRAY_TANGENT];
 		if (tangents.size() == 0)
 			continue;
 
