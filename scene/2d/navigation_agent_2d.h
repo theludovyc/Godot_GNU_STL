@@ -31,7 +31,6 @@
 #ifndef NAVIGATION_AGENT_2D_H
 #define NAVIGATION_AGENT_2D_H
 
-#include "core/vector.h"
 #include "scene/main/node.h"
 
 class Node2D;
@@ -55,7 +54,7 @@ class NavigationAgent2D : public Node {
 	real_t path_max_distance;
 
 	Vector2 target_location;
-	Vector<Vector2> navigation_path;
+	std::vector<Vector2> navigation_path;
 	int nav_path_index;
 	bool velocity_submitted;
 	Vector2 prev_safe_velocity;
@@ -124,7 +123,7 @@ public:
 
 	Vector2 get_next_location();
 
-	Vector<Vector2> get_nav_path() const {
+	std::vector<Vector2> get_nav_path() const {
 		return navigation_path;
 	}
 
