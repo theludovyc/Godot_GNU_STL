@@ -66,7 +66,7 @@ protected:
 	static void _bind_methods();
 
 	void create_physical_skeleton();
-	PhysicalBone3D *create_physical_bone(int bone_id, int bone_child_id, const Vector<BoneInfo> &bones_infos);
+	PhysicalBone3D *create_physical_bone(int bone_id, int bone_child_id, const std::vector<BoneInfo> &bones_infos);
 
 public:
 	void edit(Skeleton3D *p_node);
