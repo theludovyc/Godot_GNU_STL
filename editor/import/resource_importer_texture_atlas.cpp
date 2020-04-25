@@ -294,7 +294,7 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 			for (int k = 0; k < chart.faces.size(); k++) {
 				Vector2 positions[3];
 				for (uint8_t l = 0; l < 3u; ++l) {
-					int vertex_idx = c_face.vertex[l];
+					int vertex_idx = chart.faces[k].vertex[l];
 					positions[l] = chart.vertices[vertex_idx];
 				}
 
@@ -355,9 +355,9 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 				indices.resize(fc * 3);
 
 				{
-					Vector2 *vw = vertices.ptrw();
-					int *iw = indices.ptrw();
-					Vector2 *uvw = uvs.ptrw();
+					Vector2 *vw = vertices.data();
+					int *iw = indices.data();
+					Vector2 *uvw = uvs.data();
 
 					for (decltype(vc) j = 0; j < vc; ++j) {
 						vw[j] = chart.vertices[j];

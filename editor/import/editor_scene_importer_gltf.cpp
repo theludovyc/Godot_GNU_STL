@@ -870,8 +870,6 @@ std::vector<Color> EditorSceneImporterGLTF::_decode_accessor_as_color(GLTFState 
 
 std::vector<Quat> EditorSceneImporterGLTF::_decode_accessor_as_quat(GLTFState &state, const GLTFAccessorIndex p_accessor, const bool p_for_vertex) {
 
-std::vector<Quat> EditorSceneImporterGLTF::_decode_accessor_as_quat(GLTFState &state, const GLTFAccessorIndex p_accessor, const bool p_for_vertex) {
-
 	const std::vector<double> attribs = _decode_accessor(state, p_accessor, p_for_vertex);
 	std::vector<Quat> ret;
 
@@ -1021,7 +1019,7 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 				std::vector<float> weights = _decode_accessor_as_floats(state, a["WEIGHTS_0"], true);
 				{ //gltf does not seem to normalize the weights for some reason..
 					int wc = weights.size();
-					float *w = weights.ptrw();
+					float *w = weights.data();
 
 					for (int k = 0; k < wc; k += 4) {
 						float total = 0.0;
@@ -1047,7 +1045,7 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 					//swap around indices, convert ccw to cw for front face
 
 					const int is = indices.size();
-					int *w = indices.ptrw();
+					int *w = indices.data();
 					for (int k = 0; k < is; k += 3) {
 						SWAP(w[k + 1], w[k + 2]);
 					}
@@ -1062,7 +1060,7 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 				const int vs = vertices.size();
 				indices.resize(vs);
 				{
-					int *w = indices.ptrw();
+					int *w = indices.data();
 					for (int k = 0; k < vs; k += 3) {
 						w[k] = k;
 						w[k + 1] = k + 2;
@@ -1133,9 +1131,9 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 							const int max_idx = varr.size();
 							varr.resize(size);
 
-							Vector3 *w_varr = varr.ptrw();
-							const Vector3 *r_varr = varr.ptr();
-							const Vector3 *r_src_varr = src_varr.ptr();
+							Vector3 *w_varr = varr.data();
+							const Vector3 *r_varr = varr.data();
+							const Vector3 *r_src_varr = src_varr.data();
 							for (int l = 0; l < size; l++) {
 								if (l < max_idx) {
 									w_varr[l] = r_varr[l] + r_src_varr[l];
@@ -1155,9 +1153,9 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 							int max_idx = narr.size();
 							narr.resize(size);
 
-							Vector3 *w_narr = narr.ptrw();
-							const Vector3 *r_narr = narr.ptr();
-							const Vector3 *r_src_narr = src_narr.ptr();
+							Vector3 *w_narr = narr.data();
+							const Vector3 *r_narr = narr.data();
+							const Vector3 *r_src_narr = src_narr.data();
 							for (int l = 0; l < size; l++) {
 								if (l < max_idx) {
 									w_narr[l] = r_narr[l] + r_src_narr[l];
@@ -1181,10 +1179,10 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 
 							int size4 = src_tangents.size();
 							tangents_v4.resize(size4);
-							float *w4 = tangents_v4.ptrw();
+							float *w4 = tangents_v4.data();
 
-							const Vector3 *r3 = tangents_v3.ptr();
-							const float *r4 = src_tangents.ptr();
+							const Vector3 *r3 = tangents_v3.data();
+							const float *r4 = src_tangents.data();
 
 							for (int l = 0; l < size4 / 4; l++) {
 
@@ -2413,7 +2411,7 @@ Error EditorSceneImporterGLTF::_parse_animations(GLTFState &state) {
 				ERR_FAIL_COND_V_MSG(weights.size() != expected_value_count, ERR_PARSE_ERROR, "Invalid weight data, expected " + itos(expected_value_count) + " weight values, got " + itos(weights.size()) + " instead.");
 
 				const int wlen = weights.size() / wc;
-				const float *r = weights.ptr();
+				const float *r = weights.data();
 				for (int k = 0; k < wc; k++) { //separate tracks, having them together is not such a good idea
 					GLTFAnimation::Channel<float> cf;
 					cf.interpolation = interp;
