@@ -90,7 +90,7 @@ public:
 	void set_constant(int p_value);
 	int get_constant() const;
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
 	VisualShaderNodeIntConstant();
 };
@@ -424,7 +424,7 @@ public:
 	void set_operator(Operator p_op);
 	Operator get_operator() const;
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
 	VisualShaderNodeIntOp();
 };
@@ -717,7 +717,7 @@ public:
 	void set_function(Function p_func);
 	Function get_function() const;
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
 	VisualShaderNodeIntFunc();
 };
@@ -1457,7 +1457,7 @@ public:
 	void set_step(float p_value);
 	float get_step() const;
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
 	VisualShaderNodeFloatUniform();
 };
@@ -1509,7 +1509,7 @@ public:
 	void set_step(int p_value);
 	int get_step() const;
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
 	VisualShaderNodeIntUniform();
 };
