@@ -354,14 +354,14 @@ bool HTTPRequest::_update_connection() {
 			downloaded += chunk.size();
 
 			if (file) {
-				const uint8_t *r = chunk.ptr();
+				const uint8_t *r = chunk.data();
 				file->store_buffer(r, chunk.size());
 				if (file->get_error() != OK) {
 					call_deferred("_request_done", RESULT_DOWNLOAD_FILE_WRITE_ERROR, response_code, response_headers, PackedByteArray());
 					return true;
 				}
 			} else {
-				body.append_array(chunk);
+				body.insert(body.end(), chunk.begin(), chunk.end());
 			}
 
 			if (body_size_limit >= 0 && downloaded > body_size_limit) {
