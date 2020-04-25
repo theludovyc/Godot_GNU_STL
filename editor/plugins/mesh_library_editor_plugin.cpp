@@ -175,9 +175,9 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 		std::vector<int> ids = p_library->get_item_list();
 		for (int i = 0; i < ids.size(); i++) {
 
-			if (mesh_instances.find(id)) {
-				meshes.push_back(p_library->get_item_mesh(id));
-				transforms.push_back(mesh_instances[id]->get_transform());
+			if (mesh_instances.find(ids[i])) {
+				meshes.push_back(p_library->get_item_mesh(ids[i]));
+				transforms.push_back(mesh_instances[ids[i]]->get_transform());
 			}
 		}
 
