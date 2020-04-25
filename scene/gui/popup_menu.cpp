@@ -578,7 +578,7 @@ void PopupMenu::_notification(int p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 
 			for (int i = 0; i < items.size(); i++) {
-				items.write[i].xl_text = tr(items[i].text);
+				items[i].xl_text = tr(items[i].text);
 			}
 
 			child_controls_changed();
@@ -999,7 +999,7 @@ void PopupMenu::set_item_as_checkable(int p_idx, bool p_checkable) {
 void PopupMenu::set_item_as_radio_checkable(int p_idx, bool p_radio_checkable) {
 
 	ERR_FAIL_INDEX(p_idx, items.size());
-	items.write[p_idx].checkable_type = p_radio_checkable ? Item::CHECKABLE_TYPE_RADIO_BUTTON : Item::CHECKABLE_TYPE_NONE;
+	items[p_idx].checkable_type = p_radio_checkable ? Item::CHECKABLE_TYPE_RADIO_BUTTON : Item::CHECKABLE_TYPE_NONE;
 	control->update();
 }
 
@@ -1190,7 +1190,7 @@ void PopupMenu::remove_item(int p_idx) {
 		_unref_shortcut(items[p_idx].shortcut);
 	}
 
-	items.remove(p_idx);
+	items.erase(items.begin() + p_idx);
 	control->update();
 	child_controls_changed();
 }
