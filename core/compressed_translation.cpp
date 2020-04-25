@@ -228,11 +228,11 @@ StringName PHashTranslation::get_message(const StringName &p_src_text) const {
 	CharString str = p_src_text.operator String().utf8();
 	uint32_t h = hash(0, str.get_data());
 
-	const int *htr = hash_table.ptr();
+	const int *htr = hash_table.data();
 	const uint32_t *htptr = (const uint32_t *)&htr[0];
-	const int *btr = bucket_table.ptr();
+	const int *btr = bucket_table.data();
 	const uint32_t *btptr = (const uint32_t *)&btr[0];
-	const uint8_t *sr = strings.ptr();
+	const uint8_t *sr = strings.data();
 	const char *sptr = (const char *)&sr[0];
 
 	uint32_t p = htptr[h % htsize];
