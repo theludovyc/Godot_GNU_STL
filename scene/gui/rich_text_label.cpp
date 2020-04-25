@@ -1661,7 +1661,7 @@ void RichTextLabel::_add_item(Item *p_item, bool p_enter, bool p_ensure_newline)
 	}
 
 	if (current_frame->lines[current_frame->lines.size() - 1].from == nullptr) {
-		current_frame->lines.write[current_frame->lines.size() - 1].from = p_item;
+		current_frame->lines[current_frame->lines.size() - 1].from = p_item;
 	}
 	p_item->line = current_frame->lines.size() - 1;
 
@@ -1758,7 +1758,7 @@ bool RichTextLabel::remove_line(const int p_line) {
 	}
 
 	if (!was_newline) {
-		current_frame->lines.remove(p_line);
+		current_frame->lines.erase(current_frame->lines.begin() + p_line);
 		if (current_frame->lines.size() == 0) {
 			current_frame->lines.resize(1);
 		}
