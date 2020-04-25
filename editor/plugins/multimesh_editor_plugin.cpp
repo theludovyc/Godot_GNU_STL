@@ -124,7 +124,7 @@ void MultiMeshEditor::_populate() {
 
 	Transform geom_xform = node->get_global_transform().affine_inverse() * ss_instance->get_global_transform();
 
-	Vector<Face3> geometry = ss_instance->get_faces(VisualInstance3D::FACES_SOLID);
+	std::vector<Face3> geometry = ss_instance->get_faces(VisualInstance3D::FACES_SOLID);
 
 	if (geometry.size() == 0) {
 
@@ -136,7 +136,7 @@ void MultiMeshEditor::_populate() {
 	//make all faces local
 
 	int gc = geometry.size();
-	Face3 *w = geometry.ptrw();
+	Face3 *w = geometry.data();
 
 	for (int i = 0; i < gc; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -144,11 +144,11 @@ void MultiMeshEditor::_populate() {
 		}
 	}
 
-	Vector<Face3> faces = geometry;
+	std::vector<Face3> faces = geometry;
 	int facecount = faces.size();
 	ERR_FAIL_COND_MSG(!facecount, "Parent has no solid faces to populate.");
 
-	const Face3 *r = faces.ptr();
+	const Face3 *r = faces.data();
 
 	float area_accum = 0;
 	Map<float, int> triangle_area_map;

@@ -138,7 +138,7 @@ void Polygon2DEditor::_sync_bones() {
 
 			if (weights.size() == 0) { //create them
 				weights.resize(node->get_polygon().size());
-				float *w = weights.ptrw();
+				float *w = weights.data();
 				for (int j = 0; j < wc; j++) {
 					w[j] = 0.0;
 				}
@@ -608,10 +608,10 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					if (closest == -1)
 						return;
 
-					uv_create_poly_prev.remove(closest);
-					uv_create_uv_prev.remove(closest);
+					uv_create_poly_prev.erase(uv_create_poly_prev.begin() + closest);
+					uv_create_uv_prev.erase(uv_create_uv_prev.begin() + closest);
 					if (uv_create_colors_prev.size()) {
-						uv_create_colors_prev.remove(closest);
+						uv_create_colors_prev.erase(uv_create_colors_prev.begin() + closest);
 					}
 
 					undo_redo->create_action(TTR("Remove Internal Vertex"));
@@ -623,7 +623,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					undo_redo->add_undo_method(node, "set_vertex_colors", node->get_vertex_colors());
 					for (int i = 0; i < node->get_bone_count(); i++) {
 						std::vector<float> bonew = node->get_bone_weights(i);
-						bonew.remove(closest);
+						bonew.erase(bonew.begin() + closest);
 						undo_redo->add_do_method(node, "set_bone_weights", i, bonew);
 						undo_redo->add_undo_method(node, "set_bone_weights", i, node->get_bone_weights(i));
 					}
@@ -833,7 +833,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 				case UV_MODE_EDIT_POINT: {
 
 					std::vector<Vector2> uv_new = points_prev;
-					uv_new.set(point_drag_index, uv_new[point_drag_index] + drag);
+					uv_new.at(point_drag_index) = uv_new[point_drag_index] + drag;
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
 						node->set_uv(uv_new);
@@ -845,7 +845,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 
 					std::vector<Vector2> uv_new = points_prev;
 					for (int i = 0; i < uv_new.size(); i++)
-						uv_new.set(i, uv_new[i] + drag);
+						uv_new.at(i) = uv_new[i] + drag;
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
 						node->set_uv(uv_new);
@@ -867,7 +867,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					for (int i = 0; i < uv_new.size(); i++) {
 						Vector2 rel = points_prev[i] - center;
 						rel = rel.rotated(angle);
-						uv_new.set(i, center + rel);
+						uv_new.at(i) = center + rel;
 					}
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
@@ -895,7 +895,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					for (int i = 0; i < uv_new.size(); i++) {
 						Vector2 rel = points_prev[i] - center;
 						rel = rel * scale;
-						uv_new.set(i, center + rel);
+						uv_new.at(i) = center + rel;
 					}
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
@@ -925,9 +925,9 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 						amount = -amount;
 					}
 
-					float *w = painted_weights.ptrw();
-					const float *r = prev_weights.ptr();
-					const Vector2 *rv = points_prev.ptr();
+					float *w = painted_weights.data();
+					const float *r = prev_weights.data();
+					const Vector2 *rv = points_prev.data();
 
 					for (int i = 0; i < pc; i++) {
 						if (mtx.xform(rv[i]).distance_to(bone_paint_pos) < radius) {
@@ -1044,7 +1044,7 @@ void Polygon2DEditor::_uv_draw() {
 		}
 
 		if (bone_selected != -1 && node->get_bone_weights(bone_selected).size() == uvs.size()) {
-			weight_r = node->get_bone_weights(bone_selected).ptr();
+			weight_r = node->get_bone_weights(bone_selected).data();
 		}
 	}
 
