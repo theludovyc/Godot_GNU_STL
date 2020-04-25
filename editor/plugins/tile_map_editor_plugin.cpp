@@ -715,7 +715,7 @@ std::vector<Vector2> TileMapEditor::_bucket_fill(const Point2i &p_start, bool er
 void TileMapEditor::_fill_points(const std::vector<Vector2> &p_points, const Dictionary &p_op) {
 
 	int len = p_points.size();
-	const Vector2 *pr = p_points.ptr();
+	const Vector2 *pr = p_points.data();
 
 	std::vector<int> ids = p_op["id"];
 	bool xf = p_op["flip_h"];
@@ -733,7 +733,7 @@ void TileMapEditor::_fill_points(const std::vector<Vector2> &p_points, const Dic
 void TileMapEditor::_erase_points(const std::vector<Vector2> &p_points) {
 
 	int len = p_points.size();
-	const Vector2 *pr = p_points.ptr();
+	const Vector2 *pr = p_points.data();
 
 	for (int i = 0; i < len; i++) {
 		_set_cell(pr[i], invalid_cell);
@@ -896,7 +896,7 @@ void TileMapEditor::_draw_cell(Control *p_viewport, int p_cell, const Point2i &p
 void TileMapEditor::_draw_fill_preview(Control *p_viewport, int p_cell, const Point2i &p_point, bool p_flip_h, bool p_flip_v, bool p_transpose, const Point2i &p_autotile_coord, const Transform2D &p_xform) {
 
 	std::vector<Vector2> points = _bucket_fill(p_point, false, true);
-	const Vector2 *pr = points.ptr();
+	const Vector2 *pr = points.data();
 	int len = points.size();
 
 	for (int i = 0; i < len; ++i) {
