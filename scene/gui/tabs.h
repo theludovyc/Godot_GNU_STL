@@ -31,8 +31,6 @@
 #ifndef TABS_H
 #define TABS_H
 
-#include <vector>
-
 #include "scene/gui/control.h"
 
 class Tabs : public Control {
@@ -79,24 +77,16 @@ private:
 	int highlight_arrow;
 	bool buttons_visible;
 	bool missing_right;
-
 	std::vector<Tab> tabs;
-
-	std::vector<Tab>::iterator it_current;
-
 	int current;
-
 	int _get_top_margin() const;
 	TabAlign tab_align;
-
-	std::vector<Tab>::iterator it_rb_hover;
-
+	int rb_hover;
 	bool rb_pressing;
 
 	bool select_with_rmb;
 
-	std::vector<Tab>::iterator it_cb_hover;
-
+	int cb_hover;
 	bool cb_pressing;
 	CloseButtonDisplayPolicy cb_displaypolicy;
 
@@ -106,7 +96,7 @@ private:
 	bool drag_to_rearrange_enabled;
 	int tabs_rearrange_group;
 
-	
+	int get_tab_width(int p_idx) const;
 	void _ensure_no_over_offset();
 
 	void _update_hover();
@@ -115,10 +105,6 @@ private:
 	void _on_mouse_exited();
 
 protected:
-	void _set_current_it_tab(const std::vector<Tab>::iterator&);
-	unsigned _get_tab_width(const std::vector<Tab>::iterator&) const;
-	Rect2 _get_tab_rect(const std::vector<Tab>::iterator&) const;
-
 	void _gui_input(const Ref<InputEvent> &p_event);
 	void _notification(int p_what);
 	static void _bind_methods();
@@ -152,11 +138,8 @@ public:
 	CloseButtonDisplayPolicy get_tab_close_display_policy() const;
 
 	int get_tab_count() const;
-
-	// need_update : int to const unsigned& p_current
 	void set_current_tab(int p_current);
-
-	int get_current_tab();
+	int get_current_tab() const;
 	int get_hovered_tab() const;
 
 	int get_tab_offset() const;
