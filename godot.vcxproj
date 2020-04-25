@@ -861,6 +861,7 @@
     <ClInclude Include="scene\main\scene_tree.h" />
     <ClInclude Include="scene\main\timer.h" />
     <ClInclude Include="scene\main\viewport.h" />
+    <ClInclude Include="scene\main\window.h" />
     <ClInclude Include="scene\resources\box_shape_3d.h" />
     <ClInclude Include="scene\resources\capsule_shape_3d.h" />
     <ClInclude Include="scene\resources\concave_polygon_shape_3d.h" />
@@ -2302,6 +2303,7 @@
     <ClCompile Include="scene\main\scene_tree.cpp" />
     <ClCompile Include="scene\main\timer.cpp" />
     <ClCompile Include="scene\main\viewport.cpp" />
+    <ClCompile Include="scene\main\window.cpp" />
     <ClCompile Include="scene\register_scene_types.cpp" />
     <ClCompile Include="scene\resources\animation.cpp" />
     <ClCompile Include="scene\resources\audio_stream_sample.cpp" />

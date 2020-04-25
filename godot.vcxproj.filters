@@ -5534,6 +5534,9 @@
     <ClInclude Include="scene\resources\default_theme\theme_data.h">
       <Filter>Header Files\scene\resources\default_theme</Filter>
     </ClInclude>
+    <ClInclude Include="scene\main\window.h">
+      <Filter>Header Files\scene\main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\io\compression.cpp">
@@ -10580,6 +10583,9 @@
       <Filter>Header Files\scene\main</Filter>
     </ClCompile>
     <ClCompile Include="scene\main\viewport.cpp">
+      <Filter>Header Files\scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\main\window.cpp">
       <Filter>Header Files\scene\main</Filter>
     </ClCompile>
   </ItemGroup>
