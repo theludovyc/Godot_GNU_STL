@@ -49,7 +49,7 @@ class FabrikInverseKinematic {
 
 	struct ChainItem {
 
-		Vector<ChainItem> children;
+		std::vector<ChainItem> children;
 		ChainItem *parent_item;
 
 		// Bone info
@@ -93,7 +93,7 @@ class FabrikInverseKinematic {
 	struct Chain {
 		ChainItem chain_root;
 		ChainItem *middle_chain_item;
-		Vector<ChainTip> tips;
+		std::vector<ChainTip> tips;
 		Vector3 magnet_position;
 	};
 
@@ -110,7 +110,7 @@ public:
 
 		// Bone data
 		BoneId root_bone;
-		Vector<EndEffector> end_effectors;
+		std::vector<EndEffector> end_effectors;
 
 		Transform goal_global_transform;
 
