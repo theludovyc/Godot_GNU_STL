@@ -569,29 +569,6 @@ void EditorPropertyFlags::update_property() {
 	}
 }
 
-CheckBox* EditorPropertyFlags::setup_add_checkbox(String p_option){
-	p_option = p_option.strip_edges();
-
-	bool first = true;
-	for (int i = 0; i < p_options.size(); i++) {
-		String option = p_options[i].strip_edges();
-		if (option != "") {
-			CheckBox *cb = memnew(CheckBox);
-			cb->set_text(option);
-			cb->set_clip_text(true);
-			cb->connect("pressed", callable_mp(this, &EditorPropertyFlags::_flag_toggled));
-			add_focusable(cb);
-			vbox->add_child(cb);
-			flags.push_back(cb);
-			flag_indices.push_back(i);
-			if (first) {
-				set_label_reference(cb);
-				first = false;
-			}
-		}
-	}
-}
-
 void EditorPropertyFlags::_bind_methods() {
 }
 
@@ -2403,7 +2380,7 @@ void EditorPropertyResource::_update_menu_items() {
 					}
 				}
 
-				if (it == custom_resources.end() && !(ScriptServer::is_global_class(t) || ClassDB::can_instance(t)))
+				if (!is_custom_resource && !(ScriptServer::is_global_class(t) || ClassDB::can_instance(t)))
 					continue;
 
 				inheritors_array.push_back(t);
@@ -2465,7 +2442,6 @@ void EditorPropertyResource::_update_menu_items() {
 	}
 
 	if (!res.is_null()) {
-		std::vector<Ref<EditorResourceConversionPlugin> > conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(res);
 
 		std::vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(res);
 		if (conversions.size()) {
