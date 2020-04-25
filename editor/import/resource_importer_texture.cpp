@@ -261,7 +261,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 				int data_len = data.size();
 				f->store_32(data_len);
 
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				f->store_buffer(r, data_len);
 			}
 		} break;
@@ -283,7 +283,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 
 			std::vector<uint8_t> data = image->get_data();
 			int dl = data.size();
-			const uint8_t *r = data.ptr();
+			const uint8_t *r = data.data();
 			f->store_buffer(r, dl);
 		} break;
 		case COMPRESS_VRAM_UNCOMPRESSED: {
@@ -296,7 +296,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 
 			std::vector<uint8_t> data = p_image->get_data();
 			int dl = data.size();
-			const uint8_t *r = data.ptr();
+			const uint8_t *r = data.data();
 
 			f->store_buffer(r, dl);
 
@@ -315,7 +315,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 				int data_len = data.size();
 				f->store_32(data_len);
 
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				f->store_buffer(r, data_len);
 			}
 		} break;

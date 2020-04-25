@@ -916,9 +916,9 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 					bones.resize(RS::ARRAY_WEIGHTS_SIZE);
 					//float sum=0.0;
 					for (int l = 0; l < RS::ARRAY_WEIGHTS_SIZE; l++) {
-						if (l < vertex_array[k].weights.size()) {
-							weights[l] = vertex_array[k].weights[l].weight;
-							bones[l] = vertex_array[k].weights[l].bone_idx;
+						if (l < vertex.weights.size()) {
+							weights[l] = vertex.weights[l].weight;
+							bones[l] = vertex.weights[l].bone_idx;
 							//sum += vertex_array[k].weights[l].weight;
 						} else {
 
@@ -1562,7 +1562,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 					return false;
 				});
 
-				if (xform_idx == -1) {
+				if (it_find == cn->xform_list.end()) {
 					WARN_PRINT("Collada: Couldn't find matching node " + at.target + " xform for track " + at.param + ".");
 					continue;
 				}
