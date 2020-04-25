@@ -229,7 +229,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 							if (closest_idx >= 0) {
 
 								pre_move_edit = poly;
-								poly.insert(closest_idx + 1, cpoint);
+								poly.insert(poly.begin() + closest_idx + 1, cpoint);
 								edited_point = closest_idx + 1;
 								edited_point_pos = cpoint;
 								node->call("set_polygon", poly);
@@ -276,7 +276,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 							//apply
 
 							ERR_FAIL_INDEX_V(edited_point, poly.size(), false);
-							poly.write[edited_point] = edited_point_pos;
+							poly[edited_point] = edited_point_pos;
 							undo_redo->create_action(TTR("Edit Poly"));
 							undo_redo->add_do_method(node, "set_polygon", poly);
 							undo_redo->add_undo_method(node, "set_polygon", pre_move_edit);
@@ -310,7 +310,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 
 						undo_redo->create_action(TTR("Edit Poly (Remove Point)"));
 						undo_redo->add_undo_method(node, "set_polygon", poly);
-						poly.remove(closest_idx);
+						poly.erase(poly.begin() + closest_idx);
 						undo_redo->add_do_method(node, "set_polygon", poly);
 						undo_redo->add_do_method(this, "_polygon_draw");
 						undo_redo->add_undo_method(this, "_polygon_draw");
@@ -474,7 +474,7 @@ void CollisionPolygon3DEditor::_polygon_draw() {
 	{
 
 		va.resize(poly.size());
-		Vector3 *w = va.ptrw();
+		Vector3 *w = va.data();
 		for (int i = 0; i < poly.size(); i++) {
 
 			Vector2 p, p2;
