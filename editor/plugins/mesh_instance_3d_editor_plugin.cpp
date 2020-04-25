@@ -196,7 +196,7 @@ void MeshInstance3DEditor::_menu_option(int p_option) {
 				return;
 			}
 
-			Vector<Ref<Shape3D>> shapes = mesh->convex_decompose();
+			std::vector<Ref<Shape3D>> shapes = mesh->convex_decompose();
 
 			if (!shapes.size()) {
 				err_dialog->set_text(TTR("Couldn't create any collision shapes."));
@@ -327,23 +327,23 @@ void MeshInstance3DEditor::_create_uv_lines(int p_layer) {
 			continue;
 		Array a = mesh->surface_get_arrays(i);
 
-		Vector<Vector2> uv = a[p_layer == 0 ? Mesh::ARRAY_TEX_UV : Mesh::ARRAY_TEX_UV2];
+		std::vector<Vector2> uv = a[p_layer == 0 ? Mesh::ARRAY_TEX_UV : Mesh::ARRAY_TEX_UV2];
 		if (uv.size() == 0) {
 			err_dialog->set_text(TTR("Model has no UV in this layer"));
 			err_dialog->popup_centered();
 			return;
 		}
 
-		const Vector2 *r = uv.ptr();
+		const Vector2 *r = uv.data();
 
-		Vector<int> indices = a[Mesh::ARRAY_INDEX];
+		std::vector<int> indices = a[Mesh::ARRAY_INDEX];
 		const int *ri = nullptr;
 
 		int ic;
 
 		if (indices.size()) {
 			ic = indices.size();
-			ri = indices.ptr();
+			ri = indices.data();
 		} else {
 			ic = uv.size();
 		}
