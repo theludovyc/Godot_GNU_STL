@@ -65,7 +65,7 @@ void CPUParticles3D::set_amount(int p_amount) {
 
 	particles.resize(p_amount);
 	{
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < p_amount; i++) {
 			w[i].active = false;
@@ -244,7 +244,7 @@ void CPUParticles3D::restart() {
 
 	{
 		int pc = particles.size();
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < pc; i++) {
 			w[i].active = false;
@@ -597,7 +597,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 	p_delta *= speed_scale;
 
 	int pcount = particles.size();
-	Particle *w = particles.ptrw();
+	Particle *w = particles.data();
 
 	Particle *parray = w;
 
@@ -756,7 +756,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 
 					int random_idx = Math::rand() % pc;
 
-					p.transform.origin = emission_points.get(random_idx);
+					p.transform.origin = emission_points[random_idx];
 
 					if (emission_shape == EMISSION_SHAPE_DIRECTED_POINTS && emission_normals.size() == pc) {
 						if (flags[FLAG_DISABLE_Z]) {
@@ -768,7 +768,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 							VELOCITY.xy = rotm * VELOCITY.xy;
 							*/
 						} else {
-							Vector3 normal = emission_normals.get(random_idx);
+							Vector3 normal = emission_normals[random_idx];
 							Vector3 v0 = Math::abs(normal.z) < 0.999 ? Vector3(0.0, 0.0, 1.0) : Vector3(0, 1.0, 0.0);
 							Vector3 tangent = v0.cross(normal).normalized();
 							Vector3 bitangent = tangent.cross(normal).normalized();
@@ -781,7 +781,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 					}
 
 					if (emission_colors.size() == pc) {
-						p.base_color = emission_colors.get(random_idx);
+						p.base_color = emission_colors[random_idx];
 					}
 				} break;
 				case EMISSION_SHAPE_MAX: { // Max value for validity check.
@@ -1024,12 +1024,12 @@ void CPUParticles3D::_update_particle_data_buffer() {
 	int *ow;
 	int *order = nullptr;
 
-	float *w = particle_data.ptrw();
-	const Particle *r = particles.ptr();
+	float *w = particle_data.data();
+	const Particle *r = particles.data();
 	float *ptr = w;
 
 	if (draw_order != DRAW_ORDER_INDEX) {
-		ow = particle_order.ptrw();
+		ow = particle_order.data();
 		order = ow;
 
 		for (int i = 0; i < pc; i++) {
@@ -1170,8 +1170,8 @@ void CPUParticles3D::_notification(int p_what) {
 
 			int pc = particles.size();
 
-			float *w = particle_data.ptrw();
-			const Particle *r = particles.ptr();
+			float *w = particle_data.data();
+			const Particle *r = particles.data();
 			float *ptr = w;
 
 			for (int i = 0; i < pc; i++) {
