@@ -629,7 +629,7 @@ void TileMap::update_dirty_quadrants() {
 						vs->canvas_item_set_z_index(debug_navigation_item, RS::CANVAS_ITEM_Z_MAX - 2); // Display one below collision debug
 
 						if (debug_navigation_item.is_valid()) {
-							Vector<Vector2> navigation_polygon_vertices = navpoly->get_vertices();
+							std::vector<Vector2> navigation_polygon_vertices = navpoly->get_vertices();
 							int vsize = navigation_polygon_vertices.size();
 
 							if (vsize > 2) {
@@ -637,7 +637,7 @@ void TileMap::update_dirty_quadrants() {
 								std::vector<Vector2> vertices(vsize);
 
 								{
-									const Vector2 *vr = navigation_polygon_vertices.ptr();
+									const Vector2 *vr = navigation_polygon_vertices.data();
 									for (int j = 0; j < vsize; j++) {
 										vertices[j] = vr[j];
 										colors[j] = debug_navigation_color;
