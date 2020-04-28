@@ -141,8 +141,8 @@ void PHashTranslation::generate(const Ref<Translation> &p_from) {
 	hash_table.resize(size);
 	bucket_table.resize(bucket_table_size);
 
-	int *htwb = hash_table.ptrw();
-	int *btwb = bucket_table.ptrw();
+	int *htwb = hash_table.data();
+	int *btwb = bucket_table.data();
 
 	uint32_t *htw = (uint32_t *)&htwb[0];
 	uint32_t *btw = (uint32_t *)&btwb[0];
@@ -174,7 +174,7 @@ void PHashTranslation::generate(const Ref<Translation> &p_from) {
 	}
 
 	strings.resize(total_compression_size);
-	uint8_t *cw = strings.ptrw();
+	uint8_t *cw = strings.data();
 
 	for (auto &&cmp : compressed) {
 		memcpy(&cw[cmp.offset], cmp.compressed.get_data(), cmp.compressed.size());
