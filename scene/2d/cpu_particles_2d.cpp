@@ -52,7 +52,7 @@ void CPUParticles2D::set_amount(int p_amount) {
 
 	particles.resize(p_amount);
 	{
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < p_amount; i++) {
 			w[i].active = false;
@@ -292,7 +292,7 @@ void CPUParticles2D::restart() {
 
 	{
 		int pc = particles.size();
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < pc; i++) {
 			w[i].active = false;
@@ -631,7 +631,7 @@ void CPUParticles2D::_particles_process(float p_delta) {
 	p_delta *= speed_scale;
 
 	int pcount = particles.size();
-	Particle *w = particles.ptrw();
+	Particle *w = particles.data();
 
 	Particle *parray = w;
 
@@ -781,14 +781,14 @@ void CPUParticles2D::_particles_process(float p_delta) {
 
 					int random_idx = Math::rand() % pc;
 
-					p.transform[2] = emission_points.get(random_idx);
+					p.transform[2] = emission_points[random_idx];
 
 					if (emission_shape == EMISSION_SHAPE_DIRECTED_POINTS && emission_normals.size() == pc) {
-						p.velocity = emission_normals.get(random_idx);
+						p.velocity = emission_normals[random_idx];
 					}
 
 					if (emission_colors.size() == pc) {
-						p.base_color = emission_colors.get(random_idx);
+						p.base_color = emission_colors[random_idx];
 					}
 				} break;
 				case EMISSION_SHAPE_MAX: { // Max value for validity check.
@@ -978,12 +978,12 @@ void CPUParticles2D::_update_particle_data_buffer() {
 	int *ow;
 	int *order = nullptr;
 
-	float *w = particle_data.ptrw();
-	const Particle *r = particles.ptr();
+	float *w = particle_data.data();
+	const Particle *r = particles.data();
 	float *ptr = w;
 
 	if (draw_order != DRAW_ORDER_INDEX) {
-		ow = particle_order.ptrw();
+		ow = particle_order.data();
 		order = ow;
 
 		for (int i = 0; i < pc; i++) {
@@ -1113,8 +1113,8 @@ void CPUParticles2D::_notification(int p_what) {
 
 			int pc = particles.size();
 
-			float *w = particle_data.ptrw();
-			const Particle *r = particles.ptr();
+			float *w = particle_data.data();
+			const Particle *r = particles.data();
 			float *ptr = w;
 
 			for (int i = 0; i < pc; i++) {
