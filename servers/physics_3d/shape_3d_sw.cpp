@@ -758,13 +758,13 @@ Vector3 ConvexPolygonShape3DSW::get_support(const Vector3 &p_normal) const {
 
 void ConvexPolygonShape3DSW::get_supports(const Vector3 &p_normal, int p_max, Vector3 *r_supports, int &r_amount) const {
 
-	const Geometry::MeshData::Face *faces = mesh.faces.ptr();
+	const Geometry::MeshData::Face *faces = mesh.faces.data();
 	int fc = mesh.faces.size();
 
-	const Geometry::MeshData::Edge *edges = mesh.edges.ptr();
+	const Geometry::MeshData::Edge *edges = mesh.edges.data();
 	int ec = mesh.edges.size();
 
-	const Vector3 *vertices = mesh.vertices.ptr();
+	const Vector3 *vertices = mesh.vertices.data();
 	int vc = mesh.vertices.size();
 
 	//find vertex first
@@ -786,7 +786,7 @@ void ConvexPolygonShape3DSW::get_supports(const Vector3 &p_normal, int p_max, Ve
 		if (faces[i].plane.normal.dot(p_normal) > _FACE_IS_VALID_SUPPORT_THRESHOLD) {
 
 			int ic = faces[i].indices.size();
-			const int *ind = faces[i].indices.ptr();
+			const int *ind = faces[i].indices.data();
 
 			bool valid = false;
 			for (int j = 0; j < ic; j++) {
@@ -828,10 +828,10 @@ void ConvexPolygonShape3DSW::get_supports(const Vector3 &p_normal, int p_max, Ve
 
 bool ConvexPolygonShape3DSW::intersect_segment(const Vector3 &p_begin, const Vector3 &p_end, Vector3 &r_result, Vector3 &r_normal) const {
 
-	const Geometry::MeshData::Face *faces = mesh.faces.ptr();
+	const Geometry::MeshData::Face *faces = mesh.faces.data();
 	int fc = mesh.faces.size();
 
-	const Vector3 *vertices = mesh.vertices.ptr();
+	const Vector3 *vertices = mesh.vertices.data();
 
 	Vector3 n = p_end - p_begin;
 	real_t min = 1e20;
@@ -843,7 +843,7 @@ bool ConvexPolygonShape3DSW::intersect_segment(const Vector3 &p_begin, const Vec
 			continue; //opposing face
 
 		int ic = faces[i].indices.size();
-		const int *ind = faces[i].indices.ptr();
+		const int *ind = faces[i].indices.data();
 
 		for (int j = 1; j < ic - 1; j++) {
 
@@ -868,7 +868,7 @@ bool ConvexPolygonShape3DSW::intersect_segment(const Vector3 &p_begin, const Vec
 
 bool ConvexPolygonShape3DSW::intersect_point(const Vector3 &p_point) const {
 
-	const Geometry::MeshData::Face *faces = mesh.faces.ptr();
+	const Geometry::MeshData::Face *faces = mesh.faces.data();
 	int fc = mesh.faces.size();
 
 	for (int i = 0; i < fc; i++) {
@@ -882,9 +882,9 @@ bool ConvexPolygonShape3DSW::intersect_point(const Vector3 &p_point) const {
 
 Vector3 ConvexPolygonShape3DSW::get_closest_point_to(const Vector3 &p_point) const {
 
-	const Geometry::MeshData::Face *faces = mesh.faces.ptr();
+	const Geometry::MeshData::Face *faces = mesh.faces.data();
 	int fc = mesh.faces.size();
-	const Vector3 *vertices = mesh.vertices.ptr();
+	const Vector3 *vertices = mesh.vertices.data();
 
 	bool all_inside = true;
 	for (int i = 0; i < fc; i++) {
@@ -895,7 +895,7 @@ Vector3 ConvexPolygonShape3DSW::get_closest_point_to(const Vector3 &p_point) con
 		all_inside = false;
 		bool is_inside = true;
 		int ic = faces[i].indices.size();
-		const int *indices = faces[i].indices.ptr();
+		const int *indices = faces[i].indices.data();
 
 		for (int j = 0; j < ic; j++) {
 
@@ -921,7 +921,7 @@ Vector3 ConvexPolygonShape3DSW::get_closest_point_to(const Vector3 &p_point) con
 	Vector3 min_point;
 
 	//check edges
-	const Geometry::MeshData::Edge *edges = mesh.edges.ptr();
+	const Geometry::MeshData::Edge *edges = mesh.edges.data();
 	int ec = mesh.edges.size();
 	for (int i = 0; i < ec; i++) {
 
@@ -1106,18 +1106,18 @@ FaceShape3DSW::FaceShape3DSW() {
 	configure(AABB());
 }
 
-Vector<Vector3> ConcavePolygonShape3DSW::get_faces() const {
+std::vector<Vector3> ConcavePolygonShape3DSW::get_faces() const {
 
-	Vector<Vector3> rfaces;
+	std::vector<Vector3> rfaces;
 	rfaces.resize(faces.size() * 3);
 
 	for (int i = 0; i < faces.size(); i++) {
 
-		Face f = faces.get(i);
+		Face f = faces[i];
 
 		for (int j = 0; j < 3; j++) {
 
-			rfaces.set(i * 3 + j, vertices.get(f.indices[j]));
+			rfaces[i * 3 + j] = vertices[f.indices[j]];
 		}
 	}
 
@@ -1132,7 +1132,7 @@ void ConcavePolygonShape3DSW::project_range(const Vector3 &p_normal, const Trans
 		r_max = 0;
 		return;
 	}
-	const Vector3 *vptr = vertices.ptr();
+	const Vector3 *vptr = vertices.data();
 
 	for (int i = 0; i < count; i++) {
 
@@ -1151,7 +1151,7 @@ Vector3 ConcavePolygonShape3DSW::get_support(const Vector3 &p_normal) const {
 	if (count == 0)
 		return Vector3();
 
-	const Vector3 *vptr = vertices.ptr();
+	const Vector3 *vptr = vertices.data();
 
 	Vector3 n = p_normal;
 
@@ -1229,9 +1229,9 @@ bool ConcavePolygonShape3DSW::intersect_segment(const Vector3 &p_begin, const Ve
 		return false;
 
 	// unlock data
-	const Face *fr = faces.ptr();
-	const Vector3 *vr = vertices.ptr();
-	const BVH *br = bvh.ptr();
+	const Face *fr = faces.data();
+	const Vector3 *vr = vertices.data();
+	const BVH *br = bvh.data();
 
 	_SegmentCullParams params;
 	params.from = p_begin;
@@ -1308,9 +1308,9 @@ void ConcavePolygonShape3DSW::cull(const AABB &p_local_aabb, Callback p_callback
 	AABB local_aabb = p_local_aabb;
 
 	// unlock data
-	const Face *fr = faces.ptr();
-	const Vector3 *vr = vertices.ptr();
-	const BVH *br = bvh.ptr();
+	const Face *fr = faces.data();
+	const Vector3 *vr = vertices.data();
+	const BVH *br = bvh.data();
 
 	FaceShape3DSW face; // use this to send in the callback
 
@@ -1462,7 +1462,7 @@ void ConcavePolygonShape3DSW::_fill_bvh(_VolumeSW_BVH *p_bvh_tree, BVH *p_bvh_ar
 	memdelete(p_bvh_tree);
 }
 
-void ConcavePolygonShape3DSW::_setup(Vector<Vector3> p_faces) {
+void ConcavePolygonShape3DSW::_setup(std::vector<Vector3> p_faces) {
 
 	int src_face_count = p_faces.size();
 	if (src_face_count == 0) {
@@ -1472,19 +1472,19 @@ void ConcavePolygonShape3DSW::_setup(Vector<Vector3> p_faces) {
 	ERR_FAIL_COND(src_face_count % 3);
 	src_face_count /= 3;
 
-	const Vector3 *facesr = p_faces.ptr();
+	const Vector3 *facesr = p_faces.data();
 
-	Vector<_VolumeSW_BVH_Element> bvh_array;
+	std::vector<_VolumeSW_BVH_Element> bvh_array;
 	bvh_array.resize(src_face_count);
 
-	_VolumeSW_BVH_Element *bvh_arrayw = bvh_array.ptrw();
+	_VolumeSW_BVH_Element *bvh_arrayw = bvh_array.data();
 
 	faces.resize(src_face_count);
-	Face *facesw = faces.ptrw();
+	Face *facesw = faces.data();
 
 	vertices.resize(src_face_count * 3);
 
-	Vector3 *verticesw = vertices.ptrw();
+	Vector3 *verticesw = vertices.data();
 
 	AABB _aabb;
 
@@ -1513,7 +1513,7 @@ void ConcavePolygonShape3DSW::_setup(Vector<Vector3> p_faces) {
 
 	bvh.resize(count + 1);
 
-	BVH *bvh_arrayw2 = bvh.ptrw();
+	BVH *bvh_arrayw2 = bvh.data();
 
 	int idx = 0;
 	_fill_bvh(bvh_tree, bvh_arrayw2, idx);
@@ -1536,7 +1536,7 @@ ConcavePolygonShape3DSW::ConcavePolygonShape3DSW() {
 
 /* HEIGHT MAP SHAPE */
 
-Vector<real_t> HeightMapShape3DSW::get_heights() const {
+std::vector<real_t> HeightMapShape3DSW::get_heights() const {
 
 	return heights;
 }
@@ -1593,14 +1593,14 @@ Vector3 HeightMapShape3DSW::get_moment_of_inertia(real_t p_mass) const {
 			(p_mass / 3.0) * (extents.y * extents.y + extents.y * extents.y));
 }
 
-void HeightMapShape3DSW::_setup(Vector<real_t> p_heights, int p_width, int p_depth, real_t p_cell_size) {
+void HeightMapShape3DSW::_setup(std::vector<real_t> p_heights, int p_width, int p_depth, real_t p_cell_size) {
 
 	heights = p_heights;
 	width = p_width;
 	depth = p_depth;
 	cell_size = p_cell_size;
 
-	const real_t *r = heights.ptr();
+	const real_t *r = heights.data();
 
 	AABB aabb;
 
@@ -1633,7 +1633,7 @@ void HeightMapShape3DSW::set_data(const Variant &p_data) {
 	int width = d["width"];
 	int depth = d["depth"];
 	real_t cell_size = d["cell_size"];
-	Vector<real_t> heights = d["heights"];
+	std::vector<real_t> heights = d["heights"];
 
 	ERR_FAIL_COND(width <= 0);
 	ERR_FAIL_COND(depth <= 0);
