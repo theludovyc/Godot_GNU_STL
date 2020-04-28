@@ -106,7 +106,7 @@ bool AudioStreamGeneratorPlayback::push_buffer(const PackedVector2Array &p_frame
 		return false;
 	}
 
-	const Vector2 *r = p_frames.ptr();
+	const Vector2 *r = p_frames.data();
 	if (sizeof(real_t) == 4) {
 		//write directly
 		buffer.write((const AudioFrame *)r, to_write);
