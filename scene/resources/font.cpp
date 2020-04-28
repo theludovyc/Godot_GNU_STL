@@ -116,7 +116,7 @@ void BitmapFont::_set_chars(const std::vector<int> &p_chars) {
 		return; //none to do
 	int chars = len / 9;
 
-	const int *r = p_chars.ptr();
+	const int *r = p_chars.data();
 	for (int i = 0; i < chars; i++) {
 
 		const int *data = &r[i * 9];
@@ -155,7 +155,7 @@ void BitmapFont::_set_kernings(const std::vector<int> &p_kernings) {
 	ERR_FAIL_COND(len % 3);
 	if (!len)
 		return;
-	const int *r = p_kernings.ptr();
+	const int *r = p_kernings.data();
 
 	for (int i = 0; i < len / 3; i++) {
 
