@@ -83,14 +83,14 @@ StringName ARVRInterface::get_name() const {
 };
 
 bool ARVRInterface::is_primary() {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, false);
 
 	return arvr_server->get_primary_interface() == this;
 };
 
 void ARVRInterface::set_is_primary(bool p_is_primary) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	if (p_is_primary) {
