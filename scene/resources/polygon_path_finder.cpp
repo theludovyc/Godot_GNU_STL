@@ -427,11 +427,11 @@ void PolygonPathFinder::_set_data(const Dictionary &p_data) {
 	int pc = p.size();
 	points.resize(pc + 2);
 
-	const Vector2 *pr = p.ptr();
+	const Vector2 *pr = p.data();
 	for (int i = 0; i < pc; i++) {
 		points[i].pos = pr[i];
 		std::vector<int> con = c[i];
-		const int *cr = con.ptr();
+		const int *cr = con.data();
 		int cc = con.size();
 		for (int j = 0; j < cc; j++) {
 
@@ -443,7 +443,7 @@ void PolygonPathFinder::_set_data(const Dictionary &p_data) {
 
 		std::vector<float> penalties = p_data["penalties"];
 		if (penalties.size() == pc) {
-			const float *pr2 = penalties.ptr();
+			const float *pr2 = penalties.data();
 			for (int i = 0; i < pc; i++) {
 				points[i].penalty = pr2[i];
 			}
@@ -453,7 +453,7 @@ void PolygonPathFinder::_set_data(const Dictionary &p_data) {
 	std::vector<int> segs = p_data["segments"];
 	int sc = segs.size();
 	ERR_FAIL_COND(sc & 1);
-	const int *sr = segs.ptr();
+	const int *sr = segs.data();
 	for (int i = 0; i < sc; i += 2) {
 
 		Edge e(sr[i], sr[i + 1]);
@@ -483,8 +483,8 @@ Dictionary PolygonPathFinder::_get_data() const {
 	std::vector<float> penalties;
 	penalties.resize(MAX(0, points.size() - 2));
 	{
-		Vector2 *wp = p.ptrw();
-		float *pw = penalties.ptrw();
+		Vector2 *wp = p.data();
+		float *pw = penalties.data();
 
 		for (decltype(size) i = 0; i < size; ++i) {
 			wp[i] = points[i].pos;
@@ -507,7 +507,7 @@ Dictionary PolygonPathFinder::_get_data() const {
 	}
 	{
 
-		int *iw = ind.ptrw();
+		int *iw = ind.data();
 		int idx = 0;
 		for (Set<Edge>::Element *E = edges.front(); E; E = E->next()) {
 			iw[idx++] = E->get().points[0];
