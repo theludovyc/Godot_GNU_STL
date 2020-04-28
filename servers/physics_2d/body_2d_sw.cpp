@@ -431,6 +431,8 @@ void Body2DSW::integrate_forces(real_t p_step) {
 	area_linear_damp = 0;
 	if (!areas.empty()) {
 		std::sort(areas.begin(), areas.end());
+		const AreaCMP *aa = &areas[0];
+		auto ac = areas.size();
 		// damp_area = aa[ac-1].area;
 		for (int i = ac - 1; i >= 0 && !stopped; i--) {
 			PhysicsServer2D::AreaSpaceOverrideMode mode = aa[i].area->get_space_override_mode();
