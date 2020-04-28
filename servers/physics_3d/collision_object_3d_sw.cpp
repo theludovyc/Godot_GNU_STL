@@ -54,7 +54,7 @@ void CollisionObject3DSW::set_shape(int p_index, Shape3DSW *p_shape) {
 
 	ERR_FAIL_INDEX(p_index, shapes.size());
 	shapes[p_index].shape->remove_owner(this);
-	shapes.write[p_index].shape = p_shape;
+	shapes[p_index].shape = p_shape;
 
 	p_shape->add_owner(this);
 	if (!pending_shape_update_list.in_list()) {
@@ -67,8 +67,8 @@ void CollisionObject3DSW::set_shape_transform(int p_index, const Transform &p_tr
 
 	ERR_FAIL_INDEX(p_index, shapes.size());
 
-	shapes.write[p_index].xform = p_transform;
-	shapes.write[p_index].xform_inv = p_transform.affine_inverse();
+	shapes[p_index].xform = p_transform;
+	shapes[p_index].xform_inv = p_transform.affine_inverse();
 	if (!pending_shape_update_list.in_list()) {
 		PhysicsServer3DSW::singleton->pending_shape_update_list.add(&pending_shape_update_list);
 	}
@@ -77,7 +77,7 @@ void CollisionObject3DSW::set_shape_transform(int p_index, const Transform &p_tr
 }
 
 void CollisionObject3DSW::set_shape_as_disabled(int p_idx, bool p_enable) {
-	shapes.write[p_idx].disabled = p_enable;
+	shapes[p_idx].disabled = p_enable;
 	if (!pending_shape_update_list.in_list()) {
 		PhysicsServer3DSW::singleton->pending_shape_update_list.add(&pending_shape_update_list);
 	}
@@ -105,10 +105,10 @@ void CollisionObject3DSW::remove_shape(int p_index) {
 			continue;
 		//should never get here with a null owner
 		space->get_broadphase()->remove(shapes[i].bpid);
-		shapes.write[i].bpid = 0;
+		shapes[i].bpid = 0;
 	}
 	shapes[p_index].shape->remove_owner(this);
-	shapes.remove(p_index);
+	shapes.erase(shapes.begin() + p_index);
 
 	if (!pending_shape_update_list.in_list()) {
 		PhysicsServer3DSW::singleton->pending_shape_update_list.add(&pending_shape_update_list);
@@ -136,7 +136,7 @@ void CollisionObject3DSW::_unregister_shapes() {
 
 	for (int i = 0; i < shapes.size(); i++) {
 
-		Shape &s = shapes.write[i];
+		Shape &s = shapes[i];
 		if (s.bpid > 0) {
 			space->get_broadphase()->remove(s.bpid);
 			s.bpid = 0;
@@ -151,7 +151,7 @@ void CollisionObject3DSW::_update_shapes() {
 
 	for (int i = 0; i < shapes.size(); i++) {
 
-		Shape &s = shapes.write[i];
+		Shape &s = shapes[i];
 		if (s.bpid == 0) {
 			s.bpid = space->get_broadphase()->create(this, i);
 			space->get_broadphase()->set_static(s.bpid, _static);
@@ -178,7 +178,7 @@ void CollisionObject3DSW::_update_shapes_with_motion(const Vector3 &p_motion) {
 
 	for (int i = 0; i < shapes.size(); i++) {
 
-		Shape &s = shapes.write[i];
+		Shape &s = shapes[i];
 		if (s.bpid == 0) {
 			s.bpid = space->get_broadphase()->create(this, i);
 			space->get_broadphase()->set_static(s.bpid, _static);
@@ -203,7 +203,7 @@ void CollisionObject3DSW::_set_space(Space3DSW *p_space) {
 
 		for (int i = 0; i < shapes.size(); i++) {
 
-			Shape &s = shapes.write[i];
+			Shape &s = shapes[i];
 			if (s.bpid) {
 				space->get_broadphase()->remove(s.bpid);
 				s.bpid = 0;
