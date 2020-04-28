@@ -438,7 +438,7 @@ DynamicFontAtSize::TexturePosition DynamicFontAtSize::_find_texture_pos_for_glyp
 
 		{
 			//zero texture
-			uint8_t *w = tex.imgdata.ptrw();
+			uint8_t *w = tex.imgdata.data();
 			ERR_FAIL_COND_V(texsize * texsize * p_color_size > tex.imgdata.size(), ret);
 			for (int i = 0; i < texsize * texsize * p_color_size; i++) {
 				w[i] = 0;
@@ -476,7 +476,7 @@ DynamicFontAtSize::Character DynamicFontAtSize::_bitmap_to_character(FT_Bitmap b
 	CharTexture &tex = textures[tex_pos.index];
 
 	{
-		uint8_t *wr = tex.imgdata.ptrw();
+		uint8_t *wr = tex.imgdata.data();
 
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
@@ -1038,10 +1038,10 @@ void DynamicFont::update_oversampling() {
 
 				for (int i = 0; i < E->self()->fallback_data_at_size.size(); i++) {
 					if (E->self()->fallback_data_at_size[i].is_valid()) {
-						E->self()->fallback_data_at_size.write[i]->update_oversampling();
+						E->self()->fallback_data_at_size[i]->update_oversampling();
 
 						if (E->self()->has_outline() && E->self()->fallback_outline_data_at_size[i].is_valid()) {
-							E->self()->fallback_outline_data_at_size.write[i]->update_oversampling();
+							E->self()->fallback_outline_data_at_size[i]->update_oversampling();
 						}
 					}
 				}
