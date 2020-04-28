@@ -65,7 +65,7 @@ Ref<TriangleMesh> Mesh::generate_triangle_mesh() const {
 
 	std::vector<Vector3> faces;
 	faces.resize(facecount);
-	Vector3 *facesw = faces.ptrw();
+	Vector3 *facesw = faces.data();
 
 	int widx = 0;
 
@@ -79,13 +79,13 @@ Ref<TriangleMesh> Mesh::generate_triangle_mesh() const {
 
 		int vc = surface_get_array_len(i);
 		std::vector<Vector3> vertices = a[ARRAY_VERTEX];
-		const Vector3 *vr = vertices.ptr();
+		const Vector3 *vr = vertices.data();
 
 		if (surface_get_format(i) & ARRAY_FORMAT_INDEX) {
 
 			int ic = surface_get_array_index_len(i);
 			std::vector<int> indices = a[ARRAY_INDEX];
-			const int *ir = indices.ptr();
+			const int *ir = indices.data();
 
 			for (int j = 0; j < ic; j++) {
 				int index = ir[j];
@@ -123,8 +123,8 @@ void Mesh::generate_debug_mesh_lines(std::vector<Vector3> &r_lines) {
 
 	debug_lines.resize(tm->get_triangles().size() * 6); // 3 lines x 2 points each line
 
-	const int *ind_r = triangle_indices.ptr();
-	const Vector3 *ver_r = vertices.ptr();
+	const int *ind_r = triangle_indices.data();
+	const Vector3 *ver_r = vertices.data();
 	for (int j = 0, x = 0, i = 0; i < triangles_num; j += 6, x += 3, ++i) {
 		// Triangle line 1
 		debug_lines[j + 0] = ver_r[ind_r[x + 0]];
@@ -235,7 +235,7 @@ Ref<Shape3D> Mesh::create_convex_shape() const {
 		Array a = surface_get_arrays(i);
 		ERR_FAIL_COND_V(a.empty(), Ref<ConvexPolygonShape3D>());
 		std::vector<Vector3> v = a[ARRAY_VERTEX];
-		vertices.append_array(v);
+		vertices.insert(vertices.end(), v.begin(), v.end());
 	}
 
 	Ref<ConvexPolygonShape3D> shape = memnew(ConvexPolygonShape3D);
@@ -254,10 +254,10 @@ Ref<Shape3D> Mesh::create_trimesh_shape() const {
 
 	for (int i = 0; i < face_points.size(); i += 3) {
 
-		Face3 f = faces.get(i / 3);
-		face_points.set(i, f.vertex[0]);
-		face_points.set(i + 1, f.vertex[1]);
-		face_points.set(i + 2, f.vertex[2]);
+		Face3 f = faces[i / 3];
+		face_points[i] = f.vertex[0];
+		face_points[i + 1] = f.vertex[1];
+		face_points[i + 2] = f.vertex[2];
 	}
 
 	Ref<ConcavePolygonShape3D> shape = memnew(ConcavePolygonShape3D);
@@ -305,7 +305,7 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 							arrays[j] = Variant();
 							continue;
 						}
-						dst.append_array(src);
+						dst.insert(dst.end(), src.begin(), src.end());
 						arrays[j] = dst;
 					} break;
 					case ARRAY_TANGENT:
@@ -318,7 +318,7 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 							arrays[j] = Variant();
 							continue;
 						}
-						dst.append_array(src);
+						dst.insert(dst.end(), src.begin(), src.end());
 						arrays[j] = dst;
 
 					} break;
@@ -329,7 +329,7 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 							arrays[j] = Variant();
 							continue;
 						}
-						dst.append_array(src);
+						dst.insert(dst.end(), src.begin(), src.end());
 						arrays[j] = dst;
 
 					} break;
@@ -341,7 +341,7 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 							arrays[j] = Variant();
 							continue;
 						}
-						dst.append_array(src);
+						dst.insert(dst.end(), src.begin(), src.end());
 						arrays[j] = dst;
 
 					} break;
@@ -354,12 +354,12 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 						}
 						{
 							int ss = src.size();
-							int *w = src.ptrw();
+							int *w = src.data();
 							for (int k = 0; k < ss; k++) {
 								w[k] += index_accum;
 							}
 						}
-						dst.append_array(src);
+						dst.insert(dst.end(), src.begin(), src.end());
 						arrays[j] = dst;
 						index_accum += vcount;
 
@@ -378,12 +378,12 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 		std::vector<Vector3> vertices = arrays[ARRAY_VERTEX];
 		int vc = vertices.size();
 		ERR_FAIL_COND_V(!vc, Ref<ArrayMesh>());
-		Vector3 *r = vertices.ptrw();
+		Vector3 *r = vertices.data();
 
 		if (indices.size()) {
 			ERR_FAIL_COND_V(indices.size() % 3 != 0, Ref<ArrayMesh>());
 			vc = indices.size();
-			ir = indices.ptrw();
+			ir = indices.data();
 			has_indices = true;
 		}
 
@@ -446,7 +446,7 @@ Ref<Mesh> Mesh::create_outline(float p_margin) const {
 
 			std::vector<int> new_indices;
 			new_indices.resize(vertices.size());
-			int *iw = new_indices.ptrw();
+			int *iw = new_indices.data();
 
 			for (int j = 0; j < vc2; j += 3) {
 
@@ -562,7 +562,7 @@ std::vector<Ref<Shape3D>> Mesh::convex_decompose() const {
 		std::vector<Vector3> convex_points;
 		convex_points.resize(points.size());
 		{
-			Vector3 *w = convex_points.ptrw();
+			Vector3 *w = convex_points.data();
 			int idx = 0;
 			for (Set<Vector3>::Element *E = points.front(); E; E = E->next()) {
 				w[idx++] = E->get();
@@ -603,8 +603,8 @@ static std::vector<uint8_t> _fix_array_compatibility(const std::vector<uint8_t> 
 
 	ret.resize(dst_stride * p_elements);
 	{
-		uint8_t *w = ret.ptrw();
-		const uint8_t *r = p_src.ptr();
+		uint8_t *w = ret.data();
+		const uint8_t *r = p_src.data();
 
 		for (uint32_t i = 0; i < p_elements; i++) {
 
@@ -707,7 +707,7 @@ bool ArrayMesh::_set(const StringName &p_name, const Variant &p_value) {
 
 		std::vector<String> sk = p_value;
 		int sz = sk.size();
-		const String *r = sk.ptr();
+		const String *r = sk.data();
 		for (int i = 0; i < sz; i++)
 			add_blend_shape(r[i]);
 		return true;
@@ -1253,7 +1253,7 @@ void ArrayMesh::surface_set_material(int p_idx, const Ref<Material> &p_material)
 	ERR_FAIL_INDEX(p_idx, surfaces.size());
 	if (surfaces[p_idx].material == p_material)
 		return;
-	surfaces.write[p_idx].material = p_material;
+	surfaces[p_idx].material = p_material;
 	RenderingServer::get_singleton()->mesh_surface_set_material(mesh, p_idx, p_material.is_null() ? RID() : p_material->get_rid());
 
 	_change_notify("material");
@@ -1400,10 +1400,10 @@ Error ArrayMesh::lightmap_unwrap(const Transform &p_base_transform, float p_texe
 
 		std::vector<Vector3> rvertices = arrays[Mesh::ARRAY_VERTEX];
 		int vc = rvertices.size();
-		const Vector3 *r = rvertices.ptr();
+		const Vector3 *r = rvertices.data();
 
 		std::vector<Vector3> rnormals = arrays[Mesh::ARRAY_NORMAL];
-		const Vector3 *rn = rnormals.ptr();
+		const Vector3 *rn = rnormals.data();
 
 		auto vertex_ofs = vertices.size() / 3;
 
@@ -1441,7 +1441,7 @@ Error ArrayMesh::lightmap_unwrap(const Transform &p_base_transform, float p_texe
 			}
 
 		} else {
-			const int *ri = rindices.ptr();
+			const int *ri = rindices.data();
 
 			for (int j = 0; j < ic / 3; j++) {
 				if (Face3(r[ri[j * 3 + 0]], r[ri[j * 3 + 1]], r[ri[j * 3 + 2]]).is_degenerate())
