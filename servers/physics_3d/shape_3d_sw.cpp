@@ -952,7 +952,7 @@ Vector3 ConvexPolygonShape3DSW::get_moment_of_inertia(real_t p_mass) const {
 			(p_mass / 3.0) * (extents.y * extents.y + extents.y * extents.y));
 }
 
-void ConvexPolygonShape3DSW::_setup(const Vector<Vector3> &p_vertices) {
+void ConvexPolygonShape3DSW::_setup(const std::vector<Vector3> &p_vertices) {
 
 	Error err = QuickHull::build(p_vertices, mesh);
 	if (err != OK)

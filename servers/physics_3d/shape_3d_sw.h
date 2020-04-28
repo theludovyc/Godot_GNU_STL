@@ -262,7 +262,7 @@ struct ConvexPolygonShape3DSW : public Shape3DSW {
 
 	Geometry::MeshData mesh;
 
-	void _setup(const Vector<Vector3> &p_vertices);
+	void _setup(const std::vector<Vector3> &p_vertices);
 
 public:
 	const Geometry::MeshData &get_mesh() const { return mesh; }
@@ -296,8 +296,8 @@ struct ConcavePolygonShape3DSW : public ConcaveShape3DSW {
 		int indices[3];
 	};
 
-	Vector<Face> faces;
-	Vector<Vector3> vertices;
+	std::vector<Face> faces;
+	std::vector<Vector3> vertices;
 
 	struct BVH {
 
@@ -308,7 +308,7 @@ struct ConcavePolygonShape3DSW : public ConcaveShape3DSW {
 		int face_index;
 	};
 
-	Vector<BVH> bvh;
+	std::vector<BVH> bvh;
 
 	struct _CullParams {
 
@@ -341,10 +341,10 @@ struct ConcavePolygonShape3DSW : public ConcaveShape3DSW {
 
 	void _fill_bvh(_VolumeSW_BVH *p_bvh_tree, BVH *p_bvh_array, int &p_idx);
 
-	void _setup(Vector<Vector3> p_faces);
+	void _setup(std::vector<Vector3> p_faces);
 
 public:
-	Vector<Vector3> get_faces() const;
+	std::vector<Vector3> get_faces() const;
 
 	virtual PhysicsServer3D::ShapeType get_type() const { return PhysicsServer3D::SHAPE_CONCAVE_POLYGON; }
 
@@ -367,7 +367,7 @@ public:
 
 struct HeightMapShape3DSW : public ConcaveShape3DSW {
 
-	Vector<real_t> heights;
+	std::vector<real_t> heights;
 	int width;
 	int depth;
 	real_t cell_size;
@@ -375,10 +375,10 @@ struct HeightMapShape3DSW : public ConcaveShape3DSW {
 	//void _cull_segment(int p_idx,_SegmentCullParams *p_params) const;
 	//void _cull(int p_idx,_CullParams *p_params) const;
 
-	void _setup(Vector<real_t> p_heights, int p_width, int p_depth, real_t p_cell_size);
+	void _setup(std::vector<real_t> p_heights, int p_width, int p_depth, real_t p_cell_size);
 
 public:
-	Vector<real_t> get_heights() const;
+	std::vector<real_t> get_heights() const;
 	int get_width() const;
 	int get_depth() const;
 	real_t get_cell_size() const;
