@@ -498,7 +498,7 @@ std::vector<Color> Voxelizer::_get_bake_texture(Ref<Image> p_image, const Color 
 	p_image->convert(Image::FORMAT_RGBA8);
 	p_image->resize(bake_texture_size, bake_texture_size, Image::INTERPOLATE_CUBIC);
 
-	const uint8_t *r = p_image->get_data().ptr();
+	const uint8_t *r = p_image->get_data().data();
 	ret.resize(bake_texture_size * bake_texture_size);
 
 	for (int i = 0; i < bake_texture_size * bake_texture_size; i++) {
@@ -893,7 +893,7 @@ std::vector<uint8_t> Voxelizer::get_giprobe_octree_cells() const {
 	{
 		uint8_t *w = data.data();
 		uint32_t *children_cells = (uint32_t *)w;
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 
 		uint32_t cell_count = bake_cells.size();
 
@@ -913,7 +913,7 @@ std::vector<uint8_t> Voxelizer::get_giprobe_data_cells() const {
 	{
 		uint8_t *w = data.data();
 		uint32_t *dataptr = (uint32_t *)w;
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 
 		uint32_t cell_count = bake_cells.size();
 
@@ -965,7 +965,7 @@ std::vector<uint8_t> Voxelizer::get_giprobe_data_cells() const {
 
 std::vector<int> Voxelizer::get_giprobe_level_cell_count() const {
 	uint32_t cell_count = bake_cells.size();
-	const Cell *cells = bake_cells.ptr();
+	const Cell *cells = bake_cells.data();
 	std::vector<int> level_count;
 	level_count.resize(cell_subdiv + 1); //remember, always x+1 levels for x subdivisions
 	{
@@ -1041,7 +1041,7 @@ std::vector<uint8_t> Voxelizer::get_sdf_3d_image() const {
 
 	//plot solid cells
 	{
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 		uint32_t cell_count = bake_cells.size();
 
 		for (uint32_t i = 0; i < cell_count; i++) {
