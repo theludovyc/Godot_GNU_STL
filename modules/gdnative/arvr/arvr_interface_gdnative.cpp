@@ -152,7 +152,7 @@ bool ARVRInterfaceGDNative::initialize() {
 	if (initialized) {
 		// if we successfully initialize our interface and we don't have a primary interface yet, this becomes our primary interface
 
-		ARVRServer *arvr_server = ARVRServer::get_singleton();
+		XRServer *arvr_server = XRServer::get_singleton();
 		if ((arvr_server != nullptr) && (arvr_server->get_primary_interface() == nullptr)) {
 			arvr_server->set_primary_interface(this);
 		};
@@ -164,7 +164,7 @@ bool ARVRInterfaceGDNative::initialize() {
 void ARVRInterfaceGDNative::uninitialize() {
 	ERR_FAIL_COND(interface == nullptr);
 
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	if (arvr_server != nullptr) {
 		// Whatever happens, make sure this is no longer our primary interface
 		arvr_server->clear_primary_interface_if(this);
@@ -250,11 +250,11 @@ void GDAPI godot_arvr_register_interface(const godot_arvr_interface_gdnative *p_
 	Ref<ARVRInterfaceGDNative> new_interface;
 	new_interface.instance();
 	new_interface->set_interface((const godot_arvr_interface_gdnative *)p_interface);
-	ARVRServer::get_singleton()->add_interface(new_interface);
+	XRServer::get_singleton()->add_interface(new_interface);
 }
 
 godot_real GDAPI godot_arvr_get_worldscale() {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 1.0);
 
 	return arvr_server->get_world_scale();
@@ -264,7 +264,7 @@ godot_transform GDAPI godot_arvr_get_reference_frame() {
 	godot_transform reference_frame;
 	Transform *reference_frame_ptr = (Transform *)&reference_frame;
 
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	if (arvr_server != nullptr) {
 		*reference_frame_ptr = arvr_server->get_reference_frame();
 	} else {
@@ -314,7 +314,7 @@ godot_int GDAPI godot_arvr_get_texid(godot_rid *p_render_target) {
 }
 
 godot_int GDAPI godot_arvr_add_controller(char *p_device_name, godot_int p_hand, godot_bool p_tracks_orientation, godot_bool p_tracks_position) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 0);
 
 	InputFilter *input = InputFilter::get_singleton();
@@ -322,7 +322,7 @@ godot_int GDAPI godot_arvr_add_controller(char *p_device_name, godot_int p_hand,
 
 	ARVRPositionalTracker *new_tracker = memnew(ARVRPositionalTracker);
 	new_tracker->set_name(p_device_name);
-	new_tracker->set_type(ARVRServer::TRACKER_CONTROLLER);
+	new_tracker->set_type(XRServer::TRACKER_CONTROLLER);
 	if (p_hand == 1) {
 		new_tracker->set_hand(ARVRPositionalTracker::TRACKER_LEFT_HAND);
 	} else if (p_hand == 2) {
@@ -353,13 +353,13 @@ godot_int GDAPI godot_arvr_add_controller(char *p_device_name, godot_int p_hand,
 }
 
 void GDAPI godot_arvr_remove_controller(godot_int p_controller_id) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	InputFilter *input = InputFilter::get_singleton();
 	ERR_FAIL_NULL(input);
 
-	ARVRPositionalTracker *remove_tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, p_controller_id);
+	ARVRPositionalTracker *remove_tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, p_controller_id);
 	if (remove_tracker != nullptr) {
 		// unset our joystick if applicable
 		int joyid = remove_tracker->get_joy_id();
@@ -375,10 +375,10 @@ void GDAPI godot_arvr_remove_controller(godot_int p_controller_id) {
 }
 
 void GDAPI godot_arvr_set_controller_transform(godot_int p_controller_id, godot_transform *p_transform, godot_bool p_tracks_orientation, godot_bool p_tracks_position) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, p_controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, p_controller_id);
 	if (tracker != nullptr) {
 		Transform *transform = (Transform *)p_transform;
 		if (p_tracks_orientation) {
@@ -391,13 +391,13 @@ void GDAPI godot_arvr_set_controller_transform(godot_int p_controller_id, godot_
 }
 
 void GDAPI godot_arvr_set_controller_button(godot_int p_controller_id, godot_int p_button, godot_bool p_is_pressed) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	InputFilter *input = InputFilter::get_singleton();
 	ERR_FAIL_NULL(input);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, p_controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, p_controller_id);
 	if (tracker != nullptr) {
 		int joyid = tracker->get_joy_id();
 		if (joyid != -1) {
@@ -407,13 +407,13 @@ void GDAPI godot_arvr_set_controller_button(godot_int p_controller_id, godot_int
 }
 
 void GDAPI godot_arvr_set_controller_axis(godot_int p_controller_id, godot_int p_axis, godot_real p_value, godot_bool p_can_be_negative) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	InputFilter *input = InputFilter::get_singleton();
 	ERR_FAIL_NULL(input);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, p_controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, p_controller_id);
 	if (tracker != nullptr) {
 		int joyid = tracker->get_joy_id();
 		if (joyid != -1) {
@@ -426,10 +426,10 @@ void GDAPI godot_arvr_set_controller_axis(godot_int p_controller_id, godot_int p
 }
 
 godot_real GDAPI godot_arvr_get_controller_rumble(godot_int p_controller_id) {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 0.0);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, p_controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, p_controller_id);
 	if (tracker != nullptr) {
 		return tracker->get_rumble();
 	}

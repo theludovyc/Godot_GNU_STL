@@ -297,7 +297,7 @@ bool MobileVRInterface::is_initialized() const {
 };
 
 bool MobileVRInterface::initialize() {
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, false);
 
 	if (!initialized) {
@@ -326,7 +326,7 @@ bool MobileVRInterface::initialize() {
 
 void MobileVRInterface::uninitialize() {
 	if (initialized) {
-		ARVRServer *arvr_server = ARVRServer::get_singleton();
+		XRServer *arvr_server = XRServer::get_singleton();
 		if (arvr_server != nullptr) {
 			// no longer our primary interface
 			arvr_server->clear_primary_interface_if(this);
@@ -353,7 +353,7 @@ Transform MobileVRInterface::get_transform_for_eye(ARVRInterface::Eyes p_eye, co
 
 	Transform transform_for_eye;
 
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, transform_for_eye);
 
 	if (initialized) {

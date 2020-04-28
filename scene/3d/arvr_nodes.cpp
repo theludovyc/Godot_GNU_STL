@@ -31,7 +31,7 @@
 #include "arvr_nodes.h"
 #include "core/input/input_filter.h"
 #include "servers/arvr/arvr_interface.h"
-#include "servers/arvr_server.h"
+#include "servers/xr_server.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,8 +68,8 @@ String ARVRCamera::get_configuration_warning() const {
 };
 
 Vector3 ARVRCamera::project_local_ray_normal(const Point2 &p_pos) const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, Vector3());
 
 	Ref<ARVRInterface> arvr_interface = arvr_server->get_primary_interface();
@@ -92,8 +92,8 @@ Vector3 ARVRCamera::project_local_ray_normal(const Point2 &p_pos) const {
 };
 
 Point2 ARVRCamera::unproject_position(const Vector3 &p_pos) const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, Vector2());
 
 	Ref<ARVRInterface> arvr_interface = arvr_server->get_primary_interface();
@@ -121,8 +121,8 @@ Point2 ARVRCamera::unproject_position(const Vector3 &p_pos) const {
 };
 
 Vector3 ARVRCamera::project_position(const Point2 &p_point, float p_z_depth) const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, Vector3());
 
 	Ref<ARVRInterface> arvr_interface = arvr_server->get_primary_interface();
@@ -150,8 +150,8 @@ Vector3 ARVRCamera::project_position(const Point2 &p_point, float p_z_depth) con
 };
 
 std::vector<Plane> ARVRCamera::get_frustum() const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, std::vector<Plane>{});
 
 	Ref<ARVRInterface> arvr_interface = arvr_server->get_primary_interface();
@@ -186,12 +186,12 @@ void ARVRController::_notification(int p_what) {
 			set_process_internal(false);
 		}; break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			// get our ARVRServer
-			ARVRServer *arvr_server = ARVRServer::get_singleton();
+			// get our XRServer
+			XRServer *arvr_server = XRServer::get_singleton();
 			ERR_FAIL_NULL(arvr_server);
 
 			// find the tracker for our controller
-			ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+			ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 			if (tracker == nullptr) {
 				// this controller is currently turned off
 				is_active = false;
@@ -274,11 +274,11 @@ int ARVRController::get_controller_id(void) const {
 };
 
 String ARVRController::get_controller_name(void) const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, String());
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 	if (tracker == nullptr) {
 		return String("Not connected");
 	};
@@ -287,11 +287,11 @@ String ARVRController::get_controller_name(void) const {
 };
 
 int ARVRController::get_joystick_id() const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 0);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 	if (tracker == nullptr) {
 		// No tracker? no joystick id... (0 is our first joystick)
 		return -1;
@@ -319,11 +319,11 @@ float ARVRController::get_joystick_axis(int p_axis) const {
 };
 
 real_t ARVRController::get_rumble() const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 0.0);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 	if (tracker == nullptr) {
 		return 0.0;
 	};
@@ -332,11 +332,11 @@ real_t ARVRController::get_rumble() const {
 };
 
 void ARVRController::set_rumble(real_t p_rumble) {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 	if (tracker != nullptr) {
 		tracker->set_rumble(p_rumble);
 	};
@@ -351,11 +351,11 @@ bool ARVRController::get_is_active() const {
 };
 
 ARVRPositionalTracker::TrackerHand ARVRController::get_hand() const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, ARVRPositionalTracker::TRACKER_HAND_UNKNOWN);
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_CONTROLLER, controller_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_CONTROLLER, controller_id);
 	if (tracker == nullptr) {
 		return ARVRPositionalTracker::TRACKER_HAND_UNKNOWN;
 	};
@@ -401,12 +401,12 @@ void ARVRAnchor::_notification(int p_what) {
 			set_process_internal(false);
 		}; break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			// get our ARVRServer
-			ARVRServer *arvr_server = ARVRServer::get_singleton();
+			// get our XRServer
+			XRServer *arvr_server = XRServer::get_singleton();
 			ERR_FAIL_NULL(arvr_server);
 
 			// find the tracker for our anchor
-			ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_ANCHOR, anchor_id);
+			ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_ANCHOR, anchor_id);
 			if (tracker == nullptr) {
 				// this anchor is currently not available
 				is_active = false;
@@ -474,11 +474,11 @@ Vector3 ARVRAnchor::get_size() const {
 };
 
 String ARVRAnchor::get_anchor_name(void) const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, String());
 
-	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(ARVRServer::TRACKER_ANCHOR, anchor_id);
+	ARVRPositionalTracker *tracker = arvr_server->find_by_type_and_id(XRServer::TRACKER_ANCHOR, anchor_id);
 	if (tracker == nullptr) {
 		return String("Not connected");
 	};
@@ -558,24 +558,24 @@ void ARVROrigin::clear_tracked_camera_if(ARVRCamera *p_tracked_camera) {
 };
 
 float ARVROrigin::get_world_scale() const {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL_V(arvr_server, 1.0);
 
 	return arvr_server->get_world_scale();
 };
 
 void ARVROrigin::set_world_scale(float p_world_scale) {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	arvr_server->set_world_scale(p_world_scale);
 };
 
 void ARVROrigin::_notification(int p_what) {
-	// get our ARVRServer
-	ARVRServer *arvr_server = ARVRServer::get_singleton();
+	// get our XRServer
+	XRServer *arvr_server = XRServer::get_singleton();
 	ERR_FAIL_NULL(arvr_server);
 
 	switch (p_what) {
