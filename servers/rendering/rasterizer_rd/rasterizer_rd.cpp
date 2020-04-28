@@ -44,7 +44,7 @@ void RasterizerRD::blit_render_targets_to_screen(DisplayServer::WindowID p_scree
 		RID rd_texture = storage->texture_get_rd_texture(texture);
 		ERR_CONTINUE(rd_texture.is_null());
 		if (!render_target_descriptors.has(rd_texture) || !RD::get_singleton()->uniform_set_is_valid(render_target_descriptors[rd_texture])) {
-			Vector<RD::Uniform> uniforms;
+			std::vector<RD::Uniform> uniforms;
 			RD::Uniform u;
 			u.type = RD::UNIFORM_TYPE_SAMPLER_WITH_TEXTURE;
 			u.binding = 0;
@@ -115,7 +115,7 @@ void RasterizerRD::initialize() {
 				"layout (binding = 0) uniform sampler2D src_rt;\n"
 				"void main() { color=texture(src_rt,uv); }\n");
 
-		Vector<RenderingDevice::ShaderStageData> source;
+		std::vector<RenderingDevice::ShaderStageData> source;
 		source.push_back(vert);
 		source.push_back(frag);
 		String error;
@@ -126,10 +126,10 @@ void RasterizerRD::initialize() {
 	}
 
 	{ //create index array for copy shader
-		Vector<uint8_t> pv;
+		std::vector<uint8_t> pv;
 		pv.resize(6 * 4);
 		{
-			uint8_t *w = pv.ptrw();
+			uint8_t *w = pv.data();
 			int *p32 = (int *)w;
 			p32[0] = 0;
 			p32[1] = 1;
