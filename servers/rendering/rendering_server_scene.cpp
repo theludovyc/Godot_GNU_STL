@@ -1810,7 +1810,7 @@ void RenderingServerScene::render_camera(RID p_render_buffers, Ref<ARVRInterface
 
 	// We also ignore our camera position, it will have been positioned with a slightly old tracking position.
 	// Instead we take our origin point and have our ar/vr interface add fresh tracking data! Whoohoo!
-	Transform world_origin = ARVRServer::get_singleton()->get_world_origin();
+	Transform world_origin = XRServer::get_singleton()->get_world_origin();
 	Transform cam_transform = p_interface->get_transform_for_eye(p_eye, world_origin);
 
 	// For stereo render we only prepare for our left eye and then reuse the outcome for our right eye
