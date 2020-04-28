@@ -52,8 +52,8 @@ void BitMap::create_from_image_alpha(const Ref<Image> &p_image, float p_threshol
 
 	create(Size2(img->get_width(), img->get_height()));
 
-	const uint8_t *r = img->get_data().ptr();
-	uint8_t *w = bitmask.ptrw();
+	const uint8_t *r = img->get_data().data();
+	uint8_t *w = bitmask.data();
 
 	for (int i = 0; i < width * height; i++) {
 
@@ -462,7 +462,7 @@ static void fill_bits(const BitMap *p_src, Ref<BitMap> &p_map, const Point2i &p_
 
 					FillBitsStackEntry se = { pos, i, j };
 					stack.resize(MAX(stack_size + 1, stack.size()));
-					stack.set(stack_size, se);
+					stack[stack_size] = se;
 					stack_size++;
 
 					pos = Point2i(i, j);
@@ -476,7 +476,7 @@ static void fill_bits(const BitMap *p_src, Ref<BitMap> &p_map, const Point2i &p_
 		}
 		if (!reenter) {
 			if (stack_size) {
-				FillBitsStackEntry se = stack.get(stack_size - 1);
+				FillBitsStackEntry se = stack[stack_size - 1];
 				stack_size--;
 				pos = se.pos;
 				next_i = se.i;

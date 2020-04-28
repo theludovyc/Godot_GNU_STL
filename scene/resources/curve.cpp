@@ -680,7 +680,7 @@ void Curve2D::_bake() const {
 	if (points.size() == 1) {
 
 		baked_point_cache.resize(1);
-		baked_point_cache.set(0, points[0].pos);
+		baked_point_cache[0] = points[0].pos;
 		return;
 	}
 
@@ -741,7 +741,7 @@ void Curve2D::_bake() const {
 	pointlist.push_back(lastpos);
 
 	baked_point_cache.resize(pointlist.size());
-	Vector2 *w = baked_point_cache.ptrw();
+	Vector2 *w = baked_point_cache.data();
 	int idx = 0;
 
 	for (List<Vector2>::Element *E = pointlist.front(); E; E = E->next()) {
@@ -768,10 +768,10 @@ Vector2 Curve2D::interpolate_baked(float p_offset, bool p_cubic) const {
 	ERR_FAIL_COND_V_MSG(pc == 0, Vector2(), "No points in Curve2D.");
 
 	if (pc == 1)
-		return baked_point_cache.get(0);
+		return baked_point_cache[0];
 
 	int bpc = baked_point_cache.size();
-	const Vector2 *r = baked_point_cache.ptr();
+	const Vector2 *r = baked_point_cache.data();
 
 	if (p_offset < 0)
 		return r[0];
@@ -831,9 +831,9 @@ Vector2 Curve2D::get_closest_point(const Vector2 &p_to_point) const {
 	ERR_FAIL_COND_V_MSG(pc == 0, Vector2(), "No points in Curve2D.");
 
 	if (pc == 1)
-		return baked_point_cache.get(0);
+		return baked_point_cache[0];
 
-	const Vector2 *r = baked_point_cache.ptr();
+	const Vector2 *r = baked_point_cache.data();
 
 	Vector2 nearest;
 	float nearest_dist = -1.0f;
@@ -869,7 +869,7 @@ float Curve2D::get_closest_offset(const Vector2 &p_to_point) const {
 	if (pc == 1)
 		return 0.0f;
 
-	const Vector2 *r = baked_point_cache.ptr();
+	const Vector2 *r = baked_point_cache.data();
 
 	float nearest = 0.0f;
 	float nearest_dist = -1.0f;
@@ -901,7 +901,7 @@ Dictionary Curve2D::_get_data() const {
 
 	PackedVector2Array d;
 	d.resize(points.size() * 3);
-	Vector2 *w = d.ptrw();
+	Vector2 *w = d.data();
 
 	for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 		w[i * 3 + 0] = points[i].in;
@@ -921,7 +921,7 @@ void Curve2D::_set_data(const Dictionary &p_data) {
 	int pc = rp.size();
 	ERR_FAIL_COND(pc % 3 != 0);
 	points.resize(pc / 3);
-	const Vector2 *r = rp.ptr();
+	const Vector2 *r = rp.data();
 
 	for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 		points[i].in = r[i * 3 + 0];
@@ -951,7 +951,7 @@ PackedVector2Array Curve2D::tessellate(int p_max_stages, float p_tolerance) cons
 	}
 
 	tess.resize(pc);
-	Vector2 *bpw = tess.ptrw();
+	Vector2 *bpw = tess.data();
 	bpw[0] = points[0].pos;
 	int pidx = 0;
 
@@ -1177,14 +1177,14 @@ void Curve3D::_bake() const {
 	if (points.size() == 1) {
 
 		baked_point_cache.resize(1);
-		baked_point_cache.set(0, points[0].pos);
+		baked_point_cache[0] = points[0].pos;
 		baked_tilt_cache.resize(1);
-		baked_tilt_cache.set(0, points[0].tilt);
+		baked_tilt_cache[0] = points[0].tilt;
 
 		if (up_vector_enabled) {
 
 			baked_up_vector_cache.resize(1);
-			baked_up_vector_cache.set(0, Vector3(0, 1, 0));
+			baked_up_vector_cache[0] = Vector3(0, 1, 0);
 		} else
 			baked_up_vector_cache.resize(0);
 
@@ -1251,14 +1251,14 @@ void Curve3D::_bake() const {
 	pointlist.push_back(Plane(lastpos, lastilt));
 
 	baked_point_cache.resize(pointlist.size());
-	Vector3 *w = baked_point_cache.ptrw();
+	Vector3 *w = baked_point_cache.data();
 	int idx = 0;
 
 	baked_tilt_cache.resize(pointlist.size());
-	real_t *wt = baked_tilt_cache.ptrw();
+	real_t *wt = baked_tilt_cache.data();
 
 	baked_up_vector_cache.resize(up_vector_enabled ? pointlist.size() : 0);
-	Vector3 *up_write = baked_up_vector_cache.ptrw();
+	Vector3 *up_write = baked_up_vector_cache.data();
 
 	Vector3 sideways;
 	Vector3 up;
@@ -1323,10 +1323,10 @@ Vector3 Curve3D::interpolate_baked(float p_offset, bool p_cubic) const {
 	ERR_FAIL_COND_V_MSG(pc == 0, Vector3(), "No points in Curve3D.");
 
 	if (pc == 1)
-		return baked_point_cache.get(0);
+		return baked_point_cache[0];
 
 	int bpc = baked_point_cache.size();
-	const Vector3 *r = baked_point_cache.ptr();
+	const Vector3 *r = baked_point_cache.data();
 
 	if (p_offset < 0)
 		return r[0];
@@ -1365,10 +1365,10 @@ float Curve3D::interpolate_baked_tilt(float p_offset) const {
 	ERR_FAIL_COND_V_MSG(pc == 0, 0, "No tilts in Curve3D.");
 
 	if (pc == 1)
-		return baked_tilt_cache.get(0);
+		return baked_tilt_cache[0];
 
 	int bpc = baked_tilt_cache.size();
-	const real_t *r = baked_tilt_cache.ptr();
+	const real_t *r = baked_tilt_cache.data();
 
 	if (p_offset < 0)
 		return r[0];
@@ -1401,11 +1401,11 @@ Vector3 Curve3D::interpolate_baked_up_vector(float p_offset, bool p_apply_tilt) 
 	ERR_FAIL_COND_V_MSG(count == 0, Vector3(0, 1, 0), "No up vectors in Curve3D.");
 
 	if (count == 1)
-		return baked_up_vector_cache.get(0);
+		return baked_up_vector_cache[0];
 
-	const Vector3 *r = baked_up_vector_cache.ptr();
-	const Vector3 *rp = baked_point_cache.ptr();
-	const real_t *rt = baked_tilt_cache.ptr();
+	const Vector3 *r = baked_up_vector_cache.data();
+	const Vector3 *rp = baked_point_cache.data();
+	const real_t *rt = baked_tilt_cache.data();
 
 	float offset = CLAMP(p_offset, 0.0f, baked_max_ofs);
 
@@ -1469,9 +1469,9 @@ Vector3 Curve3D::get_closest_point(const Vector3 &p_to_point) const {
 	ERR_FAIL_COND_V_MSG(pc == 0, Vector3(), "No points in Curve3D.");
 
 	if (pc == 1)
-		return baked_point_cache.get(0);
+		return baked_point_cache[0];
 
-	const Vector3 *r = baked_point_cache.ptr();
+	const Vector3 *r = baked_point_cache.data();
 
 	Vector3 nearest;
 	float nearest_dist = -1.0f;
@@ -1507,7 +1507,7 @@ float Curve3D::get_closest_offset(const Vector3 &p_to_point) const {
 	if (pc == 1)
 		return 0.0f;
 
-	const Vector3 *r = baked_point_cache.ptr();
+	const Vector3 *r = baked_point_cache.data();
 
 	float nearest = 0.0f;
 	float nearest_dist = -1.0f;
@@ -1563,10 +1563,10 @@ Dictionary Curve3D::_get_data() const {
 
 	PackedVector3Array d;
 	d.resize(points.size() * 3);
-	Vector3 *w = d.ptrw();
+	Vector3 *w = d.data();
 	PackedFloat32Array t;
 	t.resize(points.size());
-	real_t *wt = t.ptrw();
+	real_t *wt = t.data();
 
 	for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 
@@ -1590,9 +1590,9 @@ void Curve3D::_set_data(const Dictionary &p_data) {
 	int pc = rp.size();
 	ERR_FAIL_COND(pc % 3 != 0);
 	points.resize(pc / 3);
-	const Vector3 *r = rp.ptr();
+	const Vector3 *r = rp.data();
 	PackedFloat32Array rtl = p_data["tilts"];
-	const real_t *rt = rtl.ptr();
+	const real_t *rt = rtl.data();
 
 	for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 		points[i].in = r[i * 3 + 0];

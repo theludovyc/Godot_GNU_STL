@@ -61,7 +61,7 @@ bool Polygon2D::_edit_use_pivot() const {
 Rect2 Polygon2D::_edit_get_rect() const {
 	if (rect_cache_dirty) {
 		int l = polygon.size();
-		const Vector2 *r = polygon.ptr();
+		const Vector2 *r = polygon.data();
 		item_rect = Rect2();
 		for (int i = 0; i < l; i++) {
 			Vector2 pos = r[i] + offset;
@@ -148,7 +148,7 @@ void Polygon2D::_notification(int p_what) {
 
 			{
 
-				const Vector2 *polyr = polygon.ptr();
+				const Vector2 *polyr = polygon.data();
 				for (int i = 0; i < len; i++) {
 					points[i] = polyr[i] + offset;
 				}
@@ -215,7 +215,7 @@ void Polygon2D::_notification(int p_what) {
 
 				if (points.size() == uv.size()) {
 
-					const Vector2 *uvr = uv.ptr();
+					const Vector2 *uvr = uv.data();
 
 					for (int i = 0; i < len; i++) {
 						uvs[i] = texmat.xform(uvr[i]) / tex_size;
@@ -255,7 +255,7 @@ void Polygon2D::_notification(int p_what) {
 					}
 
 					int bone_index = bone->get_index_in_skeleton();
-					const float *r = bone_weights[i].weights.data();
+					const float *r = b_weight.weights.data();
 					for (int j = 0; j < vc; j++) {
 						if (r[j] == 0.0)
 							continue; //weight is unpainted, skip
@@ -294,7 +294,7 @@ void Polygon2D::_notification(int p_what) {
 			std::vector<Color> colors;
 			if (vertex_colors.size() == points.size()) {
 				colors.resize(len);
-				const Color *color_r = vertex_colors.ptr();
+				const Color *color_r = vertex_colors.data();
 				for (int i = 0; i < len; i++) {
 					colors[i] = color_r[i];
 				}

@@ -181,7 +181,7 @@ void AnimationCache::_update_cache() {
 	cache_valid = true;
 }
 
-void AnimationCache::set_track_transform(unsigned p_idx, const Transform &p_transform) {
+void AnimationCache::set_track_transform(int p_idx, const Transform &p_transform) {
 	if (cache_dirty)
 		_update_cache();
 
@@ -205,7 +205,7 @@ void AnimationCache::set_track_transform(unsigned p_idx, const Transform &p_tran
 	}
 }
 
-void AnimationCache::set_track_value(unsigned p_idx, const Variant &p_value) {
+void AnimationCache::set_track_value(int p_idx, const Variant &p_value) {
 	if (cache_dirty)
 		_update_cache();
 
@@ -299,6 +299,7 @@ void AnimationCache::set_all(float p_time, float p_delta) {
 						call_track(i, name, nullptr, 0, err);
 					} else {
 
+						std::vector<const Variant *> argptrs;
 						argptrs.resize(args.size());
 
 						for (unsigned j = 0; j < args.size(); j++) {

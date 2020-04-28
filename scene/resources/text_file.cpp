@@ -50,7 +50,7 @@ void TextFile::reload_from_file() {
 
 Error TextFile::load_text(const String &p_path) {
 
-	Vector<uint8_t> sourcef;
+	std::vector<uint8_t> sourcef;
 	Error err;
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ, &err);
 
@@ -58,7 +58,7 @@ Error TextFile::load_text(const String &p_path) {
 
 	int len = f->get_len();
 	sourcef.resize(len + 1);
-	uint8_t *w = sourcef.ptrw();
+	uint8_t *w = sourcef.data();
 	int r = f->get_buffer(w, len);
 	f->close();
 	memdelete(f);

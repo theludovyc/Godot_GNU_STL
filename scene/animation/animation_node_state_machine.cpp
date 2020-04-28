@@ -647,7 +647,7 @@ void AnimationNodeStateMachine::remove_node(const StringName &p_name) {
 	for (int i = 0; i < transitions.size(); i++) {
 		if (transitions[i].from == p_name || transitions[i].to == p_name) {
 			transitions[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-			transitions.remove(i);
+			transitions.erase(transitions.begin() + i);
 			i--;
 		}
 	}
@@ -792,7 +792,7 @@ void AnimationNodeStateMachine::remove_transition(const StringName &p_from, cons
 	for (decltype(transitions.size()) i = 0; i < transitions.size(); ++i) {
 		if (transitions[i].from == p_from && transitions[i].to == p_to) {
 			transitions[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-			transitions.remove(i);
+			transitions.erase(transitions.begin() + i);
 			return;
 		}
 	}
@@ -806,7 +806,7 @@ void AnimationNodeStateMachine::remove_transition_by_index(int p_transition) {
 
 	ERR_FAIL_INDEX(p_transition, transitions.size());
 	transitions[p_transition].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-	transitions.remove(p_transition);
+	transitions.erase(transitions.begin() + p_transition);
 	/*if (playing) {
 		path.clear();
 	}*/

@@ -74,7 +74,7 @@ void SoftBodyRenderingServerHandler::clear() {
 }
 
 void SoftBodyRenderingServerHandler::open() {
-	write_buffer = buffer.ptrw();
+	write_buffer = buffer.data();
 }
 
 void SoftBodyRenderingServerHandler::close() {
@@ -150,7 +150,7 @@ bool SoftBody3D::_get(const StringName &p_name, Variant &r_ret) const {
 	if ("pinned_points" == which) {
 		Array arr_ret;
 		const int pinned_points_indices_size = pinned_points.size();
-		const PinnedPoint *r = pinned_points.ptr();
+		const PinnedPoint *r = pinned_points.data();
 		arr_ret.resize(pinned_points_indices_size);
 
 		for (int i = 0; i < pinned_points_indices_size; ++i) {
@@ -189,7 +189,7 @@ bool SoftBody3D::_set_property_pinned_points_indices(const Array &p_indices) {
 	const int p_indices_size = p_indices.size();
 
 	{ // Remove the pined points on physics server that will be removed by resize
-		const PinnedPoint *r = pinned_points.ptr();
+		const PinnedPoint *r = pinned_points.data();
 		if (p_indices_size < pinned_points.size()) {
 			for (int i = pinned_points.size() - 1; i >= p_indices_size; --i) {
 				pin_point(r[i].point_index, false);
@@ -199,7 +199,7 @@ bool SoftBody3D::_set_property_pinned_points_indices(const Array &p_indices) {
 
 	pinned_points.resize(p_indices_size);
 
-	PinnedPoint *w = pinned_points.ptrw();
+	PinnedPoint *w = pinned_points.data();
 	int point_index;
 	for (int i = 0; i < p_indices_size; ++i) {
 		point_index = p_indices.get(i);
@@ -219,11 +219,11 @@ bool SoftBody3D::_set_property_pinned_points_attachment(int p_item, const String
 	}
 
 	if ("spatial_attachment_path" == p_what) {
-		PinnedPoint *w = pinned_points.ptrw();
+		PinnedPoint *w = pinned_points.data();
 		pin_point(w[p_item].point_index, true, p_value);
 		_make_cache_dirty();
 	} else if ("offset" == p_what) {
-		PinnedPoint *w = pinned_points.ptrw();
+		PinnedPoint *w = pinned_points.data();
 		w[p_item].offset = p_value;
 	} else {
 		return false;
@@ -236,7 +236,7 @@ bool SoftBody3D::_get_property_pinned_points(int p_item, const String &p_what, V
 	if (pinned_points.size() <= p_item) {
 		return false;
 	}
-	const PinnedPoint *r = pinned_points.ptr();
+	const PinnedPoint *r = pinned_points.data();
 
 	if ("point_index" == p_what) {
 		r_ret = r[p_item].point_index;
@@ -416,7 +416,7 @@ void SoftBody3D::_update_physics_server() {
 	_update_cache_pin_points_datas();
 	// Submit bone attachment
 	const int pinned_points_indices_size = pinned_points.size();
-	const PinnedPoint *r = pinned_points.ptr();
+	const PinnedPoint *r = pinned_points.data();
 	for (int i = 0; i < pinned_points_indices_size; ++i) {
 		if (r[i].spatial_attachment) {
 			PhysicsServer3D::get_singleton()->soft_body_move_point(physics_rid, r[i].point_index, r[i].spatial_attachment->get_global_transform().xform(r[i].offset));
@@ -480,8 +480,8 @@ void SoftBody3D::become_mesh_owner() {
 	if (!mesh_owner) {
 		mesh_owner = true;
 
-		Vector<Ref<Material>> copy_materials;
-		copy_materials.append_array(materials);
+		std::vector<Ref<Material>> copy_materials;
+		copy_materials.insert(copy_materials.end(), materials.begin(), materials.end());
 
 		ERR_FAIL_COND(!mesh->get_surface_count());
 
@@ -719,7 +719,7 @@ SoftBody3D::~SoftBody3D() {
 
 void SoftBody3D::reset_softbody_pin() {
 	PhysicsServer3D::get_singleton()->soft_body_remove_all_pinned_points(physics_rid);
-	const PinnedPoint *pps = pinned_points.ptr();
+	const PinnedPoint *pps = pinned_points.data();
 	for (int i = pinned_points.size() - 1; 0 < i; --i) {
 		PhysicsServer3D::get_singleton()->soft_body_pin_point(physics_rid, pps[i].point_index, true);
 	}
@@ -735,7 +735,7 @@ void SoftBody3D::_update_cache_pin_points_datas() {
 
 	pinned_points_cache_dirty = false;
 
-	PinnedPoint *w = pinned_points.ptrw();
+	PinnedPoint *w = pinned_points.data();
 	for (int i = pinned_points.size() - 1; 0 <= i; --i) {
 
 		if (!w[i].spatial_attachment_path.is_empty()) {
@@ -784,8 +784,8 @@ void SoftBody3D::_reset_points_offsets() {
 	if (!Engine::get_singleton()->is_editor_hint())
 		return;
 
-	const PinnedPoint *r = pinned_points.ptr();
-	PinnedPoint *w = pinned_points.ptrw();
+	const PinnedPoint *r = pinned_points.data();
+	PinnedPoint *w = pinned_points.data();
 	for (int i = pinned_points.size() - 1; 0 <= i; --i) {
 
 		if (!r[i].spatial_attachment)
@@ -801,7 +801,7 @@ void SoftBody3D::_reset_points_offsets() {
 void SoftBody3D::_remove_pinned_point(int p_point_index) {
 	const int id(_has_pinned_point(p_point_index));
 	if (-1 != id) {
-		pinned_points.remove(id);
+		pinned_points.erase(pinned_points.begin() + id);
 	}
 }
 
@@ -811,13 +811,13 @@ int SoftBody3D::_get_pinned_point(int p_point_index, SoftBody3D::PinnedPoint *&r
 		r_point = nullptr;
 		return -1;
 	} else {
-		r_point = const_cast<SoftBody3D::PinnedPoint *>(&pinned_points.ptr()[id]);
+		r_point = const_cast<SoftBody3D::PinnedPoint *>(&pinned_points[id]);
 		return id;
 	}
 }
 
 int SoftBody3D::_has_pinned_point(int p_point_index) const {
-	const PinnedPoint *r = pinned_points.ptr();
+	const PinnedPoint *r = pinned_points.data();
 	for (int i = pinned_points.size() - 1; 0 <= i; --i) {
 		if (p_point_index == r[i].point_index) {
 			return i;

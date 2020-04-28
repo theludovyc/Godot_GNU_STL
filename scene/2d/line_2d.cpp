@@ -71,7 +71,7 @@ bool Line2D::_edit_use_rect() const {
 bool Line2D::_edit_is_selected_on_click(const Point2 &p_point, double p_tolerance) const {
 
 	const real_t d = _width / 2 + p_tolerance;
-	const Vector2 *points = _points.ptr();
+	const Vector2 *points = _points.data();
 	for (int i = 0; i < _points.size() - 1; i++) {
 		Vector2 p = Geometry::get_closest_point_to_segment_2d(p_point, &points[i]);
 		if (p.distance_to(p_point) <= d)
@@ -123,13 +123,13 @@ std::vector<Vector2> Line2D::get_points() const {
 }
 
 void Line2D::set_point_position(int i, Vector2 p_pos) {
-	_points.set(i, p_pos);
+	_points[i] = p_pos;
 	update();
 }
 
 Vector2 Line2D::get_point_position(int i) const {
 	ERR_FAIL_INDEX_V(i, _points.size(), Vector2());
-	return _points.get(i);
+	return _points[i];
 }
 
 int Line2D::get_point_count() const {
@@ -148,13 +148,13 @@ void Line2D::add_point(Vector2 p_pos, int p_atpos) {
 	if (p_atpos < 0 || _points.size() < p_atpos) {
 		_points.push_back(p_pos);
 	} else {
-		_points.insert(p_atpos, p_pos);
+		_points.insert(_points.begin() + p_atpos, p_pos);
 	}
 	update();
 }
 
 void Line2D::remove_point(int i) {
-	_points.remove(i);
+	_points.erase(_points.begin() + i);
 	update();
 }
 
@@ -281,9 +281,9 @@ void Line2D::_draw() {
 	std::vector<Vector2> points(_points.size());
 	auto len = points.size();
 	{
-		const Vector2 *points_read = _points.ptr();
+		const Vector2 *points_read = _points.data();
 		for (int i = 0; i < len; ++i) {
-			points.write[i] = points_read[i];
+			points[i] = points_read[i];
 		}
 	}
 

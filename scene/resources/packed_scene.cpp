@@ -1137,7 +1137,7 @@ void SceneState::set_bundled_scene(const Dictionary &p_dictionary) {
 		const int *r = snodes.data();
 		int idx = 0;
 		for (int i = 0; i < node_count; i++) {
-			NodeData &nd = nodes.data[i];
+			NodeData &nd = nodes[i];
 			nd.parent = r[idx++];
 			nd.owner = r[idx++];
 			nd.type = r[idx++];
@@ -1163,7 +1163,7 @@ void SceneState::set_bundled_scene(const Dictionary &p_dictionary) {
 		const int *r = sconns.data();
 		int idx = 0;
 		for (int i = 0; i < conn_count; i++) {
-			ConnectionData &cd = connections.data[i];
+			ConnectionData &cd = connections[i];
 			cd.from = r[idx++];
 			cd.to = r[idx++];
 			cd.signal = r[idx++];

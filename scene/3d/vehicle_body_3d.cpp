@@ -98,7 +98,11 @@ void VehicleWheel3D::_notification(int p_what) {
 		VehicleBody3D *cb = Object::cast_to<VehicleBody3D>(get_parent());
 		if (!cb)
 			return;
-		cb->wheels.erase(this);
+
+		auto it_wheel = std::find(cb->wheels.begin(), cb->wheels.end(), this);
+		if (it_wheel != cb->wheels.end()) {
+			cb->wheels.erase(it_wheel);
+		}
 		body = nullptr;
 	}
 }

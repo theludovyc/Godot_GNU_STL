@@ -136,9 +136,9 @@ void CollisionObject2D::shape_owner_set_disabled(uint32_t p_owner, bool p_disabl
 	sd.disabled = p_disabled;
 	for (auto &&shape : sd.shapes) {
 		if (area) {
-			PhysicsServer2D::get_singleton()->area_set_shape_disabled(rid, sd.shapes[i].index, p_disabled);
+			PhysicsServer2D::get_singleton()->area_set_shape_disabled(rid, shape.index, p_disabled);
 		} else {
-			PhysicsServer2D::get_singleton()->body_set_shape_disabled(rid, sd.shapes[i].index, p_disabled);
+			PhysicsServer2D::get_singleton()->body_set_shape_disabled(rid, shape.index, p_disabled);
 		}
 	}
 }
@@ -218,9 +218,9 @@ void CollisionObject2D::shape_owner_set_transform(uint32_t p_owner, const Transf
 	sd.xform = p_transform;
 	for (auto &&shape : sd.shapes) {
 		if (area) {
-			PhysicsServer2D::get_singleton()->area_set_shape_transform(rid, sd.shapes[i].index, sd.xform);
+			PhysicsServer2D::get_singleton()->area_set_shape_transform(rid, shape.index, sd.xform);
 		} else {
-			PhysicsServer2D::get_singleton()->body_set_shape_transform(rid, sd.shapes[i].index, sd.xform);
+			PhysicsServer2D::get_singleton()->body_set_shape_transform(rid, shape.index, sd.xform);
 		}
 	}
 }

@@ -53,7 +53,7 @@ void CollisionPolygon2D::_build_polygon() {
 		std::vector<std::vector<Vector2>> decomp = _decompose_in_convex();
 		for (int i = 0; i < decomp.size(); i++) {
 			Ref<ConvexPolygonShape2D> convex = memnew(ConvexPolygonShape2D);
-			convex->set_points(vec);
+			convex->set_points(decomp[i]);
 			parent->shape_owner_add_shape(owner_id, convex);
 		}
 
@@ -63,7 +63,7 @@ void CollisionPolygon2D::_build_polygon() {
 
 		std::vector<Vector2> segments;
 		segments.resize(polygon.size() * 2);
-		Vector2 *w = segments.ptrw();
+		Vector2 *w = segments.data();
 
 		for (decltype(polygon.size()) i = 0; i < polygon.size(); ++i) {
 			w[(i << 1) + 0] = polygon[i];

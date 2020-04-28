@@ -316,7 +316,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<Vector3> array;
 				array.resize(varr_len);
-				Vector3 *w = array.ptrw();
+				Vector3 *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx++) {
@@ -342,7 +342,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<Vector2> array;
 				array.resize(varr_len);
-				Vector2 *w = array.ptrw();
+				Vector2 *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx++) {
@@ -366,7 +366,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<float> array;
 				array.resize(varr_len * 4);
-				float *w = array.ptrw();
+				float *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx += 4) {
@@ -389,7 +389,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<Color> array;
 				array.resize(varr_len);
-				Color *w = array.ptrw();
+				Color *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx++) {
@@ -404,7 +404,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<int> array;
 				array.resize(varr_len * 4);
-				int *w = array.ptrw();
+				int *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx += 4) {
@@ -425,7 +425,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<float> array;
 				array.resize(varr_len * 4);
-				float *w = array.ptrw();
+				float *w = array.data();
 
 				int idx = 0;
 				for (List<Vertex>::Element *E = vertex_array.front(); E; E = E->next(), idx += 4) {
@@ -448,7 +448,7 @@ Array SurfaceTool::commit_to_arrays() {
 
 				std::vector<int> array;
 				array.resize(index_array.size());
-				int *w = array.ptrw();
+				int *w = array.data();
 
 				int idx = 0;
 				for (List<int>::Element *E = index_array.front(); E; E = E->next(), idx++) {
@@ -723,7 +723,7 @@ void SurfaceTool::_create_list_from_arrays(Array arr, List<Vertex> *r_vertex, Li
 	if (is) {
 
 		lformat |= RS::ARRAY_FORMAT_INDEX;
-		const int *iarr = idx.ptr();
+		const int *iarr = idx.data();
 		for (int i = 0; i < is; i++) {
 			r_index->push_back(iarr[i]);
 		}

@@ -95,7 +95,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 				int vcount = values.size();
 				ERR_FAIL_COND_V(vcount % 12, false); // should be multiple of 11
 
-				const float *r = values.ptr();
+				const float *r = values.data();
 
 				tt->transforms.resize(vcount / 12);
 
@@ -149,7 +149,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 
 					int valcount = times.size();
 
-					const float *rt = times.ptr();
+					const float *rt = times.data();
 
 					vt->values.resize(valcount);
 
@@ -164,7 +164,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 						std::vector<float> transitions = d["transitions"];
 						ERR_FAIL_COND_V(transitions.size() != valcount, false);
 
-						const float *rtr = transitions.ptr();
+						const float *rtr = transitions.data();
 
 						for (int i = 0; i < valcount; i++) {
 							vt->values[i].transition = rtr[i];
@@ -192,7 +192,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 
 					int valcount = times.size();
 
-					const float *rt = times.ptr();
+					const float *rt = times.data();
 
 					for (int i = 0; i < valcount; i++) {
 
@@ -204,7 +204,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 						std::vector<float> transitions = d["transitions"];
 						ERR_FAIL_COND_V(transitions.size() != valcount, false);
 
-						const float *rtr = transitions.ptr();
+						const float *rtr = transitions.data();
 
 						for (int i = 0; i < valcount; i++) {
 
@@ -228,8 +228,8 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 
 					int valcount = times.size();
 
-					const float *rt = times.ptr();
-					const float *rv = values.ptr();
+					const float *rt = times.data();
+					const float *rv = values.data();
 
 					bt->values.resize(valcount);
 
@@ -261,7 +261,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 
 					int valcount = times.size();
 
-					const float *rt = times.ptr();
+					const float *rt = times.data();
 
 					ad->values.clear();
 
@@ -302,8 +302,8 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 
 					int valcount = times.size();
 
-					const float *rt = times.ptr();
-					const String *rc = clips.ptr();
+					const float *rt = times.data();
+					const String *rc = clips.data();
 
 					an->values.resize(valcount);
 
@@ -374,7 +374,7 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 				int kk = track_get_key_count(track);
 				keys.resize(kk * 12);
 
-				real_t *w = keys.ptrw();
+				real_t *w = keys.data();
 
 				int idx = 0;
 				for (int i = 0; i < track_get_key_count(track); i++) {
@@ -419,8 +419,8 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 				key_transitions.resize(kk);
 				key_values.resize(kk);
 
-				float *wti = key_times.ptrw();
-				float *wtr = key_transitions.ptrw();
+				float *wti = key_times.data();
+				float *wtr = key_transitions.data();
 
 				int idx = 0;
 
@@ -456,8 +456,8 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 				key_transitions.resize(kk);
 				key_values.resize(kk);
 
-				float *wti = key_times.ptrw();
-				float *wtr = key_transitions.ptrw();
+				float *wti = key_times.data();
+				float *wtr = key_transitions.data();
 
 				int idx = 0;
 				for (int i = 0; i < track_get_key_count(track); i++) {
@@ -492,8 +492,8 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 				key_times.resize(kk);
 				key_points.resize(kk * 5);
 
-				float *wti = key_times.ptrw();
-				float *wpo = key_points.ptrw();
+				float *wti = key_times.data();
+				float *wpo = key_points.data();
 
 				int idx = 0;
 
@@ -526,7 +526,7 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 
 				key_times.resize(kk);
 
-				float *wti = key_times.ptrw();
+				float *wti = key_times.data();
 
 				uint32_t idx = 0;
 
@@ -561,8 +561,8 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 				key_times.resize(kk);
 				clips.resize(kk);
 
-				float *wti = key_times.ptrw();
-				String *wcl = clips.ptrw();
+				float *wti = key_times.data();
+				String *wcl = clips.data();
 
 				const TKey<StringName> *vls = an->values.data();
 
