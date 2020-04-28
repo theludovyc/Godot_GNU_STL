@@ -315,7 +315,7 @@ Error Signal::emit(const Variant **p_arguments, int p_argcount) const {
 
 	return obj->emit_signal(name, p_arguments, p_argcount);
 }
-Error Signal::connect(const Callable &p_callable, const Vector<Variant> &p_binds, uint32_t p_flags) {
+Error Signal::connect(const Callable &p_callable, const std::vector<Variant> &p_binds, uint32_t p_flags) {
 
 	Object *object = get_object();
 	ERR_FAIL_COND_V(!object, ERR_UNCONFIGURED);
