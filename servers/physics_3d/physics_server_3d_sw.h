@@ -107,7 +107,7 @@ public:
 	virtual PhysicsDirectSpaceState3D *space_get_direct_state(RID p_space);
 
 	virtual void space_set_debug_contacts(RID p_space, int p_max_contacts);
-	virtual Vector<Vector3> space_get_contacts(RID p_space) const;
+	virtual std::vector<Vector3> space_get_contacts(RID p_space) const;
 	virtual int space_get_contact_count(RID p_space) const;
 
 	/* AREA API */
