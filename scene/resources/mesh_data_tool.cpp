@@ -47,7 +47,7 @@ Error MeshDataTool::create_from_surface(const Ref<ArrayMesh> &p_mesh, int p_surf
 	Array arrays = p_mesh->surface_get_arrays(p_surface);
 	ERR_FAIL_COND_V(arrays.empty(), ERR_INVALID_PARAMETER);
 
-	Vector<Vector3> varray = arrays[Mesh::ARRAY_VERTEX];
+	std::vector<Vector3> varray = arrays[Mesh::ARRAY_VERTEX];
 
 	int vcount = varray.size();
 	ERR_FAIL_COND_V(vcount == 0, ERR_INVALID_PARAMETER);
@@ -56,34 +56,34 @@ Error MeshDataTool::create_from_surface(const Ref<ArrayMesh> &p_mesh, int p_surf
 	format = p_mesh->surface_get_format(p_surface);
 	material = p_mesh->surface_get_material(p_surface);
 
-	const Vector3 *vr = varray.ptr();
+	const Vector3 *vr = varray.data();
 
 	const Vector3 *nr = nullptr;
 	if (arrays[Mesh::ARRAY_NORMAL].get_type() != Variant::NIL)
-		nr = arrays[Mesh::ARRAY_NORMAL].operator Vector<Vector3>().ptr();
+		nr = arrays[Mesh::ARRAY_NORMAL].operator std::vector<Vector3>().data();
 
 	const real_t *ta = nullptr;
 	if (arrays[Mesh::ARRAY_TANGENT].get_type() != Variant::NIL)
-		ta = arrays[Mesh::ARRAY_TANGENT].operator Vector<real_t>().ptr();
+		ta = arrays[Mesh::ARRAY_TANGENT].operator std::vector<real_t>().data();
 
 	const Vector2 *uv = nullptr;
 	if (arrays[Mesh::ARRAY_TEX_UV].get_type() != Variant::NIL)
-		uv = arrays[Mesh::ARRAY_TEX_UV].operator Vector<Vector2>().ptr();
+		uv = arrays[Mesh::ARRAY_TEX_UV].operator std::vector<Vector2>().data();
 	const Vector2 *uv2 = nullptr;
 	if (arrays[Mesh::ARRAY_TEX_UV2].get_type() != Variant::NIL)
-		uv2 = arrays[Mesh::ARRAY_TEX_UV2].operator Vector<Vector2>().ptr();
+		uv2 = arrays[Mesh::ARRAY_TEX_UV2].operator std::vector<Vector2>().data();
 
 	const Color *col = nullptr;
 	if (arrays[Mesh::ARRAY_COLOR].get_type() != Variant::NIL)
-		col = arrays[Mesh::ARRAY_COLOR].operator Vector<Color>().ptr();
+		col = arrays[Mesh::ARRAY_COLOR].operator std::vector<Color>().data();
 
 	const int *bo = nullptr;
 	if (arrays[Mesh::ARRAY_BONES].get_type() != Variant::NIL)
-		bo = arrays[Mesh::ARRAY_BONES].operator Vector<int>().ptr();
+		bo = arrays[Mesh::ARRAY_BONES].operator std::vector<int>().data();
 
 	const real_t *we = nullptr;
 	if (arrays[Mesh::ARRAY_WEIGHTS].get_type() != Variant::NIL)
-		we = arrays[Mesh::ARRAY_WEIGHTS].operator Vector<real_t>().ptr();
+		we = arrays[Mesh::ARRAY_WEIGHTS].operator std::vector<real_t>().data();
 
 	vertices.resize(vcount);
 
@@ -121,7 +121,7 @@ Error MeshDataTool::create_from_surface(const Ref<ArrayMesh> &p_mesh, int p_surf
 		vertices[i] = v;
 	}
 
-	Vector<int> indices;
+	std::vector<int> indices;
 
 	if (arrays[Mesh::ARRAY_INDEX].get_type() != Variant::NIL) {
 
@@ -129,13 +129,13 @@ Error MeshDataTool::create_from_surface(const Ref<ArrayMesh> &p_mesh, int p_surf
 	} else {
 		//make code simpler
 		indices.resize(vcount);
-		int *iw = indices.ptrw();
+		int *iw = indices.data();
 		for (int i = 0; i < vcount; i++)
 			iw[i] = i;
 	}
 
 	int icount = indices.size();
-	const int *r = indices.ptr();
+	const int *r = indices.data();
 
 	Map<Point2i, int> edge_indices;
 
@@ -187,61 +187,61 @@ Error MeshDataTool::commit_to_surface(const Ref<ArrayMesh> &p_mesh) {
 
 	int vcount = vertices.size();
 
-	Vector<Vector3> v;
-	Vector<Vector3> n;
-	Vector<real_t> t;
-	Vector<Vector2> u;
-	Vector<Vector2> u2;
-	Vector<Color> c;
-	Vector<int> b;
-	Vector<real_t> w;
-	Vector<int> in;
+	std::vector<Vector3> v;
+	std::vector<Vector3> n;
+	std::vector<real_t> t;
+	std::vector<Vector2> u;
+	std::vector<Vector2> u2;
+	std::vector<Color> c;
+	std::vector<int> b;
+	std::vector<real_t> w;
+	std::vector<int> in;
 
 	{
 
 		v.resize(vcount);
-		Vector3 *vr = v.ptrw();
+		Vector3 *vr = v.data();
 
 		Vector3 *nr = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_NORMAL) {
 			n.resize(vcount);
-			nr = n.ptrw();
+			nr = n.data();
 		}
 
 		real_t *ta = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_TANGENT) {
 			t.resize(vcount * 4);
-			ta = t.ptrw();
+			ta = t.data();
 		}
 
 		Vector2 *uv = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_TEX_UV) {
 			u.resize(vcount);
-			uv = u.ptrw();
+			uv = u.data();
 		}
 
 		Vector2 *uv2 = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_TEX_UV2) {
 			u2.resize(vcount);
-			uv2 = u2.ptrw();
+			uv2 = u2.data();
 		}
 
 		Color *col = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_COLOR) {
 			c.resize(vcount);
-			col = c.ptrw();
+			col = c.data();
 		}
 
 		int *bo = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_BONES) {
 			b.resize(vcount * 4);
-			bo = b.ptrw();
+			bo = b.data();
 		}
 
 		real_t *we = nullptr;
 		if (format & Mesh::ARRAY_FORMAT_WEIGHTS) {
 			w.resize(vcount * 4);
-			we = w.ptrw();
+			we = w.data();
 		}
 
 		for (int i = 0; i < vcount; i++) {
@@ -283,7 +283,7 @@ Error MeshDataTool::commit_to_surface(const Ref<ArrayMesh> &p_mesh) {
 
 		int fc = faces.size();
 		in.resize(fc * 3);
-		int *iw = in.ptrw();
+		int *iw = in.data();
 		for (int i = 0; i < fc; i++) {
 
 			iw[i * 3 + 0] = faces[i].v[0];
