@@ -111,7 +111,7 @@ void ResourceFormatLoader::get_recognized_extensions(List<String> *p_extensions)
 		PackedStringArray exts = get_script_instance()->call("get_recognized_extensions");
 
 		{
-			const String *r = exts.ptr();
+			const String *r = exts.data();
 			for (int i = 0; i < exts.size(); ++i) {
 				p_extensions->push_back(r[i]);
 			}
@@ -148,7 +148,7 @@ void ResourceFormatLoader::get_dependencies(const String &p_path, List<String> *
 		PackedStringArray deps = get_script_instance()->call("get_dependencies", p_path, p_add_types);
 
 		{
-			const String *r = deps.ptr();
+			const String *r = deps.data();
 			for (int i = 0; i < deps.size(); ++i) {
 				p_dependencies->push_back(r[i]);
 			}
@@ -876,7 +876,7 @@ String ResourceLoader::_path_remap(const String &p_path, bool *r_translation_rem
 		ERR_FAIL_COND_V_MSG(locale.length() < 2, p_path, "Could not remap path '" + p_path + "' for translation as configured locale '" + locale + "' is invalid.");
 		String lang = TranslationServer::get_language_code(locale);
 
-		Vector<String> &res_remaps = *translation_remaps.getptr(new_path);
+		std::vector<String> &res_remaps = *translation_remaps.getptr(new_path);
 		bool near_match = false;
 
 		for (int i = 0; i < res_remaps.size(); i++) {
@@ -1027,10 +1027,10 @@ void ResourceLoader::load_path_remaps() {
 	if (!ProjectSettings::get_singleton()->has_setting("path_remap/remapped_paths"))
 		return;
 
-	Vector<String> remaps = ProjectSettings::get_singleton()->get("path_remap/remapped_paths");
+	std::vector<String> remaps = ProjectSettings::get_singleton()->get("path_remap/remapped_paths");
 	int rc = remaps.size();
 	ERR_FAIL_COND(rc & 1); //must be even
-	const String *r = remaps.ptr();
+	const String *r = remaps.data();
 
 	for (int i = 0; i < rc; i += 2) {
 
