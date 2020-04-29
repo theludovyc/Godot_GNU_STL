@@ -55,7 +55,7 @@ struct SortNetData {
 	bool operator()(const ScriptNetData &p_a, const ScriptNetData &p_b) const {
 		return compare(p_a.name, p_b.name);
 	}
-} SortNetData ;
+};
 
 class ScriptServer {
 	enum {
