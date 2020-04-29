@@ -43,7 +43,7 @@ PackedStringArray ConfigFile::_get_sections() const {
 	int idx = 0;
 	for (const List<String>::Element *E = s.front(); E; E = E->next()) {
 
-		arr.set(idx++, E->get());
+		arr[idx++] = E->get();
 	}
 
 	return arr;
@@ -58,7 +58,7 @@ PackedStringArray ConfigFile::_get_section_keys(const String &p_section) const {
 	int idx = 0;
 	for (const List<String>::Element *E = s.front(); E; E = E->next()) {
 
-		arr.set(idx++, E->get());
+		arr[idx++] = E->get();
 	}
 
 	return arr;
