@@ -1582,6 +1582,27 @@ void ProjectList::remove_project_0(const Item &project, bool p_update_settings) 
 	update_dock_menu();
 }
 
+void ProjectList::remove_project(int p_index, bool p_update_settings) {
+	const Item item = _projects[p_index]; // Take a copy
+
+	_selected_project_keys.erase(item.project_key);
+
+	if (_last_clicked == item.project_key) {
+		_last_clicked = "";
+	}
+
+	memdelete(item.control);
+	_projects.erase(_projects.begin() + p_index);
+
+	if (p_update_settings) {
+		EditorSettings::get_singleton()->erase("projects/" + item.project_key);
+		EditorSettings::get_singleton()->erase("favorite_projects/" + item.project_key);
+		// Not actually saving the file, in case you are doing more changes to settings
+	}
+
+	update_dock_menu();
+}
+
 bool ProjectList::is_any_project_missing() const {
 	return std::find_if(_projects.begin(), _projects.end(),
 				   [](const Item& project) {
