@@ -2312,7 +2312,7 @@ inline DA _convert_array(const SA &p_array) {
 
 	for (int i = 0; i < p_array.size(); i++) {
 
-		da.set(i, Variant(p_array.get(i)));
+		da[i] = Variant(p_array[i]);
 	}
 
 	return da;
@@ -2456,7 +2456,7 @@ Variant::operator std::vector<Plane>() const {
 		return planes;
 
 	planes.resize(va_size);
-	Plane *w = planes.ptrw();
+	Plane *w = planes.data();
 
 	for (int i = 0; i < va_size; i++)
 		w[i] = va[i];
@@ -2473,8 +2473,8 @@ Variant::operator std::vector<Face3>() const {
 		return faces;
 
 	faces.resize(va_size / 3);
-	Face3 *w = faces.ptrw();
-	const Vector3 *r = va.ptr();
+	Face3 *w = faces.data();
+	const Vector3 *r = va.data();
 
 	for (int i = 0; i < va_size; i++)
 		w[i / 3].vertex[i % 3] = r[i];
@@ -2491,7 +2491,7 @@ Variant::operator std::vector<Variant>() const {
 		return variants;
 
 	variants.resize(va_size);
-	Variant *w = variants.ptrw();
+	Variant *w = variants.data();
 	for (int i = 0; i < va_size; i++)
 		w[i] = va[i];
 
@@ -2524,7 +2524,7 @@ Variant::operator IP_Address() const {
 
 		std::vector<int> addr = operator std::vector<int>();
 		if (addr.size() == 4) {
-			return IP_Address(addr.get(0), addr.get(1), addr.get(2), addr.get(3));
+			return IP_Address(addr[0], addr[1], addr[2], addr[3]);
 		}
 	}
 
@@ -2861,8 +2861,8 @@ Variant::Variant(const std::vector<Face3> &p_face_array) {
 	vertices.resize(face_count * 3);
 
 	if (face_count) {
-		const Face3 *r = p_face_array.ptr();
-		Vector3 *w = vertices.ptrw();
+		const Face3 *r = p_face_array.data();
+		Vector3 *w = vertices.data();
 
 		for (int i = 0; i < face_count; i++) {
 
@@ -2894,7 +2894,7 @@ Variant::Variant(const std::vector<StringName> &p_array) {
 	int len = p_array.size();
 	v.resize(len);
 	for (int i = 0; i < len; i++)
-		v.set(i, p_array[i]);
+		v[i] = p_array[i];
 	*this = v;
 }
 
@@ -3287,7 +3287,7 @@ uint32_t Variant::hash() const {
 			const std::vector<uint8_t> &arr = PackedArrayRef<uint8_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const uint8_t *r = arr.ptr();
+				const uint8_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len);
 			} else {
 				return hash_djb2_one_64(0);
@@ -3299,7 +3299,7 @@ uint32_t Variant::hash() const {
 			const std::vector<int32_t> &arr = PackedArrayRef<int32_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const int32_t *r = arr.ptr();
+				const int32_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(int32_t));
 			} else {
 				return hash_djb2_one_64(0);
@@ -3311,7 +3311,7 @@ uint32_t Variant::hash() const {
 			const std::vector<int64_t> &arr = PackedArrayRef<int64_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const int64_t *r = arr.ptr();
+				const int64_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(int64_t));
 			} else {
 				return hash_djb2_one_64(0);
@@ -3324,7 +3324,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const float *r = arr.ptr();
+				const float *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(float));
 			} else {
 				return hash_djb2_one_float(0.0);
@@ -3337,7 +3337,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const double *r = arr.ptr();
+				const double *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(double));
 			} else {
 				return hash_djb2_one_float(0.0);
@@ -3351,7 +3351,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const String *r = arr.ptr();
+				const String *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_32(r[i].hash(), hash);
@@ -3367,7 +3367,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Vector2 *r = arr.ptr();
+				const Vector2 *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].x, hash);
@@ -3384,7 +3384,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Vector3 *r = arr.ptr();
+				const Vector3 *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].x, hash);
@@ -3402,7 +3402,7 @@ uint32_t Variant::hash() const {
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Color *r = arr.ptr();
+				const Color *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].r, hash);
@@ -3421,6 +3421,7 @@ uint32_t Variant::hash() const {
 	return 0;
 }
 
+// need update : replace macro with inline function
 #define hash_compare_scalar(p_lhs, p_rhs) \
 	((p_lhs) == (p_rhs)) || (Math::is_nan(p_lhs) && Math::is_nan(p_rhs))
 
@@ -3445,21 +3446,21 @@ uint32_t Variant::hash() const {
 			(hash_compare_scalar((p_lhs).b, (p_rhs).b)) && \
 			(hash_compare_scalar((p_lhs).a, (p_rhs).a))
 
-#define hash_compare_packed_array(p_lhs, p_rhs, p_type, p_compare_func) \
+#define hash_compare_packed_array(p_lhs, p_rhs, p_type, p_compare_func)      \
 	const std::vector<p_type> &l = PackedArrayRef<p_type>::get_array(p_lhs); \
 	const std::vector<p_type> &r = PackedArrayRef<p_type>::get_array(p_rhs); \
-                                                                        \
-	if (l.size() != r.size())                                           \
-		return false;                                                   \
-                                                                        \
-	const p_type *lr = l.ptr();                                         \
-	const p_type *rr = r.ptr();                                         \
-                                                                        \
-	for (int i = 0; i < l.size(); ++i) {                                \
-		if (!p_compare_func((lr[i]), (rr[i])))                          \
-			return false;                                               \
-	}                                                                   \
-                                                                        \
+                                                                             \
+	if (l.size() != r.size())                                                \
+		return false;                                                        \
+                                                                             \
+	const p_type *lr = l.data();                                             \
+	const p_type *rr = r.data();                                             \
+                                                                             \
+	for (int i = 0; i < l.size(); ++i) {                                     \
+		if (!p_compare_func((lr[i]), (rr[i])))                               \
+			return false;                                                    \
+	}                                                                        \
+                                                                             \
 	return true
 
 bool Variant::hash_compare(const Variant &p_variant) const {
