@@ -1043,28 +1043,28 @@ bool _Geometry::point_is_inside_triangle(const Vector2 &s, const Vector2 &a, con
 	return Geometry::is_point_in_triangle(s, a, b, c);
 }
 
-Vector<Vector3> _Geometry::segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius) {
+std::vector<Vector3> _Geometry::segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius) {
 
-	Vector<Vector3> r;
+	std::vector<Vector3> r;
 	Vector3 res, norm;
 	if (!Geometry::segment_intersects_sphere(p_from, p_to, p_sphere_pos, p_sphere_radius, &res, &norm))
 		return r;
 
 	r.resize(2);
-	r.set(0, res);
-	r.set(1, norm);
+	r[0] = res;
+	r[1] = norm;
 	return r;
 }
-Vector<Vector3> _Geometry::segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius) {
+std::vector<Vector3> _Geometry::segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius) {
 
-	Vector<Vector3> r;
+	std::vector<Vector3> r;
 	Vector3 res, norm;
 	if (!Geometry::segment_intersects_cylinder(p_from, p_to, p_height, p_radius, &res, &norm))
 		return r;
 
 	r.resize(2);
-	r.set(0, res);
-	r.set(1, norm);
+	r[0] = res;
+	r[1] = norm;
 	return r;
 }
 std::vector<Vector3> _Geometry::segment_intersects_convex(const Vector3 &p_from, const Vector3 &p_to, const std::vector<Plane> &p_planes) {
@@ -1077,9 +1077,9 @@ std::vector<Vector3> _Geometry::segment_intersects_convex(const Vector3 &p_from,
 
 	r.resize(2);
 
-	r.set(0, res);
+	r[0] = res;
 
-	r.set(1, norm);
+	r[1] = norm;
 	return r;
 }
 
@@ -1651,10 +1651,10 @@ void _File::store_var(const Variant &p_var, bool p_full_objects) {
 	Error err = encode_variant(p_var, nullptr, len, p_full_objects);
 	ERR_FAIL_COND_MSG(err != OK, "Error when trying to encode Variant.");
 
-	Vector<uint8_t> buff;
+	std::vector<uint8_t> buff;
 	buff.resize(len);
 
-	uint8_t *w = buff.ptrw();
+	uint8_t *w = buff.data();
 	err = encode_variant(p_var, &w[0], len, p_full_objects);
 	ERR_FAIL_COND_MSG(err != OK, "Error when trying to encode Variant.");
 
@@ -1666,10 +1666,10 @@ Variant _File::get_var(bool p_allow_objects) const {
 
 	ERR_FAIL_COND_V_MSG(!f, Variant(), "File must be opened before use.");
 	uint32_t len = get_32();
-	Vector<uint8_t> buff = get_buffer(len);
+	std::vector<uint8_t> buff = get_buffer(len);
 	ERR_FAIL_COND_V((uint32_t)buff.size() != len, Variant());
 
-	const uint8_t *r = buff.ptr();
+	const uint8_t *r = buff.data();
 
 	Variant v;
 	Error err = decode_variant(v, &r[0], len, nullptr, p_allow_objects);
@@ -1964,9 +1964,9 @@ String _Marshalls::variant_to_base64(const Variant &p_var, bool p_full_objects) 
 	Error err = encode_variant(p_var, nullptr, len, p_full_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, "", "Error when trying to encode Variant.");
 
-	Vector<uint8_t> buff;
+	std::vector<uint8_t> buff;
 	buff.resize(len);
-	uint8_t *w = buff.ptrw();
+	uint8_t *w = buff.data();
 
 	err = encode_variant(p_var, &w[0], len, p_full_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, "", "Error when trying to encode Variant.");
@@ -1982,9 +1982,9 @@ Variant _Marshalls::base64_to_variant(const String &p_str, bool p_allow_objects)
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	buf.resize(strlen / 4 * 3 + 1);
-	uint8_t *w = buf.ptrw();
+	uint8_t *w = buf.data();
 
 	size_t len = 0;
 	ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &len, (unsigned char *)cstr.get_data(), strlen) != OK, Variant());
@@ -1998,7 +1998,7 @@ Variant _Marshalls::base64_to_variant(const String &p_str, bool p_allow_objects)
 
 String _Marshalls::raw_to_base64(const std::vector<uint8_t> &p_arr) {
 
-	String ret = CryptoCore::b64_encode_str(p_arr.ptr(), p_arr.size());
+	String ret = CryptoCore::b64_encode_str(p_arr.data(), p_arr.size());
 	ERR_FAIL_COND_V(ret == "", ret);
 	return ret;
 };
@@ -2240,7 +2240,7 @@ PackedStringArray _ClassDB::get_class_list() const {
 	ret.resize(classes.size());
 	int idx = 0;
 	for (List<StringName>::Element *E = classes.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
@@ -2254,7 +2254,7 @@ PackedStringArray _ClassDB::get_inheriters_from_class(const StringName &p_class)
 	ret.resize(classes.size());
 	int idx = 0;
 	for (List<StringName>::Element *E = classes.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
@@ -2377,7 +2377,7 @@ PackedStringArray _ClassDB::get_integer_constant_list(const StringName &p_class,
 	ret.resize(constants.size());
 	int idx = 0;
 	for (List<String>::Element *E = constants.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
