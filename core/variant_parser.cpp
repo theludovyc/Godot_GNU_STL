@@ -935,7 +935,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 			{
 				int len = args.size();
 				arr.resize(len);
-				uint8_t *w = arr.ptrw();
+				uint8_t *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = args[i];
 				}
@@ -956,7 +956,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 			{
 				int32_t len = args.size();
 				arr.resize(len);
-				int32_t *w = arr.ptrw();
+				int32_t *w = arr.data();
 				for (int32_t i = 0; i < len; i++) {
 					w[i] = int32_t(args[i]);
 				}
@@ -1749,7 +1749,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			String s;
 			std::vector<uint8_t> data = p_variant;
 			int len = data.size();
-			const uint8_t *ptr = data.ptr();
+			const uint8_t *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
@@ -1767,7 +1767,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedInt32Array( ");
 			std::vector<int32_t> data = p_variant;
 			int32_t len = data.size();
-			const int32_t *ptr = data.ptr();
+			const int32_t *ptr = data.data();
 
 			for (int32_t i = 0; i < len; i++) {
 
@@ -1785,7 +1785,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedInt64Array( ");
 			std::vector<int64_t> data = p_variant;
 			int64_t len = data.size();
-			const int64_t *ptr = data.ptr();
+			const int64_t *ptr = data.data();
 
 			for (int64_t i = 0; i < len; i++) {
 
@@ -1803,7 +1803,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedFloat32Array( ");
 			std::vector<float> data = p_variant;
 			int len = data.size();
-			const float *ptr = data.ptr();
+			const float *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
@@ -1820,7 +1820,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedFloat64Array( ");
 			std::vector<double> data = p_variant;
 			int len = data.size();
-			const double *ptr = data.ptr();
+			const double *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
@@ -1837,7 +1837,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedStringArray( ");
 			std::vector<String> data = p_variant;
 			int len = data.size();
-			const String *ptr = data.ptr();
+			const String *ptr = data.data();
 
 			String s;
 			//write_string("\n");
@@ -1858,7 +1858,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedVector2Array( ");
 			std::vector<Vector2> data = p_variant;
 			int len = data.size();
-			const Vector2 *ptr = data.ptr();
+			const Vector2 *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
@@ -1875,7 +1875,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 			p_store_string_func(p_store_string_ud, "PackedVector3Array( ");
 			std::vector<Vector3> data = p_variant;
 			int len = data.size();
-			const Vector3 *ptr = data.ptr();
+			const Vector3 *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
@@ -1893,7 +1893,7 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 
 			std::vector<Color> data = p_variant;
 			int len = data.size();
-			const Color *ptr = data.ptr();
+			const Color *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 
