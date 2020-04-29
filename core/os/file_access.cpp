@@ -404,11 +404,11 @@ int FileAccess::get_buffer(uint8_t *p_dst, int p_length) const {
 }
 
 String FileAccess::get_as_utf8_string() const {
-	Vector<uint8_t> sourcef;
+	std::vector<uint8_t> sourcef;
 	int len = get_len();
 	sourcef.resize(len + 1);
 
-	uint8_t *w = sourcef.ptrw();
+	uint8_t *w = sourcef.data();
 	int r = get_buffer(w, len);
 	ERR_FAIL_COND_V(r != len, String());
 	w[len] = 0;
