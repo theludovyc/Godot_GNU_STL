@@ -473,7 +473,7 @@ std::vector<Vector3> AStar::get_point_path(int p_from_id, int p_to_id) {
 	path.resize(pc);
 
 	{
-		Vector3 *w = path.ptrw();
+		Vector3 *w = path.data();
 
 		Point *p2 = end_point;
 		int idx = pc - 1;
@@ -521,7 +521,7 @@ std::vector<int> AStar::get_id_path(int p_from_id, int p_to_id) {
 	path.resize(pc);
 
 	{
-		int *w = path.ptrw();
+		int *w = path.data();
 
 		p = end_point;
 		int idx = pc - 1;
@@ -751,7 +751,7 @@ std::vector<Vector2> AStar2D::get_point_path(int p_from_id, int p_to_id) {
 	path.resize(pc);
 
 	{
-		Vector2 *w = path.ptrw();
+		Vector2 *w = path.data();
 
 		AStar::Point *p2 = end_point;
 		int idx = pc - 1;
@@ -799,7 +799,7 @@ std::vector<int> AStar2D::get_id_path(int p_from_id, int p_to_id) {
 	path.resize(pc);
 
 	{
-		int *w = path.ptrw();
+		int *w = path.data();
 
 		p = end_point;
 		int idx = pc - 1;
@@ -838,8 +838,8 @@ bool AStar2D::_solve(AStar::Point *begin_point, AStar::Point *end_point) {
 			break;
 		}
 
-		sorter.pop_heap(0, open_list.size(), open_list.ptrw()); // Remove the current point from the open list
-		open_list.remove(open_list.size() - 1);
+		sorter.pop_heap(0, open_list.size(), open_list.data()); // Remove the current point from the open list
+		open_list.erase(open_list.begin() + open_list.size() - 1);
 		p->closed_pass = astar.pass; // Mark the point as closed
 
 		for (OAHashMap<int, AStar::Point *>::Iterator it = p->neighbours.iter(); it.valid; it = p->neighbours.next_iter(it)) {
@@ -867,9 +867,9 @@ bool AStar2D::_solve(AStar::Point *begin_point, AStar::Point *end_point) {
 			e->f_score = e->g_score + _estimate_cost(e->id, end_point->id);
 
 			if (new_point) { // The position of the new points is already known.
-				sorter.push_heap(0, open_list.size() - 1, 0, e, open_list.ptrw());
+				sorter.push_heap(0, open_list.size() - 1, 0, e, open_list.data());
 			} else {
-				sorter.push_heap(0, open_list.find(e), 0, e, open_list.ptrw());
+				sorter.push_heap(0, std::distance(open_list.begin(), std::find(open_list.begin(), open_list.end(), e)), 0, e, open_list.data());
 			}
 		}
 	}
