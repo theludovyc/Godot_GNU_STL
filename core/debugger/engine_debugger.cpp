@@ -124,7 +124,7 @@ void EngineDebugger::iteration(uint64_t p_frame_ticks, uint64_t p_idle_ticks, ui
 	singleton->poll_events(true);
 }
 
-void EngineDebugger::initialize(const String &p_uri, bool p_skip_breakpoints, Vector<String> p_breakpoints) {
+void EngineDebugger::initialize(const String &p_uri, bool p_skip_breakpoints, std::vector<String> p_breakpoints) {
 	if (p_uri.empty())
 		return;
 	if (p_uri == "local://") {
