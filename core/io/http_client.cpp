@@ -152,18 +152,18 @@ Error HTTPClient::request_raw(Method p_method, const String &p_url, const std::v
 	request += "\r\n";
 	CharString cs = request.utf8();
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(cs.length());
 	{
-		uint8_t *data_write = data.ptrw();
+		uint8_t *data_write = data.data();
 		for (int i = 0; i < cs.length(); i++) {
 			data_write[i] = cs[i];
 		}
 	}
 
-	data.append_array(p_body);
+	data.insert(data.end(), p_body.begin(), p_body.end());
 
-	const uint8_t *r = data.ptr();
+	const uint8_t *r = data.data();
 	Error err = connection->put_data(&r[0], data.size());
 
 	if (err) {
@@ -639,7 +639,7 @@ PackedByteArray HTTPClient::read_response_body_chunk() {
 		while (to_read > 0) {
 			int rec = 0;
 			{
-				uint8_t *w = ret.ptrw();
+				uint8_t *w = ret.data();
 				err = _get_http_data(w + _offset, to_read, rec);
 			}
 			if (rec <= 0) { // Ended up reading less
@@ -809,7 +809,7 @@ PackedStringArray HTTPClient::_get_response_headers() {
 	ret.resize(rh.size());
 	int idx = 0;
 	for (const List<String>::Element *E = rh.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
