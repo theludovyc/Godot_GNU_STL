@@ -38,9 +38,9 @@
 
 // This implementation is very inefficient, commenting unless bugs happen. See the other one.
 /*
-bool Geometry::is_point_in_polygon(const Vector2 &p_point, const Vector<Vector2> &p_polygon) {
+bool Geometry::is_point_in_polygon(const Vector2 &p_point, const std::vector<Vector2> &p_polygon) {
 
-	Vector<int> indices = Geometry::triangulate_polygon(p_polygon);
+	std::vector<int> indices = Geometry::triangulate_polygon(p_polygon);
 	for (int j = 0; j + 3 <= indices.size(); j += 3) {
 		int i1 = indices[j], i2 = indices[j + 1], i3 = indices[j + 2];
 		if (Geometry::is_point_in_triangle(p_point, p_polygon[i1], p_polygon[i2], p_polygon[i3]))
@@ -213,19 +213,19 @@ static bool _group_face(_FaceClassify *p_faces, int len, int p_index, int p_grou
 	return true;
 }
 
-Vector<Vector<Face3>> Geometry::separate_objects(Vector<Face3> p_array) {
+std::vector<std::vector<Face3>> Geometry::separate_objects(std::vector<Face3> p_array) {
 
-	Vector<Vector<Face3>> objects;
+	std::vector<std::vector<Face3>> objects;
 
 	int len = p_array.size();
 
-	const Face3 *arrayptr = p_array.ptr();
+	const Face3 *arrayptr = p_array.data();
 
-	Vector<_FaceClassify> fc;
+	std::vector<_FaceClassify> fc;
 
 	fc.resize(len);
 
-	_FaceClassify *_fcptr = fc.ptrw();
+	_FaceClassify *_fcptr = fc.data();
 
 	for (int i = 0; i < len; i++) {
 
@@ -234,7 +234,7 @@ Vector<Vector<Face3>> Geometry::separate_objects(Vector<Face3> p_array) {
 
 	bool error = _connect_faces(_fcptr, len, -1);
 
-	ERR_FAIL_COND_V_MSG(error, Vector<Vector<Face3>>(), "Invalid geometry.");
+	ERR_FAIL_COND_V_MSG(error, std::vector<std::vector<Face3>>(), "Invalid geometry.");
 
 	// Group connected faces in separate objects.
 
@@ -258,7 +258,7 @@ Vector<Vector<Face3>> Geometry::separate_objects(Vector<Face3> p_array) {
 	if (group >= 0) {
 
 		objects.resize(group);
-		Vector<Face3> *group_faces = objects.ptrw();
+		std::vector<Face3> *group_faces = objects.data();
 
 		for (int i = 0; i < len; i++) {
 			if (!_fcptr[i].valid)
@@ -464,7 +464,7 @@ static inline void _mark_outside(uint8_t ***p_cell_status, int x, int y, int z, 
 	}
 }
 
-static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, int len_x, int len_y, int len_z, Vector<Face3> &p_faces) {
+static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, int len_x, int len_y, int len_z, std::vector<Face3> &p_faces) {
 
 	ERR_FAIL_INDEX(x, len_x);
 	ERR_FAIL_INDEX(y, len_y);
@@ -524,13 +524,13 @@ static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, i
 	}
 }
 
-Vector<Face3> Geometry::wrap_geometry(Vector<Face3> p_array, real_t *p_error) {
+std::vector<Face3> Geometry::wrap_geometry(std::vector<Face3> p_array, real_t *p_error) {
 
 #define _MIN_SIZE 1.0
 #define _MAX_LENGTH 20
 
 	int face_count = p_array.size();
-	const Face3 *faces = p_array.ptr();
+	const Face3 *faces = p_array.data();
 
 	AABB global_aabb;
 
@@ -631,7 +631,7 @@ Vector<Face3> Geometry::wrap_geometry(Vector<Face3> p_array, real_t *p_error) {
 
 	// Build faces for the inside-outside cell divisors.
 
-	Vector<Face3> wrapped_faces;
+	std::vector<Face3> wrapped_faces;
 
 	for (int i = 0; i < div_x; i++) {
 
@@ -647,7 +647,7 @@ Vector<Face3> Geometry::wrap_geometry(Vector<Face3> p_array, real_t *p_error) {
 	// Transform face vertices to global coords.
 
 	int wrapped_faces_count = wrapped_faces.size();
-	Face3 *wrapped_faces_ptr = wrapped_faces.ptrw();
+	Face3 *wrapped_faces_ptr = wrapped_faces.data();
 
 	for (int i = 0; i < wrapped_faces_count; i++) {
 
@@ -712,7 +712,7 @@ std::vector<std::vector<Vector2>> Geometry::decompose_polygon_in_convex(std::vec
 	return decomp;
 }
 
-Geometry::MeshData Geometry::build_convex_mesh(const Vector<Plane> &p_planes) {
+Geometry::MeshData Geometry::build_convex_mesh(const std::vector<Plane> &p_planes) {
 
 	MeshData mesh;
 
@@ -852,9 +852,9 @@ Geometry::MeshData Geometry::build_convex_mesh(const Vector<Plane> &p_planes) {
 	return mesh;
 }
 
-Vector<Plane> Geometry::build_box_planes(const Vector3 &p_extents) {
+std::vector<Plane> Geometry::build_box_planes(const Vector3 &p_extents) {
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	planes.push_back(Plane(Vector3(1, 0, 0), p_extents.x));
 	planes.push_back(Plane(Vector3(-1, 0, 0), p_extents.x));
@@ -866,9 +866,9 @@ Vector<Plane> Geometry::build_box_planes(const Vector3 &p_extents) {
 	return planes;
 }
 
-Vector<Plane> Geometry::build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis) {
+std::vector<Plane> Geometry::build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis) {
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	for (int i = 0; i < p_sides; i++) {
 
@@ -888,9 +888,9 @@ Vector<Plane> Geometry::build_cylinder_planes(real_t p_radius, real_t p_height, 
 	return planes;
 }
 
-Vector<Plane> Geometry::build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis) {
+std::vector<Plane> Geometry::build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis) {
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	Vector3 axis;
 	axis[p_axis] = 1.0;
@@ -921,9 +921,9 @@ Vector<Plane> Geometry::build_sphere_planes(real_t p_radius, int p_lats, int p_l
 	return planes;
 }
 
-Vector<Plane> Geometry::build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
+std::vector<Plane> Geometry::build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	Vector3 axis;
 	axis[p_axis] = 1.0;
