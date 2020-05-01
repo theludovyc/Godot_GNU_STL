@@ -864,11 +864,20 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 				} break;
 			}
 
-			array_len = PackedVector3Array(p_arrays[i]).size();
+			// need_udpate
+
+			PackedVector3Array pva = p_arrays[i];
+
+			array_len = pva.size();
+
 			ERR_FAIL_COND_V(array_len == 0, ERR_INVALID_DATA);
 		} else if (i == RS::ARRAY_INDEX) {
 
-			index_array_len = PackedInt32Array(p_arrays[i]).size();
+			// need_update
+
+			PackedVector3Array pva = p_arrays[i];
+
+			index_array_len = pva.size();
 		}
 	}
 
