@@ -569,6 +569,29 @@ void EditorPropertyFlags::update_property() {
 	}
 }
 
+void EditorPropertyFlags::setup(const std::vector<String> &p_options) {
+	ERR_FAIL_COND(flags.size());
+
+	bool first = true;
+	for (int i = 0; i < p_options.size(); i++) {
+		String option = p_options[i].strip_edges();
+		if (option != "") {
+			CheckBox *cb = memnew(CheckBox);
+			cb->set_text(option);
+			cb->set_clip_text(true);
+			cb->connect("pressed", callable_mp(this, &EditorPropertyFlags::_flag_toggled));
+			add_focusable(cb);
+			vbox->add_child(cb);
+			flags.push_back(cb);
+			flag_indices.push_back(i);
+			if (first) {
+				set_label_reference(cb);
+				first = false;
+			}
+		}
+	}
+}
+
 void EditorPropertyFlags::_bind_methods() {
 }
 

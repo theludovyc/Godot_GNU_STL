@@ -649,7 +649,7 @@ String String::camelcase_to_underscore(bool lowercase) const {
 }
 
 String String::get_with_code_lines() const {
-	Vector<String> lines = split("\n");
+	std::vector<String> lines = split("\n");
 	String ret;
 	for (int i = 0; i < lines.size(); i++) {
 		if (i > 0) {

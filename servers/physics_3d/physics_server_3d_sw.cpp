@@ -208,10 +208,10 @@ void PhysicsServer3DSW::space_set_debug_contacts(RID p_space, int p_max_contacts
 	space->set_debug_contacts(p_max_contacts);
 }
 
-Vector<Vector3> PhysicsServer3DSW::space_get_contacts(RID p_space) const {
+std::vector<Vector3> PhysicsServer3DSW::space_get_contacts(RID p_space) const {
 
 	Space3DSW *space = space_owner.getornull(p_space);
-	ERR_FAIL_COND_V(!space, Vector<Vector3>());
+	ERR_FAIL_COND_V(!space, std::vector<Vector3>());
 	return space->get_debug_contacts();
 }
 

@@ -33,7 +33,7 @@
 
 #include "core/os/thread_safe.h"
 #include "scene/resources/mesh.h"
-#include "servers/arvr_server.h"
+#include "servers/xr_server.h"
 
 /**
 	@author Bastiaan Olij <mux213@gmail.com>
@@ -55,7 +55,7 @@ public:
 	};
 
 private:
-	ARVRServer::TrackerType type; // type of tracker
+	XRServer::TrackerType type; // type of tracker
 	StringName name; // (unique) name of the tracker
 	int tracker_id; // tracker index id that is unique per type
 	int joy_id; // if we also have a related joystick entity, the id of the joystick
@@ -71,8 +71,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	void set_type(ARVRServer::TrackerType p_type);
-	ARVRServer::TrackerType get_type() const;
+	void set_type(XRServer::TrackerType p_type);
+	XRServer::TrackerType get_type() const;
 	void set_name(const String &p_name);
 	StringName get_name() const;
 	int get_tracker_id() const;

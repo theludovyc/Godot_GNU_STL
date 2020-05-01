@@ -64,7 +64,7 @@ void ResourceFormatSaver::get_recognized_extensions(const RES &p_resource, List<
 		PackedStringArray exts = get_script_instance()->call("get_recognized_extensions", p_resource);
 
 		{
-			const String *r = exts.ptr();
+			const String *r = exts.data();
 			for (int i = 0; i < exts.size(); ++i) {
 				p_extensions->push_back(r[i]);
 			}

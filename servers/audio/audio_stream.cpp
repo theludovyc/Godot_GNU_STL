@@ -137,7 +137,7 @@ void AudioStreamPlaybackMicrophone::_mix_internal(AudioFrame *p_buffer, int p_fr
 
 	AudioDriver::get_singleton()->lock();
 
-	Vector<int32_t> buf = AudioDriver::get_singleton()->get_input_buffer();
+	std::vector<int32_t> buf = AudioDriver::get_singleton()->get_input_buffer();
 	unsigned int input_size = AudioDriver::get_singleton()->get_input_size();
 	int mix_rate = AudioDriver::get_singleton()->get_mix_rate();
 	unsigned int playback_delay = MIN(((50 * mix_rate) / 1000) * 2, buf.size() >> 1);

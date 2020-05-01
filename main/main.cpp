@@ -65,7 +65,7 @@
 #include "scene/main/window.h"
 #include "scene/register_scene_types.h"
 #include "scene/resources/packed_scene.h"
-#include "servers/arvr_server.h"
+#include "servers/xr_server.h"
 #include "servers/audio_server.h"
 #include "servers/camera_server.h"
 #include "servers/display_server.h"
@@ -109,7 +109,7 @@ static AudioServer *audio_server = nullptr;
 static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
 static CameraServer *camera_server = nullptr;
-static ARVRServer *arvr_server = nullptr;
+static XRServer *arvr_server = nullptr;
 static PhysicsServer3D *physics_server = nullptr;
 static PhysicsServer2D *physics_2d_server = nullptr;
 static NavigationServer3D *navigation_server = nullptr;
@@ -1304,7 +1304,7 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	audio_server->init();
 
 	// also init our arvr_server from here
-	arvr_server = memnew(ARVRServer);
+	arvr_server = memnew(XRServer);
 
 	register_core_singletons();
 

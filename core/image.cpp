@@ -2839,7 +2839,7 @@ void Image::set_pixel(int p_x, int p_y, const Color &p_color) {
 #endif
 
 	uint32_t ofs = p_y * width + p_x;
-	_set_color_at_ofs(data.data, ofs, p_color);
+	_set_color_at_ofs(data.data(), ofs, p_color);
 }
 
 Image::UsedChannels Image::detect_used_channels(CompressSource p_source) {

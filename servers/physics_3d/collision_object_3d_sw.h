@@ -71,7 +71,7 @@ private:
 		Shape() { disabled = false; }
 	};
 
-	Vector<Shape> shapes;
+	std::vector<Shape> shapes;
 	Space3DSW *space;
 	Transform transform;
 	Transform inv_transform;

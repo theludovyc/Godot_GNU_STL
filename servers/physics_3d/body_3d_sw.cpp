@@ -459,7 +459,7 @@ void Body3DSW::integrate_forces(real_t p_step) {
 	area_linear_damp = 0;
 	area_angular_damp = 0;
 	if (ac) {
-		areas.sort();
+		std::sort(areas.begin(), areas.end());
 		const AreaCMP *aa = &areas[0];
 		// damp_area = aa[ac-1].area;
 		for (int i = ac - 1; i >= 0 && !stopped; i--) {

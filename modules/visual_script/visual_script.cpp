@@ -1290,7 +1290,7 @@ void VisualScript::_set_data(const Dictionary &p_data) {
 
 	// Sort so we are 100% that they are always the same.
 
-	std::sort(rpc_functions.begin(), rpc_functions.end(), SortNetData);
+	std::sort(rpc_functions.begin(), rpc_functions.end(), SortNetData{});
 }
 
 Dictionary VisualScript::_get_data() const {

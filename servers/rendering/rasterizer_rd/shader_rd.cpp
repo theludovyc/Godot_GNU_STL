@@ -209,7 +209,7 @@ void ShaderRD::_clear_version(Version *p_version) {
 
 void ShaderRD::_compile_variant(uint32_t p_variant, Version *p_version) {
 
-	Vector<RD::ShaderStageData> stages;
+	std::vector<RD::ShaderStageData> stages;
 
 	String error;
 	String current_source;
@@ -401,7 +401,7 @@ void ShaderRD::_compile_version(Version *p_version) {
 	p_version->valid = true;
 }
 
-void ShaderRD::version_set_code(RID p_version, const String &p_uniforms, const String &p_vertex_globals, const String &p_vertex_code, const String &p_fragment_globals, const String &p_fragment_light, const String &p_fragment_code, const Vector<String> &p_custom_defines) {
+void ShaderRD::version_set_code(RID p_version, const String &p_uniforms, const String &p_vertex_globals, const String &p_vertex_code, const String &p_fragment_globals, const String &p_fragment_light, const String &p_fragment_code, const std::vector<String> &p_custom_defines) {
 
 	ERR_FAIL_COND(is_compute);
 
@@ -426,7 +426,7 @@ void ShaderRD::version_set_code(RID p_version, const String &p_uniforms, const S
 	}
 }
 
-void ShaderRD::version_set_compute_code(RID p_version, const String &p_uniforms, const String &p_compute_globals, const String &p_compute_code, const Vector<String> &p_custom_defines) {
+void ShaderRD::version_set_compute_code(RID p_version, const String &p_uniforms, const String &p_compute_globals, const String &p_compute_code, const std::vector<String> &p_custom_defines) {
 
 	ERR_FAIL_COND(!is_compute);
 
@@ -472,7 +472,7 @@ bool ShaderRD::version_free(RID p_version) {
 	return true;
 }
 
-void ShaderRD::initialize(const Vector<String> &p_variant_defines, const String &p_general_defines) {
+void ShaderRD::initialize(const std::vector<String> &p_variant_defines, const String &p_general_defines) {
 	ERR_FAIL_COND(variant_defines.size());
 	ERR_FAIL_COND(p_variant_defines.size() == 0);
 	general_defines = p_general_defines.utf8();

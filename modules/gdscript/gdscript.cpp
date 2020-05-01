@@ -1032,9 +1032,9 @@ void GDScript::_init_rpc_methods_properties() {
 	}
 
 	// Sort so we are 100% that they are always the same.
-	std::sort(rpc_functions.begin(), rpc_functions.end(), SortNetData);
+	std::sort(rpc_functions.begin(), rpc_functions.end(), SortNetData{});
 
-	std::sort(rpc_variables.begin(), rpc_variables.end(), SortNetData);
+	std::sort(rpc_variables.begin(), rpc_variables.end(), SortNetData{});
 }
 
 GDScript::~GDScript() {

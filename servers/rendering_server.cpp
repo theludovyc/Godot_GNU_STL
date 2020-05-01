@@ -78,7 +78,7 @@ Array RenderingServer::_shader_get_param_list_bind(RID p_shader) const {
 	return convert_property_list(&l);
 }
 
-static Array to_array(const Vector<ObjectID> &ids) {
+static Array to_array(const std::vector<ObjectID> &ids) {
 	Array a;
 	a.resize(ids.size());
 	for (int i = 0; i < ids.size(); ++i) {
@@ -89,26 +89,26 @@ static Array to_array(const Vector<ObjectID> &ids) {
 
 Array RenderingServer::_instances_cull_aabb_bind(const AABB &p_aabb, RID p_scenario) const {
 
-	Vector<ObjectID> ids = instances_cull_aabb(p_aabb, p_scenario);
+	std::vector<ObjectID> ids = instances_cull_aabb(p_aabb, p_scenario);
 	return to_array(ids);
 }
 
 Array RenderingServer::_instances_cull_ray_bind(const Vector3 &p_from, const Vector3 &p_to, RID p_scenario) const {
 
-	Vector<ObjectID> ids = instances_cull_ray(p_from, p_to, p_scenario);
+	std::vector<ObjectID> ids = instances_cull_ray(p_from, p_to, p_scenario);
 	return to_array(ids);
 }
 
 Array RenderingServer::_instances_cull_convex_bind(const Array &p_convex, RID p_scenario) const {
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 	for (int i = 0; i < p_convex.size(); ++i) {
 		Variant v = p_convex[i];
 		ERR_FAIL_COND_V(v.get_type() != Variant::PLANE, Array());
 		planes.push_back(v);
 	}
 
-	Vector<ObjectID> ids = instances_cull_convex(planes, p_scenario);
+	std::vector<ObjectID> ids = instances_cull_convex(planes, p_scenario);
 	return to_array(ids);
 }
 
@@ -120,11 +120,11 @@ RID RenderingServer::get_test_texture() {
 
 #define TEST_TEXTURE_SIZE 256
 
-	Vector<uint8_t> test_data;
+	std::vector<uint8_t> test_data;
 	test_data.resize(TEST_TEXTURE_SIZE * TEST_TEXTURE_SIZE * 3);
 
 	{
-		uint8_t *w = test_data.ptrw();
+		uint8_t *w = test_data.data();
 
 		for (int x = 0; x < TEST_TEXTURE_SIZE; x++) {
 
@@ -172,10 +172,10 @@ void RenderingServer::_free_internal_rids() {
 
 RID RenderingServer::_make_test_cube() {
 
-	Vector<Vector3> vertices;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector3> uvs;
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector3> uvs;
 
 #define ADD_VTX(m_idx)                           \
 	vertices.push_back(face_points[m_idx]);      \
@@ -229,10 +229,10 @@ RID RenderingServer::_make_test_cube() {
 	d[RenderingServer::ARRAY_TEX_UV] = uvs;
 	d[RenderingServer::ARRAY_VERTEX] = vertices;
 
-	Vector<int> indices;
+	std::vector<int> indices;
 	indices.resize(vertices.size());
 	for (int i = 0; i < vertices.size(); i++)
-		indices.set(i, i);
+		indices[i] = i;
 	d[RenderingServer::ARRAY_INDEX] = indices;
 
 	mesh_add_surface_from_arrays(test_cube, PRIMITIVE_TRIANGLES, d);
@@ -254,8 +254,8 @@ RID RenderingServer::_make_test_cube() {
 
 RID RenderingServer::make_sphere_mesh(int p_lats, int p_lons, float p_radius) {
 
-	Vector<Vector3> vertices;
-	Vector<Vector3> normals;
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
 
 	for (int i = 1; i <= p_lats; i++) {
 		double lat0 = Math_PI * (-0.5 + (double)(i - 1) / p_lats);
@@ -314,10 +314,10 @@ RID RenderingServer::get_white_texture() {
 	if (white_texture.is_valid())
 		return white_texture;
 
-	Vector<uint8_t> wt;
+	std::vector<uint8_t> wt;
 	wt.resize(16 * 3);
 	{
-		uint8_t *w = wt.ptrw();
+		uint8_t *w = wt.data();
 		for (int i = 0; i < 16 * 3; i++)
 			w[i] = 255;
 	}
@@ -329,13 +329,13 @@ RID RenderingServer::get_white_texture() {
 #define SMALL_VEC2 Vector2(0.00001, 0.00001)
 #define SMALL_VEC3 Vector3(0.00001, 0.00001, 0.00001)
 
-Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint32_t *p_offsets, uint32_t p_stride, Vector<uint8_t> &r_vertex_array, int p_vertex_array_len, Vector<uint8_t> &r_index_array, int p_index_array_len, AABB &r_aabb, Vector<AABB> &r_bone_aabb) {
+Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint32_t *p_offsets, uint32_t p_stride, std::vector<uint8_t> &r_vertex_array, int p_vertex_array_len, std::vector<uint8_t> &r_index_array, int p_index_array_len, AABB &r_aabb, std::vector<AABB> &r_bone_aabb) {
 
-	uint8_t *vw = r_vertex_array.ptrw();
+	uint8_t *vw = r_vertex_array.data();
 
 	uint8_t *iw = nullptr;
 	if (r_index_array.size()) {
-		iw = r_index_array.ptrw();
+		iw = r_index_array.data();
 	}
 
 	int max_bone = 0;
@@ -351,10 +351,10 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				if (p_format & RS::ARRAY_FLAG_USE_2D_VERTICES) {
 
-					Vector<Vector2> array = p_arrays[ai];
+					std::vector<Vector2> array = p_arrays[ai];
 					ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-					const Vector2 *src = array.ptr();
+					const Vector2 *src = array.data();
 
 					// setting vertices means regenerating the AABB
 					Rect2 aabb;
@@ -379,10 +379,10 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 					r_aabb = AABB(Vector3(aabb.position.x, aabb.position.y, 0), Vector3(aabb.size.x, aabb.size.y, 0));
 
 				} else {
-					Vector<Vector3> array = p_arrays[ai];
+					std::vector<Vector3> array = p_arrays[ai];
 					ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-					const Vector3 *src = array.ptr();
+					const Vector3 *src = array.data();
 
 					// setting vertices means regenerating the AABB
 					AABB aabb;
@@ -412,10 +412,10 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_VECTOR3_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<Vector3> array = p_arrays[ai];
+				std::vector<Vector3> array = p_arrays[ai];
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-				const Vector3 *src = array.ptr();
+				const Vector3 *src = array.data();
 
 				// setting vertices means regenerating the AABB
 
@@ -447,11 +447,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_FLOAT32_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<real_t> array = p_arrays[ai];
+				std::vector<real_t> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len * 4, ERR_INVALID_PARAMETER);
 
-				const real_t *src = array.ptr();
+				const real_t *src = array.data();
 
 				if (p_format & ARRAY_COMPRESS_TANGENT) {
 
@@ -485,11 +485,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_COLOR_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<Color> array = p_arrays[ai];
+				std::vector<Color> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-				const Color *src = array.ptr();
+				const Color *src = array.data();
 
 				if (p_format & ARRAY_COMPRESS_COLOR) {
 
@@ -517,11 +517,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_VECTOR3_ARRAY && p_arrays[ai].get_type() != Variant::PACKED_VECTOR2_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<Vector2> array = p_arrays[ai];
+				std::vector<Vector2> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-				const Vector2 *src = array.ptr();
+				const Vector2 *src = array.data();
 
 				if (p_format & ARRAY_COMPRESS_TEX_UV) {
 
@@ -546,11 +546,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_VECTOR3_ARRAY && p_arrays[ai].get_type() != Variant::PACKED_VECTOR2_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<Vector2> array = p_arrays[ai];
+				std::vector<Vector2> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len, ERR_INVALID_PARAMETER);
 
-				const Vector2 *src = array.ptr();
+				const Vector2 *src = array.data();
 
 				if (p_format & ARRAY_COMPRESS_TEX_UV2) {
 
@@ -573,11 +573,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_FLOAT32_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<real_t> array = p_arrays[ai];
+				std::vector<real_t> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len * RS::ARRAY_WEIGHTS_SIZE, ERR_INVALID_PARAMETER);
 
-				const real_t *src = array.ptr();
+				const real_t *src = array.data();
 
 				{
 
@@ -597,11 +597,11 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_INT32_ARRAY && p_arrays[ai].get_type() != Variant::PACKED_FLOAT32_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<int> array = p_arrays[ai];
+				std::vector<int> array = p_arrays[ai];
 
 				ERR_FAIL_COND_V(array.size() != p_vertex_array_len * RS::ARRAY_WEIGHTS_SIZE, ERR_INVALID_PARAMETER);
 
-				const int *src = array.ptr();
+				const int *src = array.data();
 
 				for (int i = 0; i < p_vertex_array_len; i++) {
 
@@ -621,13 +621,13 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 				ERR_FAIL_COND_V(p_index_array_len <= 0, ERR_INVALID_DATA);
 				ERR_FAIL_COND_V(p_arrays[ai].get_type() != Variant::PACKED_INT32_ARRAY, ERR_INVALID_PARAMETER);
 
-				Vector<int> indices = p_arrays[ai];
+				std::vector<int> indices = p_arrays[ai];
 				ERR_FAIL_COND_V(indices.size() == 0, ERR_INVALID_PARAMETER);
 				ERR_FAIL_COND_V(indices.size() != p_index_array_len, ERR_INVALID_PARAMETER);
 
 				/* determine whether using 16 or 32 bits indices */
 
-				const int *src = indices.ptr();
+				const int *src = indices.data();
 
 				for (int i = 0; i < p_index_array_len; i++) {
 
@@ -658,24 +658,24 @@ Error RenderingServer::_surface_set_data(Array p_arrays, uint32_t p_format, uint
 
 		if (first) {
 			for (int i = 0; i < total_bones; i++) {
-				r_bone_aabb.write[i].size = Vector3(-1, -1, -1); //negative means unused
+				r_bone_aabb[i].size = Vector3(-1, -1, -1); //negative means unused
 			}
 		}
 
-		Vector<Vector3> vertices = p_arrays[RS::ARRAY_VERTEX];
-		Vector<int> bones = p_arrays[RS::ARRAY_BONES];
-		Vector<float> weights = p_arrays[RS::ARRAY_WEIGHTS];
+		std::vector<Vector3> vertices = p_arrays[RS::ARRAY_VERTEX];
+		std::vector<int> bones = p_arrays[RS::ARRAY_BONES];
+		std::vector<float> weights = p_arrays[RS::ARRAY_WEIGHTS];
 
 		bool any_valid = false;
 
 		if (vertices.size() && bones.size() == vertices.size() * 4 && weights.size() == bones.size()) {
 
 			int vs = vertices.size();
-			const Vector3 *rv = vertices.ptr();
-			const int *rb = bones.ptr();
-			const float *rw = weights.ptr();
+			const Vector3 *rv = vertices.data();
+			const int *rb = bones.data();
+			const float *rw = weights.data();
 
-			AABB *bptr = r_bone_aabb.ptrw();
+			AABB *bptr = r_bone_aabb.data();
 
 			for (int i = 0; i < vs; i++) {
 
@@ -854,10 +854,10 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 			Variant var = p_arrays[i];
 			switch (var.get_type()) {
 				case Variant::PACKED_VECTOR2_ARRAY: {
-					Vector<Vector2> v2 = var;
+					std::vector<Vector2> v2 = var;
 				} break;
 				case Variant::PACKED_VECTOR3_ARRAY: {
-					Vector<Vector3> v3 = var;
+					std::vector<Vector3> v3 = var;
 				} break;
 				default: {
 					Array v = var;
@@ -1007,27 +1007,27 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 
 	int array_size = total_elem_size * array_len;
 
-	Vector<uint8_t> vertex_array;
+	std::vector<uint8_t> vertex_array;
 	vertex_array.resize(array_size);
 
 	int index_array_size = offsets[RS::ARRAY_INDEX] * index_array_len;
 
-	Vector<uint8_t> index_array;
+	std::vector<uint8_t> index_array;
 	index_array.resize(index_array_size);
 
 	AABB aabb;
-	Vector<AABB> bone_aabb;
+	std::vector<AABB> bone_aabb;
 
 	Error err = _surface_set_data(p_arrays, format, offsets, total_elem_size, vertex_array, array_len, index_array, index_array_len, aabb, bone_aabb);
 	ERR_FAIL_COND_V_MSG(err != OK, ERR_INVALID_DATA, "Invalid array format for surface.");
 
-	Vector<Vector<uint8_t>> blend_shape_data;
+	std::vector<std::vector<uint8_t>> blend_shape_data;
 
 	for (int i = 0; i < p_blend_shapes.size(); i++) {
 
-		Vector<uint8_t> vertex_array_shape;
+		std::vector<uint8_t> vertex_array_shape;
 		vertex_array_shape.resize(array_size);
-		Vector<uint8_t> noindex;
+		std::vector<uint8_t> noindex;
 
 		AABB laabb;
 		Error err2 = _surface_set_data(p_blend_shapes[i], format & ~ARRAY_FORMAT_INDEX, offsets, total_elem_size, vertex_array_shape, array_len, noindex, 0, laabb, bone_aabb);
@@ -1036,7 +1036,7 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 
 		blend_shape_data.push_back(vertex_array_shape);
 	}
-	Vector<SurfaceData::LOD> lods;
+	std::vector<SurfaceData::LOD> lods;
 	if (index_array_len) {
 
 		List<Variant> keys;
@@ -1044,18 +1044,18 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 		for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
 			float distance = E->get();
 			ERR_CONTINUE(distance <= 0.0);
-			Vector<int> indices = p_lods[E->get()];
+			std::vector<int> indices = p_lods[E->get()];
 			ERR_CONTINUE(indices.size() == 0);
 			uint32_t index_count = indices.size();
 			ERR_CONTINUE(index_count >= (uint32_t)index_array_len); //should be smaller..
 
-			const int *r = indices.ptr();
+			const int *r = indices.data();
 
-			Vector<uint8_t> data;
+			std::vector<uint8_t> data;
 			if (array_len <= 65536) {
 				//16 bits indices
 				data.resize(indices.size() * 2);
-				uint8_t *w = data.ptrw();
+				uint8_t *w = data.data();
 				uint16_t *index_ptr = (uint16_t *)w;
 				for (uint32_t i = 0; i < index_count; i++) {
 					index_ptr[i] = r[i];
@@ -1063,7 +1063,7 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 			} else {
 				//32 bits indices
 				data.resize(indices.size() * 4);
-				uint8_t *w = data.ptrw();
+				uint8_t *w = data.data();
 				uint32_t *index_ptr = (uint32_t *)w;
 				for (uint32_t i = 0; i < index_count; i++) {
 					index_ptr[i] = r[i];
@@ -1102,7 +1102,7 @@ void RenderingServer::mesh_add_surface_from_arrays(RID p_mesh, PrimitiveType p_p
 	mesh_add_surface(p_mesh, sd);
 }
 
-Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t> p_vertex_data, int p_vertex_len, Vector<uint8_t> p_index_data, int p_index_len) const {
+Array RenderingServer::_get_array_from_surface(uint32_t p_format, std::vector<uint8_t> p_vertex_data, int p_vertex_len, std::vector<uint8_t> p_index_data, int p_index_len) const {
 
 	uint32_t offsets[ARRAY_MAX];
 
@@ -1214,7 +1214,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 	Array ret;
 	ret.resize(RS::ARRAY_MAX);
 
-	const uint8_t *r = p_vertex_data.ptr();
+	const uint8_t *r = p_vertex_data.data();
 
 	for (int i = 0; i < RS::ARRAY_MAX; i++) {
 
@@ -1227,12 +1227,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 
 				if (p_format & ARRAY_FLAG_USE_2D_VERTICES) {
 
-					Vector<Vector2> arr_2d;
+					std::vector<Vector2> arr_2d;
 					arr_2d.resize(p_vertex_len);
 
 					{
 
-						Vector2 *w = arr_2d.ptrw();
+						Vector2 *w = arr_2d.data();
 
 						for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1244,12 +1244,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 					ret[i] = arr_2d;
 				} else {
 
-					Vector<Vector3> arr_3d;
+					std::vector<Vector3> arr_3d;
 					arr_3d.resize(p_vertex_len);
 
 					{
 
-						Vector3 *w = arr_3d.ptrw();
+						Vector3 *w = arr_3d.data();
 
 						for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1263,12 +1263,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 
 			} break;
 			case RS::ARRAY_NORMAL: {
-				Vector<Vector3> arr;
+				std::vector<Vector3> arr;
 				arr.resize(p_vertex_len);
 
 				if (p_format & ARRAY_COMPRESS_NORMAL) {
 
-					Vector3 *w = arr.ptrw();
+					Vector3 *w = arr.data();
 					const float multiplier = 1.f / 127.f;
 
 					for (int j = 0; j < p_vertex_len; j++) {
@@ -1277,7 +1277,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 						w[j] = Vector3(float(v[0]) * multiplier, float(v[1]) * multiplier, float(v[2]) * multiplier);
 					}
 				} else {
-					Vector3 *w = arr.ptrw();
+					Vector3 *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1291,10 +1291,10 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 
 			case RS::ARRAY_TANGENT: {
-				Vector<float> arr;
+				std::vector<float> arr;
 				arr.resize(p_vertex_len * 4);
 				if (p_format & ARRAY_COMPRESS_TANGENT) {
-					float *w = arr.ptrw();
+					float *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1305,7 +1305,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 					}
 				} else {
 
-					float *w = arr.ptrw();
+					float *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 						const float *v = (const float *)&r[j * total_elem_size + offsets[i]];
@@ -1320,12 +1320,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 			case RS::ARRAY_COLOR: {
 
-				Vector<Color> arr;
+				std::vector<Color> arr;
 				arr.resize(p_vertex_len);
 
 				if (p_format & ARRAY_COMPRESS_COLOR) {
 
-					Color *w = arr.ptrw();
+					Color *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1333,7 +1333,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 						w[j] = Color(float(v[0] / 255.0), float(v[1] / 255.0), float(v[2] / 255.0), float(v[3] / 255.0));
 					}
 				} else {
-					Color *w = arr.ptrw();
+					Color *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1346,12 +1346,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 			case RS::ARRAY_TEX_UV: {
 
-				Vector<Vector2> arr;
+				std::vector<Vector2> arr;
 				arr.resize(p_vertex_len);
 
 				if (p_format & ARRAY_COMPRESS_TEX_UV) {
 
-					Vector2 *w = arr.ptrw();
+					Vector2 *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1360,7 +1360,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 					}
 				} else {
 
-					Vector2 *w = arr.ptrw();
+					Vector2 *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1373,12 +1373,12 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 
 			case RS::ARRAY_TEX_UV2: {
-				Vector<Vector2> arr;
+				std::vector<Vector2> arr;
 				arr.resize(p_vertex_len);
 
 				if (p_format & ARRAY_COMPRESS_TEX_UV2) {
 
-					Vector2 *w = arr.ptrw();
+					Vector2 *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1387,7 +1387,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 					}
 				} else {
 
-					Vector2 *w = arr.ptrw();
+					Vector2 *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1401,10 +1401,10 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 			case RS::ARRAY_WEIGHTS: {
 
-				Vector<float> arr;
+				std::vector<float> arr;
 				arr.resize(p_vertex_len * 4);
 				{
-					float *w = arr.ptrw();
+					float *w = arr.data();
 
 					for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1420,10 +1420,10 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			} break;
 			case RS::ARRAY_BONES: {
 
-				Vector<int> arr;
+				std::vector<int> arr;
 				arr.resize(p_vertex_len * 4);
 
-				int *w = arr.ptrw();
+				int *w = arr.data();
 
 				for (int j = 0; j < p_vertex_len; j++) {
 
@@ -1439,13 +1439,13 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 			case RS::ARRAY_INDEX: {
 				/* determine whether using 16 or 32 bits indices */
 
-				const uint8_t *ir = p_index_data.ptr();
+				const uint8_t *ir = p_index_data.data();
 
-				Vector<int> arr;
+				std::vector<int> arr;
 				arr.resize(p_index_len);
 				if (p_vertex_len < (1 << 16)) {
 
-					int *w = arr.ptrw();
+					int *w = arr.data();
 
 					for (int j = 0; j < p_index_len; j++) {
 
@@ -1454,7 +1454,7 @@ Array RenderingServer::_get_array_from_surface(uint32_t p_format, Vector<uint8_t
 					}
 				} else {
 
-					int *w = arr.ptrw();
+					int *w = arr.data();
 
 					for (int j = 0; j < p_index_len; j++) {
 						const int *v = (const int *)&ir[j * 4];
@@ -1486,22 +1486,22 @@ Dictionary RenderingServer::mesh_surface_get_lods(RID p_mesh, int p_surface) con
 	Dictionary ret;
 
 	for (int i = 0; i < sd.lods.size(); i++) {
-		Vector<int> lods;
+		std::vector<int> lods;
 		if (sd.vertex_count <= 65536) {
 			uint32_t lc = sd.lods[i].index_data.size() / 2;
 			lods.resize(lc);
-			const uint8_t *r = sd.lods[i].index_data.ptr();
+			const uint8_t *r = sd.lods[i].index_data.data();
 			const uint16_t *rptr = (const uint16_t *)r;
-			int *w = lods.ptrw();
+			int *w = lods.data();
 			for (uint32_t j = 0; j < lc; j++) {
 				w[j] = rptr[i];
 			}
 		} else {
 			uint32_t lc = sd.lods[i].index_data.size() / 4;
 			lods.resize(lc);
-			const uint8_t *r = sd.lods[i].index_data.ptr();
+			const uint8_t *r = sd.lods[i].index_data.data();
 			const uint32_t *rptr = (const uint32_t *)r;
-			int *w = lods.ptrw();
+			int *w = lods.data();
 			for (uint32_t j = 0; j < lc; j++) {
 				w[j] = rptr[i];
 			}
@@ -1518,12 +1518,12 @@ Array RenderingServer::mesh_surface_get_blend_shape_arrays(RID p_mesh, int p_sur
 	SurfaceData sd = mesh_get_surface(p_mesh, p_surface);
 	ERR_FAIL_COND_V(sd.vertex_count == 0, Array());
 
-	Vector<Vector<uint8_t>> blend_shape_data = sd.blend_shapes;
+	std::vector<std::vector<uint8_t>> blend_shape_data = sd.blend_shapes;
 
 	if (blend_shape_data.size() > 0) {
 		int vertex_len = sd.vertex_count;
 
-		Vector<uint8_t> index_data = sd.index_data;
+		std::vector<uint8_t> index_data = sd.index_data;
 		int index_len = sd.index_count;
 
 		uint32_t format = sd.format;
@@ -1542,12 +1542,12 @@ Array RenderingServer::mesh_surface_get_blend_shape_arrays(RID p_mesh, int p_sur
 
 Array RenderingServer::mesh_create_arrays_from_surface_data(const SurfaceData &p_data) const {
 
-	Vector<uint8_t> vertex_data = p_data.vertex_data;
+	std::vector<uint8_t> vertex_data = p_data.vertex_data;
 
 	ERR_FAIL_COND_V(vertex_data.size() == 0, Array());
 	int vertex_len = p_data.vertex_count;
 
-	Vector<uint8_t> index_data = p_data.index_data;
+	std::vector<uint8_t> index_data = p_data.index_data;
 	int index_len = p_data.index_count;
 
 	uint32_t format = p_data.format;
@@ -1557,7 +1557,7 @@ Array RenderingServer::mesh_create_arrays_from_surface_data(const SurfaceData &p
 #if 0
 Array RenderingServer::_mesh_surface_get_skeleton_aabb_bind(RID p_mesh, int p_surface) const {
 
-	Vector<AABB> vec = RS::get_singleton()->mesh_surface_get_skeleton_aabb(p_mesh, p_surface);
+	std::vector<AABB> vec = RS::get_singleton()->mesh_surface_get_skeleton_aabb(p_mesh, p_surface);
 	Array arr;
 	for (int i = 0; i < vec.size(); i++) {
 		arr[i] = vec[i];
@@ -1872,8 +1872,8 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("canvas_item_add_texture_rect_region", "item", "rect", "texture", "src_rect", "modulate", "transpose", "normal_map", "clip_uv"), &RenderingServer::canvas_item_add_texture_rect_region, DEFVAL(Color(1, 1, 1)), DEFVAL(false), DEFVAL(RID()), DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("canvas_item_add_nine_patch", "item", "rect", "source", "texture", "topleft", "bottomright", "x_axis_mode", "y_axis_mode", "draw_center", "modulate", "normal_map"), &RenderingServer::canvas_item_add_nine_patch, DEFVAL(NINE_PATCH_STRETCH), DEFVAL(NINE_PATCH_STRETCH), DEFVAL(true), DEFVAL(Color(1, 1, 1)), DEFVAL(RID()));
 	ClassDB::bind_method(D_METHOD("canvas_item_add_primitive", "item", "points", "colors", "uvs", "texture", "width", "normal_map"), &RenderingServer::canvas_item_add_primitive, DEFVAL(1.0), DEFVAL(RID()));
-	ClassDB::bind_method(D_METHOD("canvas_item_add_polygon", "item", "points", "colors", "uvs", "texture", "normal_map", "antialiased"), &RenderingServer::canvas_item_add_polygon, DEFVAL(Vector<Point2>()), DEFVAL(RID()), DEFVAL(RID()), DEFVAL(false));
-	ClassDB::bind_method(D_METHOD("canvas_item_add_triangle_array", "item", "indices", "points", "colors", "uvs", "bones", "weights", "texture", "count", "normal_map", "antialiased"), &RenderingServer::canvas_item_add_triangle_array, DEFVAL(Vector<Point2>()), DEFVAL(Vector<int>()), DEFVAL(Vector<float>()), DEFVAL(RID()), DEFVAL(-1), DEFVAL(RID()), DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("canvas_item_add_polygon", "item", "points", "colors", "uvs", "texture", "normal_map", "antialiased"), &RenderingServer::canvas_item_add_polygon, DEFVAL(std::vector<Point2>()), DEFVAL(RID()), DEFVAL(RID()), DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("canvas_item_add_triangle_array", "item", "indices", "points", "colors", "uvs", "bones", "weights", "texture", "count", "normal_map", "antialiased"), &RenderingServer::canvas_item_add_triangle_array, DEFVAL(std::vector<Point2>()), DEFVAL(std::vector<int>()), DEFVAL(std::vector<float>()), DEFVAL(RID()), DEFVAL(-1), DEFVAL(RID()), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("canvas_item_add_mesh", "item", "mesh", "transform", "modulate", "texture", "normal_map"), &RenderingServer::canvas_item_add_mesh, DEFVAL(Transform2D()), DEFVAL(Color(1, 1, 1)), DEFVAL(RID()), DEFVAL(RID()));
 	ClassDB::bind_method(D_METHOD("canvas_item_add_multimesh", "item", "mesh", "texture", "normal_map"), &RenderingServer::canvas_item_add_multimesh, DEFVAL(RID()));
 	ClassDB::bind_method(D_METHOD("canvas_item_add_particles", "item", "particles", "texture", "normal_map"), &RenderingServer::canvas_item_add_particles);
@@ -2227,7 +2227,7 @@ void RenderingServer::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("frame_post_draw"));
 }
 
-void RenderingServer::_canvas_item_add_style_box(RID p_item, const Rect2 &p_rect, const Rect2 &p_source, RID p_texture, const Vector<float> &p_margins, const Color &p_modulate) {
+void RenderingServer::_canvas_item_add_style_box(RID p_item, const Rect2 &p_rect, const Rect2 &p_source, RID p_texture, const std::vector<float> &p_margins, const Color &p_modulate) {
 
 	ERR_FAIL_COND(p_margins.size() != 4);
 	//canvas_item_add_style_box(p_item,p_rect,p_source,p_texture,Vector2(p_margins[0],p_margins[1]),Vector2(p_margins[2],p_margins[3]),true,p_modulate);
@@ -2240,8 +2240,8 @@ void RenderingServer::_camera_set_orthogonal(RID p_camera, float p_size, float p
 
 void RenderingServer::mesh_add_surface_from_mesh_data(RID p_mesh, const Geometry::MeshData &p_mesh_data) {
 
-	Vector<Vector3> vertices;
-	Vector<Vector3> normals;
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
 
 	for (int i = 0; i < p_mesh_data.faces.size(); i++) {
 
@@ -2266,7 +2266,7 @@ void RenderingServer::mesh_add_surface_from_mesh_data(RID p_mesh, const Geometry
 	mesh_add_surface_from_arrays(p_mesh, PRIMITIVE_TRIANGLES, d);
 }
 
-void RenderingServer::mesh_add_surface_from_planes(RID p_mesh, const Vector<Plane> &p_planes) {
+void RenderingServer::mesh_add_surface_from_planes(RID p_mesh, const std::vector<Plane> &p_planes) {
 
 	Geometry::MeshData mdata = Geometry::build_convex_mesh(p_planes);
 	mesh_add_surface_from_mesh_data(p_mesh, mdata);

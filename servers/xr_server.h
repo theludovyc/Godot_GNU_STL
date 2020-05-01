@@ -56,8 +56,8 @@ class ARVRPositionalTracker;
 	or as a separate PR once this has been merged into the master branch.
 **/
 
-class ARVRServer : public Object {
-	GDCLASS(ARVRServer, Object);
+class XRServer : public Object {
+	GDCLASS(XRServer, Object);
 	_THREAD_SAFE_CLASS_
 
 public:
@@ -92,12 +92,12 @@ private:
 	uint64_t last_frame_usec; /* time it took between process and committing, we should probably average this over the last x frames */
 
 protected:
-	static ARVRServer *singleton;
+	static XRServer *singleton;
 
 	static void _bind_methods();
 
 public:
-	static ARVRServer *get_singleton();
+	static XRServer *get_singleton();
 
 	/*
 		World scale allows you to specify a scale factor that is applied to all positioning vectors in our VR world in essence scaling up, or scaling down the world.
@@ -182,13 +182,13 @@ public:
 	void _process();
 	void _mark_commit();
 
-	ARVRServer();
-	~ARVRServer();
+	XRServer();
+	~XRServer();
 };
 
 #define ARVR ARVRServer
 
-VARIANT_ENUM_CAST(ARVRServer::TrackerType);
-VARIANT_ENUM_CAST(ARVRServer::RotationMode);
+VARIANT_ENUM_CAST(XRServer::TrackerType);
+VARIANT_ENUM_CAST(XRServer::RotationMode);
 
 #endif

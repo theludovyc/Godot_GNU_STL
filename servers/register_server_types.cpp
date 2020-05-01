@@ -35,7 +35,7 @@
 
 #include "arvr/arvr_interface.h"
 #include "arvr/arvr_positional_tracker.h"
-#include "arvr_server.h"
+#include "xr_server.h"
 #include "audio/audio_effect.h"
 #include "audio/audio_stream.h"
 #include "audio/effects/audio_effect_amplify.h"
@@ -102,7 +102,7 @@ void register_server_types() {
 	ClassDB::register_class<AudioServer>();
 	ClassDB::register_virtual_class<PhysicsServer3D>();
 	ClassDB::register_virtual_class<PhysicsServer2D>();
-	ClassDB::register_class<ARVRServer>();
+	ClassDB::register_class<XRServer>();
 	ClassDB::register_class<CameraServer>();
 
 	ClassDB::register_virtual_class<ARVRInterface>();
@@ -198,6 +198,6 @@ void register_server_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer3D", PhysicsServer3D::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("NavigationServer2D", NavigationServer2D::get_singleton_mut()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("NavigationServer3D", NavigationServer3D::get_singleton_mut()));
-	Engine::get_singleton()->add_singleton(Engine::Singleton("ARVRServer", ARVRServer::get_singleton()));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("XRServer", XRServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("CameraServer", CameraServer::get_singleton()));
 }

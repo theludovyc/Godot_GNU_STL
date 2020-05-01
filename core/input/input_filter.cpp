@@ -1070,7 +1070,7 @@ void InputFilter::parse_mapping(String p_mapping) {
 	for (int i = 0; i < HAT_MAX; ++i)
 		mapping.hat[i].index = 1024 + i;
 
-	Vector<String> entry = p_mapping.split(",");
+	std::vector<String> entry = p_mapping.split(",");
 	if (entry.size() < 2) {
 		return;
 	}
@@ -1131,7 +1131,7 @@ void InputFilter::parse_mapping(String p_mapping) {
 void InputFilter::add_joy_mapping(String p_mapping, bool p_update_existing) {
 	parse_mapping(p_mapping);
 	if (p_update_existing) {
-		Vector<String> entry = p_mapping.split(",");
+		std::vector<String> entry = p_mapping.split(",");
 		String uid = entry[0];
 		for (int i = 0; i < joy_names.size(); i++) {
 			if (uid == joy_names[i].uid) {
@@ -1144,7 +1144,7 @@ void InputFilter::add_joy_mapping(String p_mapping, bool p_update_existing) {
 void InputFilter::remove_joy_mapping(String p_guid) {
 	for (int i = map_db.size() - 1; i >= 0; i--) {
 		if (p_guid == map_db[i].uid) {
-			map_db.remove(i);
+			map_db.erase(map_db.begin() + i);
 		}
 	}
 	for (int i = 0; i < joy_names.size(); i++) {
@@ -1297,7 +1297,7 @@ InputFilter::InputFilter() {
 	// If defined, parse SDL_GAMECONTROLLERCONFIG for possible new mappings/overrides.
 	String env_mapping = OS::get_singleton()->get_environment("SDL_GAMECONTROLLERCONFIG");
 	if (env_mapping != "") {
-		Vector<String> entries = env_mapping.split("\n");
+		std::vector<String> entries = env_mapping.split("\n");
 		for (int i = 0; i < entries.size(); i++) {
 			if (entries[i] == "")
 				continue;

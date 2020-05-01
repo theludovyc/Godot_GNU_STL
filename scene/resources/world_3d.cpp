@@ -58,7 +58,7 @@ struct SpatialIndexer {
 		VISIBILITY_CULL_MAX = 32768
 	};
 
-	Vector<VisibilityNotifier3D *> cull;
+	std::vector<VisibilityNotifier3D *> cull;
 
 	bool changed;
 	uint64_t pass;
@@ -158,11 +158,11 @@ struct SpatialIndexer {
 
 			Camera3D *c = E->key();
 
-			Vector<Plane> planes = c->get_frustum();
+			std::vector<Plane> planes = c->get_frustum();
 
-			int culled = octree.cull_convex(planes, cull.ptrw(), cull.size());
+			int culled = octree.cull_convex(planes, cull.data(), cull.size());
 
-			VisibilityNotifier3D **ptr = cull.ptrw();
+			VisibilityNotifier3D **ptr = cull.data();
 
 			List<VisibilityNotifier3D *> added;
 			List<VisibilityNotifier3D *> removed;

@@ -80,7 +80,7 @@ Variant PackedDataContainer::_iter_get_ofs(const Variant &p_iter, uint32_t p_off
 	if (pos < 0 || pos >= size)
 		return Variant();
 
-	const uint8_t *rd = data.ptr();
+	const uint8_t *rd = data.data();
 	const uint8_t *r = &rd[p_offset];
 	uint32_t type = decode_uint32(r);
 
@@ -127,7 +127,7 @@ Variant PackedDataContainer::_get_at_ofs(uint32_t p_ofs, const uint8_t *p_buf, b
 
 uint32_t PackedDataContainer::_type_at_ofs(uint32_t p_ofs) const {
 
-	const uint8_t *rd = data.ptr();
+	const uint8_t *rd = data.data();
 	const uint8_t *r = &rd[p_ofs];
 	uint32_t type = decode_uint32(r);
 
@@ -136,7 +136,7 @@ uint32_t PackedDataContainer::_type_at_ofs(uint32_t p_ofs) const {
 
 int PackedDataContainer::_size(uint32_t p_ofs) const {
 
-	const uint8_t *rd = data.ptr();
+	const uint8_t *rd = data.data();
 	ERR_FAIL_COND_V(!rd, 0);
 	const uint8_t *r = &rd[p_ofs];
 	uint32_t type = decode_uint32(r);
@@ -157,7 +157,7 @@ int PackedDataContainer::_size(uint32_t p_ofs) const {
 
 Variant PackedDataContainer::_key_at_ofs(uint32_t p_ofs, const Variant &p_key, bool &err) const {
 
-	const uint8_t *rd = data.ptr();
+	const uint8_t *rd = data.data();
 	const uint8_t *r = &rd[p_ofs];
 	uint32_t type = decode_uint32(r);
 
@@ -344,13 +344,13 @@ Error PackedDataContainer::pack(const Variant &p_data) {
 	return OK;
 }
 
-void PackedDataContainer::_set_data(const Vector<uint8_t> &p_data) {
+void PackedDataContainer::_set_data(const std::vector<uint8_t> &p_data) {
 
 	data = p_data;
 	datalen = data.size();
 }
 
-Vector<uint8_t> PackedDataContainer::_get_data() const {
+std::vector<uint8_t> PackedDataContainer::_get_data() const {
 	return data;
 }
 

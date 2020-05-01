@@ -324,7 +324,7 @@ Error PluginScript::reload(bool p_keep_state) {
 	}
 
 	// Sort so we are 100% that they are always the same.
-	std::sort(_rpc_methods.begin(), _rpc_methods.end(), SortNetData);
+	std::sort(_rpc_methods.begin(), _rpc_methods.end(), SortNetData{});
 
 	Array *signals = (Array *)&manifest.signals;
 	for (int i = 0; i < signals->size(); ++i) {
@@ -351,7 +351,7 @@ Error PluginScript::reload(bool p_keep_state) {
 	}
 
 	// Sort so we are 100% that they are always the same.
-	std::sort(_rpc_variables.begin(), _rpc_variables.end(), SortNetData);
+	std::sort(_rpc_variables.begin(), _rpc_variables.end(), SortNetData{});
 
 #ifdef TOOLS_ENABLED
 /*for (Set<PlaceHolderScriptInstance*>::Element *E=placeholders.front();E;E=E->next()) {

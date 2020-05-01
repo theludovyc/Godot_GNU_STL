@@ -773,7 +773,7 @@ void Expression::exec_func(BuiltinFunc p_func, const Variant **p_inputs, Variant
 
 			barr.resize(len);
 			{
-				uint8_t *w = barr.ptrw();
+				uint8_t *w = barr.data();
 				encode_variant(*p_inputs[0], w, len, full_objects);
 			}
 			*r_return = barr;
@@ -792,7 +792,7 @@ void Expression::exec_func(BuiltinFunc p_func, const Variant **p_inputs, Variant
 			bool allow_objects = *p_inputs[1];
 			Variant ret;
 			{
-				const uint8_t *r = varr.ptr();
+				const uint8_t *r = varr.data();
 				Error err = decode_variant(ret, r, varr.size(), nullptr, allow_objects);
 				if (err != OK) {
 					r_error_str = RTR("Not enough bytes for decoding bytes, or invalid format.");
@@ -1847,7 +1847,7 @@ Expression::ENode *Expression::_parse_expression() {
 				op->nodes[1] = nullptr;
 				expression[i].is_op = false;
 				expression[i].node = op;
-				expression.remove(i + 1);
+				expression.erase(expression.begin() + i + 1);
 			}
 
 		} else {

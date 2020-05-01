@@ -69,8 +69,8 @@ void RenderingServerViewport::_draw_3d(Viewport *p_viewport, ARVRInterface::Eyes
 	RENDER_TIMESTAMP(">Begin Rendering 3D Scene");
 
 	Ref<ARVRInterface> arvr_interface;
-	if (ARVRServer::get_singleton() != nullptr) {
-		arvr_interface = ARVRServer::get_singleton()->get_primary_interface();
+	if (XRServer::get_singleton() != nullptr) {
+		arvr_interface = XRServer::get_singleton()->get_primary_interface();
 	}
 
 	if (p_viewport->use_arvr && arvr_interface.is_valid()) {

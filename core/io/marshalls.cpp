@@ -601,11 +601,11 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			len -= 4;
 			ERR_FAIL_COND_V(count < 0 || count > len, ERR_INVALID_DATA);
 
-			Vector<uint8_t> data;
+			std::vector<uint8_t> data;
 
 			if (count) {
 				data.resize(count);
-				uint8_t *w = data.ptrw();
+				uint8_t *w = data.data();
 				for (int32_t i = 0; i < count; i++) {
 
 					w[i] = buf[i];
@@ -630,12 +630,12 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 4, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 4 > len, ERR_INVALID_DATA);
 
-			Vector<int32_t> data;
+			std::vector<int32_t> data;
 
 			if (count) {
 				//const int*rbuf=(const int*)buf;
 				data.resize(count);
-				int32_t *w = data.ptrw();
+				int32_t *w = data.data();
 				for (int32_t i = 0; i < count; i++) {
 
 					w[i] = decode_uint32(&buf[i * 4]);
@@ -656,12 +656,12 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 8, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 8 > len, ERR_INVALID_DATA);
 
-			Vector<int64_t> data;
+			std::vector<int64_t> data;
 
 			if (count) {
 				//const int*rbuf=(const int*)buf;
 				data.resize(count);
-				int64_t *w = data.ptrw();
+				int64_t *w = data.data();
 				for (int64_t i = 0; i < count; i++) {
 
 					w[i] = decode_uint64(&buf[i * 8]);
@@ -682,12 +682,12 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 4, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 4 > len, ERR_INVALID_DATA);
 
-			Vector<float> data;
+			std::vector<float> data;
 
 			if (count) {
 				//const float*rbuf=(const float*)buf;
 				data.resize(count);
-				float *w = data.ptrw();
+				float *w = data.data();
 				for (int32_t i = 0; i < count; i++) {
 
 					w[i] = decode_float(&buf[i * 4]);
@@ -709,12 +709,12 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 8, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 8 > len, ERR_INVALID_DATA);
 
-			Vector<double> data;
+			std::vector<double> data;
 
 			if (count) {
 				//const double*rbuf=(const double*)buf;
 				data.resize(count);
-				double *w = data.ptrw();
+				double *w = data.data();
 				for (int64_t i = 0; i < count; i++) {
 
 					w[i] = decode_double(&buf[i * 8]);
@@ -732,7 +732,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_COND_V(len < 4, ERR_INVALID_DATA);
 			int32_t count = decode_uint32(buf);
 
-			Vector<String> strings;
+			std::vector<String> strings;
 			buf += 4;
 			len -= 4;
 
@@ -762,7 +762,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 
 			ERR_FAIL_MUL_OF(count, 4 * 2, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 4 * 2 > len, ERR_INVALID_DATA);
-			Vector<Vector2> varray;
+			std::vector<Vector2> varray;
 
 			if (r_len) {
 				(*r_len) += 4;
@@ -770,7 +770,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 
 			if (count) {
 				varray.resize(count);
-				Vector2 *w = varray.ptrw();
+				Vector2 *w = varray.data();
 
 				for (int32_t i = 0; i < count; i++) {
 
@@ -797,7 +797,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 4 * 3, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 4 * 3 > len, ERR_INVALID_DATA);
 
-			Vector<Vector3> varray;
+			std::vector<Vector3> varray;
 
 			if (r_len) {
 				(*r_len) += 4;
@@ -805,7 +805,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 
 			if (count) {
 				varray.resize(count);
-				Vector3 *w = varray.ptrw();
+				Vector3 *w = varray.data();
 
 				for (int32_t i = 0; i < count; i++) {
 
@@ -833,7 +833,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 			ERR_FAIL_MUL_OF(count, 4 * 4, ERR_INVALID_DATA);
 			ERR_FAIL_COND_V(count < 0 || count * 4 * 4 > len, ERR_INVALID_DATA);
 
-			Vector<Color> carray;
+			std::vector<Color> carray;
 
 			if (r_len) {
 				(*r_len) += 4;
@@ -841,7 +841,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 
 			if (count) {
 				carray.resize(count);
-				Color *w = carray.ptrw();
+				Color *w = carray.data();
 
 				for (int32_t i = 0; i < count; i++) {
 
@@ -1366,14 +1366,14 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		// arrays
 		case Variant::PACKED_BYTE_ARRAY: {
 
-			Vector<uint8_t> data = p_variant;
+			std::vector<uint8_t> data = p_variant;
 			int datalen = data.size();
 			int datasize = sizeof(uint8_t);
 
 			if (buf) {
 				encode_uint32(datalen, buf);
 				buf += 4;
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				copymem(buf, &r[0], datalen * datasize);
 				buf += datalen * datasize;
 			}
@@ -1388,14 +1388,14 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
 
-			Vector<int32_t> data = p_variant;
+			std::vector<int32_t> data = p_variant;
 			int datalen = data.size();
 			int datasize = sizeof(int32_t);
 
 			if (buf) {
 				encode_uint32(datalen, buf);
 				buf += 4;
-				const int32_t *r = data.ptr();
+				const int32_t *r = data.data();
 				for (int32_t i = 0; i < datalen; i++)
 					encode_uint32(r[i], &buf[i * datasize]);
 			}
@@ -1405,14 +1405,14 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 
-			Vector<int64_t> data = p_variant;
+			std::vector<int64_t> data = p_variant;
 			int datalen = data.size();
 			int datasize = sizeof(int64_t);
 
 			if (buf) {
 				encode_uint64(datalen, buf);
 				buf += 4;
-				const int64_t *r = data.ptr();
+				const int64_t *r = data.data();
 				for (int64_t i = 0; i < datalen; i++)
 					encode_uint64(r[i], &buf[i * datasize]);
 			}
@@ -1422,14 +1422,14 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 
-			Vector<float> data = p_variant;
+			std::vector<float> data = p_variant;
 			int datalen = data.size();
 			int datasize = sizeof(float);
 
 			if (buf) {
 				encode_uint32(datalen, buf);
 				buf += 4;
-				const float *r = data.ptr();
+				const float *r = data.data();
 				for (int i = 0; i < datalen; i++)
 					encode_float(r[i], &buf[i * datasize]);
 			}
@@ -1439,14 +1439,14 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_FLOAT64_ARRAY: {
 
-			Vector<double> data = p_variant;
+			std::vector<double> data = p_variant;
 			int datalen = data.size();
 			int datasize = sizeof(double);
 
 			if (buf) {
 				encode_uint32(datalen, buf);
 				buf += 4;
-				const double *r = data.ptr();
+				const double *r = data.data();
 				for (int i = 0; i < datalen; i++)
 					encode_double(r[i], &buf[i * datasize]);
 			}
@@ -1456,7 +1456,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_STRING_ARRAY: {
 
-			Vector<String> data = p_variant;
+			std::vector<String> data = p_variant;
 			int len = data.size();
 
 			if (buf) {
@@ -1468,7 +1468,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 
 			for (int i = 0; i < len; i++) {
 
-				CharString utf8 = data.get(i).utf8();
+				CharString utf8 = data[i].utf8();
 
 				if (buf) {
 					encode_uint32(utf8.length() + 1, buf);
@@ -1488,7 +1488,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
 
-			Vector<Vector2> data = p_variant;
+			std::vector<Vector2> data = p_variant;
 			int len = data.size();
 
 			if (buf) {
@@ -1502,7 +1502,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 
 				for (int i = 0; i < len; i++) {
 
-					Vector2 v = data.get(i);
+					Vector2 v = data[i];
 
 					encode_float(v.x, &buf[0]);
 					encode_float(v.y, &buf[4]);
@@ -1515,7 +1515,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 
-			Vector<Vector3> data = p_variant;
+			std::vector<Vector3> data = p_variant;
 			int len = data.size();
 
 			if (buf) {
@@ -1529,7 +1529,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 
 				for (int i = 0; i < len; i++) {
 
-					Vector3 v = data.get(i);
+					Vector3 v = data[i];
 
 					encode_float(v.x, &buf[0]);
 					encode_float(v.y, &buf[4]);
@@ -1543,7 +1543,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 
-			Vector<Color> data = p_variant;
+			std::vector<Color> data = p_variant;
 			int len = data.size();
 
 			if (buf) {
@@ -1557,7 +1557,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *r_buffer, int &r_len, bo
 
 				for (int i = 0; i < len; i++) {
 
-					Color c = data.get(i);
+					Color c = data[i];
 
 					encode_float(c.r, &buf[0]);
 					encode_float(c.g, &buf[4]);

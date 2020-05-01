@@ -215,7 +215,7 @@ Ref<AudioStreamSample> AudioEffectRecord::get_recording() const {
 	AudioStreamSample::Format dst_format = format;
 	bool stereo = true; //forcing mono is not implemented
 
-	Vector<uint8_t> dst_data;
+	std::vector<uint8_t> dst_data;
 
 	ERR_FAIL_COND_V(current_instance.is_null(), nullptr);
 	ERR_FAIL_COND_V(current_instance->recording_data.size() == 0, nullptr);
@@ -223,7 +223,7 @@ Ref<AudioStreamSample> AudioEffectRecord::get_recording() const {
 	if (dst_format == AudioStreamSample::FORMAT_8_BITS) {
 		int data_size = current_instance->recording_data.size();
 		dst_data.resize(data_size);
-		uint8_t *w = dst_data.ptrw();
+		uint8_t *w = dst_data.data();
 
 		for (int i = 0; i < data_size; i++) {
 			int8_t v = CLAMP(current_instance->recording_data[i] * 128, -128, 127);
@@ -232,7 +232,7 @@ Ref<AudioStreamSample> AudioEffectRecord::get_recording() const {
 	} else if (dst_format == AudioStreamSample::FORMAT_16_BITS) {
 		int data_size = current_instance->recording_data.size();
 		dst_data.resize(data_size * 2);
-		uint8_t *w = dst_data.ptrw();
+		uint8_t *w = dst_data.data();
 
 		for (int i = 0; i < data_size; i++) {
 			int16_t v = CLAMP(current_instance->recording_data[i] * 32768, -32768, 32767);
@@ -252,8 +252,8 @@ Ref<AudioStreamSample> AudioEffectRecord::get_recording() const {
 			right[i] = current_instance->recording_data[i * 2 + 1];
 		}
 
-		Vector<uint8_t> bleft;
-		Vector<uint8_t> bright;
+		std::vector<uint8_t> bleft;
+		std::vector<uint8_t> bright;
 
 		ResourceImporterWAV::_compress_ima_adpcm(left, bleft);
 		ResourceImporterWAV::_compress_ima_adpcm(right, bright);
@@ -261,9 +261,9 @@ Ref<AudioStreamSample> AudioEffectRecord::get_recording() const {
 		int dl = bleft.size();
 		dst_data.resize(dl * 2);
 
-		uint8_t *w = dst_data.ptrw();
-		const uint8_t *rl = bleft.ptr();
-		const uint8_t *rr = bright.ptr();
+		uint8_t *w = dst_data.data();
+		const uint8_t *rl = bleft.data();
+		const uint8_t *rr = bright.data();
 
 		for (int i = 0; i < dl; i++) {
 			w[i * 2 + 0] = rl[i];

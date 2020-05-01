@@ -97,7 +97,7 @@ RemoteDebuggerPeerTCP::~RemoteDebuggerPeerTCP() {
 
 void RemoteDebuggerPeerTCP::_write_out() {
 	while (tcp_client->poll(NetSocket::POLL_TYPE_OUT) == OK) {
-		uint8_t *buf = out_buf.ptrw();
+		uint8_t *buf = out_buf.data();
 		if (out_left <= 0) {
 			if (out_queue.size() == 0)
 				break; // Nothing left to send
@@ -122,7 +122,7 @@ void RemoteDebuggerPeerTCP::_write_out() {
 
 void RemoteDebuggerPeerTCP::_read_in() {
 	while (tcp_client->poll(NetSocket::POLL_TYPE_IN) == OK) {
-		uint8_t *buf = in_buf.ptrw();
+		uint8_t *buf = in_buf.data();
 		if (in_left <= 0) {
 			if (in_queue.size() > max_queued_messages) {
 				break; // Too many messages already in queue.

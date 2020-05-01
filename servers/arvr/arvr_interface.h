@@ -34,7 +34,7 @@
 #include "core/math/camera_matrix.h"
 #include "core/os/thread_safe.h"
 #include "scene/main/window.h"
-#include "servers/arvr_server.h"
+#include "servers/xr_server.h"
 
 /**
 	@author Bastiaan Olij <mux213@gmail.com>

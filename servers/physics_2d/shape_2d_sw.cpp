@@ -647,11 +647,11 @@ void ConvexPolygonShape2DSW::set_data(const Variant &p_data) {
 	point_count = 0;
 
 	if (p_data.get_type() == Variant::PACKED_VECTOR2_ARRAY) {
-		Vector<Vector2> arr = p_data;
+		std::vector<Vector2> arr = p_data;
 		ERR_FAIL_COND(arr.size() == 0);
 		point_count = arr.size();
 		points = memnew_arr(Point, point_count);
-		const Vector2 *r = arr.ptr();
+		const Vector2 *r = arr.data();
 
 		for (int i = 0; i < point_count; i++) {
 			points[i].pos = r[i];
@@ -665,12 +665,12 @@ void ConvexPolygonShape2DSW::set_data(const Variant &p_data) {
 		}
 	} else {
 
-		Vector<real_t> dvr = p_data;
+		std::vector<real_t> dvr = p_data;
 		point_count = dvr.size() / 4;
 		ERR_FAIL_COND(point_count == 0);
 
 		points = memnew_arr(Point, point_count);
-		const real_t *r = dvr.ptr();
+		const real_t *r = dvr.data();
 
 		for (int i = 0; i < point_count; i++) {
 
@@ -693,12 +693,12 @@ void ConvexPolygonShape2DSW::set_data(const Variant &p_data) {
 
 Variant ConvexPolygonShape2DSW::get_data() const {
 
-	Vector<Vector2> dvr;
+	std::vector<Vector2> dvr;
 
 	dvr.resize(point_count);
 
 	for (int i = 0; i < point_count; i++) {
-		dvr.set(i, points[i].pos);
+		dvr[i] = points[i].pos;
 	}
 
 	return dvr;
@@ -904,7 +904,7 @@ void ConcavePolygonShape2DSW::set_data(const Variant &p_data) {
 
 	if (p_data.get_type() == Variant::PACKED_VECTOR2_ARRAY) {
 
-		Vector<Vector2> p2arr = p_data;
+		std::vector<Vector2> p2arr = p_data;
 		int len = p2arr.size();
 		ERR_FAIL_COND(len % 2);
 
@@ -918,7 +918,7 @@ void ConcavePolygonShape2DSW::set_data(const Variant &p_data) {
 			return;
 		}
 
-		const Vector2 *arr = p2arr.ptr();
+		const Vector2 *arr = p2arr.data();
 
 		Map<Point2, int> pointmap;
 		for (int i = 0; i < len; i += 2) {
@@ -972,10 +972,10 @@ void ConcavePolygonShape2DSW::set_data(const Variant &p_data) {
 }
 Variant ConcavePolygonShape2DSW::get_data() const {
 
-	Vector<Vector2> rsegments;
+	std::vector<Vector2> rsegments;
 	int len = segments.size();
 	rsegments.resize(len * 2);
-	Vector2 *w = rsegments.ptrw();
+	Vector2 *w = rsegments.data();
 	for (int i = 0; i < len; i++) {
 
 		w[(i << 1) + 0] = points[segments[i].points[0]];
