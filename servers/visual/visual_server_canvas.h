@@ -131,7 +131,7 @@ public:
 		float parent_scale;
 
 		int find_item(Item *p_item) {
-			for (int i = 0; i < child_items.size(); i++) {
+			for (decltype(child_items.size()) i = 0; i < child_items.size(); i++) {
 				if (child_items[i].item == p_item)
 					return i;
 			}
