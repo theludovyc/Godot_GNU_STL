@@ -920,7 +920,7 @@ public:
 
 						const Item::CommandPolyLine *pline = static_cast<const Item::CommandPolyLine *>(c);
 						if (pline->triangles.size()) {
-							for (int j = 0; j < pline->triangles.size(); j++) {
+							for (decltype(pline->triangles.size()) j = 0; j < pline->triangles.size(); j++) {
 
 								if (j == 0) {
 									r.position = pline->triangles[j];
@@ -930,7 +930,7 @@ public:
 							}
 						} else {
 
-							for (int j = 0; j < pline->lines.size(); j++) {
+							for (decltype(pline->lines.size()) j = 0; j < pline->lines.size(); j++) {
 
 								if (j == 0) {
 									r.position = pline->lines[j];
@@ -956,7 +956,7 @@ public:
 
 						const Item::CommandPrimitive *primitive = static_cast<const Item::CommandPrimitive *>(c);
 						r.position = primitive->points[0];
-						for (int j = 1; j < primitive->points.size(); j++) {
+						for (decltype(primitive->points.size()) j = 1; j < primitive->points.size(); j++) {
 							r.expand_to(primitive->points[j]);
 						}
 					} break;
@@ -1031,7 +1031,7 @@ public:
 		}
 
 		void clear() {
-			for (int i = 0; i < commands.size(); i++)
+			for (decltype(commands.size()) i = 0; i < commands.size(); i++)
 				memdelete(commands[i]);
 			commands.clear();
 			clip = false;
