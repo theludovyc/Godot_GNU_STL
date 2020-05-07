@@ -332,14 +332,16 @@ public:
 	int get_argument_count() const { return _argument_count; }
 	StringName get_argument_name(int p_idx) const {
 #ifdef TOOLS_ENABLED
-		ERR_FAIL_INDEX_V(p_idx, arg_names.size(), StringName());
+		int size = arg_names.size();
+		ERR_FAIL_INDEX_V(p_idx, size, StringName());
 		return arg_names[p_idx];
 #else
 		return StringName();
 #endif
 	}
 	Variant get_default_argument(int p_idx) const {
-		ERR_FAIL_INDEX_V(p_idx, default_arguments.size(), Variant());
+		int size = default_arguments.size();
+		ERR_FAIL_INDEX_V(p_idx, size, Variant());
 		return default_arguments[p_idx];
 	}
 
