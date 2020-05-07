@@ -173,7 +173,7 @@ inline static bool are_segements_parallel(const Vector2 p_segment1_points[2], co
 
 void CSGBrush::_regen_face_aabbs() {
 
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 		faces[i].aabb = AABB();
 		faces[i].aabb.position = faces[i].vertices[0];
 		faces[i].aabb.expand_to(faces[i].vertices[1]);
@@ -203,7 +203,7 @@ void CSGBrush::build_from_faces(const PoolVector<Vector3> &p_vertices, const Poo
 
 	faces.resize(p_vertices.size() / 3);
 
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 
 		Face &f = faces[i];
 		f.vertices[0] = rv[i * 3 + 0];
@@ -259,7 +259,7 @@ void CSGBrush::copy_from(const CSGBrush &p_brush, const Transform &p_xform) {
 	faces = p_brush.faces;
 	materials = p_brush.materials;
 
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			faces[i].vertices[j] = p_xform.xform(p_brush.faces[i].vertices[j]);
 		}
@@ -274,8 +274,8 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 	// Check for face collisions and add necessary faces.
 	Build2DFaceCollection build2DFaceCollection;
-	for (int i = 0; i < p_brush_a.faces.size(); i++) {
-		for (int j = 0; j < p_brush_b.faces.size(); j++) {
+	for (decltype(p_brush_a.faces.size()) i = 0; i < p_brush_a.faces.size(); i++) {
+		for (decltype(p_brush_b.faces.size()) j = 0; j < p_brush_b.faces.size(); j++) {
 			if (p_brush_a.faces[i].aabb.intersects_inclusive(p_brush_b.faces[j].aabb)) {
 				update_faces(p_brush_a, i, p_brush_b, j, build2DFaceCollection, p_vertex_snap);
 			}
@@ -286,7 +286,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 	MeshMerge mesh_merge;
 	mesh_merge.vertex_snap = p_vertex_snap;
 
-	for (int i = 0; i < p_brush_a.faces.size(); i++) {
+	for (decltype(p_brush_a.faces.size()) i = 0; i < p_brush_a.faces.size(); i++) {
 
 		Ref<Material> material;
 		if (p_brush_a.faces[i].material != -1) {
@@ -306,7 +306,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 		}
 	}
 
-	for (int i = 0; i < p_brush_b.faces.size(); i++) {
+	for (decltype(p_brush_b.faces.size()) i = 0; i < p_brush_b.faces.size(); i++) {
 
 		Ref<Material> material;
 		if (p_brush_b.faces[i].material != -1) {
@@ -338,7 +338,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			int outside_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 				if (mesh_merge.faces[i].inside)
 					continue;
 				outside_count++;
@@ -348,7 +348,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			outside_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 
 				if (mesh_merge.faces[i].inside)
 					continue;
@@ -372,7 +372,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			int inside_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 				if (!mesh_merge.faces[i].inside)
 					continue;
 				inside_count++;
@@ -382,7 +382,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			inside_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 
 				if (!mesh_merge.faces[i].inside)
 					continue;
@@ -406,7 +406,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			int face_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 				if (mesh_merge.faces[i].from_b && !mesh_merge.faces[i].inside)
 					continue;
 				if (!mesh_merge.faces[i].from_b && mesh_merge.faces[i].inside)
@@ -418,7 +418,7 @@ void CSGBrushOperation::merge_brushes(Operation p_operation, const CSGBrush &p_b
 
 			face_count = 0;
 
-			for (int i = 0; i < mesh_merge.faces.size(); i++) {
+			for (decltype(mesh_merge.faces.size()) i = 0; i < mesh_merge.faces.size(); i++) {
 
 				if (mesh_merge.faces[i].from_b && !mesh_merge.faces[i].inside)
 					continue;
@@ -672,7 +672,7 @@ void CSGBrushOperation::MeshMerge::mark_inside_faces() {
 	bool first_a = true;
 	bool first_b = true;
 
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 		facebvh[i].left = -1;
 		facebvh[i].right = -1;
 		facebvh[i].face = i;
@@ -709,7 +709,7 @@ void CSGBrushOperation::MeshMerge::mark_inside_faces() {
 	std::vector<FaceBVH *> bvhtrvec;
 	bvhtrvec.resize(faces.size());
 	FaceBVH **bvhptr = bvhtrvec.data();
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 		bvhptr[i] = &facebvh[i];
 	}
 
@@ -717,7 +717,7 @@ void CSGBrushOperation::MeshMerge::mark_inside_faces() {
 	int max_alloc = faces.size();
 	_create_bvh(facebvh, bvhptr, 0, faces.size(), 1, max_depth, max_alloc);
 
-	for (int i = 0; i < faces.size(); i++) {
+	for (decltype(faces.size()) i = 0; i < faces.size(); i++) {
 
 		// Check if face AABB intersects the intersection AABB.
 		if (!intersection_aabb.intersects_inclusive(facebvh[i].aabb))
@@ -781,7 +781,7 @@ void CSGBrushOperation::MeshMerge::add_face(const Vector3 p_points[], const Vect
 
 int CSGBrushOperation::Build2DFaces::_get_point_idx(const Vector2 &p_point) {
 
-	for (int vertex_idx = 0; vertex_idx < vertices.size(); ++vertex_idx) {
+	for (decltype(vertices.size()) vertex_idx = 0; vertex_idx < vertices.size(); ++vertex_idx) {
 		if ((p_point - vertices[vertex_idx].point).length_squared() < vertex_snap2)
 			return vertex_idx;
 	}
@@ -801,7 +801,8 @@ int CSGBrushOperation::Build2DFaces::_add_vertex(const Vertex2D &p_vertex) {
 void CSGBrushOperation::Build2DFaces::_add_vertex_idx_sorted(std::vector<int> &r_vertex_indices, int p_new_vertex_index) {
 
 	if (p_new_vertex_index >= 0 && !std_h::isFind(r_vertex_indices, p_new_vertex_index)) {
-		ERR_FAIL_COND_MSG(p_new_vertex_index >= vertices.size(), "Invalid vertex index.");
+		int size = vertices.size();
+		ERR_FAIL_COND_MSG(p_new_vertex_index >= size, "Invalid vertex index.");
 
 		// The first vertex.
 		if (r_vertex_indices.size() == 0) {
@@ -839,7 +840,7 @@ void CSGBrushOperation::Build2DFaces::_add_vertex_idx_sorted(std::vector<int> &r
 		if (Math::abs(last_point.x - first_point.x) < Math::abs(last_point.y - first_point.y)) axis = 1;
 
 		// Insert the point at the appropriate index.
-		for (int insert_idx = 0; insert_idx < r_vertex_indices.size(); ++insert_idx) {
+		for (decltype(r_vertex_indices.size()) insert_idx = 0; insert_idx < r_vertex_indices.size(); ++insert_idx) {
 			Vector2 insert_point = vertices[r_vertex_indices[insert_idx]].point;
 			if (new_point[axis] < insert_point[axis]) {
 				r_vertex_indices.insert(r_vertex_indices.begin() + insert_idx, p_new_vertex_index);
@@ -874,7 +875,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const std::vector<int> &p_seg
 		std::vector<int> merge_faces_idx;
 		std::vector<Face2D> merge_faces;
 		std::vector<int> merge_faces_inner_vertex_idx;
-		for (int face_idx = 0; face_idx < faces.size(); ++face_idx) {
+		for (decltype(faces.size()) face_idx = 0; face_idx < faces.size(); ++face_idx) {
 			for (int face_vertex_idx = 0; face_vertex_idx < 3; ++face_vertex_idx) {
 				if (faces[face_idx].vertex_idx[face_vertex_idx] == inner_idx) {
 					merge_faces_idx.push_back(face_idx);
@@ -887,7 +888,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const std::vector<int> &p_seg
 		std::vector<int> degenerate_points;
 
 		// Create the new faces.
-		for (int merge_idx = 0; merge_idx < merge_faces.size(); ++merge_idx) {
+		for (decltype(merge_faces.size()) merge_idx = 0; merge_idx < merge_faces.size(); ++merge_idx) {
 
 			int outer_edge_idx[2];
 			outer_edge_idx[0] = merge_faces[merge_idx].vertex_idx[(merge_faces_inner_vertex_idx[merge_idx] + 1) % 3];
@@ -922,13 +923,13 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const std::vector<int> &p_seg
 
 		// Delete the old faces in reverse index order.
 		std::sort(merge_faces_idx.rbegin(), merge_faces_idx.rend());
-		for (int i = 0; i < merge_faces_idx.size(); ++i)
+		for (decltype(merge_faces_idx.size()) i = 0; i < merge_faces_idx.size(); ++i)
 			faces.erase(faces.begin() + merge_faces_idx[i]);
 
 		if (degenerate_points.size() == 0) continue;
 
 		// Split faces using degenerate points.
-		for (int face_idx = 0; face_idx < faces.size(); ++face_idx) {
+		for (decltype(faces.size()) face_idx = 0; face_idx < faces.size(); ++face_idx) {
 
 			Face2D face = faces[face_idx];
 			Vertex2D face_vertices[3] = {
@@ -942,7 +943,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const std::vector<int> &p_seg
 				face_vertices[2].point
 			};
 
-			for (int point_idx = 0; point_idx < degenerate_points.size(); ++point_idx) {
+			for (decltype(degenerate_points.size()) point_idx = 0; point_idx < degenerate_points.size(); ++point_idx) {
 
 				int degenerate_idx = degenerate_points[point_idx];
 				Vector2 point_2D = vertices[degenerate_idx].point;
@@ -1007,7 +1008,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const std::vector<int> &p_seg
 void CSGBrushOperation::Build2DFaces::_find_edge_intersections(const Vector2 p_segment_points[2], std::vector<int> &r_segment_indices) {
 
 	// For each face.
-	for (int face_idx = 0; face_idx < faces.size(); ++face_idx) {
+	for (decltype(faces.size()) face_idx = 0; face_idx < faces.size(); ++face_idx) {
 
 		Face2D face = faces[face_idx];
 		Vertex2D face_vertices[3] = {
@@ -1105,7 +1106,7 @@ int CSGBrushOperation::Build2DFaces::_insert_point(const Vector2 &p_point) {
 
 	int new_vertex_idx = -1;
 
-	for (int face_idx = 0; face_idx < faces.size(); ++face_idx) {
+	for (decltype(faces.size()) face_idx = 0; face_idx < faces.size(); ++face_idx) {
 
 		Face2D face = faces[face_idx];
 		Vertex2D face_vertices[3] = {
@@ -1305,7 +1306,7 @@ void CSGBrushOperation::Build2DFaces::insert(const CSGBrush &p_brush, int p_face
 
 void CSGBrushOperation::Build2DFaces::addFacesToMesh(MeshMerge &r_mesh_merge, bool p_smooth, bool p_invert, const Ref<Material> &p_material, bool p_from_b) {
 
-	for (int face_idx = 0; face_idx < faces.size(); ++face_idx) {
+	for (decltype(faces.size()) face_idx = 0; face_idx < faces.size(); ++face_idx) {
 		Face2D face = faces[face_idx];
 		Vertex2D fv[3] = {
 			vertices[face.vertex_idx[0]],
