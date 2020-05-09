@@ -117,8 +117,9 @@ public:
 		}
 		int first = middle;
 		int second = middle + 1;
-		if (second >= points.size())
-			return points[points.size() - 1].color;
+		int size = points.size();
+		if (second >= size)
+			return points[size - 1].color;
 		if (first < 0)
 			return points[0].color;
 		const Point &pointFirst = points[first];

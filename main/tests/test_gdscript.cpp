@@ -62,7 +62,7 @@ static String _parser_extends(const GDScriptParser::ClassNode *p_class) {
 			txt += ".";
 	}
 
-	for (int i = 0; i < p_class->extends_class.size(); i++) {
+	for (decltype(p_class->extends_class.size()) i = 0; i < p_class->extends_class.size(); i++) {
 
 		if (i != 0)
 			txt += ".";
@@ -97,7 +97,7 @@ static String _parser_expr(const GDScriptParser::Node *p_expr) {
 		case GDScriptParser::Node::TYPE_ARRAY: {
 			const GDScriptParser::ArrayNode *arr_node = static_cast<const GDScriptParser::ArrayNode *>(p_expr);
 			txt += "[";
-			for (int i = 0; i < arr_node->elements.size(); i++) {
+			for (decltype(arr_node->elements.size()) i = 0; i < arr_node->elements.size(); i++) {
 
 				if (i > 0)
 					txt += ", ";
@@ -108,7 +108,7 @@ static String _parser_expr(const GDScriptParser::Node *p_expr) {
 		case GDScriptParser::Node::TYPE_DICTIONARY: {
 			const GDScriptParser::DictionaryNode *dict_node = static_cast<const GDScriptParser::DictionaryNode *>(p_expr);
 			txt += "{";
-			for (int i = 0; i < dict_node->elements.size(); i++) {
+			for (decltype(dict_node->elements.size()) i = 0; i < dict_node->elements.size(); i++) {
 
 				if (i > 0)
 					txt += ", ";
@@ -133,7 +133,7 @@ static String _parser_expr(const GDScriptParser::Node *p_expr) {
 					ERR_FAIL_COND_V(c_node->arguments.size() < 1, "");
 					String func_name;
 					const GDScriptParser::Node *nfunc = c_node->arguments[0];
-					int arg_ofs = 0;
+					uint8_t arg_ofs = 0;
 					if (nfunc->type == GDScriptParser::Node::TYPE_BUILT_IN_FUNCTION) {
 
 						const GDScriptParser::BuiltInFunctionNode *bif_node = static_cast<const GDScriptParser::BuiltInFunctionNode *>(nfunc);
@@ -159,7 +159,7 @@ static String _parser_expr(const GDScriptParser::Node *p_expr) {
 
 					txt += func_name + "(";
 
-					for (int i = arg_ofs; i < c_node->arguments.size(); i++) {
+					for (decltype(c_node->arguments.size()) i = arg_ofs; i < c_node->arguments.size(); i++) {
 
 						const GDScriptParser::Node *arg = c_node->arguments[i];
 						if (i > arg_ofs)
@@ -407,7 +407,7 @@ static void _parser_show_function(const GDScriptParser::FunctionNode *p_func, in
 		txt += String(p_func->name);
 	txt += "(";
 
-	for (int i = 0; i < p_func->arguments.size(); i++) {
+	for (decltype(p_func->arguments.size()) i = 0; i < p_func->arguments.size(); i++) {
 
 		if (i != 0)
 			txt += ", ";
@@ -439,7 +439,7 @@ static void _parser_show_class(const GDScriptParser::ClassNode *p_class, int p_i
 		print_line("\n");
 	}
 
-	for (int i = 0; i < p_class->subclasses.size(); i++) {
+	for (decltype(p_class->subclasses.size()) i = 0; i < p_class->subclasses.size(); i++) {
 
 		const GDScriptParser::ClassNode *subclass = p_class->subclasses[i];
 		String line = "class " + subclass->name;
@@ -456,7 +456,7 @@ static void _parser_show_class(const GDScriptParser::ClassNode *p_class, int p_i
 		_print_indent(p_indent, "const " + String(E->key()) + "=" + _parser_expr(constant.expression));
 	}
 
-	for (int i = 0; i < p_class->variables.size(); i++) {
+	for (decltype(p_class->variables.size()) i = 0; i < p_class->variables.size(); i++) {
 
 		const GDScriptParser::ClassNode::Member &m = p_class->variables[i];
 
@@ -465,13 +465,13 @@ static void _parser_show_class(const GDScriptParser::ClassNode *p_class, int p_i
 
 	print_line("\n");
 
-	for (int i = 0; i < p_class->static_functions.size(); i++) {
+	for (decltype(p_class->static_functions.size()) i = 0; i < p_class->static_functions.size(); i++) {
 
 		_parser_show_function(p_class->static_functions[i], p_indent);
 		print_line("\n");
 	}
 
-	for (int i = 0; i < p_class->functions.size(); i++) {
+	for (decltype(p_class->functions.size()) i = 0; i < p_class->functions.size(); i++) {
 
 		if (String(p_class->functions[i]->name) == "_init") {
 			_parser_show_function(p_class->functions[i], p_indent, p_class->initializer);
@@ -909,7 +909,8 @@ static void _disassemble_class(const Ref<GDScript> &p_class, const std::vector<S
 				case GDScriptFunction::OPCODE_LINE: {
 
 					int line = code[ip + 1] - 1;
-					if (line >= 0 && line < p_code.size())
+					int size = p_code.size();
+					if (line >= 0 && line < size)
 						txt = "\n" + itos(line + 1) + ": " + p_code[line] + "\n";
 					else
 						txt = "";
@@ -1012,7 +1013,8 @@ MainLoop *test(TestType p_type) {
 
 				for (int i = from; i <= line; i++) {
 					int l = i - 1;
-					if (l >= 0 && l < lines.size()) {
+					int size = lines.size();
+					if (l >= 0 && l < size) {
 						print_line("\n" + itos(i) + ": " + lines[l] + "\n");
 					}
 				}

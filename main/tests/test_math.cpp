@@ -531,7 +531,7 @@ MainLoop *test() {
 				Set<uint32_t> existing;
 				success = true;
 
-				for (int j = 0; j < hashes.size(); j++) {
+				for (decltype(hashes.size()) j = 0; j < hashes.size(); j++) {
 
 					uint32_t eh = ihash2(ihash3(hashes[j] + ihash(s) + s)) & ((1 << i) - 1);
 					if (existing.has(eh)) {

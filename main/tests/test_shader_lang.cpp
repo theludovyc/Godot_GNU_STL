@@ -143,13 +143,13 @@ static String dump_node_code(SL::Node *p_node, int p_level) {
 
 				code += vcode + "\n";
 			}
-			for (int i = 0; i < pnode->functions.size(); i++) {
+			for (decltype(pnode->functions.size()) i = 0; i < pnode->functions.size(); i++) {
 
 				SL::FunctionNode *fnode = pnode->functions[i].function;
 
 				String header;
 				header = _typestr(fnode->return_type) + " " + fnode->name + "(";
-				for (int j = 0; j < fnode->arguments.size(); j++) {
+				for (decltype(fnode->arguments.size()) j = 0; j < fnode->arguments.size(); j++) {
 
 					if (j > 0)
 						header += ", ";
@@ -241,7 +241,7 @@ static String dump_node_code(SL::Node *p_node, int p_level) {
 				case SL::OP_CALL:
 				case SL::OP_CONSTRUCT:
 					code = dump_node_code(onode->arguments[0], p_level) + "(";
-					for (int i = 1; i < onode->arguments.size(); i++) {
+					for (decltype(onode->arguments.size()) i = 1; i < onode->arguments.size(); i++) {
 						if (i > 1)
 							code += ", ";
 						code += dump_node_code(onode->arguments[i], p_level);

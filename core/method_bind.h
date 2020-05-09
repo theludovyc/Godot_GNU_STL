@@ -239,7 +239,8 @@ public:
 
 		int idx = argument_count - p_arg - 1;
 
-		if (idx < 0 || idx >= default_arguments.size())
+		int size = default_arguments.size();
+		if (idx < 0 || idx >= size)
 			return false;
 		else
 			return true;
@@ -249,7 +250,8 @@ public:
 
 		int idx = argument_count - p_arg - 1;
 
-		if (idx < 0 || idx >= default_arguments.size())
+		int size = default_arguments.size();
+		if (idx < 0 || idx >= size)
 			return Variant();
 		else
 			return default_arguments[idx];

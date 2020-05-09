@@ -712,7 +712,7 @@ public:
 		int inside_count = 0;
 		int outside_count = 0;
 
-		for (int a = 0; a < polygon.size(); a++) {
+		for (decltype(polygon.size()) a = 0; a < polygon.size(); a++) {
 			real_t dist = p_plane.distance_to(polygon[a]);
 			if (dist < -CMP_POINT_IN_PLANE_EPSILON) {
 				location_cache[a] = LOC_INSIDE;
@@ -739,7 +739,7 @@ public:
 		long previous = polygon.size() - 1;
 		std::vector<Vector3> clipped;
 
-		for (int index = 0; index < polygon.size(); index++) {
+		for (decltype(polygon.size()) index = 0; index < polygon.size(); index++) {
 			int loc = location_cache[index];
 			if (loc == LOC_OUTSIDE) {
 				if (location_cache[previous] == LOC_INSIDE) {
@@ -838,7 +838,7 @@ public:
 		std::vector<Delaunay2D::Triangle> tr = Delaunay2D::triangulate(p_points);
 		std::vector<int> triangles;
 
-		for (int i = 0; i < tr.size(); i++) {
+		for (decltype(tr.size()) i = 0; i < tr.size(); i++) {
 			triangles.push_back(tr[i].points[0]);
 			triangles.push_back(tr[i].points[1]);
 			triangles.push_back(tr[i].points[2]);

@@ -260,7 +260,7 @@ void GDScript::get_script_property_list(List<PropertyInfo> *p_list) const {
 
 		std::sort(msort.rbegin(), msort.rend());
 
-		for (int i = 0; i < msort.size(); i++) {
+		for (decltype(msort.size()) i = 0; i < msort.size(); i++) {
 
 			props.push_front(sptr->member_info[msort[i].name]);
 		}
@@ -465,7 +465,7 @@ bool GDScript::_update_exports() {
 			members_cache.clear();
 			member_default_values_cache.clear();
 
-			for (int i = 0; i < c->variables.size(); i++) {
+			for (decltype(c->variables.size()) i = 0; i < c->variables.size(); i++) {
 				if (c->variables[i]._export.type == Variant::NIL)
 					continue;
 
@@ -475,7 +475,7 @@ bool GDScript::_update_exports() {
 
 			_signals.clear();
 
-			for (int i = 0; i < c->_signals.size(); i++) {
+			for (decltype(c->_signals.size()) i = 0; i < c->_signals.size(); i++) {
 				_signals[c->_signals[i].name] = c->_signals[i].arguments;
 			}
 		} else {
@@ -737,7 +737,7 @@ Error GDScript::load_byte_code(const String &p_path) {
 
 		std::vector<uint8_t> key;
 		key.resize(32);
-		for (int i = 0; i < key.size(); i++) {
+		for (decltype(key.size()) i = 0; i < key.size(); i++) {
 			key[i] = script_encryption_key[i];
 		}
 
@@ -871,7 +871,7 @@ void GDScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 
 		MethodInfo mi;
 		mi.name = E->key();
-		for (int i = 0; i < E->get().size(); i++) {
+		for (decltype(E->get().size()) i = 0; i < E->get().size(); i++) {
 			PropertyInfo arg;
 			arg.name = E->get()[i];
 			mi.arguments.push_back(arg);
@@ -938,7 +938,7 @@ void GDScript::_save_orphaned_subclasses() {
 	constants.clear();
 
 	// keep orphan subclass only for subclasses that are still in use
-	for (int i = 0; i < weak_subclasses.size(); i++) {
+	for (decltype(weak_subclasses.size()) i = 0; i < weak_subclasses.size(); i++) {
 		ClassRefWithName subclass = weak_subclasses[i];
 		Object *obj = ObjectDB::get_instance(subclass.id);
 		if (!obj)
@@ -1151,7 +1151,7 @@ void GDScriptInstance::get_property_list(List<PropertyInfo> *p_properties) const
 
 		std::sort(msort.rbegin(), msort.rend());
 
-		for (int i = 0; i < msort.size(); i++) {
+		for (decltype(msort.size()) i = 0; i < msort.size(); i++) {
 
 			props.push_front(sptr->member_info[msort[i].name]);
 		}
@@ -1943,7 +1943,7 @@ String GDScriptLanguage::get_global_class_name(const String &p_path, String *r_b
 
 							while (extend_classes.size() > 0) {
 								bool found = false;
-								for (int i = 0; i < subclass->subclasses.size(); i++) {
+								for (decltype(subclass->subclasses.size()) i = 0; i < subclass->subclasses.size(); i++) {
 									const GDScriptParser::ClassNode *inner_class = subclass->subclasses[i];
 									if (inner_class->name == extend_classes[0]) {
 										extend_classes.erase(extend_classes.begin());
