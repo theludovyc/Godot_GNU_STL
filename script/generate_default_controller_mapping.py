@@ -1,71 +1,7 @@
-"""Functions used to generate source files during build time
-
-All such functions are invoked in a subprocess on Windows to prevent build flakiness.
-
-"""
-from platform_methods import subprocess_main
-from compat import byte_to_str
 from collections import OrderedDict
 
-
-def make_splash(target, source, env):
-    src = source[0]
-    dst = target[0]
-
-    with open(src, "rb") as f:
-        buf = f.read()
-
-    with open(dst, "w") as g:
-        g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-        g.write("#ifndef BOOT_SPLASH_H\n")
-        g.write("#define BOOT_SPLASH_H\n")
-        g.write('static const Color boot_splash_bg_color = Color(0.14, 0.14, 0.14);\n')
-        g.write("static const unsigned char boot_splash_png[] = {\n")
-        for i in range(len(buf)):
-            g.write(byte_to_str(buf[i]) + ",\n")
-        g.write("};\n")
-        g.write("#endif")
-
-
-def make_splash_editor(target, source, env):
-    src = source[0]
-    dst = target[0]
-
-    with open(src, "rb") as f:
-        buf = f.read()
-
-    with open(dst, "w") as g:
-        g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-        g.write("#ifndef BOOT_SPLASH_EDITOR_H\n")
-        g.write("#define BOOT_SPLASH_EDITOR_H\n")
-        g.write('static const Color boot_splash_editor_bg_color = Color(0.14, 0.14, 0.14);\n')
-        g.write("static const unsigned char boot_splash_editor_png[] = {\n")
-        for i in range(len(buf)):
-            g.write(byte_to_str(buf[i]) + ",\n")
-        g.write("};\n")
-        g.write("#endif")
-
-
-def make_app_icon(target, source, env):
-    src = source[0]
-    dst = target[0]
-
-    with open(src, "rb") as f:
-        buf = f.read()
-
-    with open(dst, "w") as g:
-        g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-        g.write("#ifndef APP_ICON_H\n")
-        g.write("#define APP_ICON_H\n")
-        g.write("static const unsigned char app_icon_png[] = {\n")
-        for i in range(len(buf)):
-            g.write(byte_to_str(buf[i]) + ",\n")
-        g.write("};\n")
-        g.write("#endif")
-
-
-def make_default_controller_mappings(target, source, env):
-    dst = target[0]
+def make_default_controller_mappings(target, source):
+    dst = target
     g = open(dst, "w")
 
     g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
@@ -125,6 +61,12 @@ def make_default_controller_mappings(target, source, env):
     g.write("\tNULL\n};\n")
     g.close()
 
+import sys
+import json
 
 if __name__ == '__main__':
-    subprocess_main(globals())
+    if len(sys.argv) < 3:
+        print("usage : " + sys.argv[0] + " <destination> <sources>")
+        exit()
+    jsonstring = "[\"" + sys.argv[2].replace(";","\",\"") + "\"]"
+    make_default_controller_mappings(sys.argv[1],json.loads(jsonstring))

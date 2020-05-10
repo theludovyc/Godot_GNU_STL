@@ -1,139 +1,7 @@
-"""Functions used to generate source files during build time
+from utils import escape_string
 
-All such functions are invoked in a subprocess on Windows to prevent build flakiness.
-
-"""
-from platform_methods import subprocess_main
-from compat import iteritems, itervalues, open_utf8, escape_string, byte_to_str
-
-
-def make_certs_header(target, source, env):
-
-    src = source[0]
-    dst = target[0]
-    f = open(src, "rb")
-    g = open_utf8(dst, "w")
-    buf = f.read()
-    decomp_size = len(buf)
-    import zlib
-    buf = zlib.compress(buf)
-
-    g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-    g.write("#ifndef _CERTS_RAW_H\n")
-    g.write("#define _CERTS_RAW_H\n")
-
-    # System certs path. Editor will use them if defined. (for package maintainers)
-    path = env['system_certs_path']
-    g.write("#define _SYSTEM_CERTS_PATH \"%s\"\n" % str(path))
-    if env['builtin_certs']:
-        # Defined here and not in env so changing it does not trigger a full rebuild.
-        g.write("#define BUILTIN_CERTS_ENABLED\n")
-        g.write("static const int _certs_compressed_size = " + str(len(buf)) + ";\n")
-        g.write("static const int _certs_uncompressed_size = " + str(decomp_size) + ";\n")
-        g.write("static const unsigned char _certs_compressed[] = {\n")
-        for i in range(len(buf)):
-            g.write("\t" + byte_to_str(buf[i]) + ",\n")
-        g.write("};\n")
-    g.write("#endif")
-
-    g.close()
-    f.close()
-
-
-def make_authors_header(target, source, env):
-    sections = ["Project Founders", "Lead Developer", "Project Manager", "Developers"]
-    sections_id = ["AUTHORS_FOUNDERS", "AUTHORS_LEAD_DEVELOPERS", "AUTHORS_PROJECT_MANAGERS", "AUTHORS_DEVELOPERS"]
-
-    src = source[0]
-    dst = target[0]
-    f = open_utf8(src, "r")
-    g = open_utf8(dst, "w")
-
-    g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-    g.write("#ifndef _EDITOR_AUTHORS_H\n")
-    g.write("#define _EDITOR_AUTHORS_H\n")
-
-    reading = False
-
-    def close_section():
-        g.write("\t0\n")
-        g.write("};\n")
-
-    for line in f:
-        if reading:
-            if line.startswith("    "):
-                g.write("\t\"" + escape_string(line.strip()) + "\",\n")
-                continue
-        if line.startswith("## "):
-            if reading:
-                close_section()
-                reading = False
-            for section, section_id in zip(sections, sections_id):
-                if line.strip().endswith(section):
-                    current_section = escape_string(section_id)
-                    reading = True
-                    g.write("const char *const " + current_section + "[] = {\n")
-                    break
-
-    if reading:
-        close_section()
-
-    g.write("#endif\n")
-
-    g.close()
-    f.close()
-
-
-def make_donors_header(target, source, env):
-    sections = ["Platinum sponsors", "Gold sponsors", "Mini sponsors",
-                "Gold donors", "Silver donors", "Bronze donors"]
-    sections_id = ["DONORS_SPONSOR_PLAT", "DONORS_SPONSOR_GOLD", "DONORS_SPONSOR_MINI",
-                   "DONORS_GOLD", "DONORS_SILVER", "DONORS_BRONZE"]
-
-    src = source[0]
-    dst = target[0]
-    f = open_utf8(src, "r")
-    g = open_utf8(dst, "w")
-
-    g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-    g.write("#ifndef _EDITOR_DONORS_H\n")
-    g.write("#define _EDITOR_DONORS_H\n")
-
-    reading = False
-
-    def close_section():
-        g.write("\t0\n")
-        g.write("};\n")
-
-    for line in f:
-        if reading >= 0:
-            if line.startswith("    "):
-                g.write("\t\"" + escape_string(line.strip()) + "\",\n")
-                continue
-        if line.startswith("## "):
-            if reading:
-                close_section()
-                reading = False
-            for section, section_id in zip(sections, sections_id):
-                if line.strip().endswith(section):
-                    current_section = escape_string(section_id)
-                    reading = True
-                    g.write("const char *const " + current_section + "[] = {\n")
-                    break
-
-    if reading:
-        close_section()
-
-    g.write("#endif\n")
-
-    g.close()
-    f.close()
-
-
-def make_license_header(target, source, env):
-    src_copyright = source[0]
-    src_license = source[1]
-    dst = target[0]
+def make_license_header(target, src_copyright, src_license):
+    dst = target
 
     class LicenseReader:
         def __init__(self, license_file):
@@ -163,7 +31,7 @@ def make_license_header(target, source, env):
     projects = OrderedDict()
     license_list = []
 
-    with open_utf8(src_copyright, "r") as copyright_file:
+    with open(src_copyright, "r") as copyright_file:
         reader = LicenseReader(copyright_file)
         part = {}
         while reader.current:
@@ -183,21 +51,21 @@ def make_license_header(target, source, env):
                 reader.next_line()
 
     data_list = []
-    for project in itervalues(projects):
+    for key, project in projects.items():
         for part in project:
             part["file_index"] = len(data_list)
             data_list += part["Files"]
             part["copyright_index"] = len(data_list)
             data_list += part["Copyright"]
 
-    with open_utf8(dst, "w") as f:
+    with open(dst, "w") as f:
 
         f.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
         f.write("#ifndef _EDITOR_LICENSE_H\n")
         f.write("#define _EDITOR_LICENSE_H\n")
         f.write("const char *const GODOT_LICENSE_TEXT =")
 
-        with open_utf8(src_license, "r") as license_file:
+        with open(src_license, "r") as license_file:
             for line in license_file:
                 escaped_string = escape_string(line.strip())
                 f.write("\n\t\t\"" + escaped_string + "\\n\"")
@@ -225,7 +93,7 @@ def make_license_header(target, source, env):
         f.write("const ComponentCopyrightPart COPYRIGHT_PROJECT_PARTS[] = {\n")
         part_index = 0
         part_indexes = {}
-        for project_name, project in iteritems(projects):
+        for project_name, project in projects.items():
             part_indexes[project_name] = part_index
             for part in project:
                 f.write("\t{ \"" + escape_string(part["License"][0]) + "\", "
@@ -239,7 +107,7 @@ def make_license_header(target, source, env):
         f.write("const int COPYRIGHT_INFO_COUNT = " + str(len(projects)) + ";\n")
 
         f.write("const ComponentCopyright COPYRIGHT_INFO[] = {\n")
-        for project_name, project in iteritems(projects):
+        for project_name, project in projects.items():
             f.write("\t{ \"" + escape_string(project_name) + "\", "
                     + "&COPYRIGHT_PROJECT_PARTS[" + str(part_indexes[project_name]) + "], "
                     + str(len(project)) + " },\n")
@@ -265,5 +133,11 @@ def make_license_header(target, source, env):
         f.write("#endif\n")
 
 
-if __name__ == '__main__':
-    subprocess_main(globals())
+
+import sys
+
+if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print("usage : " + sys.argv[0] + " <destination> <copyright> <license>")
+        exit()
+    make_license_header(sys.argv[1],sys.argv[2],sys.argv[3])

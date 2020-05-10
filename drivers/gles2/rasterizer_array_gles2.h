@@ -74,7 +74,7 @@ public:
 
 	_FORCE_INLINE_ void reset() { _size = 0; }
 
-	_FORCE_INLINE_ T *request_with_grow() {
+	T *request_with_grow() {
 		T *p = request();
 		if (!p) {
 			grow();

@@ -340,7 +340,7 @@ def make_version(template, nargs, argmax, const, ret):
     return outtext
 
 
-def run(target, source, env):
+def run(target1, target2, target3):
 
     versions = 13
     versions_ext = 6
@@ -373,16 +373,15 @@ def run(target, source, env):
 
     text_free_func += "#endif"
 
-    with open(target[0], "w") as f:
+    with open(target1, "w") as f:
         f.write(text)
 
-    with open(target[1], "w") as f:
+    with open(target2, "w") as f:
         f.write(text_ext)
 
-    with open(target[2], "w") as f:
+    with open(target3, "w") as f:
         f.write(text_free_func)
 
 
-if __name__ == '__main__':
-    from platform_methods import subprocess_main
-    subprocess_main(globals())
+if __name__ == "__main__":
+    run("../core/method_bind.gen.inc", "../core/method_bind_ext.gen.inc", "../core/method_bind_free_func.gen.inc")
