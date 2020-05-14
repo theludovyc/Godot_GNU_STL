@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="debug|Win32">
@@ -143,10 +143,17 @@
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="core\authors.gen.h" />
     <ClInclude Include="core\bind\core_bind.h" />
+    <ClInclude Include="core\cowdata.h" />
     <ClInclude Include="core\crypto\crypto.h" />
     <ClInclude Include="core\crypto\crypto_core.h" />
     <ClInclude Include="core\crypto\hashing_context.h" />
+    <ClInclude Include="core\donors.gen.h" />
+    <ClInclude Include="core\error_list.h" />
+    <ClInclude Include="core\hashfuncs.h" />
+    <ClInclude Include="core\hash_map.h" />
+    <ClInclude Include="core\int_types.h" />
     <ClInclude Include="core\io\compression.h" />
     <ClInclude Include="core\io\config_file.h" />
     <ClInclude Include="core\io\file_access_buffered.h" />
@@ -180,6 +187,9 @@
     <ClInclude Include="core\io\translation_loader_po.h" />
     <ClInclude Include="core\io\xml_parser.h" />
     <ClInclude Include="core\io\zip_io.h" />
+    <ClInclude Include="core\license.gen.h" />
+    <ClInclude Include="core\list.h" />
+    <ClInclude Include="core\map.h" />
     <ClInclude Include="core\math\a_star.h" />
     <ClInclude Include="core\math\aabb.h" />
     <ClInclude Include="core\math\audio_frame.h" />
@@ -204,6 +214,11 @@
     <ClInclude Include="core\math\triangulate.h" />
     <ClInclude Include="core\math\vector2.h" />
     <ClInclude Include="core\math\vector3.h" />
+    <ClInclude Include="core\method_ptrcall.h" />
+    <ClInclude Include="core\oa_hash_map.h" />
+    <ClInclude Include="core\object_id.h" />
+    <ClInclude Include="core\object_rc.h" />
+    <ClInclude Include="core\ordered_hash_map.h" />
     <ClInclude Include="core\os\dir_access.h" />
     <ClInclude Include="core\os\file_access.h" />
     <ClInclude Include="core\os\input.h" />
@@ -237,6 +252,7 @@
     <ClInclude Include="core\node_path.h" />
     <ClInclude Include="core\object.h" />
     <ClInclude Include="core\packed_data_container.h" />
+    <ClInclude Include="core\pair.h" />
     <ClInclude Include="core\path_remap.h" />
     <ClInclude Include="core\pool_allocator.h" />
     <ClInclude Include="core\pool_vector.h" />
@@ -247,16 +263,30 @@
     <ClInclude Include="core\register_core_types.h" />
     <ClInclude Include="core\resource.h" />
     <ClInclude Include="core\rid.h" />
+    <ClInclude Include="core\ring_buffer.h" />
     <ClInclude Include="core\safe_refcount.h" />
     <ClInclude Include="core\script_debugger_local.h" />
     <ClInclude Include="core\script_language.h" />
+    <ClInclude Include="core\self_list.h" />
+    <ClInclude Include="core\set.h" />
+    <ClInclude Include="core\simple_type.h" />
+    <ClInclude Include="core\sort_array.h" />
+    <ClInclude Include="core\string_buffer.h" />
     <ClInclude Include="core\string_builder.h" />
     <ClInclude Include="core\string_name.h" />
     <ClInclude Include="core\translation.h" />
+    <ClInclude Include="core\typedefs.h" />
+    <ClInclude Include="core\type_info.h" />
+    <ClInclude Include="core\ucaps.h" />
     <ClInclude Include="core\undo_redo.h" />
     <ClInclude Include="core\ustring.h" />
     <ClInclude Include="core\variant.h" />
     <ClInclude Include="core\variant_parser.h" />
+    <ClInclude Include="core\version.h" />
+    <ClInclude Include="core\version_generated.gen.h" />
+    <ClInclude Include="core\version_hash.gen.h" />
+    <ClInclude Include="core\vmap.h" />
+    <ClInclude Include="core\vset.h" />
     <ClInclude Include="drivers\alsa\audio_driver_alsa.h" />
     <ClInclude Include="drivers\alsamidi\midi_driver_alsamidi.h" />
     <ClInclude Include="drivers\coreaudio\audio_driver_coreaudio.h" />
@@ -1430,6 +1460,7 @@
     <ClCompile Include="core\rid.cpp" />
     <ClCompile Include="core\safe_refcount.cpp" />
     <ClCompile Include="core\script_debugger_local.cpp" />
+    <ClCompile Include="core\script_encryption_key.gen.cpp" />
     <ClCompile Include="core\script_language.cpp" />
     <ClCompile Include="core\string_builder.cpp" />
     <ClCompile Include="core\string_name.cpp" />
