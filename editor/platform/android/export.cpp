@@ -43,8 +43,8 @@
 #include "editor/editor_log.h"
 #include "editor/editor_node.h"
 #include "editor/editor_settings.h"
-#include "platform/android/logo.gen.h"
-#include "platform/android/run_icon.gen.h"
+#include "logo.gen.h"
+#include "run_icon.gen.h"
 
 #include <string.h>
 

@@ -1,8 +1,7 @@
 import os
 
-def generate_icon(ostype):
+def generate_icon(path, ostype):
     names = ['logo']
-    path = "../platform/" + ostype
     if os.path.isfile(path + "/run_icon.png"):
         names.append('run_icon')
 
@@ -29,7 +28,7 @@ def generate_icon(ostype):
 import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("usage : " + sys.argv[0] + " <os>")
+    if len(sys.argv) < 3:
+        print("usage : " + sys.argv[0] + " <path> <os>")
         exit()
-    generate_icon(sys.argv[1])
+    generate_icon(sys.argv[1] ,sys.argv[2])

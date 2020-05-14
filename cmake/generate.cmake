@@ -1,4 +1,4 @@
-macro(generateIcon os gen)
+macro(generateIcon os dir gen)
 find_file(fileIcon 
     NAMES "run_icon.png"
     PATHS "${CMAKE_CURRENT_SOURCE_DIR}" 
@@ -12,11 +12,11 @@ if(fileIcon)
 endif()
 
 
-
-list(APPEND ${gen} "${CMAKE_CURRENT_SOURCE_DIR}/logo.gen.h" ${iconFile})
-add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/logo.gen.h" ${iconFile}
-     COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_icon.py" "${os}"
-     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/logo.png"
+# TODO : redo generation
+list(APPEND ${gen} "${dir}/logo.gen.h" ${iconFile})
+add_custom_command(OUTPUT "${dir}/logo.gen.h" ${iconFile}
+     COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_icon.py" "${dir}" "${os}"
+     DEPENDS "${dir}/logo.png"
      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
 )
 endmacro()

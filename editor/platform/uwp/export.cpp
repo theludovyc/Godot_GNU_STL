@@ -40,7 +40,7 @@
 #include "core/version.h"
 #include "editor/editor_export.h"
 #include "editor/editor_node.h"
-#include "platform/uwp/logo.gen.h"
+#include "logo.gen.h"
 
 #include "thirdparty/minizip/unzip.h"
 #include "thirdparty/minizip/zip.h"

@@ -46,3 +46,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
 # TODO: suppress
 target_include_directories(${PROJECT_NAME} PRIVATE "../")
 target_include_directories(${PROJECT_NAME} PRIVATE "../platform/${target}")
+
+if(tools)
+    # godotEditor
+    target_link_libraries(${PROJECT_NAME} PRIVATE godotEditor)
+endif()

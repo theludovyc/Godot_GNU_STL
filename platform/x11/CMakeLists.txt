@@ -1,6 +1,5 @@
 
 set(gen)
-generateIcon("x11" gen)
 
 file(GLOB header "*.h")
 file(GLOB cpp "*.cpp")
@@ -11,6 +10,9 @@ add_executable(${PROJECT_NAME} ${header} ${cpp} ${gen})
 target_include_directories(${PROJECT_NAME} PRIVATE "../../")
 target_include_directories(${PROJECT_NAME} PRIVATE ".")
 
+if(NOT tools)
+    target_link_options(${PROJECT_NAME} PRIVATE "-T${CMAKE_CURRENT_SOURCE_DIR}/pck_embed.ld")
+endif()
 
 # for dl library
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
@@ -48,3 +50,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE godotScene)
 
 # godotModules
 target_link_libraries(${PROJECT_NAME} PRIVATE godotModules)
+
+if(NOT tools)
+    # godotEditor
+    target_link_libraries(${PROJECT_NAME} PRIVATE godotEditor)
+endif()

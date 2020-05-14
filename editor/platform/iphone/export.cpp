@@ -39,7 +39,7 @@
 #include "editor/editor_export.h"
 #include "editor/editor_node.h"
 #include "editor/editor_settings.h"
-#include "platform/iphone/logo.gen.h"
+#include "logo.gen.h"
 #include "string.h"
 
 #include <sys/stat.h>

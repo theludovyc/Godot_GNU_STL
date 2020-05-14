@@ -33,8 +33,8 @@
 #include "editor/editor_export.h"
 #include "editor/editor_node.h"
 #include "main/splash.gen.h"
-#include "platform/javascript/logo.gen.h"
-#include "platform/javascript/run_icon.gen.h"
+#include "logo.gen.h"
+#include "run_icon.gen.h"
 
 #define EXPORT_TEMPLATE_WEBASSEMBLY_RELEASE "webassembly_release.zip"
 #define EXPORT_TEMPLATE_WEBASSEMBLY_DEBUG "webassembly_debug.zip"

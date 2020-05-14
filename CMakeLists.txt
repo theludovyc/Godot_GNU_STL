@@ -11,6 +11,11 @@ find_package(Python 3.5 COMPONENTS Interpreter REQUIRED)
 
 project(godot)
 
+option(tools "Build the tools (a.k.a. the Godot editor)" ON)
+if(tools)
+  add_definitions(-DTOOLS_ENABLED)
+endif()
+
 
 set(target)
 if(NOT DEFINED ${CMAKE_GENERATOR_PLATFORM})
@@ -39,3 +44,6 @@ add_subdirectory(scene)
 add_subdirectory(servers)
 add_subdirectory(modules)
 add_subdirectory(platform/${target})
+if(tools)
+  add_subdirectory(editor)
+endif()

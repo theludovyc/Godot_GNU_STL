@@ -10,5 +10,6 @@ add_subdirectory(glad)
 add_subdirectory(libpng)
 add_subdirectory(freetype)
 add_subdirectory(pcre2)
+add_subdirectory(nanosvg)
 
 remove_definitions(-w)

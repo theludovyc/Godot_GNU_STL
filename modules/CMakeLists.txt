@@ -6,6 +6,8 @@ set(module_header)
 set(module_register)
 set(module_unregister)
 set(module_name)
+set(doc_data_class_paths)
+set(number_class 0)
 foreach(directorie ${directories})
     IF(IS_DIRECTORY ${directorie})
         get_filename_component(moduleName ${directorie} NAME)
@@ -23,6 +25,8 @@ foreach(directorie ${directories})
                 if(NOT module_${moduleName}_register_types)
                     message(FATAL_ERROR "${moduleName} have no register_types.h")
                 endif()
+
+                # register module
                 file(RELATIVE_PATH relative_path ${CMAKE_CURRENT_SOURCE_DIR} ${module_${moduleName}_register_types})
                 string(APPEND module_header "#include \"${relative_path}\"\n")
                 string(APPEND module_register "    register_${moduleName}_types();\n")
@@ -31,6 +35,16 @@ foreach(directorie ${directories})
                 list(APPEND module_name "module_${moduleName}")
 
                 unset(module_${moduleName}_register_types CACHE)
+
+
+                # doc class path
+                file(GLOB doc_classes "${directorie}/doc_classes/*.xml")
+                foreach(doc_class ${doc_classes})
+                    get_filename_component(class ${doc_class} NAME_WLE)
+                    MATH(EXPR number_class "${number_class}+1")
+                    string(APPEND doc_data_class_paths "    {\"${class}\", \"modules/${moduleName}/doc_classes\"},\n")
+                endforeach()
+
             endif()
         endif()
         unset(module_${moduleName}_CONFIG CACHE)
@@ -39,6 +53,14 @@ foreach(directorie ${directories})
     endif()
 endforeach()
 
+# doc_data_class_path.gen.h
+file(GENERATE OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/doc_data_class_path.gen.h"
+    CONTENT "static const int _doc_data_class_path_count = ${number_class};
+struct _DocDataClassPath { const char* name; const char* path; };
+static const _DocDataClassPath _doc_data_class_paths[] = {
+${doc_data_class_paths}
+};"
+)
 
 file(GENERATE OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/register_module_types.gen.cpp"
     CONTENT "// modules.cpp - THIS FILE IS GENERATED, DO NOT EDIT!!!!!!!
@@ -55,7 +77,7 @@ ${module_unregister}
 }"
 )
 
-add_library(${PROJECT_NAME} "register_module_types.h" "register_module_types.gen.cpp")
+add_library(${PROJECT_NAME} "register_module_types.h" "register_module_types.gen.cpp" "doc_data_class_path.gen.h")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${module_name})
 
