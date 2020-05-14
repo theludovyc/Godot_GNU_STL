@@ -24,9 +24,9 @@ foreach(directorie ${directories})
                     message(FATAL_ERROR "${moduleName} have no register_types.h")
                 endif()
                 file(RELATIVE_PATH relative_path ${CMAKE_CURRENT_SOURCE_DIR} ${module_${moduleName}_register_types})
-                list(APPEND module_header "#include \"${relative_path}\"\n")
-                list(APPEND module_register "register_${moduleName}_types();\n")
-                list(APPEND module_unregister "unregister_${moduleName}_types();\n")
+                string(APPEND module_header "#include \"${relative_path}\"\n")
+                string(APPEND module_register "    register_${moduleName}_types();\n")
+                string(APPEND module_unregister "    unregister_${moduleName}_types();\n")
 
                 list(APPEND module_name "module_${moduleName}")
 
@@ -47,11 +47,11 @@ file(GENERATE OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/register_module_types.gen.cpp"
 ${module_header}
 
 void register_module_types() {
-    ${module_register}
+${module_register}
 }
 
 void unregister_module_types() {
-    ${module_unregister}
+${module_unregister}
 }"
 )
 
