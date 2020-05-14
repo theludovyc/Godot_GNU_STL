@@ -40,7 +40,8 @@ file(GLOB_RECURSE cpp "*.cpp")
 
 add_library(${PROJECT_NAME} ${header} ${cpp} ${generateFile})
 
-
+# godotCore
+target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
 
 # TODO: suppress
 target_include_directories(${PROJECT_NAME} PRIVATE "../")

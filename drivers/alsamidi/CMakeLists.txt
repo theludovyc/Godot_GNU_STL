@@ -1,7 +1,5 @@
 project(godotAlsaMidi)
 
-find_package(ALSA REQUIRED)
-
 file(GLOB_RECURSE header "*.h")
 file(GLOB_RECURSE cpp "*.cpp")
 

@@ -9,7 +9,11 @@ file(GLOB_RECURSE cpp "*.cpp")
 
 file(GLOB_RECURSE cpp_bis "*.cc")
 
-add_library(${PROJECT_NAME} ${header} ${c} ${header_cpp} ${cpp} ${cpp_bis})
+# TODO : need to be remove
+set(generateFile)
+generateBindings(generateFile)
+
+add_library(${PROJECT_NAME} ${header} ${c} ${header_cpp} ${cpp} ${cpp_bis} ${generateFile})
 
 # TODO: need to be remove
 target_include_directories(${PROJECT_NAME} PRIVATE "../..")

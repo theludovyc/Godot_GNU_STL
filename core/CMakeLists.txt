@@ -26,11 +26,15 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/io/certs_compressed.gen.h
 	)
 list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/io/certs_compressed.gen.h")
 
-add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc"
-  COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_binders.py"
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
-	)
-list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc")
+
+# TODO : need to be change
+generateBindings(generateFile)
+
+# add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc"
+#   COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_binders.py"
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
+# 	)
+# list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc")
 
 
 
@@ -83,7 +87,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE "../")
 target_include_directories(${PROJECT_NAME} PRIVATE "../platform/${target}")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE misc)
-target_link_libraries(${PROJECT_NAME} PRIVATE zlib)
 target_link_libraries(${PROJECT_NAME} PRIVATE minizip)
 target_link_libraries(${PROJECT_NAME} PRIVATE zstd)
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls)
