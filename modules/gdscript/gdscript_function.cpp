@@ -1637,13 +1637,15 @@ int GDScriptFunction::get_code_size() const {
 
 Variant GDScriptFunction::get_constant(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, constants.size(), "<errconst>");
+	int len = constants.size();
+	ERR_FAIL_INDEX_V(p_idx, len, "<errconst>");
 	return constants[p_idx];
 }
 
 StringName GDScriptFunction::get_global_name(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, global_names.size(), "<errgname>");
+	int len = global_names.size();
+	ERR_FAIL_INDEX_V(p_idx, len, "<errgname>");
 	return global_names[p_idx];
 }
 
@@ -1653,7 +1655,8 @@ int GDScriptFunction::get_default_argument_count() const {
 }
 int GDScriptFunction::get_default_argument_addr(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, default_arguments.size(), -1);
+	int len = default_arguments.size();
+	ERR_FAIL_INDEX_V(p_idx, len, -1);
 	return default_arguments[p_idx];
 }
 
@@ -1662,7 +1665,8 @@ GDScriptDataType GDScriptFunction::get_return_type() const {
 }
 
 GDScriptDataType GDScriptFunction::get_argument_type(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, argument_types.size(), GDScriptDataType());
+	int len = argument_types.size();
+	ERR_FAIL_INDEX_V(p_idx, len, GDScriptDataType());
 	return argument_types[p_idx];
 }
 

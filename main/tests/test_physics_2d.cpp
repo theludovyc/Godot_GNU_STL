@@ -303,7 +303,7 @@ protected:
 		RID sprite = vs->canvas_item_create();
 		vs->canvas_item_set_parent(sprite, canvas);
 		vs->canvas_item_set_transform(sprite, p_xform);
-		for (int i = 0; i < p_points.size(); i += 2) {
+		for (decltype(p_points.size()) i = 0; i < p_points.size(); i += 2) {
 			vs->canvas_item_add_line(sprite, p_points[i], p_points[i + 1], Color(0, 0, 0), 2);
 		}
 	}

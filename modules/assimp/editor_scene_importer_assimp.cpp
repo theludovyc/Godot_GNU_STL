@@ -88,7 +88,7 @@ void EditorSceneImporterAssimp::_register_project_setting_import(const String ge
 	const String use_generic = "use_" + generic;
 	_GLOBAL_DEF(import_setting_string + use_generic, p_enabled, true);
 	if (ProjectSettings::get_singleton()->get(import_setting_string + use_generic)) {
-		for (int32_t i = 0; i < exts.size(); i++) {
+		for (decltype(exts.size()) i = 0; i < exts.size(); i++) {
 			r_extensions->push_back(exts[i]);
 		}
 	}
@@ -214,7 +214,7 @@ T EditorSceneImporterAssimp::_interpolate_track(const std::vector<float> &p_time
 		AssetImportAnimation::Interpolation p_interp) {
 	//could use binary search, worth it?
 	int idx = -1;
-	for (int i = 0; i < p_times.size(); i++) {
+	for (decltype(p_times.size()) i = 0; i < p_times.size(); i++) {
 		if (p_times[i] > p_time)
 			break;
 		idx++;
@@ -225,10 +225,12 @@ T EditorSceneImporterAssimp::_interpolate_track(const std::vector<float> &p_time
 	switch (p_interp) {
 		case AssetImportAnimation::INTERP_LINEAR: {
 
+			int size = p_times.size();
+
 			if (idx == -1) {
 				return p_values[0];
-			} else if (idx >= p_times.size() - 1) {
-				return p_values[p_times.size() - 1];
+			} else if (idx >= size - 1) {
+				return p_values[size - 1];
 			}
 
 			float c = (p_time - p_times[idx]) / (p_times[idx + 1] - p_times[idx]);
@@ -238,10 +240,11 @@ T EditorSceneImporterAssimp::_interpolate_track(const std::vector<float> &p_time
 		} break;
 		case AssetImportAnimation::INTERP_STEP: {
 
+			int size = p_times.size();
 			if (idx == -1) {
 				return p_values[0];
-			} else if (idx >= p_times.size() - 1) {
-				return p_values[p_times.size() - 1];
+			} else if (idx >= size - 1) {
+				return p_values[size - 1];
 			}
 
 			return p_values[idx];
@@ -249,10 +252,11 @@ T EditorSceneImporterAssimp::_interpolate_track(const std::vector<float> &p_time
 		} break;
 		case AssetImportAnimation::INTERP_CATMULLROMSPLINE: {
 
+			int size = p_times.size();
 			if (idx == -1) {
 				return p_values[1];
-			} else if (idx >= p_times.size() - 1) {
-				return p_values[1 + p_times.size() - 1];
+			} else if (idx >= size - 1) {
+				return p_values[1 + size - 1];
 			}
 
 			float c = (p_time - p_times[idx]) / (p_times[idx + 1] - p_times[idx]);
@@ -262,10 +266,11 @@ T EditorSceneImporterAssimp::_interpolate_track(const std::vector<float> &p_time
 		} break;
 		case AssetImportAnimation::INTERP_CUBIC_SPLINE: {
 
+			int size = p_times.size();
 			if (idx == -1) {
 				return p_values[1];
-			} else if (idx >= p_times.size() - 1) {
-				return p_values[(p_times.size() - 1) * 3 + 1];
+			} else if (idx >= size - 1) {
+				return p_values[(size - 1) * 3 + 1];
 			}
 
 			float c = (p_time - p_times[idx]) / (p_times[idx + 1] - p_times[idx]);
@@ -851,7 +856,7 @@ EditorSceneImporterAssimp::_generate_mesh_from_surface_indices(ImportState &stat
 
 	Map<String, uint32_t> morph_mesh_string_lookup;
 
-	for (int i = 0; i < p_surface_indices.size(); i++) {
+	for (decltype(p_surface_indices.size()) i = 0; i < p_surface_indices.size(); i++) {
 		const unsigned int mesh_idx = p_surface_indices[0];
 		const aiMesh *ai_mesh = state.assimp_scene->mMeshes[mesh_idx];
 		for (size_t j = 0; j < ai_mesh->mNumAnimMeshes; j++) {
@@ -869,7 +874,7 @@ EditorSceneImporterAssimp::_generate_mesh_from_surface_indices(ImportState &stat
 	//
 	// Process Vertex Weights
 	//
-	for (int i = 0; i < p_surface_indices.size(); i++) {
+	for (decltype(p_surface_indices.size()) i = 0; i < p_surface_indices.size(); i++) {
 		const unsigned int mesh_idx = p_surface_indices[i];
 		const aiMesh *ai_mesh = state.assimp_scene->mMeshes[mesh_idx];
 
@@ -965,7 +970,7 @@ EditorSceneImporterAssimp::_generate_mesh_from_surface_indices(ImportState &stat
 				weights.resize(bone_info.size());
 
 				// todo? do we really need to loop over all bones? - assimp may have helper to find all influences on this vertex.
-				for (int k = 0; k < bone_info.size(); k++) {
+				for (decltype(bone_info.size()) k = 0; k < bone_info.size(); k++) {
 					bones[k] = bone_info[k].bone;
 					weights[k] = bone_info[k].weight;
 				}
@@ -1325,7 +1330,7 @@ EditorSceneImporterAssimp::create_mesh(ImportState &state, const aiNode *assimp_
 
 	//surface_indices.sort();
 	String mesh_key;
-	for (int i = 0; i < surface_indices.size(); i++) {
+	for (decltype(surface_indices.size()) i = 0; i < surface_indices.size(); i++) {
 		if (i > 0) {
 			mesh_key += ":";
 		}

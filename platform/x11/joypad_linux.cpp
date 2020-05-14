@@ -247,7 +247,8 @@ void JoypadLinux::close_joypad(int p_id) {
 		close(joy.fd);
 		joy.fd = -1;
 
-		if (auto it_device = std::find(attached_devices.begin(), attached_devices.end(), joy.devpath); it_device != attached_devices.end()) {
+		auto it_device = std::find(attached_devices.begin(), attached_devices.end(), joy.devpath);
+		if (it_device != attached_devices.end()) {
 			attached_devices.erase(it_device);
 		}
 		input->joy_connection_changed(p_id, false, "");

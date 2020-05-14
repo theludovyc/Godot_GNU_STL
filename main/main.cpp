@@ -912,7 +912,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	if (script_debugger) {
 		//there is a debugger, parse breakpoints
 
-		for (int i = 0; i < breakpoints.size(); i++) {
+		for (decltype(breakpoints.size()) i = 0; i < breakpoints.size(); i++) {
 
 			String bp = breakpoints[i];
 			int sp = bp.find_last(":");

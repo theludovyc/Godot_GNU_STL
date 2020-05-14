@@ -194,7 +194,7 @@ protected:
 		ps->shape_set_data(trimesh_shape, p_faces);
 		p_faces = ps->shape_get_data(trimesh_shape); // optimized one
 		std::vector<Vector3> normals; // for drawing
-		for (int i = 0; i < p_faces.size() / 3; i++) {
+		for (decltype(p_faces.size()) i = 0; i < p_faces.size() / 3; i++) {
 
 			Plane p(p_faces[i * 3 + 0], p_faces[i * 3 + 1], p_faces[i * 3 + 2]);
 			normals.push_back(p.normal);

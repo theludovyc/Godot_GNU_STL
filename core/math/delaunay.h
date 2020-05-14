@@ -97,7 +97,7 @@ public:
 		std::vector<Triangle> triangles;
 
 		Rect2 rect;
-		for (int i = 0; i < p_points.size(); i++) {
+		for (decltype(p_points.size()) i = 0; i < p_points.size(); i++) {
 			if (i == 0) {
 				rect.position = p_points[i];
 			} else {
@@ -114,13 +114,13 @@ public:
 
 		triangles.push_back(Triangle(p_points.size() + 0, p_points.size() + 1, p_points.size() + 2));
 
-		for (int i = 0; i < p_points.size(); i++) {
+		for (decltype(p_points.size()) i = 0; i < p_points.size(); i++) {
 			//std::cout << "Traitement du point " << *p << std::endl;
 			//std::cout << "_triangles contains " << _triangles.size() << " elements" << std::endl;
 
 			std::vector<Edge> polygon;
 
-			for (int j = 0; j < triangles.size(); j++) {
+			for (decltype(triangles.size()) j = 0; j < triangles.size(); j++) {
 				if (circum_circle_contains(points, triangles[j], i)) {
 					triangles[j].bad = true;
 					polygon.push_back(Edge(triangles[j].points[0], triangles[j].points[1]));
@@ -129,15 +129,15 @@ public:
 				}
 			}
 
-			for (int j = 0; j < triangles.size(); j++) {
+			for (decltype(triangles.size()) j = 0; j < triangles.size(); j++) {
 				if (triangles[j].bad) {
 					triangles.erase(triangles.begin() + j);
 					j--;
 				}
 			}
 
-			for (int j = 0; j < polygon.size(); j++) {
-				for (int k = j + 1; k < polygon.size(); k++) {
+			for (decltype(polygon.size()) j = 0; j < polygon.size(); j++) {
+				for (decltype(polygon.size()) k = j + 1; k < polygon.size(); k++) {
 					if (edge_compare(points, polygon[j], polygon[k])) {
 						polygon[j].bad = true;
 						polygon[k].bad = true;
@@ -145,7 +145,7 @@ public:
 				}
 			}
 
-			for (int j = 0; j < polygon.size(); j++) {
+			for (decltype(polygon.size()) j = 0; j < polygon.size(); j++) {
 
 				if (polygon[j].bad) {
 					continue;
@@ -154,10 +154,11 @@ public:
 			}
 		}
 
-		for (int i = 0; i < triangles.size(); i++) {
+		for (decltype(triangles.size()) i = 0; i < triangles.size(); i++) {
 			bool invalid = false;
 			for (int j = 0; j < 3; j++) {
-				if (triangles[i].points[j] >= p_points.size()) {
+				int size = p_points.size();
+				if (triangles[i].points[j] >= size) {
 					invalid = true;
 					break;
 				}

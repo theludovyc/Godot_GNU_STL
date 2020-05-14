@@ -170,7 +170,7 @@ void GDNativeLibrary::set_config_file(Ref<ConfigFile> p_config_file) {
 			std::vector<String> tags = key.split(".");
 
 			bool skip = false;
-			for (int i = 0; i < tags.size(); i++) {
+			for (decltype(tags.size()) i = 0; i < tags.size(); i++) {
 				bool has_feature = OS::get_singleton()->has_feature(tags[i]);
 
 				if (!has_feature) {
@@ -202,7 +202,7 @@ void GDNativeLibrary::set_config_file(Ref<ConfigFile> p_config_file) {
 			std::vector<String> tags = key.split(".");
 
 			bool skip = false;
-			for (int i = 0; i < tags.size(); i++) {
+			for (decltype(tags.size()) i = 0; i < tags.size(); i++) {
 				bool has_feature = OS::get_singleton()->has_feature(tags[i]);
 
 				if (!has_feature) {

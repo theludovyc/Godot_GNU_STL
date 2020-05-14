@@ -247,7 +247,7 @@ public:
 	}
 
 	void get_custom_defines(std::vector<String> *p_defines) {
-		for (int i = 0; i < custom_defines.size(); i++) {
+		for (decltype(custom_defines.size()) i = 0; i < custom_defines.size(); i++) {
 			p_defines->push_back(custom_defines[i].get_data());
 		}
 	}

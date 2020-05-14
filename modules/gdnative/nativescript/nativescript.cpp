@@ -1289,7 +1289,7 @@ int NativeScriptLanguage::register_binding_functions(godot_instance_binding_func
 
 	int idx = -1;
 
-	for (int i = 0; i < binding_functions.size(); i++) {
+	for (decltype(binding_functions.size()) i = 0; i < binding_functions.size(); i++) {
 		if (!binding_functions[i].first) {
 			// free, we'll take it
 			idx = i;
@@ -1310,12 +1310,14 @@ int NativeScriptLanguage::register_binding_functions(godot_instance_binding_func
 }
 
 void NativeScriptLanguage::unregister_binding_functions(int p_idx) {
-	ERR_FAIL_INDEX(p_idx, binding_functions.size());
+	int len_func = binding_functions.size();
+	ERR_FAIL_INDEX(p_idx, len_func);
 
 	for (Set<std::vector<void *> *>::Element *E = binding_instances.front(); E; E = E->next()) {
 		std::vector<void *> &binding_data = *E->get();
 
-		if (p_idx < binding_data.size() && binding_data[p_idx] && binding_functions[p_idx].second.free_instance_binding_data)
+		int len = binding_data.size();
+		if (p_idx < len && binding_data[p_idx] && binding_functions[p_idx].second.free_instance_binding_data)
 			binding_functions[p_idx].second.free_instance_binding_data(binding_functions[p_idx].second.data, binding_data[p_idx]);
 	}
 
@@ -1326,7 +1328,8 @@ void NativeScriptLanguage::unregister_binding_functions(int p_idx) {
 }
 
 void *NativeScriptLanguage::get_instance_binding_data(int p_idx, Object *p_object) {
-	ERR_FAIL_INDEX_V(p_idx, binding_functions.size(), NULL);
+	int len_func = binding_functions.size();
+	ERR_FAIL_INDEX_V(p_idx, len_func, NULL);
 
 	ERR_FAIL_COND_V_MSG(!binding_functions[p_idx].first, NULL, "Tried to get binding data for a nativescript binding that does not exist.");
 
@@ -1335,7 +1338,8 @@ void *NativeScriptLanguage::get_instance_binding_data(int p_idx, Object *p_objec
 	if (!binding_data)
 		return NULL; // should never happen.
 
-	if (binding_data->size() <= p_idx) {
+	int len = binding_data->size();
+	if (len <= p_idx) {
 		// okay, add new elements here.
 		int old_size = binding_data->size();
 
@@ -1363,7 +1367,7 @@ void *NativeScriptLanguage::alloc_instance_binding_data(Object *p_object) {
 
 	binding_data->resize(binding_functions.size());
 
-	for (int i = 0; i < binding_functions.size(); i++) {
+	for (decltype(binding_functions.size()) i = 0; i < binding_functions.size(); i++) {
 		(*binding_data)[i] = NULL;
 	}
 
@@ -1379,7 +1383,7 @@ void NativeScriptLanguage::free_instance_binding_data(void *p_data) {
 
 	std::vector<void *> &binding_data = *(std::vector<void *> *)p_data;
 
-	for (int i = 0; i < binding_data.size(); i++) {
+	for (decltype(binding_data.size()) i = 0; i < binding_data.size(); i++) {
 		if (!binding_data[i])
 			continue;
 
@@ -1402,7 +1406,7 @@ void NativeScriptLanguage::refcount_incremented_instance_binding(Object *p_objec
 
 	std::vector<void *> &binding_data = *(std::vector<void *> *)data;
 
-	for (int i = 0; i < binding_data.size(); i++) {
+	for (decltype(binding_data.size()) i = 0; i < binding_data.size(); i++) {
 		if (!binding_data[i])
 			continue;
 
@@ -1426,7 +1430,7 @@ bool NativeScriptLanguage::refcount_decremented_instance_binding(Object *p_objec
 
 	bool can_die = true;
 
-	for (int i = 0; i < binding_data.size(); i++) {
+	for (decltype(binding_data.size()) i = 0; i < binding_data.size(); i++) {
 		if (!binding_data[i])
 			continue;
 

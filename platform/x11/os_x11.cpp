@@ -266,7 +266,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 			String ld_library_path(getenv("LD_LIBRARY_PATH"));
 			std::vector<String> libraries = ld_library_path.split(":");
 
-			for (int i = 0; i < libraries.size(); ++i) {
+			for (decltype(libraries.size()) i = 0; i < libraries.size(); ++i) {
 				if (FileAccess::exists(libraries[i] + "/libGL.so.1") ||
 						FileAccess::exists(libraries[i] + "/libGL.so")) {
 
@@ -2100,7 +2100,7 @@ void OS_X11::process_xevents() {
 			if (event.xcookie.type == GenericEvent && event.xcookie.extension == xi.opcode) {
 
 				XIDeviceEvent *event_data = (XIDeviceEvent *)event.xcookie.data;
-				int index = event_data->detail;
+				[[maybe_unused]] int index = event_data->detail;
 				Vector2 pos = Vector2(event_data->event_x, event_data->event_y);
 
 				switch (event_data->evtype) {
@@ -2594,7 +2594,7 @@ void OS_X11::process_xevents() {
 					Property p = read_property(x11_display, x11_window, XInternAtom(x11_display, "PRIMARY", 0));
 
 					std::vector<String> files = String((char *)p.data).split("\n", false);
-					for (int i = 0; i < files.size(); i++) {
+					for (decltype(files.size()) i = 0; i < files.size(); i++) {
 						files[i] = files[i].replace("file://", "").http_unescape().strip_edges();
 					}
 					main_loop->drop_files(files);
@@ -3105,7 +3105,7 @@ void OS_X11::alert(const String &p_alert, const String &p_title) {
 	std::vector<String> path_elems = path.split(":", false);
 	String program;
 
-	for (int i = 0; i < path_elems.size(); i++) {
+	for (decltype(path_elems.size()) i = 0; i < path_elems.size(); i++) {
 		for (uint64_t k = 0; k < sizeof(message_programs) / sizeof(char *); k++) {
 			String tested_path = path_elems[i].plus_file(message_programs[k]);
 

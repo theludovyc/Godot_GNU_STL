@@ -343,7 +343,7 @@ void CSGShapeSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 	{
 		PoolVector<Vector3>::Read r = faces.read();
 
-		for (int i = 0; i < lines.size(); i += 6) {
+		for (decltype(lines.size()) i = 0; i < lines.size(); i += 6) {
 			int f = i / 6;
 			for (int j = 0; j < 3; j++) {
 				int j_n = (j + 1) % 3;

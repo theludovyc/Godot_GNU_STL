@@ -722,7 +722,8 @@ size_t NetworkedMultiplayerENet::enet_compress(void *context, const ENetBuffer *
 	}
 
 	int req_size = Compression::get_max_compressed_buffer_size(ofs, mode);
-	if (enet->dst_compressor_mem.size() < req_size) {
+	int len = enet->dst_compressor_mem.size();
+	if (len < req_size) {
 		enet->dst_compressor_mem.resize(req_size);
 	}
 	int ret = Compression::compress(enet->dst_compressor_mem.data(), enet->src_compressor_mem.data(), ofs, mode);
