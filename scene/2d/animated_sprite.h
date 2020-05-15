@@ -87,7 +87,7 @@ public:
 		const Map<StringName, Anim>::Element *E = animations.find(p_anim);
 		ERR_FAIL_COND_V_MSG(!E, Ref<Texture>(), "Animation '" + String(p_anim) + "' doesn't exist.");
 		ERR_FAIL_COND_V(p_idx < 0, Ref<Texture>());
-		if (p_idx >= E->get().frames.size())
+		if (p_idx >= static_cast<int>(E->get().frames.size()))
 			return Ref<Texture>();
 
 		return E->get().frames[p_idx];
@@ -101,7 +101,7 @@ public:
 
 		const Map<StringName, Anim>::Element *EN = animations.find(E->get().normal_name);
 
-		if (!EN || p_idx >= EN->get().frames.size())
+		if (!EN || p_idx >= static_cast<int>(EN->get().frames.size()))
 			return Ref<Texture>();
 
 		return EN->get().frames[p_idx];
@@ -111,7 +111,7 @@ public:
 		Map<StringName, Anim>::Element *E = animations.find(p_anim);
 		ERR_FAIL_COND_MSG(!E, "Animation '" + String(p_anim) + "' doesn't exist.");
 		ERR_FAIL_COND(p_idx < 0);
-		if (p_idx >= E->get().frames.size())
+		if (p_idx >= static_cast<int>(E->get().frames.size()))
 			return;
 		E->get().frames[p_idx] = p_frame;
 	}
