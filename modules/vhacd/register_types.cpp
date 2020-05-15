@@ -39,7 +39,7 @@ static std::vector<std::vector<Face3> > convex_decompose(const std::vector<Face3
 	std::vector<uint32_t> indices;
 	indices.resize(p_faces.size() * 3);
 
-	for (int i = 0; i < p_faces.size(); i++) {
+	for (decltype(p_faces.size()) i = 0; i < p_faces.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			vertices[i * 9 + j * 3 + 0] = p_faces[i].vertex[j].x;
 			vertices[i * 9 + j * 3 + 1] = p_faces[i].vertex[j].y;
