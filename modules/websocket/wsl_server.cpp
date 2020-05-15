@@ -79,10 +79,10 @@ bool WSLServer::PendingPeer::_parse_request(const std::vector<String> p_protocol
 	key = headers["sec-websocket-key"];
 	if (headers.has("sec-websocket-protocol")) {
 		std::vector<String> protos = headers["sec-websocket-protocol"].split(",");
-		for (int i = 0; i < protos.size(); i++) {
+		for (decltype(protos.size()) i = 0; i < protos.size(); i++) {
 			String proto = protos[i].strip_edges();
 			// Check if we have the given protocol
-			for (int j = 0; j < p_protocols.size(); j++) {
+			for (decltype(p_protocols.size()) j = 0; j < p_protocols.size(); j++) {
 				if (proto != p_protocols[j])
 					continue;
 				protocol = proto;
@@ -162,7 +162,7 @@ Error WSLServer::listen(int p_port, const std::vector<String> p_protocols, bool 
 	// Strip edges from protocols.
 	_protocols.resize(p_protocols.size());
 	String *pw = _protocols.data();
-	for (int i = 0; i < p_protocols.size(); i++) {
+	for (decltype(p_protocols.size()) i = 0; i < p_protocols.size(); i++) {
 		pw[i] = p_protocols[i].strip_edges();
 	}
 	return _server->listen(p_port, bind_ip);
