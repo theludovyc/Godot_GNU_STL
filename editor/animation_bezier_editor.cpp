@@ -682,7 +682,7 @@ void AnimationBezierTrackEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 		}
 
-		for (int i = 0; i < edit_points.size(); i++) {
+		for (decltype(edit_points.size()) i = 0; i < edit_points.size(); i++) {
 
 			//first check point
 			//command makes it ignore the main point, so control point editors can be force-edited
@@ -807,7 +807,7 @@ void AnimationBezierTrackEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 			Rect2 selection_rect(bs_from, bs_to - bs_from);
 
-			for (int i = 0; i < edit_points.size(); i++) {
+			for (decltype(edit_points.size()) i = 0; i < edit_points.size(); i++) {
 
 				if (edit_points[i].point_rect.intersects(selection_rect)) {
 					selection.insert(i);
