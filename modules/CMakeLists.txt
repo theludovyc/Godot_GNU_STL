@@ -40,7 +40,7 @@ foreach(directorie ${directories})
                 # doc class path
                 file(GLOB doc_classes "${directorie}/doc_classes/*.xml")
                 foreach(doc_class ${doc_classes})
-                    get_filename_component(class ${doc_class} NAME_WLE)
+                    get_filename_component(class ${doc_class} NAME_WE)
                     MATH(EXPR number_class "${number_class}+1")
                     string(APPEND doc_data_class_paths "    {\"${class}\", \"modules/${moduleName}/doc_classes\"},\n")
                 endforeach()

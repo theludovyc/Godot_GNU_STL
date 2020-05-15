@@ -34,8 +34,8 @@ set(c "src/pcre2_auto_possess.c"
 add_library(${PROJECT_NAME}-16 ${header} ${c})
 add_library(${PROJECT_NAME}-32 ${header} ${c})
 
-target_include_directories(${PROJECT_NAME}-16 PUBLIC ".")
-target_include_directories(${PROJECT_NAME}-32 PUBLIC ".")
+target_include_directories(${PROJECT_NAME}-16 PUBLIC "./src")
+target_include_directories(${PROJECT_NAME}-32 PUBLIC "./src")
 
 target_compile_definitions(${PROJECT_NAME}-16 PRIVATE -DPCRE2_STATIC -DHAVE_CONFIG_H)
 target_compile_definitions(${PROJECT_NAME}-32 PRIVATE -DPCRE2_STATIC -DHAVE_CONFIG_H)

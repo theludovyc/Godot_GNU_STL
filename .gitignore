@@ -93,6 +93,7 @@ logs/
 [Rr]elease/
 x64/
 build/
+build_*
 bld/
 [Bb]in/
 [Oo]bj/
@@ -346,3 +347,7 @@ compile_commands.json
 
 # Cppcheck
 *.cppcheck
+
+
+# for build with docker
+.env

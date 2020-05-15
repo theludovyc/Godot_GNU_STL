@@ -65,3 +65,5 @@ add_library(${PROJECT_NAME} ${header} ${c})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -DFT2_BUILD_LIBRARY -DFT_CONFIG_OPTION_USE_PNG)
 target_include_directories(${PROJECT_NAME} PUBLIC "./include")
+
+target_link_libraries(${PROJECT_NAME} PRIVATE png)

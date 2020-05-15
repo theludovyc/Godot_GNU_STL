@@ -18,3 +18,5 @@ if(use_neon)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -DPNG_ARM_NEON_OPT=0)
 endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC ".")

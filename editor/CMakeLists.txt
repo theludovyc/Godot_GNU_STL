@@ -97,5 +97,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE godotModules)
 # godotScene
 target_link_libraries(${PROJECT_NAME} PRIVATE godotScene)
 
+# TODO : see for remove
+add_dependencies(${PROJECT_NAME} godotMain)
+
 # TODO : need to be change
 target_link_libraries(${PROJECT_NAME} PRIVATE module_svg module_gdscript)
