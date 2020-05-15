@@ -53,5 +53,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE godotModules)
 
 if(NOT tools)
     # godotEditor
-    target_link_libraries(${PROJECT_NAME} PRIVATE godotEditor)
+    target_link_libraries(${PROJECT_NAME}-linux PRIVATE godotEditor)
 endif()

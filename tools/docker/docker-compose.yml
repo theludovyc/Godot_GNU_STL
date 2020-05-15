@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  linux:
+    depends_on:
+      - base
+    build: linux
+    image: godot/build_linux
+    volumes:
+      - ../../:/build
+    env_file:
+      - ".env"
+    user: ${UID}:${GID}
+
+  base:
+    build: base
+    image: godot/build_base
