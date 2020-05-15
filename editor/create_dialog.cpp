@@ -378,7 +378,7 @@ void CreateDialog::_update_search() {
 			//there are custom types based on this... cool.
 
 			const std::vector<EditorData::CustomType> &ct = EditorNode::get_editor_data().get_custom_types()[type];
-			for (int i = 0; i < ct.size(); i++) {
+			for (decltype(ct.size()) i = 0; i < ct.size(); i++) {
 
 				bool show = search_box->get_text().is_subsequence_ofi(ct[i].name);
 
@@ -589,7 +589,7 @@ void CreateDialog::_save_favorite_list() {
 
 	if (f) {
 
-		for (int i = 0; i < favorite_list.size(); i++) {
+		for (decltype(favorite_list.size()) i = 0; i < favorite_list.size(); i++) {
 			String l = favorite_list[i];
 			String name = l.split(" ")[0];
 			if (!(ClassDB::class_exists(name) || ScriptServer::is_global_class(name)))
@@ -604,7 +604,7 @@ void CreateDialog::_update_favorite_list() {
 
 	favorites->clear();
 	TreeItem *root = favorites->create_item();
-	for (int i = 0; i < favorite_list.size(); i++) {
+	for (decltype(favorite_list.size()) i = 0; i < favorite_list.size(); i++) {
 		String l = favorite_list[i];
 		String name = l.split(" ")[0];
 		if (!((ClassDB::class_exists(name) || ScriptServer::is_global_class(name)) && !_is_class_disabled_by_feature_profile(name)))
@@ -711,7 +711,7 @@ void CreateDialog::drop_data_fw(const Point2 &p_point, const Variant &p_data, Co
 	if (ds < 0) {
 		favorite_list.insert(favorite_list.begin() + drop_idx, type);
 	} else {
-		if (drop_idx >= favorite_list.size() - 1) {
+		if (drop_idx >= static_cast<int>(favorite_list.size()) - 1) {
 			favorite_list.push_back(type);
 		} else {
 			favorite_list.insert(favorite_list.begin() + drop_idx + 1, type);
