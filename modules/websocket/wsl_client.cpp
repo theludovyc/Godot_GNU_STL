@@ -141,7 +141,7 @@ bool WSLClient::_verify_headers(String &r_protocol) {
 		ERR_FAIL_COND_V(!headers.has("sec-websocket-protocol"), false);
 		r_protocol = headers["sec-websocket-protocol"];
 		bool valid = false;
-		for (int i = 0; i < _protocols.size(); i++) {
+		for (decltype(_protocols.size()) i = 0; i < _protocols.size(); i++) {
 			if (_protocols[i] != r_protocol)
 				continue;
 			valid = true;
@@ -185,7 +185,7 @@ Error WSLClient::connect_to_host(String p_host, String p_path, uint16_t p_port, 
 	// Strip edges from protocols.
 	_protocols.resize(p_protocols.size());
 	String *pw = _protocols.data();
-	for (int i = 0; i < p_protocols.size(); i++) {
+	for (decltype(p_protocols.size()) i = 0; i < p_protocols.size(); i++) {
 		pw[i] = p_protocols[i].strip_edges();
 	}
 
@@ -199,14 +199,14 @@ Error WSLClient::connect_to_host(String p_host, String p_path, uint16_t p_port, 
 	request += "Sec-WebSocket-Version: 13\r\n";
 	if (p_protocols.size() > 0) {
 		request += "Sec-WebSocket-Protocol: ";
-		for (int i = 0; i < p_protocols.size(); i++) {
+		for (decltype(p_protocols.size()) i = 0; i < p_protocols.size(); i++) {
 			if (i != 0)
 				request += ",";
 			request += p_protocols[i];
 		}
 		request += "\r\n";
 	}
-	for (int i = 0; i < p_custom_headers.size(); i++) {
+	for (decltype(p_custom_headers.size()) i = 0; i < p_custom_headers.size(); i++) {
 		request += p_custom_headers[i] + "\r\n";
 	}
 	request += "\r\n";
