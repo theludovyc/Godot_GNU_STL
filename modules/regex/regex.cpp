@@ -50,7 +50,7 @@ int RegExMatch::_find(const Variant &p_name) const {
 	if (p_name.is_num()) {
 
 		int i = (int)p_name;
-		if (i >= data.size())
+		if (i >= static_cast<int>(data.size()))
 			return -1;
 		return i;
 
