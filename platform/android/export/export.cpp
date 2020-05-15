@@ -278,7 +278,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 				std::vector<String> ds = devices.split("\n");
 				std::vector<String> ldevices;
-				for (int i = 1; i < ds.size(); i++) {
+				for (decltype(ds.size()) i = 1; i < ds.size(); i++) {
 
 					String d = ds[i];
 					int dpos = d.find("device");
@@ -297,7 +297,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 					different = true;
 				} else {
 
-					for (int i = 0; i < ea->devices.size(); i++) {
+					for (decltype(ea->devices.size()) i = 0; i < ea->devices.size(); i++) {
 
 						if (ea->devices[i].id != ldevices[i]) {
 							different = true;
@@ -310,11 +310,11 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 					std::vector<Device> ndevices;
 
-					for (int i = 0; i < ldevices.size(); i++) {
+					for (decltype(ldevices.size()) i = 0; i < ldevices.size(); i++) {
 
 						Device d;
 						d.id = ldevices[i];
-						for (int j = 0; j < ea->devices.size(); j++) {
+						for (decltype(ea->devices.size()) j = 0; j < ea->devices.size(); j++) {
 							if (ea->devices[j].id == ldevices[i]) {
 								d.description = ea->devices[j].description;
 								d.name = ea->devices[j].name;
@@ -339,7 +339,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 							String device;
 							d.description = "Device ID: " + d.id + "\n";
 							d.api_level = 0;
-							for (int j = 0; j < props.size(); j++) {
+							for (decltype(props.size()) j = 0; j < props.size(); j++) {
 
 								// got information by `shell cat /system/build.prop` before and its format is "property=value"
 								// it's now changed to use `shell getporp` because of permission issue with Android 8.0 and above
@@ -616,7 +616,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		APKExportData *ed = (APKExportData *)p_userdata;
 		std::vector<String> abis = get_abis();
 		bool exported = false;
-		for (int i = 0; i < p_so.tags.size(); ++i) {
+		for (decltype(p_so.tags.size()) i = 0; i < p_so.tags.size(); ++i) {
 			// shared objects can be fat (compatible with multiple ABIs)
 			int abi_index = std_h::getIndex(abis, p_so.tags[i]);
 			if (abi_index != -1) {
@@ -935,7 +935,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 								attr_required_string = string_table.size() - 1;
 							}
 
-							for (int i = 0; i < feature_names.size(); i++) {
+							for (decltype(feature_names.size()) i = 0; i < feature_names.size(); i++) {
 								String feature_name = feature_names[i];
 								bool feature_required = feature_required_list[i];
 								int feature_version = feature_versions[i];
@@ -1066,7 +1066,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 							attr_uses_permission_string = string_table.size() - 1;
 						}
 
-						for (int i = 0; i < perms.size(); ++i) {
+						for (decltype(perms.size()) i = 0; i < perms.size(); ++i) {
 							print_line("Adding permission " + perms[i]);
 
 							manifest_cur_size += 56 + 24; // node + end node
@@ -1137,7 +1137,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		}
 
 		ofs = 0;
-		for (int i = 0; i < string_table.size(); i++) {
+		for (decltype(string_table.size()) i = 0; i < string_table.size(); i++) {
 
 			encode_uint32(ofs, &ret[string_table_begins + i * 4]);
 			ofs += string_table[i].length() * 2 + 2 + 2;
@@ -1146,7 +1146,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		ret.resize(ret.size() + ofs);
 		string_data_offset = ret.size() - ofs;
 		uint8_t *chars = &ret[string_data_offset];
-		for (int i = 0; i < string_table.size(); i++) {
+		for (decltype(string_table.size()) i = 0; i < string_table.size(); i++) {
 
 			String s = string_table[i];
 			encode_uint16(s.length(), chars);
@@ -1159,7 +1159,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 			chars += 2;
 		}
 
-		for (int i = 0; i < stable_extra.size(); i++) {
+		for (decltype(stable_extra.size()) i = 0; i < stable_extra.size(); i++) {
 			ret.push_back(stable_extra[i]);
 		}
 
@@ -1289,7 +1289,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		}
 
 		int ofs = 0;
-		for (int i = 0; i < string_table.size(); i++) {
+		for (decltype(string_table.size()) i = 0; i < string_table.size(); i++) {
 
 			encode_uint32(ofs, &ret[string_table_begins + i * 4]);
 			ofs += string_table[i].length() * 2 + 2 + 2;
@@ -1297,7 +1297,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 		ret.resize(ret.size() + ofs);
 		uint8_t *chars = &ret[ret.size() - ofs];
-		for (int i = 0; i < string_table.size(); i++) {
+		for (decltype(string_table.size()) i = 0; i < string_table.size(); i++) {
 
 			String s = string_table[i];
 			encode_uint16(s.length(), chars);
@@ -1357,7 +1357,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 	static std::vector<String> get_enabled_abis(const Ref<EditorExportPreset> &p_preset) {
 		std::vector<String> abis = get_abis();
 		std::vector<String> enabled_abis;
-		for (int i = 0; i < abis.size(); ++i) {
+		for (decltype(abis.size()) i = 0; i < abis.size(); ++i) {
 			bool is_enabled = p_preset->get("architectures/" + abis[i]);
 			if (is_enabled) {
 				enabled_abis.push_back(abis[i]);
@@ -1383,7 +1383,7 @@ public:
 		}
 
 		std::vector<String> abis = get_enabled_abis(p_preset);
-		for (int i = 0; i < abis.size(); ++i) {
+		for (decltype(abis.size()) i = 0; i < abis.size(); ++i) {
 			r_features->push_back(abis[i]);
 		}
 	}
@@ -1426,7 +1426,7 @@ public:
 		r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "apk_expansion/public_key", PROPERTY_HINT_MULTILINE_TEXT), ""));
 
 		std::vector<String> abis = get_abis();
-		for (int i = 0; i < abis.size(); ++i) {
+		for (decltype(abis.size()) i = 0; i < abis.size(); ++i) {
 			String abi = abis[i];
 			bool is_default = (abi == "armeabi-v7a" || abi == "arm64-v8a");
 			r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "architectures/" + abi), is_default));
@@ -1480,7 +1480,7 @@ public:
 
 	virtual String get_option_label(int p_index) const {
 
-		ERR_FAIL_INDEX_V(p_index, devices.size(), "");
+		ERR_FAIL_INDEX_V(p_index, static_cast<int>(devices.size()), "");
 		device_lock->lock();
 		String s = devices[p_index].name;
 		device_lock->unlock();
@@ -1489,7 +1489,7 @@ public:
 
 	virtual String get_option_tooltip(int p_index) const {
 
-		ERR_FAIL_INDEX_V(p_index, devices.size(), "");
+		ERR_FAIL_INDEX_V(p_index, static_cast<int>(devices.size()), "");
 		device_lock->lock();
 		String s = devices[p_index].description;
 		if (devices.size() == 1) {
@@ -1504,7 +1504,7 @@ public:
 
 	virtual Error run(const Ref<EditorExportPreset> &p_preset, int p_device, int p_debug_flags) {
 
-		ERR_FAIL_INDEX_V(p_device, devices.size(), ERR_INVALID_PARAMETER);
+		ERR_FAIL_INDEX_V(p_device, static_cast<int>(devices.size()), ERR_INVALID_PARAMETER);
 
 		String can_export_error;
 		bool can_export_missing_templates;
@@ -2296,7 +2296,7 @@ public:
 
 			if (file.ends_with(".so")) {
 				bool enabled = false;
-				for (int i = 0; i < enabled_abis.size(); ++i) {
+				for (decltype(enabled_abis.size()) i = 0; i < enabled_abis.size(); ++i) {
 					if (file.begins_with("lib/" + enabled_abis[i] + "/")) {
 						std_h::erase(invalid_abis, enabled_abis[i]);
 						enabled = true;
@@ -2350,7 +2350,7 @@ public:
 		}
 		Error err = OK;
 		std::vector<String> cl = cmdline.strip_edges().split(" ");
-		for (int i = 0; i < cl.size(); i++) {
+		for (int i = 0; i < static_cast<int>(cl.size()); i++) {
 			if (cl[i].strip_edges().length() == 0) {
 				cl.erase(cl.begin() + i);
 				i--;
@@ -2419,7 +2419,7 @@ public:
 			std::vector<uint8_t> clf;
 			clf.resize(4);
 			encode_uint32(cl.size(), &clf[0]);
-			for (int i = 0; i < cl.size(); i++) {
+			for (decltype(cl.size()) i = 0; i < cl.size(); i++) {
 
 				print_line(itos(i) + " param: " + cl[i]);
 				CharString txt = cl[i].utf8();
