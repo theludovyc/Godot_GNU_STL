@@ -3651,9 +3651,9 @@ void RasterizerStorageGLES3::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 
 	ERR_FAIL_COND(p_index_array.size() != index_array_size);
 
-	ERR_FAIL_COND(p_blend_shapes.size() != mesh->blend_shape_count);
+	ERR_FAIL_COND(static_cast<int>(p_blend_shapes.size()) != mesh->blend_shape_count);
 
-	for (int i = 0; i < p_blend_shapes.size(); i++) {
+	for (decltype(p_blend_shapes.size()) i = 0; i < p_blend_shapes.size(); i++) {
 		ERR_FAIL_COND(p_blend_shapes[i].size() != array_size);
 	}
 
@@ -3675,7 +3675,7 @@ void RasterizerStorageGLES3::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 	surface->max_bone = p_bone_aabbs.size();
 	surface->total_data_size += surface->array_byte_size + surface->index_array_byte_size;
 
-	for (int i = 0; i < surface->skeleton_bone_used.size(); i++) {
+	for (decltype(surface->skeleton_bone_used.size()) i = 0; i < surface->skeleton_bone_used.size(); i++) {
 		if (surface->skeleton_bone_aabb[i].size.x < 0 || surface->skeleton_bone_aabb[i].size.y < 0 || surface->skeleton_bone_aabb[i].size.z < 0) {
 			surface->skeleton_bone_used[i] = false;
 		} else {
@@ -3855,7 +3855,7 @@ void RasterizerStorageGLES3::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 
 		//blend shapes
 
-		for (int i = 0; i < p_blend_shapes.size(); i++) {
+		for (decltype(p_blend_shapes.size()) i = 0; i < p_blend_shapes.size(); i++) {
 
 			Surface::BlendShape mt;
 
@@ -3936,7 +3936,7 @@ void RasterizerStorageGLES3::mesh_surface_update_region(RID p_mesh, int p_surfac
 
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	int total_size = p_data.size();
 	ERR_FAIL_COND(p_offset + total_size > mesh->surfaces[p_surface]->array_byte_size);
@@ -3952,7 +3952,7 @@ void RasterizerStorageGLES3::mesh_surface_set_material(RID p_mesh, int p_surface
 
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	if (mesh->surfaces[p_surface]->material == p_material)
 		return;
@@ -3973,7 +3973,7 @@ RID RasterizerStorageGLES3::mesh_surface_get_material(RID p_mesh, int p_surface)
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, RID());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), RID());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), RID());
 
 	return mesh->surfaces[p_surface]->material;
 }
@@ -3982,7 +3982,7 @@ int RasterizerStorageGLES3::mesh_surface_get_array_len(RID p_mesh, int p_surface
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->array_len;
 }
@@ -3990,7 +3990,7 @@ int RasterizerStorageGLES3::mesh_surface_get_array_index_len(RID p_mesh, int p_s
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->index_array_len;
 }
@@ -3999,7 +3999,7 @@ PoolVector<uint8_t> RasterizerStorageGLES3::mesh_surface_get_array(RID p_mesh, i
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, PoolVector<uint8_t>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), PoolVector<uint8_t>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), PoolVector<uint8_t>());
 
 	Surface *surface = mesh->surfaces[p_surface];
 
@@ -4029,7 +4029,7 @@ PoolVector<uint8_t> RasterizerStorageGLES3::mesh_surface_get_array(RID p_mesh, i
 PoolVector<uint8_t> RasterizerStorageGLES3::mesh_surface_get_index_array(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, PoolVector<uint8_t>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), PoolVector<uint8_t>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), PoolVector<uint8_t>());
 
 	Surface *surface = mesh->surfaces[p_surface];
 
@@ -4065,7 +4065,7 @@ uint32_t RasterizerStorageGLES3::mesh_surface_get_format(RID p_mesh, int p_surfa
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->format;
 }
@@ -4074,7 +4074,7 @@ VS::PrimitiveType RasterizerStorageGLES3::mesh_surface_get_primitive_type(RID p_
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, VS::PRIMITIVE_MAX);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), VS::PRIMITIVE_MAX);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), VS::PRIMITIVE_MAX);
 
 	return mesh->surfaces[p_surface]->primitive;
 }
@@ -4083,7 +4083,7 @@ AABB RasterizerStorageGLES3::mesh_surface_get_aabb(RID p_mesh, int p_surface) co
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, AABB());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), AABB());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), AABB());
 
 	return mesh->surfaces[p_surface]->aabb;
 }
@@ -4091,11 +4091,11 @@ std::vector<PoolVector<uint8_t> > RasterizerStorageGLES3::mesh_surface_get_blend
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, std::vector<PoolVector<uint8_t> >());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), std::vector<PoolVector<uint8_t> >());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), std::vector<PoolVector<uint8_t> >());
 
 	std::vector<PoolVector<uint8_t> > bsarr;
 
-	for (int i = 0; i < mesh->surfaces[p_surface]->blend_shapes.size(); i++) {
+	for (decltype(mesh->surfaces[p_surface]->blend_shapes.size()) i = 0; i < mesh->surfaces[p_surface]->blend_shapes.size(); i++) {
 
 		PoolVector<uint8_t> ret;
 		ret.resize(mesh->surfaces[p_surface]->array_byte_size);
@@ -4126,7 +4126,7 @@ std::vector<AABB> RasterizerStorageGLES3::mesh_surface_get_skeleton_aabb(RID p_m
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, std::vector<AABB>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), std::vector<AABB>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), std::vector<AABB>());
 
 	return mesh->surfaces[p_surface]->skeleton_bone_aabb;
 }
@@ -4135,7 +4135,7 @@ void RasterizerStorageGLES3::mesh_remove_surface(RID p_mesh, int p_surface) {
 
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	Surface *surface = mesh->surfaces[p_surface];
 
@@ -4151,7 +4151,7 @@ void RasterizerStorageGLES3::mesh_remove_surface(RID p_mesh, int p_surface) {
 	glDeleteVertexArrays(1, &surface->array_id);
 	glDeleteVertexArrays(1, &surface->instancing_array_id);
 
-	for (int i = 0; i < surface->blend_shapes.size(); i++) {
+	for (decltype(surface->blend_shapes.size()) i = 0; i < surface->blend_shapes.size(); i++) {
 
 		glDeleteBuffers(1, &surface->blend_shapes[i].vertex_id);
 		glDeleteVertexArrays(1, &surface->blend_shapes[i].array_id);
@@ -4214,7 +4214,7 @@ AABB RasterizerStorageGLES3::mesh_get_aabb(RID p_mesh, RID p_skeleton) const {
 
 	if (sk && sk->size != 0) {
 
-		for (int i = 0; i < mesh->surfaces.size(); i++) {
+		for (decltype(mesh->surfaces.size()) i = 0; i < mesh->surfaces.size(); i++) {
 
 			AABB laabb;
 			if ((mesh->surfaces[i]->format & VS::ARRAY_FORMAT_BONES) && mesh->surfaces[i]->skeleton_bone_aabb.size()) {
@@ -4302,7 +4302,7 @@ AABB RasterizerStorageGLES3::mesh_get_aabb(RID p_mesh, RID p_skeleton) const {
 		}
 	} else {
 
-		for (int i = 0; i < mesh->surfaces.size(); i++) {
+		for (decltype(mesh->surfaces.size()) i = 0; i < mesh->surfaces.size(); i++) {
 
 			if (i == 0)
 				aabb = mesh->surfaces[i]->aabb;
@@ -6520,7 +6520,7 @@ void RasterizerStorageGLES3::particles_set_draw_pass_mesh(RID p_particles, int p
 
 	Particles *particles = particles_owner.getornull(p_particles);
 	ERR_FAIL_COND(!particles);
-	ERR_FAIL_INDEX(p_pass, particles->draw_passes.size());
+	ERR_FAIL_INDEX(p_pass, static_cast<int>(particles->draw_passes.size()));
 	particles->draw_passes[p_pass] = p_mesh;
 }
 
@@ -6588,7 +6588,7 @@ AABB RasterizerStorageGLES3::particles_get_current_aabb(RID p_particles) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	float longest_axis = 0;
-	for (int i = 0; i < particles->draw_passes.size(); i++) {
+	for (decltype(particles->draw_passes.size()) i = 0; i < particles->draw_passes.size(); i++) {
 		if (particles->draw_passes[i].is_valid()) {
 			AABB maabb = mesh_get_aabb(particles->draw_passes[i], RID());
 			longest_axis = MAX(maabb.get_longest_axis_size(), longest_axis);
@@ -6628,7 +6628,7 @@ RID RasterizerStorageGLES3::particles_get_draw_pass_mesh(RID p_particles, int p_
 
 	const Particles *particles = particles_owner.getornull(p_particles);
 	ERR_FAIL_COND_V(!particles, RID());
-	ERR_FAIL_INDEX_V(p_pass, particles->draw_passes.size(), RID());
+	ERR_FAIL_INDEX_V(p_pass, static_cast<int>(particles->draw_passes.size()), RID());
 
 	return particles->draw_passes[p_pass];
 }
@@ -7038,7 +7038,7 @@ void RasterizerStorageGLES3::_render_target_clear(RenderTarget *rt) {
 		glDeleteTextures(1, &rt->effects.ssao.blur_red[0]);
 		glDeleteFramebuffers(1, &rt->effects.ssao.blur_fbo[1]);
 		glDeleteTextures(1, &rt->effects.ssao.blur_red[1]);
-		for (int i = 0; i < rt->effects.ssao.depth_mipmap_fbos.size(); i++) {
+		for (decltype(rt->effects.ssao.depth_mipmap_fbos.size()) i = 0; i < rt->effects.ssao.depth_mipmap_fbos.size(); i++) {
 			glDeleteFramebuffers(1, &rt->effects.ssao.depth_mipmap_fbos[i]);
 		}
 
@@ -7082,7 +7082,7 @@ void RasterizerStorageGLES3::_render_target_clear(RenderTarget *rt) {
 
 	for (int i = 0; i < 2; i++) {
 		if (rt->effects.mip_maps[i].color) {
-			for (int j = 0; j < rt->effects.mip_maps[i].sizes.size(); j++) {
+			for (decltype(rt->effects.mip_maps[i].sizes.size()) j = 0; j < rt->effects.mip_maps[i].sizes.size(); j++) {
 				glDeleteFramebuffers(1, &rt->effects.mip_maps[i].sizes[j].fbo);
 			}
 
@@ -7436,7 +7436,7 @@ void RasterizerStorageGLES3::_render_target_allocate(RenderTarget *rt) {
 				glDepthMask(GL_TRUE);
 			}
 
-			for (int j = 0; j < rt->effects.mip_maps[i].sizes.size(); j++) {
+			for (decltype(rt->effects.mip_maps[i].sizes.size()) j = 0; j < rt->effects.mip_maps[i].sizes.size(); j++) {
 
 				RenderTarget::Effects::MipMaps::Size &mm = rt->effects.mip_maps[i].sizes[j];
 
@@ -7951,7 +7951,7 @@ bool RasterizerStorageGLES3::free(RID p_rid) {
 				ins->material_override = RID();
 			}
 
-			for (int i = 0; i < ins->materials.size(); i++) {
+			for (decltype(ins->materials.size()) i = 0; i < ins->materials.size(); i++) {
 				if (ins->materials[i] == p_rid) {
 					ins->materials[i] = RID();
 				}
@@ -8433,7 +8433,7 @@ void RasterizerStorageGLES3::initialize() {
 
 		String vendors = GLOBAL_GET("rendering/quality/depth_prepass/disable_for_vendors");
 		std::vector<String> vendor_match = vendors.split(",");
-		for (int i = 0; i < vendor_match.size(); i++) {
+		for (decltype(vendor_match.size()) i = 0; i < vendor_match.size(); i++) {
 			String v = vendor_match[i].strip_edges();
 			if (v == String())
 				continue;
