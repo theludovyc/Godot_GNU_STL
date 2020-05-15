@@ -121,7 +121,7 @@ bool GridMap::_get(const StringName &p_name, Variant &r_ret) const {
 
 		Array ret;
 		ret.resize(baked_meshes.size());
-		for (int i = 0; i < baked_meshes.size(); i++) {
+		for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 			ret[i] = baked_meshes[i].mesh;
 		}
 		r_ret = ret;
@@ -397,7 +397,7 @@ void GridMap::_octant_transform(const OctantKey &p_key) {
 		VS::get_singleton()->instance_set_transform(g.collision_debug_instance, get_global_transform());
 	}
 
-	for (int i = 0; i < g.multimesh_instances.size(); i++) {
+	for (decltype(g.multimesh_instances.size()) i = 0; i < g.multimesh_instances.size(); i++) {
 		VS::get_singleton()->instance_set_transform(g.multimesh_instances[i].instance, get_global_transform());
 	}
 }
@@ -427,7 +427,7 @@ bool GridMap::_octant_update(const OctantKey &p_key) {
 
 	//erase multimeshes
 
-	for (int i = 0; i < g.multimesh_instances.size(); i++) {
+	for (decltype(g.multimesh_instances.size()) i = 0; i < g.multimesh_instances.size(); i++) {
 
 		VS::get_singleton()->free(g.multimesh_instances[i].instance);
 		VS::get_singleton()->free(g.multimesh_instances[i].multimesh);
@@ -481,7 +481,7 @@ bool GridMap::_octant_update(const OctantKey &p_key) {
 
 		std::vector<MeshLibrary::ShapeData> shapes = mesh_library->get_item_shapes(c.item);
 		// add the item's shape at given xform to octant's static_body
-		for (int i = 0; i < shapes.size(); i++) {
+		for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 			// add the item's shape
 			if (!shapes[i].shape.is_valid())
 				continue;
@@ -583,7 +583,7 @@ void GridMap::_octant_enter_world(const OctantKey &p_key) {
 		VS::get_singleton()->instance_set_transform(g.collision_debug_instance, get_global_transform());
 	}
 
-	for (int i = 0; i < g.multimesh_instances.size(); i++) {
+	for (decltype(g.multimesh_instances.size()) i = 0; i < g.multimesh_instances.size(); i++) {
 		VS::get_singleton()->instance_set_scenario(g.multimesh_instances[i].instance, get_world()->get_scenario());
 		VS::get_singleton()->instance_set_transform(g.multimesh_instances[i].instance, get_global_transform());
 	}
@@ -613,7 +613,7 @@ void GridMap::_octant_exit_world(const OctantKey &p_key) {
 		VS::get_singleton()->instance_set_scenario(g.collision_debug_instance, RID());
 	}
 
-	for (int i = 0; i < g.multimesh_instances.size(); i++) {
+	for (decltype(g.multimesh_instances.size()) i = 0; i < g.multimesh_instances.size(); i++) {
 		VS::get_singleton()->instance_set_scenario(g.multimesh_instances[i].instance, RID());
 	}
 
@@ -650,7 +650,7 @@ void GridMap::_octant_clean_up(const OctantKey &p_key) {
 
 	//erase multimeshes
 
-	for (int i = 0; i < g.multimesh_instances.size(); i++) {
+	for (decltype(g.multimesh_instances.size()) i = 0; i < g.multimesh_instances.size(); i++) {
 
 		VS::get_singleton()->free(g.multimesh_instances[i].instance);
 		VS::get_singleton()->free(g.multimesh_instances[i].multimesh);
@@ -680,7 +680,7 @@ void GridMap::_notification(int p_what) {
 				_octant_enter_world(E->key());
 			}
 
-			for (int i = 0; i < baked_meshes.size(); i++) {
+			for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 				VS::get_singleton()->instance_set_scenario(baked_meshes[i].instance, get_world()->get_scenario());
 				VS::get_singleton()->instance_set_transform(baked_meshes[i].instance, get_global_transform());
 			}
@@ -698,7 +698,7 @@ void GridMap::_notification(int p_what) {
 
 			last_transform = new_xform;
 
-			for (int i = 0; i < baked_meshes.size(); i++) {
+			for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 				VS::get_singleton()->instance_set_transform(baked_meshes[i].instance, get_global_transform());
 			}
 
@@ -714,7 +714,7 @@ void GridMap::_notification(int p_what) {
 			//_queue_octants_dirty(MAP_DIRTY_INSTANCES|MAP_DIRTY_TRANSFORMS);
 			//_update_octants_callback();
 			//_update_area_instances();
-			for (int i = 0; i < baked_meshes.size(); i++) {
+			for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 				VS::get_singleton()->instance_set_scenario(baked_meshes[i].instance, RID());
 			}
 
@@ -733,7 +733,7 @@ void GridMap::_update_visibility() {
 
 	for (Map<OctantKey, Octant *>::Element *e = octant_map.front(); e; e = e->next()) {
 		Octant *octant = e->value();
-		for (int i = 0; i < octant->multimesh_instances.size(); i++) {
+		for (decltype(octant->multimesh_instances.size()) i = 0; i < octant->multimesh_instances.size(); i++) {
 			const Octant::MultimeshInstance &mi = octant->multimesh_instances[i];
 			VS::get_singleton()->instance_set_visible(mi.instance, is_visible());
 		}
@@ -971,7 +971,7 @@ Vector3 GridMap::_get_offset() const {
 
 void GridMap::clear_baked_meshes() {
 
-	for (int i = 0; i < baked_meshes.size(); i++) {
+	for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 		VS::get_singleton()->free(baked_meshes[i].instance);
 	}
 	baked_meshes.clear();
@@ -1071,7 +1071,7 @@ Array GridMap::get_bake_meshes() {
 	}
 
 	Array arr;
-	for (int i = 0; i < baked_meshes.size(); i++) {
+	for (decltype(baked_meshes.size()) i = 0; i < baked_meshes.size(); i++) {
 		arr.push_back(baked_meshes[i].mesh);
 		arr.push_back(Transform());
 	}
@@ -1081,7 +1081,7 @@ Array GridMap::get_bake_meshes() {
 
 RID GridMap::get_bake_mesh_instance(int p_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx, baked_meshes.size(), RID());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(baked_meshes.size()), RID());
 	return baked_meshes[p_idx].instance;
 }
 
