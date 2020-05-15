@@ -114,13 +114,13 @@ static void _display_error_with_code(const String &p_error, const std::vector<co
 	int line = 1;
 	String total_code;
 
-	for (int i = 0; i < p_code.size(); i++) {
+	for (decltype(p_code.size()) i = 0; i < p_code.size(); i++) {
 		total_code += String(p_code[i]);
 	}
 
 	std::vector<String> lines = String(total_code).split("\n");
 
-	for (int j = 0; j < lines.size(); j++) {
+	for (decltype(lines.size()) j = 0; j < lines.size(); j++) {
 
 		print_line(itos(line) + ": " + lines[j]);
 		line++;
@@ -186,7 +186,7 @@ ShaderGLES2::Version *ShaderGLES2::get_current_version() {
 	strings.push_back("#define ANDROID_ENABLED\n");
 #endif
 
-	for (int i = 0; i < custom_defines.size(); i++) {
+	for (decltype(custom_defines.size()) i = 0; i < custom_defines.size(); i++) {
 
 		strings.push_back(custom_defines[i].get_data());
 		strings.push_back("\n");
@@ -221,7 +221,7 @@ ShaderGLES2::Version *ShaderGLES2::get_current_version() {
 	ERR_FAIL_COND_V(v.id == 0, NULL);
 
 	if (cc) {
-		for (int i = 0; i < cc->custom_defines.size(); i++) {
+		for (decltype(cc->custom_defines.size()) i = 0; i < cc->custom_defines.size(); i++) {
 			strings.push_back(cc->custom_defines[i]);
 			DEBUG_PRINT("CD #" + itos(i) + ": " + String(cc->custom_defines[i].get_data()));
 		}
@@ -441,14 +441,14 @@ ShaderGLES2::Version *ShaderGLES2::get_current_version() {
 
 	if (cc) {
 		// uniforms
-		for (int i = 0; i < cc->custom_uniforms.size(); i++) {
+		for (decltype(cc->custom_uniforms.size()) i = 0; i < cc->custom_uniforms.size(); i++) {
 			String native_uniform_name = _mkid(cc->custom_uniforms[i]);
 			GLint location = glGetUniformLocation(v.id, (native_uniform_name).ascii().get_data());
 			v.custom_uniform_locations[cc->custom_uniforms[i]] = location;
 		}
 
 		// textures
-		for (int i = 0; i < cc->texture_uniforms.size(); i++) {
+		for (decltype(cc->texture_uniforms.size()) i = 0; i < cc->texture_uniforms.size(); i++) {
 			String native_uniform_name = _mkid(cc->texture_uniforms[i]);
 			GLint location = glGetUniformLocation(v.id, (native_uniform_name).ascii().get_data());
 			v.custom_uniform_locations[cc->texture_uniforms[i]] = location;
