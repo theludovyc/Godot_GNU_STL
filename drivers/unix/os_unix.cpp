@@ -340,7 +340,7 @@ Error OS_Unix::execute(const String &p_path, const List<String> &p_arguments, bo
 			cs.push_back(p_arguments[i].utf8());
 
 		std::vector<char *> args;
-		for (int i = 0; i < cs.size(); i++)
+		for (decltype(cs.size()) i = 0; i < cs.size(); i++)
 			args.push_back((char *)cs[i].get_data());
 		args.push_back(0);
 
