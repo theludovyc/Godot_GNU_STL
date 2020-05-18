@@ -36,9 +36,9 @@
 
 void EditorProfiler::_make_metric_ptrs(Metric &m) {
 
-	for (int i = 0; i < m.categories.size(); i++) {
+	for (decltype(m.categories.size()) i = 0; i < m.categories.size(); i++) {
 		m.category_ptrs[m.categories[i].signature] = &m.categories[i];
-		for (int j = 0; j < m.categories[i].items.size(); j++) {
+		for (decltype(m.categories[i].items.size()) j = 0; j < m.categories[i].items.size(); j++) {
 			m.item_ptrs[m.categories[i].items[j].signature] = &m.categories[i].items[j];
 		}
 	}
@@ -47,7 +47,7 @@ void EditorProfiler::_make_metric_ptrs(Metric &m) {
 void EditorProfiler::add_frame_metric(const Metric &p_metric, bool p_final) {
 
 	++last_metric;
-	if (last_metric >= frame_metrics.size())
+	if (last_metric >= static_cast<int>(frame_metrics.size()))
 		last_metric = 0;
 
 	frame_metrics[last_metric] = p_metric;
@@ -61,7 +61,7 @@ void EditorProfiler::add_frame_metric(const Metric &p_metric, bool p_final) {
 		cursor_metric_edit->set_value(frame_metrics[last_metric].frame_number);
 		if (hover_metric != -1) {
 			hover_metric++;
-			if (hover_metric >= frame_metrics.size()) {
+			if (hover_metric >= static_cast<int>(frame_metrics.size())) {
 				hover_metric = 0;
 			}
 		}
@@ -191,7 +191,7 @@ void EditorProfiler::_update_plot() {
 	const bool use_self = display_time->get_selected() == DISPLAY_SELF_TIME;
 	float highest = 0;
 
-	for (int i = 0; i < frame_metrics.size(); i++) {
+	for (decltype(frame_metrics.size()) i = 0; i < frame_metrics.size(); i++) {
 		const Metric &m = frame_metrics[i];
 		if (!m.valid)
 			continue;
@@ -235,7 +235,7 @@ void EditorProfiler::_update_plot() {
 
 			int current = i * frame_metrics.size() / w;
 			int next = (i + 1) * frame_metrics.size() / w;
-			if (next > frame_metrics.size()) {
+			if (next > static_cast<int>(frame_metrics.size())) {
 				next = frame_metrics.size();
 			}
 			if (next == current)
@@ -249,7 +249,7 @@ void EditorProfiler::_update_plot() {
 
 					//wrap
 					int idx = last_metric + 1 + j;
-					while (idx >= frame_metrics.size()) {
+					while (idx >= static_cast<int>(frame_metrics.size())) {
 						idx -= frame_metrics.size();
 					}
 
@@ -366,7 +366,7 @@ void EditorProfiler::_update_frame() {
 
 	int cursor_metric = _get_cursor_index();
 
-	ERR_FAIL_INDEX(cursor_metric, frame_metrics.size());
+	ERR_FAIL_INDEX(cursor_metric, static_cast<int>(frame_metrics.size()));
 
 	updating_frame = true;
 	variables->clear();
@@ -376,7 +376,7 @@ void EditorProfiler::_update_frame() {
 
 	int dtime = display_time->get_selected();
 
-	for (int i = 0; i < m.categories.size(); i++) {
+	for (decltype(m.categories.size()) i = 0; i < m.categories.size(); i++) {
 
 		TreeItem *category = variables->create_item(root);
 		category->set_cell_mode(0, TreeItem::CELL_MODE_CHECK);
@@ -504,14 +504,14 @@ void EditorProfiler::_graph_tex_input(const Ref<InputEvent> &p_ev) {
 		int x = me->get_position().x;
 		x = x * frame_metrics.size() / graph->get_size().width;
 
-		bool show_hover = x >= 0 && x < frame_metrics.size();
+		bool show_hover = x >= 0 && x < static_cast<int>(frame_metrics.size());
 
 		if (x < 0) {
 			x = 0;
 		}
 
-		if (x >= frame_metrics.size()) {
-			x = frame_metrics.size() - 1;
+		if (x >= static_cast<int>(frame_metrics.size())) {
+			x = static_cast<int>(frame_metrics.size()) - 1;
 		}
 
 		int metric = frame_metrics.size() - x - 1;
@@ -534,7 +534,7 @@ void EditorProfiler::_graph_tex_input(const Ref<InputEvent> &p_ev) {
 
 			//metric may be invalid, so look for closest metric that is valid, this makes snap feel better
 			bool valid = false;
-			for (int i = 0; i < frame_metrics.size(); i++) {
+			for (decltype(frame_metrics.size()) i = 0; i < frame_metrics.size(); i++) {
 
 				if (frame_metrics[metric].valid) {
 					valid = true;
@@ -542,7 +542,7 @@ void EditorProfiler::_graph_tex_input(const Ref<InputEvent> &p_ev) {
 				}
 
 				metric++;
-				if (metric >= frame_metrics.size())
+				if (metric >= static_cast<int>(frame_metrics.size()))
 					metric = 0;
 			}
 
@@ -635,12 +635,12 @@ std::vector<std::vector<String> > EditorProfiler::get_data_as_csv() const {
 	std::vector<String> signatures;
 	const std::vector<EditorProfiler::Metric::Category> &categories = frame_metrics[0].categories;
 
-	for (int j = 0; j < categories.size(); j++) {
+	for (decltype(categories.size()) j = 0; j < categories.size(); j++) {
 
 		const EditorProfiler::Metric::Category &c = categories[j];
 		signatures.push_back(c.signature);
 
-		for (int k = 0; k < c.items.size(); k++) {
+		for (decltype(c.items.size()) k = 0; k < c.items.size(); k++) {
 			signatures.push_back(c.items[k].signature);
 		}
 	}
@@ -652,11 +652,11 @@ std::vector<std::vector<String> > EditorProfiler::get_data_as_csv() const {
 
 	int index = last_metric;
 
-	for (int i = 0; i < frame_metrics.size(); i++) {
+	for (decltype(frame_metrics.size()) i = 0; i < frame_metrics.size(); i++) {
 
 		++index;
 
-		if (index >= frame_metrics.size()) {
+		if (index >= static_cast<int>(frame_metrics.size())) {
 			index = 0;
 		}
 
@@ -666,12 +666,12 @@ std::vector<std::vector<String> > EditorProfiler::get_data_as_csv() const {
 		int it = 0;
 		const std::vector<EditorProfiler::Metric::Category> &frame_cat = frame_metrics[index].categories;
 
-		for (int j = 0; j < frame_cat.size(); j++) {
+		for (decltype(frame_cat.size()) j = 0; j < frame_cat.size(); j++) {
 
 			const EditorProfiler::Metric::Category &c = frame_cat[j];
 			values[it++] = String::num_real(c.total_time);
 
-			for (int k = 0; k < c.items.size(); k++) {
+			for (decltype(c.items.size()) k = 0; k < c.items.size(); k++) {
 				values[it++] = String::num_real(c.items[k].total);
 			}
 		}
