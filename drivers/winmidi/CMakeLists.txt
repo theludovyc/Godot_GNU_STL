@@ -8,6 +8,8 @@ add_library(${PROJECT_NAME} ${header} ${cpp})
 # TODO : remove
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DWINDOWS_ENABLED)
 
+target_link_libraries(${PROJECT_NAME} PRIVATE winmm)
+
 # TODO : remove
 target_include_directories(${PROJECT_NAME} PRIVATE "../../")
 target_include_directories(${PROJECT_NAME} PRIVATE "../../platform/${target}")

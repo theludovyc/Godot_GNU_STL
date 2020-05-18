@@ -9,6 +9,10 @@ add_library(${PROJECT_NAME} ${header} ${cpp})
 target_include_directories(${PROJECT_NAME} PRIVATE "../../")
 target_include_directories(${PROJECT_NAME} PRIVATE "../../platform/${target}")
 
+if(${target} STREQUAL "windows")
+    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32 iphlpapi)
+endif()
+
 # for thread
 find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)

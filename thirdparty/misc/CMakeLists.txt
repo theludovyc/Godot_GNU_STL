@@ -9,6 +9,11 @@ file(GLOB_RECURSE cpp "*.cpp")
 
 file(GLOB_RECURSE cpp_bis "*.cc")
 
+if(${target} STREQUAL "windows")
+    list(REMOVE_ITEM header ${CMAKE_CURRENT_SOURCE_DIR}/ifaddrs-android.h)
+    list(REMOVE_ITEM cpp_bis ${CMAKE_CURRENT_SOURCE_DIR}/ifaddrs-android.cc)
+endif()
+
 # TODO : need to be remove
 set(generateFile)
 generateBindings(generateFile)

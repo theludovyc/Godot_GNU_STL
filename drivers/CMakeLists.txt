@@ -46,9 +46,14 @@ if(${target} STREQUAL "windows")
     add_subdirectory(wasapi)
     add_subdirectory(windows)
     add_subdirectory(winmidi)
-    add_subdirectory(xaudio2)
-    target_link_libraries(${PROJECT_NAME} INTERFACE godotWasapi godotWindows godotWinmidi godotXaudio)
+    target_link_libraries(${PROJECT_NAME} INTERFACE godotWasapi godotWindows godotWinmidi)
 endif()
+
+if(${target} STREQUAL "uwp")
+    add_subdirectory(xaudio2)
+    target_link_libraries(${PROJECT_NAME} INTERFACE godotXaudio)
+endif()
+
 
 if(${target} STREQUAL "server")
     add_subdirectory(dummy)

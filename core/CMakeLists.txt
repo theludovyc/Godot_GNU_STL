@@ -87,6 +87,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE "../")
 target_include_directories(${PROJECT_NAME} PRIVATE "../platform/${target}")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE misc)
-target_link_libraries(${PROJECT_NAME} PRIVATE minizip)
+
+# TODO : need to set private
+target_link_libraries(${PROJECT_NAME} PUBLIC minizip)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE zstd)
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls)

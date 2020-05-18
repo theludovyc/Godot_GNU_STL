@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-
+set(CMAKE_EXE_LINKER_FLAGS -static)
 include(cmake/compilegles.cmake)
 include(cmake/generate.cmake)
 
@@ -18,7 +18,7 @@ endif()
 
 
 set(target)
-if(NOT DEFINED ${CMAKE_GENERATOR_PLATFORM})
+if(NOT DEFINED ${CMAKE_SYSTEM_NAME})
   # linux
   if(UNIX AND NOT APPLE)
     set(target "x11")
@@ -30,9 +30,10 @@ if(NOT DEFINED ${CMAKE_GENERATOR_PLATFORM})
   # windows
   if(WIN32)
     set(target "windows")
-	endif()
+  endif()
+else()
+  string(TOLOWER ${CMAKE_SYSTEM_NAME} target)
 endif()
-
 
 include(platform/${target}/definition.cmake)
 

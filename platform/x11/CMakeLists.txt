@@ -1,11 +1,9 @@
-
-set(gen)
 set(exe_name "${PROJECT_NAME}-linux")
 
 file(GLOB header "*.h")
 file(GLOB cpp "*.cpp")
 
-add_executable(${exe_name} ${header} ${cpp} ${gen})
+add_executable(${exe_name} ${header} ${cpp})
 
 # TODO : remove
 target_include_directories(${exe_name} PRIVATE "../../")

@@ -5,5 +5,5 @@ file(GLOB_RECURSE c "*.c")
 
 add_library(${PROJECT_NAME} ${header} ${c})
 
-
-target_link_libraries(${PROJECT_NAME} PRIVATE zlib)
+# TODO : need to set private
+target_link_libraries(${PROJECT_NAME} PUBLIC zlib)

@@ -1,6 +1,11 @@
 version: '3.7'
 
 services:
+
+  base:
+    build: base
+    image: godot/build_base
+
   linux:
     depends_on:
       - base
@@ -12,6 +17,13 @@ services:
       - ".env"
     user: ${UID}:${GID}
 
-  base:
-    build: base
-    image: godot/build_base
+  windows:
+    depends_on:
+      - base
+    build: windows
+    image: godot/build_windows
+    volumes:
+      - ../../:/build
+    env_file:
+      - ".env"
+    user: ${UID}:${GID}
