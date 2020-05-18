@@ -289,7 +289,7 @@ void EditorAssetInstaller::ok_pressed() {
 
 	if (failed_files.size()) {
 		String msg = TTR("The following files failed extraction from package:") + "\n\n";
-		for (int i = 0; i < failed_files.size(); i++) {
+		for (decltype(failed_files.size()) i = 0; i < failed_files.size(); i++) {
 
 			if (i > 15) {
 				msg += "\n" + vformat(TTR("And %s more files."), itos(failed_files.size() - i));
