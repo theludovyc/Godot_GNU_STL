@@ -579,7 +579,7 @@ void EditorProperty::select(int p_focusable) {
 	bool already_selected = selected;
 
 	if (p_focusable >= 0) {
-		ERR_FAIL_INDEX(p_focusable, focusables.size());
+		ERR_FAIL_INDEX(p_focusable, static_cast<int>(focusables.size()));
 		focusables[p_focusable]->grab_focus();
 	} else {
 		selected = true;
@@ -1380,7 +1380,7 @@ void EditorInspector::_parse_added_editors(VBoxContainer *current_vbox, Ref<Edit
 					ep->set_label(F->get().label);
 				}
 
-				for (int i = 0; i < F->get().properties.size(); i++) {
+				for (decltype(F->get().properties.size()) i = 0; i < F->get().properties.size(); i++) {
 					String prop = F->get().properties[i];
 
 					if (!editor_property_map.has(prop)) {
@@ -1701,7 +1701,7 @@ void EditorInspector::update_tree() {
 				DocData *dd = EditorHelp::get_doc_data();
 				Map<String, DocData::ClassDoc>::Element *F = dd->class_list.find(classname);
 				while (F && descr == String()) {
-					for (int i = 0; i < F->get().properties.size(); i++) {
+					for (decltype(F->get().properties.size()) i = 0; i < F->get().properties.size(); i++) {
 						if (F->get().properties[i].name == propname.operator String()) {
 							descr = F->get().properties[i].description.strip_edges();
 							break;
@@ -1711,7 +1711,7 @@ void EditorInspector::update_tree() {
 					std::vector<String> slices = propname.operator String().split("/");
 					if (slices.size() == 2 && slices[0].begins_with("custom_")) {
 						// Likely a theme property.
-						for (int i = 0; i < F->get().theme_properties.size(); i++) {
+						for (decltype(F->get().theme_properties.size()) i = 0; i < F->get().theme_properties.size(); i++) {
 							if (F->get().theme_properties[i].name == slices[1]) {
 								descr = F->get().theme_properties[i].description.strip_edges();
 								break;
@@ -1761,7 +1761,7 @@ void EditorInspector::update_tree() {
 							//use existin one
 							ep->set_label(name);
 						}
-						for (int i = 0; i < F->get().properties.size(); i++) {
+						for (decltype(F->get().properties.size()) i = 0; i < F->get().properties.size(); i++) {
 							String prop = F->get().properties[i];
 
 							if (!editor_property_map.has(prop)) {
@@ -2089,15 +2089,15 @@ void EditorInspector::_property_changed_update_all(const String &p_path, const V
 void EditorInspector::_multiple_properties_changed(std::vector<String> p_paths, Array p_values) {
 
 	ERR_FAIL_COND(p_paths.size() == 0 || p_values.size() == 0);
-	ERR_FAIL_COND(p_paths.size() != p_values.size());
+	ERR_FAIL_COND(static_cast<int>(p_paths.size()) != p_values.size());
 	String names;
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 		if (i > 0)
 			names += ",";
 		names += p_paths[i];
 	}
 	undo_redo->create_action(TTR("Set Multiple:") + " " + names, UndoRedo::MERGE_ENDS);
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 		_edit_set(p_paths[i], p_values[i], false, "");
 		if (restart_request_props.has(p_paths[i])) {
 			emit_signal("restart_requested");
