@@ -353,7 +353,7 @@ void EditorFeatureProfileManager::_update_profile_list(const String &p_select_pr
 
 	profile_list->clear();
 
-	for (int i = 0; i < profiles.size(); i++) {
+	for (decltype(profiles.size()) i = 0; i < profiles.size(); i++) {
 		String name = profiles[i];
 
 		if (i == 0 && selected_profile == String()) {
@@ -720,7 +720,7 @@ void EditorFeatureProfileManager::_update_selected_profile() {
 void EditorFeatureProfileManager::_import_profiles(const std::vector<String> &p_paths) {
 
 	//test it first
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 		Ref<EditorFeatureProfile> profile;
 		profile.instance();
 		Error err = profile->load_from_file(p_paths[i]);
@@ -739,7 +739,7 @@ void EditorFeatureProfileManager::_import_profiles(const std::vector<String> &p_
 	}
 
 	//do it second
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 		Ref<EditorFeatureProfile> profile;
 		profile.instance();
 		Error err = profile->load_from_file(p_paths[i]);
