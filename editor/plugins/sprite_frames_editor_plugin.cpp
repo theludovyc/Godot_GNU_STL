@@ -797,7 +797,7 @@ bool SpriteFramesEditor::can_drop_data_fw(const Point2 &p_point, const Variant &
 		if (files.size() == 0)
 			return false;
 
-		for (int i = 0; i < files.size(); i++) {
+		for (decltype(files.size()) i = 0; i < files.size(); i++) {
 			String file = files[i];
 			String ftype = EditorFileSystem::get_singleton()->get_file_type(file);
 
