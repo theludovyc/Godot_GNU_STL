@@ -13,5 +13,6 @@ add_subdirectory(pcre2)
 add_subdirectory(nanosvg)
 add_subdirectory(assimp)
 add_subdirectory(bullet)
+add_subdirectory(cvtt)
 
 remove_definitions(-w)
