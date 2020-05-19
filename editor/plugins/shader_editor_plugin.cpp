@@ -156,7 +156,8 @@ void ShaderTextEditor::_load_theme_settings() {
 			}
 		}
 
-		for (int i = 0; i < ShaderTypes::get_singleton()->get_modes(VisualServer::ShaderMode(shader->get_mode())).size(); i++) {
+		auto len = ShaderTypes::get_singleton()->get_modes(VisualServer::ShaderMode(shader->get_mode())).size();
+		for (decltype(len) i = 0; i < len; i++) {
 
 			keywords.push_back(ShaderTypes::get_singleton()->get_modes(VisualServer::ShaderMode(shader->get_mode()))[i]);
 		}
