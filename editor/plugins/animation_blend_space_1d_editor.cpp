@@ -116,7 +116,7 @@ void AnimationNodeBlendSpace1DEditor::_blend_space_gui_input(const Ref<InputEven
 		selected_point = -1;
 		_update_tool_erase();
 
-		for (int i = 0; i < points.size(); i++) {
+		for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 			if (Math::abs(float(points[i] - mb->get_position().x)) < 10 * EDSCALE) {
 				selected_point = i;
