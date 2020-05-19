@@ -217,7 +217,7 @@ void CPUParticles2DEditorPlugin::_generate_emission_mask() {
 		PoolVector2Array norms;
 		norms.resize(valid_normals.size());
 		PoolVector2Array::Write normsw = norms.write();
-		for (int i = 0; i < valid_normals.size(); i += 1) {
+		for (decltype(valid_normals.size()) i = 0; i < valid_normals.size(); i += 1) {
 			normsw[i] = valid_normals[i];
 		}
 		particles->set_emission_normals(norms);
@@ -229,7 +229,7 @@ void CPUParticles2DEditorPlugin::_generate_emission_mask() {
 		PoolVector2Array points;
 		points.resize(valid_positions.size());
 		PoolVector2Array::Write pointsw = points.write();
-		for (int i = 0; i < valid_positions.size(); i += 1) {
+		for (decltype(valid_positions.size()) i = 0; i < valid_positions.size(); i += 1) {
 			pointsw[i] = valid_positions[i];
 		}
 		particles->set_emission_points(points);
