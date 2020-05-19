@@ -50,7 +50,7 @@ target_link_libraries(${exe_name} PRIVATE godotScene)
 # godotModules
 target_link_libraries(${exe_name} PRIVATE godotModules)
 
-if(NOT tools)
+if(tools)
     # godotEditor
     target_link_libraries(${exe_name} PRIVATE godotEditor)
 endif()

@@ -11,7 +11,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
 
-if(NOT tools)
-    # godotEditor
-    target_link_libraries(${exe_name} PRIVATE godotEditor)
-endif()
+# TODO : depend of editor ???
