@@ -207,7 +207,7 @@ bool Polygon3DEditor::forward_spatial_gui_input(Camera *p_camera, const Ref<Inpu
 							int closest_idx = -1;
 							Vector2 closest_pos;
 							real_t closest_dist = 1e10;
-							for (int i = 0; i < poly.size(); i++) {
+							for (decltype(poly.size()) i = 0; i < poly.size(); i++) {
 
 								Vector2 points[2] = {
 									p_camera->unproject_position(gt.xform(Vector3(poly[i].x, poly[i].y, depth))),
@@ -245,7 +245,7 @@ bool Polygon3DEditor::forward_spatial_gui_input(Camera *p_camera, const Ref<Inpu
 							int closest_idx = -1;
 							Vector2 closest_pos;
 							real_t closest_dist = 1e10;
-							for (int i = 0; i < poly.size(); i++) {
+							for (decltype(poly.size()) i = 0; i < poly.size(); i++) {
 
 								Vector2 cp = p_camera->unproject_position(gt.xform(Vector3(poly[i].x, poly[i].y, depth)));
 
@@ -275,7 +275,7 @@ bool Polygon3DEditor::forward_spatial_gui_input(Camera *p_camera, const Ref<Inpu
 
 							//apply
 
-							ERR_FAIL_INDEX_V(edited_point, poly.size(), false);
+							ERR_FAIL_INDEX_V(edited_point, static_cast<int>(poly.size()), false);
 							poly[edited_point] = edited_point_pos;
 							undo_redo->create_action(TTR("Edit Poly"));
 							undo_redo->add_do_method(node, "set_polygon", poly);
@@ -294,7 +294,7 @@ bool Polygon3DEditor::forward_spatial_gui_input(Camera *p_camera, const Ref<Inpu
 					int closest_idx = -1;
 					Vector2 closest_pos;
 					real_t closest_dist = 1e10;
-					for (int i = 0; i < poly.size(); i++) {
+					for (decltype(poly.size()) i = 0; i < poly.size(); i++) {
 
 						Vector2 cp = p_camera->unproject_position(gt.xform(Vector3(poly[i].x, poly[i].y, depth)));
 
@@ -388,11 +388,12 @@ void Polygon3DEditor::_polygon_draw() {
 
 	Rect2 rect;
 
-	for (int i = 0; i < poly.size(); i++) {
+	int len = poly.size();
+	for (int i = 0; i < len; i++) {
 
 		Vector2 p, p2;
 		p = i == edited_point ? edited_point_pos : poly[i];
-		if ((wip_active && i == poly.size() - 1) || (((i + 1) % poly.size()) == edited_point))
+		if ((wip_active && i == len - 1) || (((i + 1) % len) == edited_point))
 			p2 = edited_point_pos;
 		else
 			p2 = poly[(i + 1) % poly.size()];
@@ -477,7 +478,7 @@ void Polygon3DEditor::_polygon_draw() {
 
 		va.resize(poly.size());
 		PoolVector<Vector3>::Write w = va.write();
-		for (int i = 0; i < poly.size(); i++) {
+		for (int i = 0; i < static_cast<int>(poly.size()); i++) {
 
 			Vector2 p, p2;
 			p = i == edited_point ? edited_point_pos : poly[i];
