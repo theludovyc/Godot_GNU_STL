@@ -1,5 +1,3 @@
-# TODO : need to be test
-
 project(module_assimp)
 
 file(GLOB_RECURSE header "*.h")
