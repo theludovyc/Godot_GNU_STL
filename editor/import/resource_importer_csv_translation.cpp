@@ -98,7 +98,7 @@ Error ResourceImporterCSVTranslation::import(const String &p_source_file, const 
 	std::vector<String> locales;
 	std::vector<Ref<Translation> > translations;
 
-	for (int i = 1; i < line.size(); i++) {
+	for (decltype(line.size()) i = 1; i < line.size(); i++) {
 
 		String locale = line[i];
 		ERR_FAIL_COND_V_MSG(!TranslationServer::is_locale_valid(locale), ERR_PARSE_ERROR, "Error importing CSV translation: '" + locale + "' is not a valid locale.");
@@ -117,7 +117,7 @@ Error ResourceImporterCSVTranslation::import(const String &p_source_file, const 
 		String key = line[0];
 		if (key != "") {
 
-			for (int i = 1; i < line.size(); i++) {
+			for (decltype(line.size()) i = 1; i < line.size(); i++) {
 				translations[i - 1]->add_message(key, line[i].c_unescape());
 			}
 		}
@@ -125,7 +125,7 @@ Error ResourceImporterCSVTranslation::import(const String &p_source_file, const 
 		line = f->get_csv_line(delimiter);
 	}
 
-	for (int i = 0; i < translations.size(); i++) {
+	for (decltype(translations.size()) i = 0; i < translations.size(); i++) {
 		Ref<Translation> xlt = translations[i];
 
 		if (compress) {
