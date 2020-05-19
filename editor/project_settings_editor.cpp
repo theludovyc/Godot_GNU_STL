@@ -1039,7 +1039,7 @@ void ProjectSettingsEditor::_copy_to_platform_about_to_show() {
 
 		String custom = EditorExport::get_singleton()->get_export_preset(i)->get_custom_features();
 		std::vector<String> custom_list = custom.split(",");
-		for (int j = 0; j < custom_list.size(); j++) {
+		for (decltype(custom_list.size()) j = 0; j < custom_list.size(); j++) {
 			String f = custom_list[j].strip_edges();
 			if (f != String()) {
 				presets.insert(f);
@@ -1313,12 +1313,12 @@ void ProjectSettingsEditor::_translation_res_option_changed() {
 
 	std::vector<String> langs = TranslationServer::get_all_locales();
 
-	ERR_FAIL_INDEX(which, langs.size());
+	ERR_FAIL_INDEX(which, static_cast<int>(langs.size()));
 
 	ERR_FAIL_COND(!remaps.has(key));
 	PoolStringArray r = remaps[key];
 	ERR_FAIL_INDEX(idx, r.size());
-	if (translation_locales_idxs_remap.size() > which) {
+	if (static_cast<int>(translation_locales_idxs_remap.size()) > which) {
 		r.set(idx, path + ":" + langs[translation_locales_idxs_remap[which]]);
 	} else {
 		r.set(idx, path + ":" + langs[which]);
@@ -1534,8 +1534,8 @@ void ProjectSettingsEditor::_update_translations() {
 	Array l_filter = l_filter_all[1];
 
 	int s = names.size();
-	bool is_short_list_when_show_all_selected = filter_mode == SHOW_ALL_LOCALES && translation_filter_treeitems.size() < s;
-	bool is_full_list_when_show_only_selected = filter_mode == SHOW_ONLY_SELECTED_LOCALES && translation_filter_treeitems.size() == s;
+	bool is_short_list_when_show_all_selected = filter_mode == SHOW_ALL_LOCALES && static_cast<int>(translation_filter_treeitems.size()) < s;
+	bool is_full_list_when_show_only_selected = filter_mode == SHOW_ONLY_SELECTED_LOCALES && static_cast<int>(translation_filter_treeitems.size()) == s;
 	bool should_recreate_locales_list = is_short_list_when_show_all_selected || is_full_list_when_show_only_selected;
 
 	if (!translation_locales_list_created || should_recreate_locales_list) {
@@ -1560,7 +1560,7 @@ void ProjectSettingsEditor::_update_translations() {
 			translation_filter_treeitems.push_back(t);
 		}
 	} else {
-		for (int i = 0; i < translation_filter_treeitems.size(); i++) {
+		for (decltype(translation_filter_treeitems.size()) i = 0; i < translation_filter_treeitems.size(); i++) {
 			TreeItem *t = translation_filter_treeitems[i];
 			t->set_checked(0, l_filter.has(t->get_tooltip(0)));
 		}
@@ -1587,7 +1587,7 @@ void ProjectSettingsEditor::_update_translations() {
 
 	String langnames = "";
 	int l_idx = 0;
-	for (int i = 0; i < names.size(); i++) {
+	for (decltype(names.size()) i = 0; i < names.size(); i++) {
 
 		if (filter_mode == SHOW_ONLY_SELECTED_LOCALES && fl_idx_count != 0) {
 			if (l_filter.size() > 0) {
@@ -1618,7 +1618,7 @@ void ProjectSettingsEditor::_update_translations() {
 		}
 		std::sort(keys.begin(), keys.end());
 
-		for (int i = 0; i < keys.size(); i++) {
+		for (decltype(keys.size()) i = 0; i < keys.size(); i++) {
 
 			TreeItem *t = translation_remap->create_item(root);
 			t->set_editable(0, false);
