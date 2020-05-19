@@ -19,7 +19,7 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(${exe_name} PUBLIC OpenGL::GL)
 
 # windows specifics
-target_link_libraries(${exe_name} PUBLIC mingw32 opengl32 dsound ole32 d3d9 gdi32 wsock32 kernel32 oleaut32 dinput8 dxguid imm32 bcrypt avrt uuid dwmapi)
+target_link_libraries(${exe_name} PUBLIC dinput8 dxguid imm32 avrt dwmapi)
 
 # godotMain
 target_link_libraries(${exe_name} PUBLIC godotMain)
