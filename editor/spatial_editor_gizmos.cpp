@@ -83,7 +83,7 @@ bool EditorSpatialGizmo::is_editable() const {
 
 void EditorSpatialGizmo::clear() {
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		if (instances[i].instance.is_valid())
 			VS::get_singleton()->free(instances[i].instance);
@@ -217,7 +217,7 @@ void EditorSpatialGizmo::add_lines(const std::vector<Vector3> &p_lines, const Re
 	color.resize(p_lines.size());
 	{
 		PoolVector<Color>::Write w = color.write();
-		for (int i = 0; i < p_lines.size(); i++) {
+		for (decltype(p_lines.size()) i = 0; i < p_lines.size(); i++) {
 			if (is_selected())
 				w[i] = Color(1, 1, 1, 0.8) * p_modulate;
 			else
@@ -232,7 +232,7 @@ void EditorSpatialGizmo::add_lines(const std::vector<Vector3> &p_lines, const Re
 
 	if (p_billboard) {
 		float md = 0;
-		for (int i = 0; i < p_lines.size(); i++) {
+		for (decltype(p_lines.size()) i = 0; i < p_lines.size(); i++) {
 
 			md = MAX(0, p_lines[i].length());
 		}
@@ -285,7 +285,7 @@ void EditorSpatialGizmo::add_unscaled_billboard(const Ref<Material> &p_material,
 	mesh->surface_set_material(0, p_material);
 
 	float md = 0;
-	for (int i = 0; i < vs.size(); i++) {
+	for (decltype(vs.size()) i = 0; i < vs.size(); i++) {
 
 		md = MAX(0, vs[i].length());
 	}
@@ -317,7 +317,7 @@ void EditorSpatialGizmo::add_collision_segments(const std::vector<Vector3> &p_li
 
 	int from = collision_segments.size();
 	collision_segments.resize(from + p_lines.size());
-	for (int i = 0; i < p_lines.size(); i++) {
+	for (decltype(p_lines.size()) i = 0; i < p_lines.size(); i++) {
 
 		collision_segments[from + i] = p_lines[i];
 	}
@@ -343,7 +343,7 @@ void EditorSpatialGizmo::add_handles(const std::vector<Vector3> &p_handles, cons
 	{
 		colors.resize(p_handles.size());
 		PoolVector<Color>::Write w = colors.write();
-		for (int i = 0; i < p_handles.size(); i++) {
+		for (int i = 0; i < static_cast<int>(p_handles.size()); i++) {
 
 			Color col(1, 1, 1, 1);
 			if (is_handle_highlighted(i))
@@ -361,7 +361,7 @@ void EditorSpatialGizmo::add_handles(const std::vector<Vector3> &p_handles, cons
 
 	if (p_billboard) {
 		float md = 0;
-		for (int i = 0; i < p_handles.size(); i++) {
+		for (decltype(p_handles.size()) i = 0; i < p_handles.size(); i++) {
 
 			md = MAX(0, p_handles[i].length());
 		}
@@ -381,14 +381,14 @@ void EditorSpatialGizmo::add_handles(const std::vector<Vector3> &p_handles, cons
 	if (!p_secondary) {
 		int chs = handles.size();
 		handles.resize(chs + p_handles.size());
-		for (int i = 0; i < p_handles.size(); i++) {
+		for (decltype(p_handles.size()) i = 0; i < p_handles.size(); i++) {
 			handles[i + chs] = p_handles[i];
 		}
 	} else {
 
 		int chs = secondary_handles.size();
 		secondary_handles.resize(chs + p_handles.size());
-		for (int i = 0; i < p_handles.size(); i++) {
+		for (decltype(p_handles.size()) i = 0; i < p_handles.size(); i++) {
 			secondary_handles[i + chs] = p_handles[i];
 		}
 	}
@@ -476,7 +476,7 @@ bool EditorSpatialGizmo::intersect_frustum(const Camera *p_camera, const std::ve
 
 		std::vector<Plane> transformed_frustum;
 
-		for (int i = 0; i < p_frustum.size(); i++) {
+		for (decltype(p_frustum.size()) i = 0; i < p_frustum.size(); i++) {
 			transformed_frustum.push_back(it.xform(p_frustum[i]));
 		}
 
@@ -507,7 +507,7 @@ bool EditorSpatialGizmo::intersect_ray(Camera *p_camera, const Point2 &p_point, 
 		float min_d = 1e20;
 		int idx = -1;
 
-		for (int i = 0; i < secondary_handles.size(); i++) {
+		for (decltype(secondary_handles.size()) i = 0; i < secondary_handles.size(); i++) {
 
 			Vector3 hpos = t.xform(secondary_handles[i]);
 			Vector2 p = p_camera->unproject_position(hpos);
@@ -533,7 +533,7 @@ bool EditorSpatialGizmo::intersect_ray(Camera *p_camera, const Point2 &p_point, 
 
 		min_d = 1e20;
 
-		for (int i = 0; i < handles.size(); i++) {
+		for (decltype(handles.size()) i = 0; i < handles.size(); i++) {
 
 			Vector3 hpos = t.xform(handles[i]);
 			Vector2 p = p_camera->unproject_position(hpos);
@@ -688,7 +688,7 @@ void EditorSpatialGizmo::create() {
 	ERR_FAIL_COND(valid);
 	valid = true;
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		instances[i].create_instance(spatial_node, hidden);
 	}
@@ -700,7 +700,7 @@ void EditorSpatialGizmo::transform() {
 
 	ERR_FAIL_COND(!spatial_node);
 	ERR_FAIL_COND(!valid);
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 		VS::get_singleton()->instance_set_transform(instances[i].instance, spatial_node->get_global_transform());
 	}
 }
@@ -710,7 +710,7 @@ void EditorSpatialGizmo::free() {
 	ERR_FAIL_COND(!spatial_node);
 	ERR_FAIL_COND(!valid);
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		if (instances[i].instance.is_valid())
 			VS::get_singleton()->free(instances[i].instance);
@@ -725,7 +725,7 @@ void EditorSpatialGizmo::free() {
 void EditorSpatialGizmo::set_hidden(bool p_hidden) {
 	hidden = p_hidden;
 	int layer = hidden ? 0 : 1 << SpatialEditorViewport::GIZMO_EDIT_LAYER;
-	for (int i = 0; i < instances.size(); ++i) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); ++i) {
 		VS::get_singleton()->instance_set_layer_mask(instances[i].instance, layer);
 	}
 }
@@ -782,7 +782,7 @@ EditorSpatialGizmo::~EditorSpatialGizmo() {
 
 Vector3 EditorSpatialGizmo::get_handle_pos(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, handles.size(), Vector3());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(handles.size()), Vector3());
 
 	return handles[p_idx];
 }
@@ -1475,7 +1475,7 @@ void CameraSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 		}
 
 		Transform local = camera->get_global_transform().affine_inverse();
-		for (int i = 0; i < lines.size(); i++) {
+		for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 			lines[i] = local.xform(lines[i]);
 		}
 
@@ -3614,7 +3614,7 @@ void CollisionShapeSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 			if (err == OK) {
 				std::vector<Vector3> points2;
 				points2.resize(md.edges.size() * 2);
-				for (int i = 0; i < md.edges.size(); i++) {
+				for (decltype(md.edges.size()) i = 0; i < md.edges.size(); i++) {
 					points2[i * 2 + 0] = md.vertices[md.edges[i].a];
 					points2[i * 2 + 1] = md.vertices[md.edges[i].b];
 				}
@@ -3688,7 +3688,7 @@ void CollisionPolygonSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 	float depth = polygon->get_depth() * 0.5;
 
 	std::vector<Vector3> lines;
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		int n = (i + 1) % points.size();
 		lines.push_back(Vector3(points[i].x, points[i].y, depth));
@@ -3747,7 +3747,7 @@ void NavigationMeshSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 	for (int i = 0; i < navmeshie->get_polygon_count(); i++) {
 		std::vector<int> p = navmeshie->get_polygon(i);
 
-		for (int j = 2; j < p.size(); j++) {
+		for (decltype(p.size()) j = 2; j < p.size(); j++) {
 			Face3 f;
 			f.vertex[0] = vr[p[0]];
 			f.vertex[1] = vr[p[j - 1]];
