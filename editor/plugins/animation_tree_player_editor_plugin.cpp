@@ -1107,7 +1107,7 @@ void AnimationTreePlayerEditor::_file_dialog_selected(String p_path) {
 		case MENU_IMPORT_ANIMATIONS: {
 			std::vector<String> files = file_dialog->get_selected_files();
 
-			for (int i = 0; i < files.size(); i++) {
+			for (decltype(files.size()) i = 0; i < files.size(); i++) {
 
 				StringName node = _add_node(AnimationTreePlayer::NODE_ANIMATION);
 
