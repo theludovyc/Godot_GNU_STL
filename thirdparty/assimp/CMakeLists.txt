@@ -78,3 +78,5 @@ endif()
 if(${target} STREQUAL "osx")
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DPLATFORM_DARWIN -DPLATFORM="DARWIN")
 endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE zlib)
