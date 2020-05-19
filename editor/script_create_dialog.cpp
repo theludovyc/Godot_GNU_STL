@@ -256,7 +256,7 @@ void ScriptCreateDialog::_template_changed(int p_template) {
 	}
 	int selected_id = template_menu->get_selected_id();
 
-	for (int i = 0; i < template_list.size(); i++) {
+	for (decltype(template_list.size()) i = 0; i < template_list.size(); i++) {
 		const ScriptTemplateInfo &sinfo = template_list[i];
 		if (sinfo.id == selected_id) {
 			script_template = sinfo.dir.plus_file(sinfo.name + "." + sinfo.extension);
@@ -400,7 +400,7 @@ void ScriptCreateDialog::_lang_changed(int l) {
 		int cur_origin = -1;
 
 		// Populate script template items previously sorted and now grouped by origin
-		for (int i = 0; i < template_list.size(); i++) {
+		for (decltype(template_list.size()) i = 0; i < template_list.size(); i++) {
 
 			if (int(templates[i].origin) != cur_origin) {
 				template_menu->add_separator();
@@ -431,7 +431,7 @@ void ScriptCreateDialog::_lang_changed(int l) {
 			override_info += TTR("Overrides");
 			override_info += ": ";
 
-			for (int i = 1; i < overrides.size(); i++) {
+			for (decltype(overrides.size()) i = 1; i < overrides.size(); i++) {
 				const ScriptTemplateInfo &overridden = template_list[overrides[i]];
 
 				int disable_index = template_menu->get_item_index(overridden.id);
@@ -476,11 +476,11 @@ void ScriptCreateDialog::_update_script_templates(const String &p_extension) {
 	dirs.push_back(EditorSettings::get_singleton()->get_project_script_templates_dir());
 	dirs.push_back(EditorSettings::get_singleton()->get_script_templates_dir());
 
-	for (int i = 0; i < dirs.size(); i++) {
+	for (decltype(dirs.size()) i = 0; i < dirs.size(); i++) {
 
 		std::vector<String> list = EditorSettings::get_singleton()->get_script_templates(p_extension, dirs[i]);
 
-		for (int j = 0; j < list.size(); j++) {
+		for (decltype(list.size()) j = 0; j < list.size(); j++) {
 			ScriptTemplateInfo sinfo;
 			sinfo.origin = ScriptOrigin(i);
 			sinfo.dir = dirs[i];
