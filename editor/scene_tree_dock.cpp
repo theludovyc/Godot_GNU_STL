@@ -60,7 +60,7 @@ void SceneTreeDock::_nodes_drag_begin() {
 
 void SceneTreeDock::_quick_open() {
 	std::vector<String> files = quick_open->get_selected_files();
-	for (int i = 0; i < files.size(); i++) {
+	for (decltype(files.size()) i = 0; i < files.size(); i++) {
 		instance(files[i]);
 	}
 }
@@ -171,7 +171,7 @@ void SceneTreeDock::_perform_instance_scenes(const std::vector<String> &p_files,
 
 	bool error = false;
 
-	for (int i = 0; i < p_files.size(); i++) {
+	for (decltype(p_files.size()) i = 0; i < p_files.size(); i++) {
 
 		Ref<PackedScene> sdata = ResourceLoader::load(p_files[i]);
 		if (!sdata.is_valid()) {
@@ -208,7 +208,7 @@ void SceneTreeDock::_perform_instance_scenes(const std::vector<String> &p_files,
 	}
 
 	if (error) {
-		for (int i = 0; i < instances.size(); i++) {
+		for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 			memdelete(instances[i]);
 		}
 		return;
@@ -216,7 +216,7 @@ void SceneTreeDock::_perform_instance_scenes(const std::vector<String> &p_files,
 
 	editor_data->get_undo_redo().create_action(TTR("Instance Scene(s)"));
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		Node *instanced_scene = instances[i];
 
@@ -328,7 +328,7 @@ bool SceneTreeDock::_track_inherit(const String &p_target_scene_path, Node *p_de
 		} else
 			break;
 	}
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 		memdelete(instances[i]);
 	}
 	return result;
@@ -1019,7 +1019,7 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 
 				int idx = p_tool - EDIT_SUBRESOURCE_BASE;
 
-				ERR_FAIL_INDEX(idx, subresources.size());
+				ERR_FAIL_INDEX(idx, static_cast<int>(subresources.size()));
 
 				Object *obj = ObjectDB::get_instance(subresources[idx]);
 				ERR_FAIL_COND(!obj);
@@ -1537,7 +1537,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 	std::sort(p_nodes.begin(), p_nodes.end(), Node::Comparator{}); //Makes result reliable.
 
 	bool no_change = true;
-	for (int ni = 0; ni < p_nodes.size(); ni++) {
+	for (int ni = 0; ni < static_cast<int>(p_nodes.size()); ni++) {
 
 		if (p_nodes[ni] == p_new_parent)
 			return; // Attempt to reparent to itself.
@@ -1566,7 +1566,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 
 	int inc = 0;
 
-	for (int ni = 0; ni < p_nodes.size(); ni++) {
+	for (int ni = 0; ni < static_cast<int>(p_nodes.size()); ni++) {
 
 		// No undo implemented for this yet.
 		Node *node = p_nodes[ni];
@@ -1605,7 +1605,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 			std::vector<StringName> fixed_new_names;
 
 			// Get last name and replace with fixed new name.
-			for (int a = 0; a < (unfixed_new_names.size() - 1); a++) {
+			for (int a = 0; a < (static_cast<int>(unfixed_new_names.size()) - 1); a++) {
 				fixed_new_names.push_back(unfixed_new_names[a]);
 			}
 			fixed_new_names.push_back(new_name);
@@ -1639,7 +1639,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 	}
 
 	// Add and move in a second step (so old order is preserved).
-	for (int ni = 0; ni < p_nodes.size(); ni++) {
+	for (decltype(p_nodes.size()) ni = 0; ni < p_nodes.size(); ni++) {
 
 		Node *node = p_nodes[ni];
 
