@@ -62,7 +62,7 @@ std::vector<Vector2> expand(const std::vector<Vector2> &points, const Rect2i &re
 	ClipperLib::PolyTree solution;
 	ClipperLib::PolyTree out;
 
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		subj << ClipperLib::IntPoint(points[i].x * PRECISION, points[i].y * PRECISION);
 	}
@@ -213,16 +213,16 @@ void SpriteEditor::_update_mesh_data() {
 	computed_indices.clear();
 
 	Size2 img_size = Vector2(image->get_width(), image->get_height());
-	for (int i = 0; i < lines.size(); i++) {
+	for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 		lines[i] = expand(lines[i], rect, epsilon);
 	}
 
 	if (selected_menu_item == MENU_OPTION_CONVERT_TO_MESH_2D) {
 
-		for (int j = 0; j < lines.size(); j++) {
+		for (decltype(lines.size()) j = 0; j < lines.size(); j++) {
 			int index_ofs = computed_vertices.size();
 
-			for (int i = 0; i < lines[j].size(); i++) {
+			for (decltype(lines[j].size()) i = 0; i < lines[j].size(); i++) {
 				Vector2 vtx = lines[j][i];
 				computed_uv.push_back(vtx / img_size);
 
@@ -242,7 +242,7 @@ void SpriteEditor::_update_mesh_data() {
 
 			std::vector<int> poly = Geometry::triangulate_polygon(lines[j]);
 
-			for (int i = 0; i < poly.size(); i += 3) {
+			for (decltype(poly.size()) i = 0; i < poly.size(); i += 3) {
 				for (int k = 0; k < 3; k++) {
 					int idx = i + k;
 					int idxn = i + (k + 1) % 3;
@@ -261,7 +261,7 @@ void SpriteEditor::_update_mesh_data() {
 	if (selected_menu_item == MENU_OPTION_CONVERT_TO_POLYGON_2D || selected_menu_item == MENU_OPTION_CREATE_COLLISION_POLY_2D || selected_menu_item == MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D) {
 		outline_lines.resize(lines.size());
 		computed_outline_lines.resize(lines.size());
-		for (int pi = 0; pi < lines.size(); pi++) {
+		for (decltype(lines.size()) pi = 0; pi < lines.size(); pi++) {
 
 			std::vector<Vector2> ol;
 			std::vector<Vector2> col;
@@ -269,7 +269,7 @@ void SpriteEditor::_update_mesh_data() {
 			ol.resize(lines[pi].size());
 			col.resize(lines[pi].size());
 
-			for (int i = 0; i < lines[pi].size(); i++) {
+			for (decltype(lines[pi].size()) i = 0; i < lines[pi].size(); i++) {
 				Vector2 vtx = lines[pi][i];
 
 				ol[i] = vtx;
@@ -355,7 +355,7 @@ void SpriteEditor::_convert_to_polygon_2d_node() {
 	Polygon2D *polygon_2d_instance = memnew(Polygon2D);
 
 	int total_point_count = 0;
-	for (int i = 0; i < computed_outline_lines.size(); i++)
+	for (decltype(computed_outline_lines.size()) i = 0; i < computed_outline_lines.size(); i++)
 		total_point_count += computed_outline_lines[i].size();
 
 	PoolVector2Array polygon;
@@ -371,7 +371,7 @@ void SpriteEditor::_convert_to_polygon_2d_node() {
 	Array polys;
 	polys.resize(computed_outline_lines.size());
 
-	for (int i = 0; i < computed_outline_lines.size(); i++) {
+	for (decltype(computed_outline_lines.size()) i = 0; i < computed_outline_lines.size(); i++) {
 
 		std::vector<Vector2> outline = computed_outline_lines[i];
 		std::vector<Vector2> uv_outline = outline_lines[i];
@@ -380,7 +380,7 @@ void SpriteEditor::_convert_to_polygon_2d_node() {
 		pia.resize(outline.size());
 		PoolIntArray::Write pia_write = pia.write();
 
-		for (int pi = 0; pi < outline.size(); pi++) {
+		for (decltype(outline.size()) pi = 0; pi < outline.size(); pi++) {
 			polygon_write[current_point_index] = outline[pi];
 			uvs_write[current_point_index] = uv_outline[pi];
 			pia_write[pi] = current_point_index;
@@ -411,7 +411,7 @@ void SpriteEditor::_create_collision_polygon_2d_node() {
 		return;
 	}
 
-	for (int i = 0; i < computed_outline_lines.size(); i++) {
+	for (decltype(computed_outline_lines.size()) i = 0; i < computed_outline_lines.size(); i++) {
 
 		std::vector<Vector2> outline = computed_outline_lines[i];
 
@@ -435,7 +435,7 @@ void SpriteEditor::_create_light_occluder_2d_node() {
 		return;
 	}
 
-	for (int i = 0; i < computed_outline_lines.size(); i++) {
+	for (decltype(computed_outline_lines.size()) i = 0; i < computed_outline_lines.size(); i++) {
 
 		std::vector<Vector2> outline = computed_outline_lines[i];
 
@@ -445,7 +445,7 @@ void SpriteEditor::_create_light_occluder_2d_node() {
 		PoolVector2Array a;
 		a.resize(outline.size());
 		PoolVector2Array::Write aw = a.write();
-		for (int io = 0; io < outline.size(); io++) {
+		for (decltype(outline.size()) io = 0; io < outline.size(); io++) {
 			aw[io] = outline[io];
 		}
 		polygon->set_polygon(a);
@@ -493,7 +493,7 @@ void SpriteEditor::_debug_uv_draw() {
 		debug_uv->draw_multiline(uv_lines, color);
 
 	} else if ((selected_menu_item == MENU_OPTION_CONVERT_TO_POLYGON_2D || selected_menu_item == MENU_OPTION_CREATE_COLLISION_POLY_2D || selected_menu_item == MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D) && outline_lines.size() > 0) {
-		for (int i = 0; i < outline_lines.size(); i++) {
+		for (decltype(outline_lines.size()) i = 0; i < outline_lines.size(); i++) {
 			std::vector<Vector2> outline = outline_lines[i];
 
 			debug_uv->draw_polyline(outline, color);
