@@ -11,5 +11,6 @@ add_subdirectory(libpng)
 add_subdirectory(freetype)
 add_subdirectory(pcre2)
 add_subdirectory(nanosvg)
+add_subdirectory(assimp)
 
 remove_definitions(-w)
