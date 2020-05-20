@@ -11,8 +11,12 @@ endmacro()
 project(module_gdscript)
 
 
-# TODO : for enable we need jsonrpc and websocket modules
-set(gdscript_lsp OFF)
+# TODO : need to be test
+if(module_jsonrpc AND module_websocket)
+    option(gdscript_lsp "enable lsp language server for gdscript" ON)
+endif()
+
+
 
 file(GLOB header "*.h")
 file(GLOB cpp "*.cpp")
