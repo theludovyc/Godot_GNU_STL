@@ -15,5 +15,6 @@ add_subdirectory(assimp)
 add_subdirectory(bullet)
 add_subdirectory(cvtt)
 add_subdirectory(enet)
+add_subdirectory(etc2comp)
 
 remove_definitions(-w)
