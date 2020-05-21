@@ -315,7 +315,7 @@ void ItemListEditor::edit(Node *p_item_list) {
 		return;
 	}
 
-	for (int i = 0; i < item_plugins.size(); i++) {
+	for (decltype(item_plugins.size()) i = 0; i < item_plugins.size(); i++) {
 		if (item_plugins[i]->handles(p_item_list)) {
 
 			item_plugins[i]->set_object(p_item_list);
@@ -334,7 +334,7 @@ void ItemListEditor::edit(Node *p_item_list) {
 
 bool ItemListEditor::handles(Object *p_object) const {
 
-	for (int i = 0; i < item_plugins.size(); i++) {
+	for (decltype(item_plugins.size()) i = 0; i < item_plugins.size(); i++) {
 		if (item_plugins[i]->handles(p_object)) {
 			return true;
 		}
@@ -392,7 +392,7 @@ ItemListEditor::ItemListEditor() {
 
 ItemListEditor::~ItemListEditor() {
 
-	for (int i = 0; i < item_plugins.size(); i++)
+	for (decltype(item_plugins.size()) i = 0; i < item_plugins.size(); i++)
 		memdelete(item_plugins[i]);
 }
 

@@ -856,7 +856,7 @@ void FindInFilesPanel::apply_replaces_in_file(String fpath, const std::vector<Re
 
 	int offset = 0;
 
-	for (int i = 0; i < locations.size(); ++i) {
+	for (decltype(locations.size()) i = 0; i < locations.size(); ++i) {
 
 		int repl_line_number = locations[i].line_number;
 

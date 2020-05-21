@@ -282,7 +282,7 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh> > &r_meshes, bool p
 			ERR_FAIL_COND_V(face[0].size() == 0, ERR_FILE_CORRUPT);
 
 			ERR_FAIL_COND_V(face[0].size() != face[1].size(), ERR_FILE_CORRUPT);
-			for (int i = 2; i < v.size() - 1; i++) {
+			for (decltype(v.size()) i = 2; i < v.size() - 1; i++) {
 
 				face[2] = v[i + 1].split("/");
 
@@ -299,7 +299,7 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh> > &r_meshes, bool p
 						int norm = face[idx][2].to_int() - 1;
 						if (norm < 0)
 							norm += normals.size() + 1;
-						ERR_FAIL_INDEX_V(norm, normals.size(), ERR_FILE_CORRUPT);
+						ERR_FAIL_INDEX_V(norm, static_cast<int>(normals.size()), ERR_FILE_CORRUPT);
 						surf_tool->add_normal(normals[norm]);
 					}
 
@@ -307,14 +307,14 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh> > &r_meshes, bool p
 						int uv = face[idx][1].to_int() - 1;
 						if (uv < 0)
 							uv += uvs.size() + 1;
-						ERR_FAIL_INDEX_V(uv, uvs.size(), ERR_FILE_CORRUPT);
+						ERR_FAIL_INDEX_V(uv, static_cast<int>(uvs.size()), ERR_FILE_CORRUPT);
 						surf_tool->add_uv(uvs[uv]);
 					}
 
 					int vtx = face[idx][0].to_int() - 1;
 					if (vtx < 0)
 						vtx += vertices.size() + 1;
-					ERR_FAIL_INDEX_V(vtx, vertices.size(), ERR_FILE_CORRUPT);
+					ERR_FAIL_INDEX_V(vtx, static_cast<int>(vertices.size()), ERR_FILE_CORRUPT);
 
 					Vector3 vertex = vertices[vtx];
 					//if (weld_vertices)

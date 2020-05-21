@@ -326,7 +326,7 @@ public:
 
 									if (weights.size() == p_vert.weights.size()) {
 
-										for (int i = 0; i < weights.size(); i++) {
+										for (decltype(weights.size()) i = 0; i < weights.size(); i++) {
 											if (weights[i].bone_idx != p_vert.weights[i].bone_idx)
 												return weights[i].bone_idx < p_vert.weights[i].bone_idx;
 
@@ -409,7 +409,7 @@ public:
 			ignore_anim = false;
 		}
 		virtual ~Node() {
-			for (int i = 0; i < children.size(); i++)
+			for (decltype(children.size()) i = 0; i < children.size(); i++)
 				memdelete(children[i]);
 		};
 	};
@@ -464,7 +464,7 @@ public:
 		std::vector<Node *> root_nodes;
 
 		~VisualScene() {
-			for (int i = 0; i < root_nodes.size(); i++)
+			for (decltype(root_nodes.size()) i = 0; i < root_nodes.size(); i++)
 				memdelete(root_nodes[i]);
 		}
 	};

@@ -273,7 +273,7 @@ void CustomPropertyEditor::_menu_option(int p_which) {
 
 						std::vector<Ref<EditorResourceConversionPlugin> > conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(RES(v));
 
-						ERR_FAIL_INDEX(to_type, conversions.size());
+						ERR_FAIL_INDEX(to_type, static_cast<int>(conversions.size()));
 
 						Ref<Resource> new_res = conversions[to_type]->convert(v);
 
@@ -437,7 +437,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 
 				std::vector<String> options = hint_text.split(",");
 				int current_val = 0;
-				for (int i = 0; i < options.size(); i++) {
+				for (decltype(options.size()) i = 0; i < options.size(); i++) {
 					std::vector<String> text_split = options[i].split(":");
 					if (text_split.size() != 1)
 						current_val = text_split[1].to_int();
@@ -518,7 +518,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 				set_size(Size2(200, 150) * EDSCALE);
 			} else if (hint == PROPERTY_HINT_FLAGS) {
 				std::vector<String> flags = hint_text.split(",");
-				for (int i = 0; i < flags.size(); i++) {
+				for (decltype(flags.size()) i = 0; i < flags.size(); i++) {
 					String flag = flags[i];
 					if (flag == "")
 						continue;
@@ -559,7 +559,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 			} else if (hint == PROPERTY_HINT_ENUM) {
 
 				std::vector<String> options = hint_text.split(",");
-				for (int i = 0; i < options.size(); i++) {
+				for (decltype(options.size()) i = 0; i < options.size(); i++) {
 					menu->add_item(options[i], i);
 				}
 				menu->set_position(get_position());
@@ -921,7 +921,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 					List<StringName> inheritors;
 					ClassDB::get_inheriters_from_class(base.strip_edges(), &inheritors);
 
-					for (int j = 0; j < custom_resources.size(); j++) {
+					for (decltype(custom_resources.size()) j = 0; j < custom_resources.size(); j++) {
 						inheritors.push_back(custom_resources[j].name);
 					}
 
@@ -937,7 +937,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 						bool is_custom_resource = false;
 						Ref<Texture> icon;
 						if (!custom_resources.empty()) {
-							for (int k = 0; k < custom_resources.size(); k++) {
+							for (decltype(custom_resources.size()) k = 0; k < custom_resources.size(); k++) {
 								if (custom_resources[k].name == t) {
 									is_custom_resource = true;
 									if (custom_resources[k].icon.is_valid())
@@ -1021,7 +1021,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 				if (conversions.size()) {
 					menu->add_separator();
 				}
-				for (int i = 0; i < conversions.size(); i++) {
+				for (decltype(conversions.size()) i = 0; i < conversions.size(); i++) {
 					String what = conversions[i]->converts_to();
 					Ref<Texture> icon;
 					if (has_icon(what, "EditorIcons")) {
@@ -1149,7 +1149,7 @@ void CustomPropertyEditor::_type_create_selected(int p_idx) {
 
 	} else if (type == Variant::OBJECT) {
 
-		ERR_FAIL_INDEX(p_idx, inheritors_array.size());
+		ERR_FAIL_INDEX(p_idx, static_cast<int>(inheritors_array.size()));
 
 		String intype = inheritors_array[p_idx];
 
@@ -1284,7 +1284,7 @@ void CustomPropertyEditor::_action_pressed(int p_which) {
 
 					if (hint_text != "") {
 						std::vector<String> extensions = hint_text.split(",");
-						for (int i = 0; i < extensions.size(); i++) {
+						for (decltype(extensions.size()) i = 0; i < extensions.size(); i++) {
 
 							String filter = extensions[i];
 							if (filter.begins_with("."))

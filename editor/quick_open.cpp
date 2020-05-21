@@ -156,7 +156,7 @@ void EditorQuickOpen::_parse_fs(EditorFileSystemDirectory *efsd, std::vector<Pai
 					float other_sim = _path_cmp(list[0].first, path);
 					int pos = 1;
 
-					while (pos < list.size() && this_sim <= other_sim) {
+					while (pos < static_cast<int>(list.size()) && this_sim <= other_sim) {
 						other_sim = _path_cmp(list[pos++].first, path);
 					}
 
@@ -200,7 +200,7 @@ std::vector<Pair<String, Ref<Texture> > > EditorQuickOpen::_sort_fs(std::vector<
 
 	std::vector<float> scores;
 	scores.resize(list.size());
-	for (int i = 0; i < list.size(); i++)
+	for (decltype(list.size()) i = 0; i < list.size(); i++)
 		scores[i] = _path_cmp(search_text, list[i].first);
 
 	while (list.size() > 0) {
@@ -208,7 +208,7 @@ std::vector<Pair<String, Ref<Texture> > > EditorQuickOpen::_sort_fs(std::vector<
 		float best_score = 0.0f;
 		int best_idx = 0;
 
-		for (int i = 0; i < list.size(); i++) {
+		for (decltype(list.size()) i = 0; i < list.size(); i++) {
 			float current_score = scores[i];
 			if (current_score > best_score) {
 				best_score = current_score;
@@ -234,7 +234,7 @@ void EditorQuickOpen::_update_search() {
 	_parse_fs(efsd, list);
 	list = _sort_fs(list);
 
-	for (int i = 0; i < list.size(); i++) {
+	for (decltype(list.size()) i = 0; i < list.size(); i++) {
 		TreeItem *ti = search_options->create_item(root);
 		ti->set_text(0, list[i].first);
 		ti->set_icon(0, list[i].second);

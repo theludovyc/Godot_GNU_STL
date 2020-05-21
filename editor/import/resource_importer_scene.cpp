@@ -286,7 +286,7 @@ static void _gen_shape_list(const Ref<Mesh> &mesh, List<Ref<Shape> > &r_shape_li
 
 		std::vector<Ref<Shape> > cd = mesh->convex_decompose();
 		if (cd.size()) {
-			for (int i = 0; i < cd.size(); i++) {
+			for (decltype(cd.size()) i = 0; i < cd.size(); i++) {
 				r_shape_list.push_back(cd[i]);
 			}
 		}
@@ -799,7 +799,7 @@ void ResourceImporterScene::_filter_tracks(Node *scene, const String &p_text) {
 	ERR_FAIL_COND(!anim);
 
 	std::vector<String> strings = p_text.split("\n");
-	for (int i = 0; i < strings.size(); i++) {
+	for (decltype(strings.size()) i = 0; i < strings.size(); i++) {
 
 		strings[i] = strings[i].strip_edges();
 	}
@@ -815,7 +815,7 @@ void ResourceImporterScene::_filter_tracks(Node *scene, const String &p_text) {
 		Set<String> keep;
 		Set<String> keep_local;
 
-		for (int i = 0; i < strings.size(); i++) {
+		for (decltype(strings.size()) i = 0; i < strings.size(); i++) {
 
 			if (strings[i].begins_with("@")) {
 
@@ -826,7 +826,7 @@ void ResourceImporterScene::_filter_tracks(Node *scene, const String &p_text) {
 				keep_local.clear();
 
 				std::vector<String> filters = strings[i].substr(1, strings[i].length()).split(",");
-				for (int j = 0; j < filters.size(); j++) {
+				for (decltype(filters.size()) j = 0; j < filters.size(); j++) {
 
 					String fname = filters[j].strip_edges();
 					if (fname == "")

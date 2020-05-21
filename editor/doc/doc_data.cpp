@@ -55,11 +55,11 @@ void DocData::merge_from(const DocData &p_data) {
 		c.brief_description = cf.brief_description;
 		c.tutorials = cf.tutorials;
 
-		for (int i = 0; i < c.methods.size(); i++) {
+		for (decltype(c.methods.size()) i = 0; i < c.methods.size(); i++) {
 
 			MethodDoc &m = c.methods[i];
 
-			for (int j = 0; j < cf.methods.size(); j++) {
+			for (decltype(cf.methods.size()) j = 0; j < cf.methods.size(); j++) {
 
 				if (cf.methods[j].name != m.name)
 					continue;
@@ -95,11 +95,11 @@ void DocData::merge_from(const DocData &p_data) {
 			}
 		}
 
-		for (int i = 0; i < c.signals.size(); i++) {
+		for (decltype(c.signals.size()) i = 0; i < c.signals.size(); i++) {
 
 			MethodDoc &m = c.signals[i];
 
-			for (int j = 0; j < cf.signals.size(); j++) {
+			for (decltype(cf.signals.size()) j = 0; j < cf.signals.size(); j++) {
 
 				if (cf.signals[j].name != m.name)
 					continue;
@@ -110,11 +110,11 @@ void DocData::merge_from(const DocData &p_data) {
 			}
 		}
 
-		for (int i = 0; i < c.constants.size(); i++) {
+		for (decltype(c.constants.size()) i = 0; i < c.constants.size(); i++) {
 
 			ConstantDoc &m = c.constants[i];
 
-			for (int j = 0; j < cf.constants.size(); j++) {
+			for (decltype(cf.constants.size()) j = 0; j < cf.constants.size(); j++) {
 
 				if (cf.constants[j].name != m.name)
 					continue;
@@ -125,11 +125,11 @@ void DocData::merge_from(const DocData &p_data) {
 			}
 		}
 
-		for (int i = 0; i < c.properties.size(); i++) {
+		for (decltype(c.properties.size()) i = 0; i < c.properties.size(); i++) {
 
 			PropertyDoc &p = c.properties[i];
 
-			for (int j = 0; j < cf.properties.size(); j++) {
+			for (decltype(cf.properties.size()) j = 0; j < cf.properties.size(); j++) {
 
 				if (cf.properties[j].name != p.name)
 					continue;
@@ -140,11 +140,11 @@ void DocData::merge_from(const DocData &p_data) {
 			}
 		}
 
-		for (int i = 0; i < c.theme_properties.size(); i++) {
+		for (decltype(c.theme_properties.size()) i = 0; i < c.theme_properties.size(); i++) {
 
 			PropertyDoc &p = c.theme_properties[i];
 
-			for (int j = 0; j < cf.theme_properties.size(); j++) {
+			for (decltype(cf.theme_properties.size()) j = 0; j < cf.theme_properties.size(); j++) {
 
 				if (cf.theme_properties[j].name != p.name)
 					continue;
@@ -1050,7 +1050,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 		_write_string(f, 1, "</description>");
 
 		_write_string(f, 1, "<tutorials>");
-		for (int i = 0; i < c.tutorials.size(); i++) {
+		for (decltype(c.tutorials.size()) i = 0; i < c.tutorials.size(); i++) {
 			_write_string(f, 2, "<link>" + c.tutorials[i].xml_escape() + "</link>");
 		}
 		_write_string(f, 1, "</tutorials>");
@@ -1059,7 +1059,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 
 		std::sort(c.methods.begin(), c.methods.end());
 
-		for (int i = 0; i < c.methods.size(); i++) {
+		for (decltype(c.methods.size()) i = 0; i < c.methods.size(); i++) {
 
 			const MethodDoc &m = c.methods[i];
 
@@ -1079,7 +1079,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 				_write_string(f, 3, "</return>");
 			}
 
-			for (int j = 0; j < m.arguments.size(); j++) {
+			for (decltype(m.arguments.size()) j = 0; j < m.arguments.size(); j++) {
 
 				const ArgumentDoc &a = m.arguments[j];
 
@@ -1110,7 +1110,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 
 			std::sort(c.properties.begin(), c.properties.end());
 
-			for (int i = 0; i < c.properties.size(); i++) {
+			for (decltype(c.properties.size()) i = 0; i < c.properties.size(); i++) {
 
 				String additional_attributes;
 				if (c.properties[i].enumeration != String()) {
@@ -1138,11 +1138,11 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 			std::sort(c.signals.begin(), c.signals.end());
 
 			_write_string(f, 1, "<signals>");
-			for (int i = 0; i < c.signals.size(); i++) {
+			for (decltype(c.signals.size()) i = 0; i < c.signals.size(); i++) {
 
 				const MethodDoc &m = c.signals[i];
 				_write_string(f, 2, "<signal name=\"" + m.name + "\">");
-				for (int j = 0; j < m.arguments.size(); j++) {
+				for (decltype(m.arguments.size()) j = 0; j < m.arguments.size(); j++) {
 
 					const ArgumentDoc &a = m.arguments[j];
 					_write_string(f, 3, "<argument index=\"" + itos(j) + "\" name=\"" + a.name.xml_escape() + "\" type=\"" + a.type.xml_escape() + "\">");
@@ -1161,7 +1161,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 
 		_write_string(f, 1, "<constants>");
 
-		for (int i = 0; i < c.constants.size(); i++) {
+		for (decltype(c.constants.size()) i = 0; i < c.constants.size(); i++) {
 
 			const ConstantDoc &k = c.constants[i];
 			if (k.enumeration != String()) {
@@ -1180,7 +1180,7 @@ Error DocData::save_classes(const String &p_default_path, const Map<String, Stri
 			std::sort(c.theme_properties.begin(), c.theme_properties.end());
 
 			_write_string(f, 1, "<theme_items>");
-			for (int i = 0; i < c.theme_properties.size(); i++) {
+			for (decltype(c.theme_properties.size()) i = 0; i < c.theme_properties.size(); i++) {
 
 				const PropertyDoc &p = c.theme_properties[i];
 

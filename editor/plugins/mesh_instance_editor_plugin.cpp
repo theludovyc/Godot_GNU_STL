@@ -207,7 +207,7 @@ void MeshInstanceEditor::_menu_option(int p_option) {
 
 			ur->create_action(TTR("Create Multiple Convex Shapes"));
 
-			for (int i = 0; i < shapes.size(); i++) {
+			for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 				CollisionShape *cshape = memnew(CollisionShape);
 				cshape->set_shape(shapes[i]);

@@ -173,7 +173,7 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 		std::vector<Ref<Mesh> > meshes;
 		std::vector<Transform> transforms;
 		std::vector<int> ids = p_library->get_item_list();
-		for (int i = 0; i < ids.size(); i++) {
+		for (decltype(ids.size()) i = 0; i < ids.size(); i++) {
 
 			if (mesh_instances.find(ids[i])) {
 
@@ -184,7 +184,7 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 
 		std::vector<Ref<Texture> > textures = EditorInterface::get_singleton()->make_mesh_previews(meshes, &transforms, EditorSettings::get_singleton()->get("editors/grid_map/preview_size"));
 		int j = 0;
-		for (int i = 0; i < ids.size(); i++) {
+		for (decltype(ids.size()) i = 0; i < ids.size(); i++) {
 
 			if (mesh_instances.find(ids[i])) {
 

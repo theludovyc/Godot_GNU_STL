@@ -2477,9 +2477,9 @@ void RasterizerStorageGLES2::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 
 	ERR_FAIL_COND(p_index_array.size() != index_array_size);
 
-	ERR_FAIL_COND(p_blend_shapes.size() != mesh->blend_shape_count);
+	ERR_FAIL_COND(static_cast<int>(p_blend_shapes.size()) != mesh->blend_shape_count);
 
-	for (int i = 0; i < p_blend_shapes.size(); i++) {
+	for (decltype(p_blend_shapes.size()) i = 0; i < p_blend_shapes.size(); i++) {
 		ERR_FAIL_COND(p_blend_shapes[i].size() != array_size);
 	}
 
@@ -2511,7 +2511,7 @@ void RasterizerStorageGLES2::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 	surface->index_data = p_index_array;
 	surface->total_data_size += surface->array_byte_size + surface->index_array_byte_size;
 
-	for (int i = 0; i < surface->skeleton_bone_used.size(); i++) {
+	for (decltype(surface->skeleton_bone_used.size()) i = 0; i < surface->skeleton_bone_used.size(); i++) {
 		surface->skeleton_bone_used[i] = !(surface->skeleton_bone_aabb[i].size.x < 0 || surface->skeleton_bone_aabb[i].size.y < 0 || surface->skeleton_bone_aabb[i].size.z < 0);
 	}
 
@@ -2546,7 +2546,7 @@ void RasterizerStorageGLES2::mesh_add_surface(RID p_mesh, uint32_t p_format, VS:
 	{
 		// blend shapes
 
-		for (int i = 0; i < p_blend_shapes.size(); i++) {
+		for (decltype(p_blend_shapes.size()) i = 0; i < p_blend_shapes.size(); i++) {
 
 			Surface::BlendShape mt;
 
@@ -2604,7 +2604,7 @@ void RasterizerStorageGLES2::mesh_surface_update_region(RID p_mesh, int p_surfac
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	int total_size = p_data.size();
 	ERR_FAIL_COND(p_offset + total_size > mesh->surfaces[p_surface]->array_byte_size);
@@ -2619,7 +2619,7 @@ void RasterizerStorageGLES2::mesh_surface_update_region(RID p_mesh, int p_surfac
 void RasterizerStorageGLES2::mesh_surface_set_material(RID p_mesh, int p_surface, RID p_material) {
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	if (mesh->surfaces[p_surface]->material == p_material)
 		return;
@@ -2640,7 +2640,7 @@ void RasterizerStorageGLES2::mesh_surface_set_material(RID p_mesh, int p_surface
 RID RasterizerStorageGLES2::mesh_surface_get_material(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, RID());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), RID());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), RID());
 
 	return mesh->surfaces[p_surface]->material;
 }
@@ -2648,7 +2648,7 @@ RID RasterizerStorageGLES2::mesh_surface_get_material(RID p_mesh, int p_surface)
 int RasterizerStorageGLES2::mesh_surface_get_array_len(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->array_len;
 }
@@ -2656,7 +2656,7 @@ int RasterizerStorageGLES2::mesh_surface_get_array_len(RID p_mesh, int p_surface
 int RasterizerStorageGLES2::mesh_surface_get_array_index_len(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->index_array_len;
 }
@@ -2665,7 +2665,7 @@ PoolVector<uint8_t> RasterizerStorageGLES2::mesh_surface_get_array(RID p_mesh, i
 
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, PoolVector<uint8_t>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), PoolVector<uint8_t>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), PoolVector<uint8_t>());
 
 	Surface *surface = mesh->surfaces[p_surface];
 #ifndef TOOLS_ENABLED
@@ -2677,7 +2677,7 @@ PoolVector<uint8_t> RasterizerStorageGLES2::mesh_surface_get_array(RID p_mesh, i
 PoolVector<uint8_t> RasterizerStorageGLES2::mesh_surface_get_index_array(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, PoolVector<uint8_t>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), PoolVector<uint8_t>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), PoolVector<uint8_t>());
 
 	Surface *surface = mesh->surfaces[p_surface];
 
@@ -2688,7 +2688,7 @@ uint32_t RasterizerStorageGLES2::mesh_surface_get_format(RID p_mesh, int p_surfa
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 
 	ERR_FAIL_COND_V(!mesh, 0);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), 0);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), 0);
 
 	return mesh->surfaces[p_surface]->format;
 }
@@ -2696,7 +2696,7 @@ uint32_t RasterizerStorageGLES2::mesh_surface_get_format(RID p_mesh, int p_surfa
 VS::PrimitiveType RasterizerStorageGLES2::mesh_surface_get_primitive_type(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, VS::PRIMITIVE_MAX);
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), VS::PRIMITIVE_MAX);
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), VS::PRIMITIVE_MAX);
 
 	return mesh->surfaces[p_surface]->primitive;
 }
@@ -2704,7 +2704,7 @@ VS::PrimitiveType RasterizerStorageGLES2::mesh_surface_get_primitive_type(RID p_
 AABB RasterizerStorageGLES2::mesh_surface_get_aabb(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, AABB());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), AABB());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), AABB());
 
 	return mesh->surfaces[p_surface]->aabb;
 }
@@ -2712,7 +2712,7 @@ AABB RasterizerStorageGLES2::mesh_surface_get_aabb(RID p_mesh, int p_surface) co
 std::vector<PoolVector<uint8_t> > RasterizerStorageGLES2::mesh_surface_get_blend_shapes(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, std::vector<PoolVector<uint8_t> >());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), std::vector<PoolVector<uint8_t> >());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), std::vector<PoolVector<uint8_t> >());
 #ifndef TOOLS_ENABLED
 	ERR_PRINT("OpenGL ES 2.0 does not allow retrieving mesh array data");
 #endif
@@ -2722,7 +2722,7 @@ std::vector<PoolVector<uint8_t> > RasterizerStorageGLES2::mesh_surface_get_blend
 std::vector<AABB> RasterizerStorageGLES2::mesh_surface_get_skeleton_aabb(RID p_mesh, int p_surface) const {
 	const Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND_V(!mesh, std::vector<AABB>());
-	ERR_FAIL_INDEX_V(p_surface, mesh->surfaces.size(), std::vector<AABB>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(mesh->surfaces.size()), std::vector<AABB>());
 
 	return mesh->surfaces[p_surface]->skeleton_bone_aabb;
 }
@@ -2731,7 +2731,7 @@ void RasterizerStorageGLES2::mesh_remove_surface(RID p_mesh, int p_surface) {
 
 	Mesh *mesh = mesh_owner.getornull(p_mesh);
 	ERR_FAIL_COND(!mesh);
-	ERR_FAIL_INDEX(p_surface, mesh->surfaces.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(mesh->surfaces.size()));
 
 	Surface *surface = mesh->surfaces[p_surface];
 
@@ -2744,7 +2744,7 @@ void RasterizerStorageGLES2::mesh_remove_surface(RID p_mesh, int p_surface) {
 		glDeleteBuffers(1, &surface->index_id);
 	}
 
-	for (int i = 0; i < surface->blend_shapes.size(); i++) {
+	for (decltype(surface->blend_shapes.size()) i = 0; i < surface->blend_shapes.size(); i++) {
 		glDeleteBuffers(1, &surface->blend_shapes[i].vertex_id);
 	}
 
@@ -2794,7 +2794,7 @@ AABB RasterizerStorageGLES2::mesh_get_aabb(RID p_mesh, RID p_skeleton) const {
 
 	if (sk && sk->size != 0) {
 
-		for (int i = 0; i < mesh->surfaces.size(); i++) {
+		for (decltype(mesh->surfaces.size()) i = 0; i < mesh->surfaces.size(); i++) {
 
 			AABB laabb;
 			if ((mesh->surfaces[i]->format & VS::ARRAY_FORMAT_BONES) && mesh->surfaces[i]->skeleton_bone_aabb.size()) {
@@ -2882,7 +2882,7 @@ AABB RasterizerStorageGLES2::mesh_get_aabb(RID p_mesh, RID p_skeleton) const {
 		}
 	} else {
 
-		for (int i = 0; i < mesh->surfaces.size(); i++) {
+		for (decltype(mesh->surfaces.size()) i = 0; i < mesh->surfaces.size(); i++) {
 
 			if (i == 0)
 				aabb = mesh->surfaces[i]->aabb;
@@ -4959,7 +4959,7 @@ void RasterizerStorageGLES2::_render_target_allocate(RenderTarget *rt) {
 			glColorMask(1, 1, 1, 1);
 			glDepthMask(GL_TRUE);
 
-			for (int j = 0; j < rt->mip_maps[i].sizes.size(); j++) {
+			for (decltype(rt->mip_maps[i].sizes.size()) j = 0; j < rt->mip_maps[i].sizes.size(); j++) {
 
 				RenderTarget::MipMaps::Size &mm = rt->mip_maps[i].sizes[j];
 
@@ -5070,8 +5070,8 @@ void RasterizerStorageGLES2::_render_target_clear(RenderTarget *rt) {
 	}
 
 	for (int i = 0; i < 2; i++) {
-		if (rt->mip_maps[i].sizes.size()) {
-			for (int j = 0; j < rt->mip_maps[i].sizes.size(); j++) {
+		if (!rt->mip_maps[i].sizes.empty()) {
+			for (decltype(rt->mip_maps[i].sizes.size()) j = 0; j < rt->mip_maps[i].sizes.size(); j++) {
 				glDeleteFramebuffers(1, &rt->mip_maps[i].sizes[j].fbo);
 				glDeleteTextures(1, &rt->mip_maps[i].sizes[j].color);
 			}
@@ -5612,7 +5612,7 @@ bool RasterizerStorageGLES2::free(RID p_rid) {
 				ins->material_override = RID();
 			}
 
-			for (int i = 0; i < ins->materials.size(); i++) {
+			for (decltype(ins->materials.size()) i = 0; i < ins->materials.size(); i++) {
 				if (ins->materials[i] == p_rid) {
 					ins->materials[i] = RID();
 				}
@@ -5872,7 +5872,7 @@ void RasterizerStorageGLES2::initialize() {
 
 		std::vector<String> extensions = String((const char *)extension_string).split(" ");
 
-		for (int i = 0; i < extensions.size(); i++) {
+		for (decltype(extensions.size()) i = 0; i < extensions.size(); i++) {
 			config.extensions.insert(extensions[i]);
 		}
 	}

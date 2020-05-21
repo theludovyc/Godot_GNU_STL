@@ -325,7 +325,7 @@ void EditorExportPlatformOSX::_fix_plist(const Ref<EditorExportPreset> &p_preset
 	String strnew;
 	str.parse_utf8((const char *)plist.data(), plist.size());
 	std::vector<String> lines = str.split("\n");
-	for (int i = 0; i < lines.size(); i++) {
+	for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 		if (lines[i].find("$binary") != -1) {
 			strnew += lines[i].replace("$binary", p_binary) + "\n";
 		} else if (lines[i].find("$name") != -1) {
@@ -711,7 +711,7 @@ Error EditorExportPlatformOSX::export_project(const Ref<EditorExportPreset> &p_p
 
 			if (err == OK) {
 				DirAccess *da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
-				for (int i = 0; i < shared_objects.size(); i++) {
+				for (decltype(shared_objects.size()) i = 0; i < shared_objects.size(); i++) {
 					err = da->copy(shared_objects[i].path, tmp_app_path_name + "/Contents/Frameworks/" + shared_objects[i].path.get_file());
 					if (err == OK && sign_enabled) {
 						err = _code_sign(p_preset, tmp_app_path_name + "/Contents/Frameworks/" + shared_objects[i].path.get_file());
@@ -785,7 +785,7 @@ Error EditorExportPlatformOSX::export_project(const Ref<EditorExportPreset> &p_p
 
 			if (err == OK) {
 				//add shared objects
-				for (int i = 0; i < shared_objects.size(); i++) {
+				for (decltype(shared_objects.size()) i = 0; i < shared_objects.size(); i++) {
 					std::vector<uint8_t> file = FileAccess::get_file_as_array(shared_objects[i].path);
 					ERR_CONTINUE(file.empty());
 

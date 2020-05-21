@@ -107,7 +107,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 			text += itos(p_type - SL::TYPE_BOOL + 1);
 			text += "(";
 
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -129,7 +129,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 			text += itos(p_type - SL::TYPE_UINT + 1);
 			text += "(";
 
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -151,7 +151,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 			text += itos(p_type - SL::TYPE_INT + 1);
 			text += "(";
 
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -172,7 +172,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 			text += itos(p_type - SL::TYPE_FLOAT + 1);
 			text += "(";
 
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -192,7 +192,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 			text += itos(p_type - SL::TYPE_MAT2 + 2);
 			text += "(";
 
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -209,7 +209,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 void ShaderCompilerGLES2::_dump_function_deps(SL::ShaderNode *p_node, const StringName &p_for_func, const Map<StringName, String> &p_func_code, StringBuilder &r_to_add, Set<StringName> &r_added) {
 	int fidx = -1;
 
-	for (int i = 0; i < p_node->functions.size(); i++) {
+	for (decltype(p_node->functions.size()) i = 0; i < p_node->functions.size(); i++) {
 		if (p_node->functions[i].name == p_for_func) {
 			fidx = i;
 			break;
@@ -228,7 +228,7 @@ void ShaderCompilerGLES2::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 
 		SL::FunctionNode *fnode = NULL;
 
-		for (int i = 0; i < p_node->functions.size(); i++) {
+		for (decltype(p_node->functions.size()) i = 0; i < p_node->functions.size(); i++) {
 			if (p_node->functions[i].name == E->get()) {
 				fnode = p_node->functions[i].function;
 				break;
@@ -246,7 +246,7 @@ void ShaderCompilerGLES2::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 		header += _mkid(fnode->name);
 		header += "(";
 
-		for (int i = 0; i < fnode->arguments.size(); i++) {
+		for (decltype(fnode->arguments.size()) i = 0; i < fnode->arguments.size(); i++) {
 			if (i > 0)
 				header += ", ";
 
@@ -275,7 +275,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			SL::ShaderNode *snode = (SL::ShaderNode *)p_node;
 
-			for (int i = 0; i < snode->render_modes.size(); i++) {
+			for (decltype(snode->render_modes.size()) i = 0; i < snode->render_modes.size(); i++) {
 
 				if (p_default_actions.render_mode_defines.has(snode->render_modes[i]) && !used_rmode_defines.has(snode->render_modes[i])) {
 
@@ -368,7 +368,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			// constants
 
-			for (int i = 0; i < snode->vconstants.size(); i++) {
+			for (decltype(snode->vconstants.size()) i = 0; i < snode->vconstants.size(); i++) {
 				String gcode;
 				gcode += "const ";
 				gcode += _prestr(snode->vconstants[i].precision);
@@ -385,7 +385,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			Map<StringName, String> function_code;
 
-			for (int i = 0; i < snode->functions.size(); i++) {
+			for (decltype(snode->functions.size()) i = 0; i < snode->functions.size(); i++) {
 				SL::FunctionNode *fnode = snode->functions[i].function;
 				current_func_name = fnode->name;
 				function_code[fnode->name] = _dump_node_code(fnode->body, 1, r_gen_code, p_actions, p_default_actions, p_assigning);
@@ -394,7 +394,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			Set<StringName> added_vertex;
 			Set<StringName> added_fragment;
 
-			for (int i = 0; i < snode->functions.size(); i++) {
+			for (decltype(snode->functions.size()) i = 0; i < snode->functions.size(); i++) {
 
 				SL::FunctionNode *fnode = snode->functions[i].function;
 
@@ -460,7 +460,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			declaration += _prestr(var_dec_node->precision);
 			declaration += _typestr(var_dec_node->datatype);
 
-			for (int i = 0; i < var_dec_node->declarations.size(); i++) {
+			for (decltype(var_dec_node->declarations.size()) i = 0; i < var_dec_node->declarations.size(); i++) {
 
 				if (i > 0) {
 					declaration += ",";
@@ -532,7 +532,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			declaration += _prestr(arr_dec_node->precision);
 			declaration += _typestr(arr_dec_node->datatype);
 
-			for (int i = 0; i < arr_dec_node->declarations.size(); i++) {
+			for (decltype(arr_dec_node->declarations.size()) i = 0; i < arr_dec_node->declarations.size(); i++) {
 
 				if (i > 0) {
 					declaration += ",";
@@ -724,7 +724,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 					code += "(";
 
-					for (int i = 1; i < op_node->arguments.size(); i++) {
+					for (decltype(op_node->arguments.size()) i = 1; i < op_node->arguments.size(); i++) {
 						if (i > 1) {
 							code += ", ";
 						}
@@ -871,7 +871,7 @@ Error ShaderCompilerGLES2::compile(VS::ShaderMode p_mode, const String &p_code, 
 	if (err != OK) {
 
 		std::vector<String> shader = p_code.split("\n");
-		for (int i = 0; i < shader.size(); i++) {
+		for (decltype(shader.size()) i = 0; i < shader.size(); i++) {
 			print_line(itos(i + 1) + " " + shader[i]);
 		}
 

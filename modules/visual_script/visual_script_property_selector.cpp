@@ -340,7 +340,7 @@ void VisualScriptPropertySelector::get_visual_node_names(const String &root_filt
 		// check if the name has the filter
 		bool in_filter = false;
 		std::vector<String> tx_filters = search_box->get_text().split(" ");
-		for (int i = 0; i < tx_filters.size(); i++) {
+		for (decltype(tx_filters.size()) i = 0; i < tx_filters.size(); i++) {
 			if (tx_filters[i] == "") {
 				in_filter = true;
 			} else {
@@ -389,7 +389,7 @@ void VisualScriptPropertySelector::get_visual_node_names(const String &root_filt
 			type_name = "Deconstruct ";
 		}
 		std::vector<String> desc = path[path.size() - 1].replace("(", " ").replace(")", " ").replace(",", " ").split(" ");
-		for (int i = 0; i < desc.size(); i++) {
+		for (decltype(desc.size()) i = 0; i < desc.size(); i++) {
 			desc[i] = desc[i].capitalize();
 			if (desc[i].ends_with(",")) {
 				desc[i] = desc[i].replace(",", ", ");
@@ -443,7 +443,7 @@ void VisualScriptPropertySelector::_item_selected() {
 
 		Map<String, DocData::ClassDoc>::Element *E = dd->class_list.find(at_class);
 		if (E) {
-			for (int i = 0; i < E->get().properties.size(); i++) {
+			for (decltype(E->get().properties.size()) i = 0; i < E->get().properties.size(); i++) {
 				if (E->get().properties[i].name == name) {
 					text = E->get().properties[i].description;
 				}
@@ -458,7 +458,7 @@ void VisualScriptPropertySelector::_item_selected() {
 
 		Map<String, DocData::ClassDoc>::Element *C = dd->class_list.find(at_class);
 		if (C) {
-			for (int i = 0; i < C->get().methods.size(); i++) {
+			for (decltype(C->get().methods.size()) i = 0; i < C->get().methods.size(); i++) {
 				if (C->get().methods[i].name == name) {
 					text = C->get().methods[i].description;
 				}
@@ -469,7 +469,7 @@ void VisualScriptPropertySelector::_item_selected() {
 	}
 	Map<String, DocData::ClassDoc>::Element *T = dd->class_list.find(class_type);
 	if (T) {
-		for (int i = 0; i < T->get().methods.size(); i++) {
+		for (decltype(T->get().methods.size()) i = 0; i < T->get().methods.size(); i++) {
 			std::vector<String> functions = name.rsplit("/", false, 1);
 			if (T->get().methods[i].name == functions[functions.size() - 1]) {
 				text = T->get().methods[i].description;
@@ -499,7 +499,7 @@ void VisualScriptPropertySelector::_item_selected() {
 		if (builtin_node.is_valid()) {
 			Map<String, DocData::ClassDoc>::Element *F = dd->class_list.find(builtin_node->get_class_name());
 			if (F) {
-				for (int i = 0; i < F->get().constants.size(); i++) {
+				for (decltype(F->get().constants.size()) i = 0; i < F->get().constants.size(); i++) {
 					if (F->get().constants[i].value.to_int() == int(builtin_node->get_func())) {
 						text = F->get().constants[i].description;
 					}

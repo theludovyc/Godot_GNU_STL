@@ -595,7 +595,7 @@ private:
 
 					if (failed_files.size()) {
 						String msg = TTR("The following files failed extraction from package:") + "\n\n";
-						for (int i = 0; i < failed_files.size(); i++) {
+						for (decltype(failed_files.size()) i = 0; i < failed_files.size(); i++) {
 
 							if (i > 15) {
 								msg += "\nAnd " + itos(failed_files.size() - i) + " more files.";
@@ -1121,7 +1121,7 @@ void ProjectList::_notification(int p_what) {
 	if (p_what == NOTIFICATION_PROCESS) {
 
 		// Load icons as a coroutine to speed up launch when you have hundreds of projects
-		if (_icon_load_index < _projects.size()) {
+		if (_icon_load_index < static_cast<int>(_projects.size())) {
 			Item &item = _projects[_icon_load_index];
 			if (item.control->icon_needs_reload) {
 				load_project_icon(_icon_load_index);
@@ -1213,7 +1213,7 @@ void ProjectList::load_projects() {
 	// If you have 150 projects, it may read through 150 files on your disk at once + load 150 icons.
 
 	// Clear whole list
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		Item &project = _projects[i];
 		CRASH_COND(project.control == NULL);
 		memdelete(project.control); // Why not queue_free()?
@@ -1254,7 +1254,7 @@ void ProjectList::load_projects() {
 	}
 
 	// Create controls
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		create_project_item_control(i);
 	}
 
@@ -1272,7 +1272,7 @@ void ProjectList::update_dock_menu() {
 
 	int favs_added = 0;
 	int total_added = 0;
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		if (!_projects[i].grayed && !_projects[i].missing) {
 			if (_projects[i].favorite) {
 				favs_added++;
@@ -1399,7 +1399,7 @@ void ProjectList::sort_projects() {
 	sorter.compare.order_option = _order_option;
 	sorter.sort(_projects.data(), _projects.size());
 
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		Item &item = _projects[i];
 
 		bool visible = true;
@@ -1421,7 +1421,7 @@ void ProjectList::sort_projects() {
 		item.control->set_visible(visible);
 	}
 
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		Item &item = _projects[i];
 		item.control->get_parent()->move_child(item.control, i);
 	}
@@ -1444,13 +1444,13 @@ std::vector<ProjectList::Item> ProjectList::get_selected_projects() const {
 	}
 	items.resize(_selected_project_keys.size());
 	int j = 0;
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		const Item &item = _projects[i];
 		if (_selected_project_keys.has(item.project_key)) {
 			items[j++] = item;
 		}
 	}
-	ERR_FAIL_COND_V(j != items.size(), items);
+	ERR_FAIL_COND_V(j != static_cast<int>(items.size()), items);
 	return items;
 }
 
@@ -1481,7 +1481,7 @@ int ProjectList::get_single_selected_index() const {
 		// Multiple selected, consider the last clicked one as "main"
 		key = _last_clicked;
 	}
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		if (_projects[i].project_key == key) {
 			return i;
 		}
@@ -1511,7 +1511,7 @@ void ProjectList::remove_project(int p_index, bool p_update_settings) {
 }
 
 bool ProjectList::is_any_project_missing() const {
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		if (_projects[i].missing) {
 			return true;
 		}
@@ -1528,7 +1528,7 @@ void ProjectList::erase_missing_projects() {
 	int deleted_count = 0;
 	int remaining_count = 0;
 
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (int i = 0; i < static_cast<int>(_projects.size()); ++i) {
 		const Item &item = _projects[i];
 
 		if (item.missing) {
@@ -1579,7 +1579,7 @@ int ProjectList::refresh_project(const String &dir_path) {
 	bool was_selected = _selected_project_keys.has(project_key);
 
 	// Remove item in any case
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 		const Item &existing_item = _projects[i];
 		if (existing_item.path == dir_path) {
 			remove_project(i, false);
@@ -1599,7 +1599,7 @@ int ProjectList::refresh_project(const String &dir_path) {
 
 		sort_projects();
 
-		for (int i = 0; i < _projects.size(); ++i) {
+		for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 			if (_projects[i].project_key == project_key) {
 				if (was_selected) {
 					select_project(i);
@@ -1625,7 +1625,7 @@ void ProjectList::select_project(int p_index) {
 	std::vector<Item> previous_selected_items = get_selected_projects();
 	_selected_project_keys.clear();
 
-	for (int i = 0; i < previous_selected_items.size(); ++i) {
+	for (decltype(previous_selected_items.size()) i = 0; i < previous_selected_items.size(); ++i) {
 		previous_selected_items[i].control->update();
 	}
 
@@ -1664,7 +1664,7 @@ void ProjectList::erase_selected_projects() {
 		return;
 	}
 
-	for (int i = 0; i < _projects.size(); ++i) {
+	for (int i = 0; i < static_cast<int>(_projects.size()); ++i) {
 		Item &item = _projects[i];
 		if (_selected_project_keys.has(item.project_key) && item.control->is_visible()) {
 
@@ -1710,7 +1710,7 @@ void ProjectList::_panel_input(const Ref<InputEvent> &p_ev, Node *p_hb) {
 		if (mb->get_shift() && _selected_project_keys.size() > 0 && _last_clicked != "" && clicked_project.project_key != _last_clicked) {
 
 			int anchor_index = -1;
-			for (int i = 0; i < _projects.size(); ++i) {
+			for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 				const Item &p = _projects[i];
 				if (p.project_key == _last_clicked) {
 					anchor_index = p.control->get_index();
@@ -1759,7 +1759,7 @@ void ProjectList::_favorite_pressed(Node *p_hb) {
 	sort_projects();
 
 	if (item.favorite) {
-		for (int i = 0; i < _projects.size(); ++i) {
+		for (decltype(_projects.size()) i = 0; i < _projects.size(); ++i) {
 			if (_projects[i].project_key == item.project_key) {
 				ensure_project_visible(i);
 				break;
@@ -1842,7 +1842,7 @@ void ProjectManager::_update_project_buttons() {
 	bool empty_selection = selected_projects.empty();
 
 	bool is_missing_project_selected = false;
-	for (int i = 0; i < selected_projects.size(); ++i) {
+	for (decltype(selected_projects.size()) i = 0; i < selected_projects.size(); ++i) {
 		if (selected_projects[i].missing) {
 			is_missing_project_selected = true;
 			break;
@@ -1966,7 +1966,7 @@ void ProjectManager::_load_recent_projects() {
 void ProjectManager::_on_projects_updated() {
 	std::vector<ProjectList::Item> selected_projects = _project_list->get_selected_projects();
 	int index = 0;
-	for (int i = 0; i < selected_projects.size(); ++i) {
+	for (decltype(selected_projects.size()) i = 0; i < selected_projects.size(); ++i) {
 		index = _project_list->refresh_project(selected_projects[i].path);
 	}
 	if (index != -1) {
@@ -2103,7 +2103,7 @@ void ProjectManager::_run_project_confirm() {
 
 	std::vector<ProjectList::Item> selected_list = _project_list->get_selected_projects();
 
-	for (int i = 0; i < selected_list.size(); ++i) {
+	for (decltype(selected_list.size()) i = 0; i < selected_list.size(); ++i) {
 
 		const String &selected_main = selected_list[i].main_scene;
 		if (selected_main == "") {
@@ -2612,7 +2612,7 @@ ProjectManager::ProjectManager() {
 		}
 	}
 	String current_lang = EditorSettings::get_singleton()->get("interface/editor/editor_language");
-	for (int i = 0; i < editor_languages.size(); i++) {
+	for (decltype(editor_languages.size()) i = 0; i < editor_languages.size(); i++) {
 		String lang = editor_languages[i];
 		String lang_name = TranslationServer::get_singleton()->get_locale_name(lang);
 		language_btn->add_item(lang_name + " [" + lang + "]", i);
@@ -2706,7 +2706,7 @@ ProjectManager::~ProjectManager() {
 void ProjectListFilter::_setup_filters(std::vector<String> options) {
 
 	filter_option->clear();
-	for (int i = 0; i < options.size(); i++)
+	for (decltype(options.size()) i = 0; i < options.size(); i++)
 		filter_option->add_item(options[i]);
 }
 

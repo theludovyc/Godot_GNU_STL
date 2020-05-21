@@ -473,7 +473,7 @@ void TileMapEditor::_update_palette() {
 		std::sort(entries.begin(), entries.end());
 	}
 
-	for (int i = 0; i < entries.size(); i++) {
+	for (decltype(entries.size()) i = 0; i < entries.size(); i++) {
 
 		if (show_tile_names) {
 			palette->add_item(entries[i].name);
@@ -544,7 +544,7 @@ void TileMapEditor::_update_palette() {
 
 		Ref<Texture> tex = tileset->tile_get_texture(sel_tile);
 
-		for (int i = 0; i < entries2.size(); i++) {
+		for (decltype(entries2.size()) i = 0; i < entries2.size(); i++) {
 
 			manual_palette->add_item(String());
 
@@ -1274,7 +1274,7 @@ bool TileMapEditor::forward_gui_input(const Ref<InputEvent> &p_event) {
 			std::vector<Point2i> points = line(old_over_tile.x, over_tile.x, old_over_tile.y, over_tile.y);
 			std::vector<int> ids = get_selected_tiles();
 
-			for (int i = 0; i < points.size(); ++i) {
+			for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 
 				Point2i pos = points[i];
 
@@ -1294,7 +1294,7 @@ bool TileMapEditor::forward_gui_input(const Ref<InputEvent> &p_event) {
 
 			std::vector<Point2i> points = line(old_over_tile.x, over_tile.x, old_over_tile.y, over_tile.y);
 
-			for (int i = 0; i < points.size(); ++i) {
+			for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 
 				Point2i pos = points[i];
 
@@ -1333,7 +1333,7 @@ bool TileMapEditor::forward_gui_input(const Ref<InputEvent> &p_event) {
 
 				std::vector<Point2i> points = line(rectangle_begin.x, over_tile.x, rectangle_begin.y, over_tile.y);
 
-				for (int i = 0; i < points.size(); i++) {
+				for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 					paint_undo[points[i]] = _get_op_from_cell(points[i]);
 

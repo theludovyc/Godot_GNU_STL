@@ -1419,7 +1419,7 @@ void CodeTextEditor::set_edit_state(const Variant &p_state) {
 
 	if (state.has("folded_lines")) {
 		std::vector<int> folded_lines = state["folded_lines"];
-		for (int i = 0; i < folded_lines.size(); i++) {
+		for (decltype(folded_lines.size()) i = 0; i < folded_lines.size(); i++) {
 			text_editor->fold_line(folded_lines[i]);
 		}
 	}

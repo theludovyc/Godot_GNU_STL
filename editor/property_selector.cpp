@@ -357,7 +357,7 @@ void PropertySelector::_item_selected() {
 
 			Map<String, DocData::ClassDoc>::Element *E = dd->class_list.find(at_class);
 			if (E) {
-				for (int i = 0; i < E->get().properties.size(); i++) {
+				for (decltype(E->get().properties.size()) i = 0; i < E->get().properties.size(); i++) {
 					if (E->get().properties[i].name == name) {
 						text = E->get().properties[i].description;
 					}
@@ -374,7 +374,7 @@ void PropertySelector::_item_selected() {
 
 			Map<String, DocData::ClassDoc>::Element *E = dd->class_list.find(at_class);
 			if (E) {
-				for (int i = 0; i < E->get().methods.size(); i++) {
+				for (decltype(E->get().methods.size()) i = 0; i < E->get().methods.size(); i++) {
 					if (E->get().methods[i].name == name) {
 						text = E->get().methods[i].description;
 					}

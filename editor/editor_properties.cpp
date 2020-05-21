@@ -188,7 +188,7 @@ void EditorPropertyTextEnum::update_property() {
 }
 
 void EditorPropertyTextEnum::setup(const std::vector<String> &p_options) {
-	for (int i = 0; i < p_options.size(); i++) {
+	for (decltype(p_options.size()) i = 0; i < p_options.size(); i++) {
 		options->add_item(p_options[i], i);
 	}
 }
@@ -238,7 +238,7 @@ void EditorPropertyPath::_path_pressed() {
 		dialog->set_current_dir(full_path);
 	} else {
 		dialog->set_mode(save_mode ? EditorFileDialog::MODE_SAVE_FILE : EditorFileDialog::MODE_OPEN_FILE);
-		for (int i = 0; i < extensions.size(); i++) {
+		for (decltype(extensions.size()) i = 0; i < extensions.size(); i++) {
 			String e = extensions[i].strip_edges();
 			if (e != String()) {
 				dialog->add_filter(extensions[i].strip_edges());
@@ -506,7 +506,7 @@ void EditorPropertyEnum::update_property() {
 void EditorPropertyEnum::setup(const std::vector<String> &p_options) {
 
 	int64_t current_val = 0;
-	for (int i = 0; i < p_options.size(); i++) {
+	for (decltype(p_options.size()) i = 0; i < p_options.size(); i++) {
 		std::vector<String> text_split = p_options[i].split(":");
 		if (text_split.size() != 1)
 			current_val = text_split[1].to_int64();
@@ -539,7 +539,7 @@ EditorPropertyEnum::EditorPropertyEnum() {
 void EditorPropertyFlags::_flag_toggled() {
 
 	uint32_t value = 0;
-	for (int i = 0; i < flags.size(); i++) {
+	for (decltype(flags.size()) i = 0; i < flags.size(); i++) {
 		if (flags[i]->is_pressed()) {
 			uint32_t val = 1;
 			val <<= flag_indices[i];
@@ -554,7 +554,7 @@ void EditorPropertyFlags::update_property() {
 
 	uint32_t value = get_edited_object()->get(get_edited_property());
 
-	for (int i = 0; i < flags.size(); i++) {
+	for (decltype(flags.size()) i = 0; i < flags.size(); i++) {
 		uint32_t val = 1;
 		val <<= flag_indices[i];
 		if (value & val) {
@@ -570,7 +570,7 @@ void EditorPropertyFlags::setup(const std::vector<String> &p_options) {
 	ERR_FAIL_COND(flags.size());
 
 	bool first = true;
-	for (int i = 0; i < p_options.size(); i++) {
+	for (decltype(p_options.size()) i = 0; i < p_options.size(); i++) {
 		String option = p_options[i].strip_edges();
 		if (option != "") {
 			CheckBox *cb = memnew(CheckBox);
@@ -617,7 +617,7 @@ public:
 	}
 
 	virtual String get_tooltip(const Point2 &p_pos) const {
-		for (int i = 0; i < flag_rects.size(); i++) {
+		for (decltype(flag_rects.size()) i = 0; i < flag_rects.size(); i++) {
 			if (i < tooltips.size() && flag_rects[i].has_point(p_pos)) {
 				return tooltips[i];
 			}
@@ -627,7 +627,7 @@ public:
 	void _gui_input(const Ref<InputEvent> &p_ev) {
 		Ref<InputEventMouseButton> mb = p_ev;
 		if (mb.is_valid() && mb->get_button_index() == BUTTON_LEFT && mb->is_pressed()) {
-			for (int i = 0; i < flag_rects.size(); i++) {
+			for (decltype(flag_rects.size()) i = 0; i < flag_rects.size(); i++) {
 				if (flag_rects[i].has_point(mb->get_position())) {
 					//toggle
 					if (value & (1 << i)) {
@@ -2097,7 +2097,7 @@ void EditorPropertyResource::_file_selected(const String &p_path) {
 	if (!property_types.empty()) {
 		bool any_type_matches = false;
 		const std::vector<String> split_property_types = property_types.split(",");
-		for (int i = 0; i < split_property_types.size(); ++i) {
+		for (decltype(split_property_types.size()) i = 0; i < split_property_types.size(); ++i) {
 			if (res->is_class(split_property_types[i])) {
 				any_type_matches = true;
 				break;
@@ -2257,7 +2257,7 @@ void EditorPropertyResource::_menu_option(int p_which) {
 
 				std::vector<Ref<EditorResourceConversionPlugin> > conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(res);
 
-				ERR_FAIL_INDEX(to_type, conversions.size());
+				ERR_FAIL_INDEX(to_type, static_cast<int>(conversions.size()));
 
 				Ref<Resource> new_res = conversions[to_type]->convert(res);
 
@@ -2388,7 +2388,7 @@ void EditorPropertyResource::_update_menu_items() {
 			List<StringName> inheritors;
 			ClassDB::get_inheriters_from_class(base.strip_edges(), &inheritors);
 
-			for (int j = 0; j < custom_resources.size(); j++) {
+			for (decltype(custom_resources.size()) j = 0; j < custom_resources.size(); j++) {
 				inheritors.push_back(custom_resources[j].name);
 			}
 
@@ -2414,7 +2414,7 @@ void EditorPropertyResource::_update_menu_items() {
 				bool is_custom_resource = false;
 				Ref<Texture> icon;
 				if (!custom_resources.empty()) {
-					for (int j = 0; j < custom_resources.size(); j++) {
+					for (decltype(custom_resources.size()) j = 0; j < custom_resources.size(); j++) {
 						if (custom_resources[j].name == t) {
 							is_custom_resource = true;
 							if (custom_resources[j].icon.is_valid())
@@ -2491,7 +2491,7 @@ void EditorPropertyResource::_update_menu_items() {
 		if (conversions.size()) {
 			menu->add_separator();
 		}
-		for (int i = 0; i < conversions.size(); i++) {
+		for (decltype(conversions.size()) i = 0; i < conversions.size(); i++) {
 			String what = conversions[i]->converts_to();
 			Ref<Texture> icon;
 			if (has_icon(what, "EditorIcons")) {
@@ -3031,7 +3031,7 @@ bool EditorInspectorDefaultPlugin::parse_property(Object *p_object, Variant::Typ
 				bool full = true;
 				bool flip = false;
 				std::vector<String> hints = p_hint_text.split(",");
-				for (int i = 0; i < hints.size(); i++) {
+				for (decltype(hints.size()) i = 0; i < hints.size(); i++) {
 					String h = hints[i].strip_edges();
 					if (h == "attenuation") {
 						flip = true;

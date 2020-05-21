@@ -53,7 +53,7 @@ Array EditorInterface::_make_mesh_previews(const Array &p_meshes, int p_preview_
 
 	std::vector<Ref<Texture> > textures = make_mesh_previews(meshes, NULL, p_preview_size);
 	Array ret;
-	for (int i = 0; i < textures.size(); i++) {
+	for (decltype(textures.size()) i = 0; i < textures.size(); i++) {
 		ret.push_back(textures[i]);
 	}
 
@@ -89,7 +89,7 @@ std::vector<Ref<Texture> > EditorInterface::make_mesh_previews(const std::vector
 
 	std::vector<Ref<Texture> > textures;
 
-	for (int i = 0; i < p_meshes.size(); i++) {
+	for (decltype(p_meshes.size()) i = 0; i < p_meshes.size(); i++) {
 
 		Ref<Mesh> mesh = p_meshes[i];
 		if (!mesh.is_valid()) {

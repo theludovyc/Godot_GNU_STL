@@ -237,7 +237,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	patches->clear();
 	TreeItem *patch_root = patches->create_item();
 	std::vector<String> patchlist = current->get_patches();
-	for (int i = 0; i < patchlist.size(); i++) {
+	for (decltype(patchlist.size()) i = 0; i < patchlist.size(); i++) {
 		TreeItem *patch = patches->create_item(patch_root);
 		patch->set_cell_mode(0, TreeItem::CELL_MODE_CHECK);
 		String file = patchlist[i].get_file();
@@ -270,7 +270,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 
 			std::vector<String> items = error.split("\n", false);
 			error = "";
-			for (int i = 0; i < items.size(); i++) {
+			for (decltype(items.size()) i = 0; i < items.size(); i++) {
 				if (i > 0)
 					error += "\n";
 				error += " - " + items[i];
@@ -338,7 +338,7 @@ void ProjectExportDialog::_update_feature_list() {
 
 	String custom = current->get_custom_features();
 	std::vector<String> custom_list = custom.split(",");
-	for (int i = 0; i < custom_list.size(); i++) {
+	for (decltype(custom_list.size()) i = 0; i < custom_list.size(); i++) {
 		String f = custom_list[i].strip_edges();
 		if (f != String()) {
 			features.push_back(f);
@@ -386,7 +386,7 @@ void ProjectExportDialog::_patch_button_pressed(Object *p_item, int p_column, in
 
 	if (p_id == 0) {
 		std::vector<String> patches = current->get_patches();
-		ERR_FAIL_INDEX(patch_index, patches.size());
+		ERR_FAIL_INDEX(patch_index, static_cast<int>(patches.size()));
 		patch_erase->set_text(vformat(TTR("Delete patch '%s' from list?"), patches[patch_index].get_file()));
 		patch_erase->popup_centered_minsize();
 	} else {
@@ -406,7 +406,7 @@ void ProjectExportDialog::_patch_edited() {
 
 	std::vector<String> patches = current->get_patches();
 
-	ERR_FAIL_INDEX(index, patches.size());
+	ERR_FAIL_INDEX(index, static_cast<int>(patches.size()));
 
 	String patch = patches[index].replace("*", "");
 
@@ -424,7 +424,7 @@ void ProjectExportDialog::_patch_selected(const String &p_path) {
 
 	std::vector<String> patches = current->get_patches();
 
-	if (patch_index >= patches.size()) {
+	if (patch_index >= static_cast<int>(patches.size())) {
 
 		current->add_patch(ProjectSettings::get_singleton()->get_resource_path().path_to(p_path) + "*");
 	} else {
@@ -441,7 +441,7 @@ void ProjectExportDialog::_patch_deleted() {
 	ERR_FAIL_COND(current.is_null());
 
 	std::vector<String> patches = current->get_patches();
-	if (patch_index < patches.size()) {
+	if (patch_index < static_cast<int>(patches.size())) {
 
 		current->remove_patch(patch_index);
 		_update_current_preset();
@@ -597,7 +597,7 @@ void ProjectExportDialog::_duplicate_preset() {
 	preset->set_include_filter(current->get_include_filter());
 	preset->set_exclude_filter(current->get_exclude_filter());
 	std::vector<String> list = current->get_patches();
-	for (int i = 0; i < list.size(); i++) {
+	for (decltype(list.size()) i = 0; i < list.size(); i++) {
 		preset->add_patch(list[i]);
 	}
 	preset->set_custom_features(current->get_custom_features());

@@ -182,7 +182,7 @@ void RasterizerSceneGLES3::shadow_atlas_set_quadrant_subdivision(RID p_atlas, in
 		return;
 
 	//erase all data from quadrant
-	for (int i = 0; i < shadow_atlas->quadrants[p_quadrant].shadows.size(); i++) {
+	for (decltype(shadow_atlas->quadrants[p_quadrant].shadows.size()) i = 0; i < shadow_atlas->quadrants[p_quadrant].shadows.size(); i++) {
 
 		if (shadow_atlas->quadrants[p_quadrant].shadows[i].owner.is_valid()) {
 			shadow_atlas->shadow_owners.erase(shadow_atlas->quadrants[p_quadrant].shadows[i].owner);
@@ -480,7 +480,7 @@ void RasterizerSceneGLES3::reflection_atlas_set_size(RID p_ref_atlas, int p_size
 
 	reflection_atlas->size = size;
 
-	for (int i = 0; i < reflection_atlas->reflections.size(); i++) {
+	for (decltype(reflection_atlas->reflections.size()) i = 0; i < reflection_atlas->reflections.size(); i++) {
 		//erase probes reference to this
 		if (reflection_atlas->reflections[i].owner.is_valid()) {
 			ReflectionProbeInstance *reflection_probe_instance = reflection_probe_instance_owner.getornull(reflection_atlas->reflections[i].owner);
@@ -552,7 +552,7 @@ void RasterizerSceneGLES3::reflection_atlas_set_subdivision(RID p_ref_atlas, int
 
 	if (subdiv) {
 
-		for (int i = 0; i < reflection_atlas->reflections.size(); i++) {
+		for (decltype(reflection_atlas->reflections.size()) i = 0; i < reflection_atlas->reflections.size(); i++) {
 			//erase probes reference to this
 			if (reflection_atlas->reflections[i].owner.is_valid()) {
 				ReflectionProbeInstance *reflection_probe_instance = reflection_probe_instance_owner.getornull(reflection_atlas->reflections[i].owner);
@@ -607,7 +607,7 @@ void RasterizerSceneGLES3::reflection_probe_release_atlas_index(RID p_instance) 
 	ReflectionAtlas *reflection_atlas = reflection_atlas_owner.getornull(rpi->atlas);
 	ERR_FAIL_COND(!reflection_atlas);
 
-	ERR_FAIL_INDEX(rpi->reflection_atlas_index, reflection_atlas->reflections.size());
+	ERR_FAIL_INDEX(rpi->reflection_atlas_index, static_cast<int>(reflection_atlas->reflections.size()));
 
 	ERR_FAIL_COND(reflection_atlas->reflections[rpi->reflection_atlas_index].owner != rpi->self);
 
@@ -656,7 +656,7 @@ bool RasterizerSceneGLES3::reflection_probe_instance_begin_render(RID p_instance
 	int best_used = -1;
 	uint64_t best_used_frame = 0;
 
-	for (int i = 0; i < reflection_atlas->reflections.size(); i++) {
+	for (decltype(reflection_atlas->reflections.size()) i = 0; i < reflection_atlas->reflections.size(); i++) {
 		if (reflection_atlas->reflections[i].owner == RID()) {
 			best_free = i;
 			break;
@@ -3191,7 +3191,7 @@ void RasterizerSceneGLES3::_fill_render_list(InstanceBase **p_cull_result, int p
 				RasterizerStorageGLES3::Particles *particles = storage->particles_owner.getptr(inst->base);
 				ERR_CONTINUE(!particles);
 
-				for (int j = 0; j < particles->draw_passes.size(); j++) {
+				for (decltype(particles->draw_passes.size()) j = 0; j < particles->draw_passes.size(); j++) {
 
 					RID pmesh = particles->draw_passes[j];
 					if (!pmesh.is_valid())
@@ -3200,9 +3200,9 @@ void RasterizerSceneGLES3::_fill_render_list(InstanceBase **p_cull_result, int p
 					if (!mesh)
 						continue; //mesh not assigned
 
-					int ssize = mesh->surfaces.size();
+					auto ssize = mesh->surfaces.size();
 
-					for (int k = 0; k < ssize; k++) {
+					for (decltype(ssize) k = 0; k < ssize; k++) {
 
 						RasterizerStorageGLES3::Surface *s = mesh->surfaces[k];
 						_add_geometry(s, inst, particles, -1, p_depth_pass, p_shadow_pass);
@@ -3220,7 +3220,7 @@ void RasterizerSceneGLES3::_blur_effect_buffer() {
 
 	//blur diffuse into effect mipmaps using separatable convolution
 	//storage->shaders.copy.set_conditional(CopyShaderGLES3::GAUSSIAN_HORIZONTAL,true);
-	for (int i = 0; i < storage->frame.current_rt->effects.mip_maps[1].sizes.size(); i++) {
+	for (decltype(storage->frame.current_rt->effects.mip_maps[1].sizes.size()) i = 0; i < storage->frame.current_rt->effects.mip_maps[1].sizes.size(); i++) {
 
 		int vp_w = storage->frame.current_rt->effects.mip_maps[1].sizes[i].width;
 		int vp_h = storage->frame.current_rt->effects.mip_maps[1].sizes[i].height;
@@ -3305,7 +3305,7 @@ void RasterizerSceneGLES3::_render_mrts(Environment *env, const CameraMatrix &p_
 		ss[0] = storage->frame.current_rt->width;
 		ss[1] = storage->frame.current_rt->height;
 
-		for (int i = 0; i < storage->frame.current_rt->effects.ssao.depth_mipmap_fbos.size(); i++) {
+		for (int i = 0; i < static_cast<int>(storage->frame.current_rt->effects.ssao.depth_mipmap_fbos.size()); i++) {
 
 			state.ssao_minify_shader.set_conditional(SsaoMinifyShaderGLES3::MINIFY_START, i == 0);
 			state.ssao_minify_shader.set_conditional(SsaoMinifyShaderGLES3::USE_ORTHOGONAL_PROJECTION, p_cam_projection.is_orthogonal());
@@ -3839,7 +3839,7 @@ void RasterizerSceneGLES3::_post_process(Environment *env, const CameraMatrix &p
 		//shrink from second to previous to last level
 
 		int s_size = exposure_shrink_size / 3;
-		for (int i = 1; i < exposure_shrink.size() - 1; i++) {
+		for (decltype(exposure_shrink.size()) i = 1; i < exposure_shrink.size() - 1; i++) {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, exposure_shrink[i].fbo);
 			glActiveTexture(GL_TEXTURE0);
@@ -3897,8 +3897,9 @@ void RasterizerSceneGLES3::_post_process(Environment *env, const CameraMatrix &p
 		for (int i = 0; i < VS::MAX_GLOW_LEVELS; i++) {
 			if (env->glow_levels & (1 << i)) {
 
-				if (i >= storage->frame.current_rt->effects.mip_maps[1].sizes.size()) {
-					max_glow_level = storage->frame.current_rt->effects.mip_maps[1].sizes.size() - 1;
+				int len = storage->frame.current_rt->effects.mip_maps[1].sizes.size();
+				if (i >= len) {
+					max_glow_level = len - 1;
 					glow_mask |= 1 << max_glow_level;
 
 				} else {
@@ -4744,7 +4745,7 @@ void RasterizerSceneGLES3::render_shadow(RID p_light, RID p_shadow_atlas, int p_
 		uint32_t quadrant = (key >> ShadowAtlas::QUADRANT_SHIFT) & 0x3;
 		uint32_t shadow = key & ShadowAtlas::SHADOW_INDEX_MASK;
 
-		ERR_FAIL_INDEX((int)shadow, shadow_atlas->quadrants[quadrant].shadows.size());
+		ERR_FAIL_INDEX((int)shadow, static_cast<int>(shadow_atlas->quadrants[quadrant].shadows.size()));
 
 		uint32_t quadrant_size = shadow_atlas->size >> 1;
 

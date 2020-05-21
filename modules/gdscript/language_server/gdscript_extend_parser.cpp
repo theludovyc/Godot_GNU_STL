@@ -88,14 +88,14 @@ void ExtendGDScriptParser::update_symbols() {
 
 		parse_class_symbol(gdclass, class_symbol);
 
-		for (int i = 0; i < class_symbol.children.size(); i++) {
+		for (decltype(class_symbol.children.size()) i = 0; i < class_symbol.children.size(); i++) {
 			const lsp::DocumentSymbol &symbol = class_symbol.children[i];
 			members.set(symbol.name, &symbol);
 
 			// cache level one inner classes
 			if (symbol.kind == lsp::SymbolKind::Class) {
 				ClassMembers inner_class;
-				for (int j = 0; j < symbol.children.size(); j++) {
+				for (decltype(symbol.children.size()) j = 0; j < symbol.children.size(); j++) {
 					const lsp::DocumentSymbol &s = symbol.children[j];
 					inner_class.set(s.name, &s);
 				}
@@ -160,7 +160,7 @@ void ExtendGDScriptParser::parse_class_symbol(const GDScriptParser::ClassNode *p
 	bool is_root_class = &r_symbol == &class_symbol;
 	r_symbol.documentation = parse_documentation(is_root_class ? 0 : LINE_NUMBER_TO_INDEX(p_class->line), is_root_class);
 
-	for (int i = 0; i < p_class->variables.size(); ++i) {
+	for (decltype(p_class->variables.size()) i = 0; i < p_class->variables.size(); ++i) {
 
 		const GDScriptParser::ClassNode::Member &m = p_class->variables[i];
 
@@ -192,7 +192,7 @@ void ExtendGDScriptParser::parse_class_symbol(const GDScriptParser::ClassNode *p
 		r_symbol.children.push_back(symbol);
 	}
 
-	for (int i = 0; i < p_class->_signals.size(); ++i) {
+	for (decltype(p_class->_signals.size()) i = 0; i < p_class->_signals.size(); ++i) {
 		const GDScriptParser::ClassNode::Signal &signal = p_class->_signals[i];
 
 		lsp::DocumentSymbol symbol;
@@ -209,7 +209,7 @@ void ExtendGDScriptParser::parse_class_symbol(const GDScriptParser::ClassNode *p
 		symbol.uri = uri;
 		symbol.script_path = path;
 		symbol.detail = "signal " + signal.name + "(";
-		for (int j = 0; j < signal.arguments.size(); j++) {
+		for (decltype(signal.arguments.size()) j = 0; j < signal.arguments.size(); j++) {
 			if (j > 0) {
 				symbol.detail += ", ";
 			}
@@ -266,21 +266,21 @@ void ExtendGDScriptParser::parse_class_symbol(const GDScriptParser::ClassNode *p
 		r_symbol.children.push_back(symbol);
 	}
 
-	for (int i = 0; i < p_class->functions.size(); ++i) {
+	for (decltype(p_class->functions.size()) i = 0; i < p_class->functions.size(); ++i) {
 		const GDScriptParser::FunctionNode *func = p_class->functions[i];
 		lsp::DocumentSymbol symbol;
 		parse_function_symbol(func, symbol);
 		r_symbol.children.push_back(symbol);
 	}
 
-	for (int i = 0; i < p_class->static_functions.size(); ++i) {
+	for (decltype(p_class->static_functions.size()) i = 0; i < p_class->static_functions.size(); ++i) {
 		const GDScriptParser::FunctionNode *func = p_class->static_functions[i];
 		lsp::DocumentSymbol symbol;
 		parse_function_symbol(func, symbol);
 		r_symbol.children.push_back(symbol);
 	}
 
-	for (int i = 0; i < p_class->subclasses.size(); ++i) {
+	for (decltype(p_class->subclasses.size()) i = 0; i < p_class->subclasses.size(); ++i) {
 		const GDScriptParser::ClassNode *subclass = p_class->subclasses[i];
 		lsp::DocumentSymbol symbol;
 		parse_class_symbol(subclass, symbol);
@@ -307,7 +307,7 @@ void ExtendGDScriptParser::parse_function_symbol(const GDScriptParser::FunctionN
 	r_symbol.script_path = path;
 
 	String arguments;
-	for (int i = 0; i < p_func->arguments.size(); i++) {
+	for (decltype(p_func->arguments.size()) i = 0; i < p_func->arguments.size(); i++) {
 		lsp::DocumentSymbol symbol;
 		symbol.kind = lsp::SymbolKind::Variable;
 		symbol.name = p_func->arguments[i];
@@ -366,7 +366,7 @@ void ExtendGDScriptParser::parse_function_symbol(const GDScriptParser::FunctionN
 }
 
 String ExtendGDScriptParser::parse_documentation(int p_line, bool p_docs_down) {
-	ERR_FAIL_INDEX_V(p_line, lines.size(), String());
+	ERR_FAIL_INDEX_V(p_line, static_cast<int>(lines.size()), String());
 
 	List<String> doc_lines;
 
@@ -385,7 +385,8 @@ String ExtendGDScriptParser::parse_documentation(int p_line, bool p_docs_down) {
 	int start_line = p_docs_down ? p_line : p_line - 1;
 	for (int i = start_line; true; i += step) {
 
-		if (i < 0 || i >= lines.size()) break;
+		int len = lines.size();
+		if (i < 0 || i >= len) break;
 
 		String line_comment = lines[i].strip_edges(true, false);
 		if (line_comment.begins_with("#")) {
@@ -470,9 +471,9 @@ String ExtendGDScriptParser::get_text_for_lookup_symbol(const lsp::Position &p_c
 
 String ExtendGDScriptParser::get_identifier_under_position(const lsp::Position &p_position, Vector2i &p_offset) const {
 
-	ERR_FAIL_INDEX_V(p_position.line, lines.size(), "");
+	ERR_FAIL_INDEX_V(p_position.line, static_cast<int>(lines.size()), "");
 	String line = lines[p_position.line];
-	ERR_FAIL_INDEX_V(p_position.character, line.size(), "");
+	ERR_FAIL_INDEX_V(p_position.character, static_cast<int>(line.size()), "");
 
 	int start_pos = p_position.character;
 	for (int c = p_position.character; c >= 0; c--) {
@@ -513,7 +514,7 @@ const lsp::DocumentSymbol *ExtendGDScriptParser::search_symbol_defined_at_line(i
 	} else if (p_parent.range.start.line == p_line) {
 		return &p_parent;
 	} else {
-		for (int i = 0; i < p_parent.children.size(); i++) {
+		for (decltype(p_parent.children.size()) i = 0; i < p_parent.children.size(); i++) {
 			ret = search_symbol_defined_at_line(p_line, p_parent.children[i]);
 			if (ret) {
 				break;
@@ -525,7 +526,7 @@ const lsp::DocumentSymbol *ExtendGDScriptParser::search_symbol_defined_at_line(i
 
 Error ExtendGDScriptParser::get_left_function_call(const lsp::Position &p_position, lsp::Position &r_func_pos, int &r_arg_index) const {
 
-	ERR_FAIL_INDEX_V(p_position.line, lines.size(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_INDEX_V(p_position.line, static_cast<int>(lines.size()), ERR_INVALID_PARAMETER);
 
 	int bracket_stack = 0;
 	int index = 0;
@@ -641,7 +642,7 @@ Dictionary ExtendGDScriptParser::dump_function_api(const GDScriptParser::Functio
 	func["return_type"] = p_func->return_type.to_string();
 	func["rpc_mode"] = p_func->rpc_mode;
 	Array arguments;
-	for (int i = 0; i < p_func->arguments.size(); i++) {
+	for (decltype(p_func->arguments.size()) i = 0; i < p_func->arguments.size(); i++) {
 		Dictionary arg;
 		arg["name"] = p_func->arguments[i];
 		arg["type"] = p_func->argument_types[i].to_string();
@@ -676,7 +677,7 @@ Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode 
 	class_api["name"] = String(p_class->name);
 	class_api["path"] = path;
 	Array extends_class;
-	for (int i = 0; i < p_class->extends_class.size(); i++) {
+	for (decltype(p_class->extends_class.size()) i = 0; i < p_class->extends_class.size(); i++) {
 		extends_class.append(String(p_class->extends_class[i]));
 	}
 	class_api["extends_class"] = extends_class;
@@ -689,7 +690,7 @@ Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode 
 	}
 
 	Array subclasses;
-	for (int i = 0; i < p_class->subclasses.size(); i++) {
+	for (decltype(p_class->subclasses.size()) i = 0; i < p_class->subclasses.size(); i++) {
 		subclasses.push_back(dump_class_api(p_class->subclasses[i]));
 	}
 	class_api["sub_classes"] = subclasses;
@@ -714,7 +715,7 @@ Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode 
 	class_api["constants"] = constants;
 
 	Array members;
-	for (int i = 0; i < p_class->variables.size(); ++i) {
+	for (decltype(p_class->variables.size()) i = 0; i < p_class->variables.size(); ++i) {
 		const GDScriptParser::ClassNode::Member &m = p_class->variables[i];
 		Dictionary api;
 		api["name"] = m.identifier;
@@ -732,12 +733,12 @@ Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode 
 	class_api["members"] = members;
 
 	Array signals;
-	for (int i = 0; i < p_class->_signals.size(); ++i) {
+	for (decltype(p_class->_signals.size()) i = 0; i < p_class->_signals.size(); ++i) {
 		const GDScriptParser::ClassNode::Signal &signal = p_class->_signals[i];
 		Dictionary api;
 		api["name"] = signal.name;
 		Array args;
-		for (int j = 0; j < signal.arguments.size(); j++) {
+		for (decltype(signal.arguments.size()) j = 0; j < signal.arguments.size(); j++) {
 			args.append(signal.arguments[j]);
 		}
 		api["arguments"] = args;
@@ -750,13 +751,13 @@ Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode 
 	class_api["signals"] = signals;
 
 	Array methods;
-	for (int i = 0; i < p_class->functions.size(); ++i) {
+	for (decltype(p_class->functions.size()) i = 0; i < p_class->functions.size(); ++i) {
 		methods.append(dump_function_api(p_class->functions[i]));
 	}
 	class_api["methods"] = methods;
 
 	Array static_functions;
-	for (int i = 0; i < p_class->static_functions.size(); ++i) {
+	for (decltype(p_class->static_functions.size()) i = 0; i < p_class->static_functions.size(); ++i) {
 		static_functions.append(dump_function_api(p_class->static_functions[i]));
 	}
 	class_api["static_functions"] = static_functions;

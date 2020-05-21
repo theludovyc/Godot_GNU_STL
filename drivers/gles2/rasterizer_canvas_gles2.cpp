@@ -1316,7 +1316,7 @@ void RasterizerCanvasGLES2::render_batches(Item::Command *const *p_commands, Ite
 							RasterizerStorageGLES2::Mesh *mesh_data = storage->mesh_owner.getornull(mesh->mesh);
 							if (mesh_data) {
 
-								for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+								for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 									RasterizerStorageGLES2::Surface *s = mesh_data->surfaces[j];
 									// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 
@@ -1406,7 +1406,7 @@ void RasterizerCanvasGLES2::render_batches(Item::Command *const *p_commands, Ite
 
 							const float *base_buffer = multi_mesh->data.data();
 
-							for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+							for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 								RasterizerStorageGLES2::Surface *s = mesh_data->surfaces[j];
 								// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 

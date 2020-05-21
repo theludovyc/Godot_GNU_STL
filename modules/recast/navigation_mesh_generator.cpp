@@ -222,10 +222,10 @@ void EditorNavigationMeshGenerator::_parse_geometry(Transform p_accumulated_tran
 						if (err == OK) {
 							PoolVector3Array faces;
 
-							for (int j = 0; j < md.faces.size(); ++j) {
+							for (decltype(md.faces.size()) j = 0; j < md.faces.size(); ++j) {
 								Geometry::MeshData::Face face = md.faces[j];
 
-								for (int k = 2; k < face.indices.size(); ++k) {
+								for (decltype(face.indices.size()) k = 2; k < face.indices.size(); ++k) {
 									faces.push_back(md.vertices[face.indices[0]]);
 									faces.push_back(md.vertices[face.indices[k - 1]]);
 									faces.push_back(md.vertices[face.indices[k]]);

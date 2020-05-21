@@ -117,7 +117,7 @@ void ResourceImporterLayeredTexture::_save_tex(const std::vector<Ref<Image> > &p
 		p_compress_mode = COMPRESS_UNCOMPRESSED; //these can't go as lossy
 	}
 
-	for (int i = 0; i < p_images.size(); i++) {
+	for (decltype(p_images.size()) i = 0; i < p_images.size(); i++) {
 
 		switch (p_compress_mode) {
 			case COMPRESS_LOSSLESS: {

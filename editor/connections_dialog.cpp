@@ -70,7 +70,7 @@ public:
 
 		if (name.begins_with("bind/")) {
 			int which = name.get_slice("/", 1).to_int() - 1;
-			ERR_FAIL_INDEX_V(which, params.size(), false);
+			ERR_FAIL_INDEX_V(which, static_cast<int>(params.size()), false);
 			params[which] = p_value;
 		} else
 			return false;
@@ -84,7 +84,7 @@ public:
 
 		if (name.begins_with("bind/")) {
 			int which = name.get_slice("/", 1).to_int() - 1;
-			ERR_FAIL_INDEX_V(which, params.size(), false);
+			ERR_FAIL_INDEX_V(which, static_cast<int>(params.size()), false);
 			r_ret = params[which];
 		} else
 			return false;
@@ -94,7 +94,7 @@ public:
 
 	void _get_property_list(List<PropertyInfo> *p_list) const {
 
-		for (int i = 0; i < params.size(); i++) {
+		for (decltype(params.size()) i = 0; i < params.size(); i++) {
 			p_list->push_back(PropertyInfo(params[i].get_type(), "bind/" + itos(i + 1)));
 		}
 	}
@@ -198,7 +198,7 @@ void ConnectDialog::_remove_bind() {
 		return;
 	int idx = st.get_slice("/", 1).to_int() - 1;
 
-	ERR_FAIL_INDEX(idx, cdbinds->params.size());
+	ERR_FAIL_INDEX(idx, static_cast<int>(cdbinds->params.size()));
 	cdbinds->params.erase(cdbinds->params.begin() + idx);
 	cdbinds->notify_changed();
 }
@@ -558,7 +558,7 @@ void ConnectionsDock::_make_or_edit_connection() {
 	if (add_script_function) {
 		// Pick up args here before "it" is deleted by update_tree.
 		script_function_args = it->get_metadata(0).operator Dictionary()["args"];
-		for (int i = 0; i < cToMake.binds.size(); i++) {
+		for (decltype(cToMake.binds.size()) i = 0; i < cToMake.binds.size(); i++) {
 			script_function_args.append("extra_arg_" + itos(i) + ":" + Variant::get_type_name(cToMake.binds[i].get_type()));
 		}
 	}
@@ -988,7 +988,7 @@ void ConnectionsDock::update_tree() {
 					DocData *dd = EditorHelp::get_doc_data();
 					Map<String, DocData::ClassDoc>::Element *F = dd->class_list.find(base);
 					while (F && descr == String()) {
-						for (int i = 0; i < F->get().signals.size(); i++) {
+						for (decltype(F->get().signals.size()) i = 0; i < F->get().signals.size(); i++) {
 							if (F->get().signals[i].name == signal_name.operator String()) {
 								descr = F->get().signals[i].description.strip_edges();
 								break;
@@ -1029,7 +1029,7 @@ void ConnectionsDock::update_tree() {
 				if (c.binds.size()) {
 
 					path += " binds(";
-					for (int i = 0; i < c.binds.size(); i++) {
+					for (decltype(c.binds.size()) i = 0; i < c.binds.size(); i++) {
 
 						if (i > 0)
 							path += ", ";

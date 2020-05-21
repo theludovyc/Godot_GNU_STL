@@ -190,7 +190,7 @@ void AnimationNodeStateMachineEditor::_state_machine_gui_input(const Ref<InputEv
 		//test the lines now
 		int closest = -1;
 		float closest_d = 1e20;
-		for (int i = 0; i < transition_lines.size(); i++) {
+		for (decltype(transition_lines.size()) i = 0; i < transition_lines.size(); i++) {
 
 			Vector2 s[2] = {
 				transition_lines[i].from,
@@ -674,7 +674,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 			to = connecting_to;
 		}
 
-		for (int i = 0; i < node_rects.size(); i++) {
+		for (decltype(node_rects.size()) i = 0; i < node_rects.size(); i++) {
 			if (node_rects[i].node_name == connecting_from) {
 				_clip_src_line_to_rect(from, to, node_rects[i].node);
 			}
@@ -715,7 +715,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 			tl.to += offset;
 		}
 
-		for (int j = 0; j < node_rects.size(); j++) {
+		for (decltype(node_rects.size()) j = 0; j < node_rects.size(); j++) {
 			if (node_rects[j].node_name == tl.from_node) {
 				_clip_src_line_to_rect(tl.from, tl.to, node_rects[j].node);
 			}
@@ -737,7 +737,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 			if (current == tl.from_node && travel_path[0] == tl.to_node) {
 				travel = true;
 			} else {
-				for (int j = 0; j < travel_path.size() - 1; j++) {
+				for (decltype(travel_path.size()) j = 0; j < travel_path.size() - 1; j++) {
 					if (travel_path[j] == tl.from_node && travel_path[j + 1] == tl.to_node) {
 						travel = true;
 						break;
@@ -758,7 +758,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 	}
 
 	//draw actual nodes
-	for (int i = 0; i < node_rects.size(); i++) {
+	for (decltype(node_rects.size()) i = 0; i < node_rects.size(); i++) {
 
 		String name = node_rects[i].node_name;
 		Ref<AnimationNode> anode = state_machine->get_node(name);
@@ -851,7 +851,7 @@ void AnimationNodeStateMachineEditor::_state_machine_pos_draw() {
 		return;
 
 	int idx = -1;
-	for (int i = 0; i < node_rects.size(); i++) {
+	for (decltype(node_rects.size()) i = 0; i < node_rects.size(); i++) {
 		if (node_rects[i].node_name == playback->get_current_node()) {
 			idx = i;
 			break;
@@ -965,7 +965,7 @@ void AnimationNodeStateMachineEditor::_notification(int p_what) {
 			}
 		}
 
-		for (int i = 0; i < transition_lines.size(); i++) {
+		for (decltype(transition_lines.size()) i = 0; i < transition_lines.size(); i++) {
 			int tidx = -1;
 			for (int j = 0; j < state_machine->get_transition_count(); j++) {
 				if (transition_lines[i].from_node == state_machine->get_transition_from(j) && transition_lines[i].to_node == state_machine->get_transition_to(j)) {
@@ -1029,7 +1029,7 @@ void AnimationNodeStateMachineEditor::_notification(int p_what) {
 			if (last_travel_path.size() != tp.size()) {
 				same_travel_path = false;
 			} else {
-				for (int i = 0; i < last_travel_path.size(); i++) {
+				for (decltype(last_travel_path.size()) i = 0; i < last_travel_path.size(); i++) {
 					if (last_travel_path[i] != tp[i]) {
 						same_travel_path = false;
 						break;

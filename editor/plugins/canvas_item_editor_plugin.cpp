@@ -612,7 +612,7 @@ void CanvasItemEditor::_get_canvas_items_at_pos(const Point2 &p_pos, std::vector
 	_find_canvas_items_at_pos(p_pos, scene, r_items);
 
 	//Remove invalid results
-	for (int i = 0; i < r_items.size(); i++) {
+	for (int i = 0; i < static_cast<int>(r_items.size()); i++) {
 		Node *node = r_items[i].item;
 
 		// Make sure the selected node is in the current scene, or editable
@@ -663,7 +663,7 @@ void CanvasItemEditor::_get_bones_at_pos(const Point2 &p_pos, std::vector<_Selec
 		if (Geometry::is_point_in_polygon(screen_pos, bone_shape)) {
 			// Check if the item is already in the list
 			bool duplicate = false;
-			for (int i = 0; i < r_items.size(); i++) {
+			for (decltype(r_items.size()) i = 0; i < r_items.size(); i++) {
 				if (r_items[i].item == from_node) {
 					duplicate = true;
 					break;
@@ -955,7 +955,7 @@ void CanvasItemEditor::_snap_changed() {
 
 void CanvasItemEditor::_selection_result_pressed(int p_result) {
 
-	if (selection_results.size() <= p_result)
+	if (static_cast<int>(selection_results.size()) <= p_result)
 		return;
 
 	CanvasItem *item = selection_results[p_result].item;
@@ -2210,7 +2210,7 @@ bool CanvasItemEditor::_gui_input_select(const Ref<InputEvent> &p_event) {
 				NodePath root_path = get_tree()->get_edited_scene_root()->get_path();
 				StringName root_name = root_path.get_name(root_path.get_name_count() - 1);
 
-				for (int i = 0; i < selection_results.size(); i++) {
+				for (decltype(selection_results.size()) i = 0; i < selection_results.size(); i++) {
 					CanvasItem *item = selection_results[i].item;
 
 					Ref<Texture> icon = EditorNode::get_singleton()->get_object_icon(item, "Node");
@@ -2388,7 +2388,7 @@ bool CanvasItemEditor::_gui_input_hover(const Ref<InputEvent> &p_event) {
 
 		// Compute the nodes names and icon position
 		std::vector<_HoverResult> hovering_results_tmp;
-		for (int i = 0; i < hovering_results_items.size(); i++) {
+		for (decltype(hovering_results_items.size()) i = 0; i < hovering_results_items.size(); i++) {
 			CanvasItem *canvas_item = hovering_results_items[i].item;
 
 			if (canvas_item->_edit_use_rect())
@@ -2405,7 +2405,7 @@ bool CanvasItemEditor::_gui_input_hover(const Ref<InputEvent> &p_event) {
 		// Check if changed, if so, update.
 		bool changed = false;
 		if (hovering_results_tmp.size() == hovering_results.size()) {
-			for (int i = 0; i < hovering_results_tmp.size(); i++) {
+			for (decltype(hovering_results_tmp.size()) i = 0; i < hovering_results_tmp.size(); i++) {
 				_HoverResult a = hovering_results_tmp[i];
 				_HoverResult b = hovering_results[i];
 				if (a.icon != b.icon || a.name != b.name || a.position != b.position) {
@@ -3477,7 +3477,7 @@ void CanvasItemEditor::_draw_invisible_nodes_positions(Node *p_node, const Trans
 void CanvasItemEditor::_draw_hover() {
 	List<Rect2> previous_rects;
 
-	for (int i = 0; i < hovering_results.size(); i++) {
+	for (decltype(hovering_results.size()) i = 0; i < hovering_results.size(); i++) {
 
 		Ref<Texture> node_icon = hovering_results[i].icon;
 		String node_name = hovering_results[i].name;
@@ -5805,7 +5805,7 @@ void CanvasItemEditorViewport::_on_change_type_closed() {
 
 void CanvasItemEditorViewport::_create_preview(const std::vector<String> &files) const {
 	bool add_preview = false;
-	for (int i = 0; i < files.size(); i++) {
+	for (decltype(files.size()) i = 0; i < files.size(); i++) {
 		String path = files[i];
 		RES res = ResourceLoader::load(path);
 		ERR_FAIL_COND(res.is_null());
@@ -5982,7 +5982,7 @@ void CanvasItemEditorViewport::_perform_drop_data() {
 
 	editor_data->get_undo_redo().create_action(TTR("Create Node"));
 
-	for (int i = 0; i < selected_files.size(); i++) {
+	for (decltype(selected_files.size()) i = 0; i < selected_files.size(); i++) {
 		String path = selected_files[i];
 		RES res = ResourceLoader::load(path);
 		if (res.is_null()) {
@@ -6030,7 +6030,7 @@ void CanvasItemEditorViewport::_perform_drop_data() {
 
 	if (error_files.size() > 0) {
 		String files_str;
-		for (int i = 0; i < error_files.size(); i++) {
+		for (decltype(error_files.size()) i = 0; i < error_files.size(); i++) {
 			files_str += error_files[i].get_file().get_basename() + ",";
 		}
 		files_str = files_str.substr(0, files_str.length() - 1);
@@ -6045,7 +6045,7 @@ bool CanvasItemEditorViewport::can_drop_data(const Point2 &p_point, const Varian
 		if (String(d["type"]) == "files") {
 			std::vector<String> files = d["files"];
 			bool can_instance = false;
-			for (int i = 0; i < files.size(); i++) { // check if dragged files contain resource or scene can be created at least once
+			for (decltype(files.size()) i = 0; i < files.size(); i++) { // check if dragged files contain resource or scene can be created at least once
 				RES res = ResourceLoader::load(files[i]);
 				if (res.is_null()) {
 					continue;
@@ -6106,7 +6106,7 @@ void CanvasItemEditorViewport::_show_resource_type_selector() {
 
 bool CanvasItemEditorViewport::_only_packed_scenes_selected() const {
 
-	for (int i = 0; i < selected_files.size(); ++i) {
+	for (decltype(selected_files.size()) i = 0; i < selected_files.size(); ++i) {
 		if (ResourceLoader::load(selected_files[i])->get_class() != "PackedScene") {
 			return false;
 		}
@@ -6213,7 +6213,7 @@ CanvasItemEditorViewport::CanvasItemEditorViewport(EditorNode *p_node, CanvasIte
 	btn_group->set_h_size_flags(0);
 
 	button_group.instance();
-	for (int i = 0; i < types.size(); i++) {
+	for (decltype(types.size()) i = 0; i < types.size(); i++) {
 		CheckBox *check = memnew(CheckBox);
 		btn_group->add_child(check);
 		check->set_text(types[i]);

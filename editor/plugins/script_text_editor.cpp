@@ -48,7 +48,7 @@ void ConnectionInfoDialog::popup_connections(String p_method, std::vector<Node *
 	tree->clear();
 	TreeItem *root = tree->create_item();
 
-	for (int i = 0; i < p_nodes.size(); i++) {
+	for (decltype(p_nodes.size()) i = 0; i < p_nodes.size(); i++) {
 		List<Connection> all_connections;
 		p_nodes[i]->get_signals_connected_to_this(&all_connections);
 
@@ -1024,7 +1024,7 @@ void ScriptTextEditor::_update_connected_methods() {
 
 	std::vector<Node *> nodes = _find_all_node_for_script(base, base, script);
 	Set<StringName> methods_found;
-	for (int i = 0; i < nodes.size(); i++) {
+	for (decltype(nodes.size()) i = 0; i < nodes.size(); i++) {
 		List<Connection> connections;
 		nodes[i]->get_signals_connected_to_this(&connections);
 
@@ -1047,7 +1047,7 @@ void ScriptTextEditor::_update_connected_methods() {
 			if (!ClassDB::has_method(script->get_instance_base_type(), connection.method)) {
 				int line = -1;
 
-				for (int j = 0; j < functions.size(); j++) {
+				for (decltype(functions.size()) j = 0; j < functions.size(); j++) {
 					String name = functions[j].get_slice(":", 0);
 					if (name == connection.method) {
 						line = functions[j].get_slice(":", 1).to_int();
@@ -1243,7 +1243,7 @@ void ScriptTextEditor::_edit_option(int p_op) {
 			std::vector<String> lines = code_editor->get_text_edit()->get_selection_text().split("\n");
 			PoolStringArray results;
 
-			for (int i = 0; i < lines.size(); i++) {
+			for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 				String line = lines[i];
 				String whitespace = line.substr(0, line.size() - line.strip_edges(true, false).size()); //extract the whitespace at the beginning
 

@@ -272,7 +272,7 @@ void EditorFileDialog::_post_popup() {
 
 		bool res = access == ACCESS_RESOURCES;
 		std::vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
-		for (int i = 0; i < recentd.size(); i++) {
+		for (decltype(recentd.size()) i = 0; i < recentd.size(); i++) {
 			bool cres = recentd[i].begins_with("res://");
 			if (cres != res)
 				continue;
@@ -401,7 +401,7 @@ void EditorFileDialog::_action_pressed() {
 			valid = true; // match none
 		} else if (filters.size() > 1 && filter->get_selected() == 0) {
 			// match all filters
-			for (int i = 0; i < filters.size(); i++) {
+			for (decltype(filters.size()) i = 0; i < filters.size(); i++) {
 
 				String flt = filters[i].get_slice(";", 0);
 				for (int j = 0; j < flt.get_slice_count(","); j++) {
@@ -419,7 +419,7 @@ void EditorFileDialog::_action_pressed() {
 			int idx = filter->get_selected();
 			if (filters.size() > 1)
 				idx--;
-			if (idx >= 0 && idx < filters.size()) {
+			if (idx >= 0 && idx < static_cast<int>(filters.size())) {
 
 				String flt = filters[idx].get_slice(";", 0);
 				int filterSliceCount = flt.get_slice_count(",");
@@ -674,7 +674,7 @@ bool EditorFileDialog::_is_open_should_be_disabled() {
 	if (items.size() == 0)
 		return mode != MODE_OPEN_DIR; // In "Open folder" mode, having nothing selected picks the current folder.
 
-	for (int i = 0; i < items.size(); i++) {
+	for (decltype(items.size()) i = 0; i < items.size(); i++) {
 
 		Dictionary d = item_list->get_item_metadata(items[i]);
 
@@ -802,7 +802,7 @@ void EditorFileDialog::update_file_list() {
 		// match all
 	} else if (filters.size() > 1 && filter->get_selected() == 0) {
 		// match all filters
-		for (int i = 0; i < filters.size(); i++) {
+		for (decltype(filters.size()) i = 0; i < filters.size(); i++) {
 
 			String f = filters[i].get_slice(";", 0);
 			for (int j = 0; j < f.get_slice_count(","); j++) {
@@ -815,7 +815,7 @@ void EditorFileDialog::update_file_list() {
 		if (filters.size() > 1)
 			idx--;
 
-		if (idx >= 0 && idx < filters.size()) {
+		if (idx >= 0 && idx < static_cast<int>(filters.size())) {
 
 			String f = filters[idx].get_slice(";", 0);
 			for (int j = 0; j < f.get_slice_count(","); j++) {
@@ -909,7 +909,7 @@ void EditorFileDialog::update_filters() {
 
 		const int max_filters = 5;
 
-		for (int i = 0; i < MIN(max_filters, filters.size()); i++) {
+		for (int i = 0; i < MIN(max_filters, static_cast<int>(filters.size())); i++) {
 			String flt = filters[i].get_slice(";", 0).strip_edges();
 			if (i > 0)
 				all_filters += ", ";
@@ -921,7 +921,7 @@ void EditorFileDialog::update_filters() {
 
 		filter->add_item(TTR("All Recognized") + " (" + all_filters + ")");
 	}
-	for (int i = 0; i < filters.size(); i++) {
+	for (decltype(filters.size()) i = 0; i < filters.size(); i++) {
 
 		String flt = filters[i].get_slice(";", 0).strip_edges();
 		String desc = filters[i].get_slice(";", 1).strip_edges();
@@ -1257,7 +1257,7 @@ void EditorFileDialog::_update_favorites() {
 	favorite->set_pressed(false);
 
 	std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
-	for (int i = 0; i < favorited.size(); i++) {
+	for (decltype(favorited.size()) i = 0; i < favorited.size(); i++) {
 		bool cres = favorited[i].begins_with("res://");
 		if (cres != res)
 			continue;
@@ -1302,7 +1302,7 @@ void EditorFileDialog::_favorite_pressed() {
 	std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
 
 	bool found = false;
-	for (int i = 0; i < favorited.size(); i++) {
+	for (decltype(favorited.size()) i = 0; i < favorited.size(); i++) {
 		bool cres = favorited[i].begins_with("res://");
 		if (cres != res)
 			continue;
@@ -1330,7 +1330,7 @@ void EditorFileDialog::_favorite_pressed() {
 void EditorFileDialog::_recent_selected(int p_idx) {
 
 	std::vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
-	ERR_FAIL_INDEX(p_idx, recentd.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(recentd.size()));
 
 	dir_access->change_dir(recent->get_item_metadata(p_idx));
 	update_file_list();
@@ -1358,11 +1358,11 @@ void EditorFileDialog::_go_back() {
 	update_dir();
 
 	dir_prev->set_disabled(local_history_pos == 0);
-	dir_next->set_disabled(local_history_pos == local_history.size() - 1);
+	dir_next->set_disabled(local_history_pos == static_cast<int>(local_history.size()) - 1);
 }
 void EditorFileDialog::_go_forward() {
 
-	if (local_history_pos == local_history.size() - 1) {
+	if (local_history_pos == static_cast<int>(local_history.size()) - 1) {
 		return;
 	}
 
@@ -1372,7 +1372,7 @@ void EditorFileDialog::_go_forward() {
 	update_dir();
 
 	dir_prev->set_disabled(local_history_pos == 0);
-	dir_next->set_disabled(local_history_pos == local_history.size() - 1);
+	dir_next->set_disabled(local_history_pos == static_cast<int>(local_history.size()) - 1);
 }
 
 bool EditorFileDialog::default_show_hidden_files = false;
@@ -1511,7 +1511,7 @@ void EditorFileDialog::_save_to_recent() {
 	int count = 0;
 	bool res = dir.begins_with("res://");
 
-	for (int i = 0; i < recent.size(); i++) {
+	for (int i = 0; i < static_cast<int>(recent.size()); i++) {
 		bool cres = recent[i].begins_with("res://");
 		if (recent[i] == dir || (res == cres && count > max)) {
 			recent.erase(recent.begin() + i);
