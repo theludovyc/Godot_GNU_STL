@@ -19,5 +19,6 @@ add_subdirectory(etc2comp)
 add_subdirectory(jpeg-compressor)
 add_subdirectory(pvrtccompressor)
 add_subdirectory(recastnavigation)
+add_subdirectory(squish)
 
 remove_definitions(-w)
