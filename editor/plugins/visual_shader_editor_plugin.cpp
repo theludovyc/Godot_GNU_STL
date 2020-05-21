@@ -108,7 +108,7 @@ void VisualShaderEditor::remove_plugin(const Ref<VisualShaderNodePlugin> &p_plug
 }
 
 void VisualShaderEditor::clear_custom_types() {
-	for (int i = 0; i < add_options.size(); i++) {
+	for (int i = 0; i < static_cast<int>(add_options.size()); i++) {
 		if (add_options[i].is_custom) {
 			add_options.erase(add_options.begin() + i);
 			i--;
@@ -121,7 +121,7 @@ void VisualShaderEditor::add_custom_type(const String &p_name, const Ref<Script>
 	ERR_FAIL_COND(!p_name.is_valid_identifier());
 	ERR_FAIL_COND(!p_script.is_valid());
 
-	for (int i = 0; i < add_options.size(); i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 		if (add_options[i].is_custom) {
 			if (add_options[i].script == p_script)
 				return;
@@ -139,7 +139,7 @@ void VisualShaderEditor::add_custom_type(const String &p_name, const Ref<Script>
 
 	bool begin = false;
 
-	for (int i = 0; i < add_options.size(); i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 		if (add_options[i].is_custom) {
 			if (add_options[i].category == p_category) {
 				if (!begin) {
@@ -325,7 +325,7 @@ void VisualShaderEditor::_update_options_menu() {
 		current_func = visual_shader->get_mode();
 	}
 
-	for (int i = 0; i < add_options.size() + 1; i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size() + 1; i++) {
 
 		if (i == add_options.size()) {
 			if (sub_category != NULL && item_count2 == 0) {
@@ -507,7 +507,7 @@ void VisualShaderEditor::_update_graph() {
 
 	Control *offset;
 
-	for (int n_i = 0; n_i < nodes.size(); n_i++) {
+	for (decltype(nodes.size()) n_i = 0; n_i < nodes.size(); n_i++) {
 
 		Vector2 position = visual_shader->get_node_position(type, nodes[n_i]);
 		Ref<VisualShaderNode> vsnode = visual_shader->get_node(type, nodes[n_i]);
@@ -575,7 +575,7 @@ void VisualShaderEditor::_update_graph() {
 			port_offset++;
 		}
 
-		for (int i = 0; i < plugins.size(); i++) {
+		for (decltype(plugins.size()) i = 0; i < plugins.size(); i++) {
 			custom_editor = plugins[i]->create_editor(visual_shader, vsnode);
 			if (custom_editor) {
 				break;
@@ -1285,7 +1285,7 @@ void VisualShaderEditor::_add_custom_node(const String &p_path) {
 
 	int idx = -1;
 
-	for (int i = custom_node_option_idx; i < add_options.size(); i++) {
+	for (int i = custom_node_option_idx; i < static_cast<int>(add_options.size()); i++) {
 		if (add_options[i].script.is_valid()) {
 			if (add_options[i].script->get_path() == p_path) {
 				idx = i;
@@ -1305,7 +1305,7 @@ void VisualShaderEditor::_add_texture_node(const String &p_path) {
 
 VisualShaderNode *VisualShaderEditor::_add_node(int p_idx, int p_op_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx, add_options.size(), NULL);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(add_options.size()), NULL);
 
 	Ref<VisualShaderNode> vsnode;
 
@@ -1793,7 +1793,7 @@ void VisualShaderEditor::_dup_paste_nodes(int p_type, int p_pasted_type, List<in
 		Ref<VisualShaderNode> node = visual_shader->get_node(pasted_type, E->get());
 
 		bool unsupported = false;
-		for (int i = 0; i < add_options.size(); i++) {
+		for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 			if (add_options[i].type == node->get_class_name()) {
 				if (!_is_available(add_options[i].mode)) {
 					unsupported = true;
@@ -2952,7 +2952,7 @@ public:
 	void _node_changed() {
 		if (updating)
 			return;
-		for (int i = 0; i < properties.size(); i++) {
+		for (decltype(properties.size()) i = 0; i < properties.size(); i++) {
 			properties[i]->update_property();
 		}
 	}
@@ -2979,7 +2979,7 @@ public:
 		node = p_node;
 		properties = p_properties;
 
-		for (int i = 0; i < p_properties.size(); i++) {
+		for (decltype(p_properties.size()) i = 0; i < p_properties.size(); i++) {
 
 			add_child(p_properties[i]);
 
@@ -3027,7 +3027,7 @@ Control *VisualShaderNodePluginDefault::create_editor(const Ref<Resource> &p_par
 
 	for (List<PropertyInfo>::Element *E = props.front(); E; E = E->next()) {
 
-		for (int i = 0; i < properties.size(); i++) {
+		for (decltype(properties.size()) i = 0; i < properties.size(); i++) {
 			if (E->get().name == String(properties[i])) {
 				pinfo.push_back(E->get());
 			}
@@ -3042,7 +3042,7 @@ Control *VisualShaderNodePluginDefault::create_editor(const Ref<Resource> &p_par
 	Ref<VisualShaderNode> node = p_node;
 	std::vector<EditorProperty *> editors;
 
-	for (int i = 0; i < pinfo.size(); i++) {
+	for (decltype(pinfo.size()) i = 0; i < pinfo.size(); i++) {
 
 		EditorProperty *prop = EditorInspector::instantiate_property_editor(node.ptr(), pinfo[i].type, pinfo[i].name, pinfo[i].hint, pinfo[i].hint_string, pinfo[i].usage);
 		if (!prop)
@@ -3102,7 +3102,7 @@ void EditorPropertyShaderMode::_option_selected(int p_which) {
 
 		VisualShader::Type type = VisualShader::Type(i);
 		std::vector<int> nodes = visual_shader->get_node_list(type);
-		for (int j = 0; j < nodes.size(); j++) {
+		for (decltype(nodes.size()) j = 0; j < nodes.size(); j++) {
 			Ref<VisualShaderNodeInput> input = visual_shader->get_node(type, nodes[j]);
 			if (!input.is_valid()) {
 				continue;
@@ -3140,7 +3140,7 @@ void EditorPropertyShaderMode::update_property() {
 }
 
 void EditorPropertyShaderMode::setup(const std::vector<String> &p_options) {
-	for (int i = 0; i < p_options.size(); i++) {
+	for (decltype(p_options.size()) i = 0; i < p_options.size(); i++) {
 		options->add_item(p_options[i], i);
 	}
 }
@@ -3201,7 +3201,7 @@ void VisualShaderNodePortPreview::_shader_changed() {
 	Ref<Shader> preview_shader;
 	preview_shader.instance();
 	preview_shader->set_code(shader_code);
-	for (int i = 0; i < default_textures.size(); i++) {
+	for (decltype(default_textures.size()) i = 0; i < default_textures.size(); i++) {
 		preview_shader->set_default_texture_param(default_textures[i].name, default_textures[i].param);
 	}
 
