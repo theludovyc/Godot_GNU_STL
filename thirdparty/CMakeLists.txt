@@ -17,5 +17,6 @@ add_subdirectory(cvtt)
 add_subdirectory(enet)
 add_subdirectory(etc2comp)
 add_subdirectory(jpeg-compressor)
+add_subdirectory(pvrtccompressor)
 
 remove_definitions(-w)
