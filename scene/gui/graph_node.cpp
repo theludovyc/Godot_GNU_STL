@@ -252,7 +252,7 @@ void GraphNode::_notification(int p_what) {
 
 			for (Map<int, Slot>::Element *E = slot_info.front(); E; E = E->next()) {
 
-				if (E->key() < 0 || E->key() >= cache_y.size())
+				if (E->key() < 0 || E->key() >= static_cast<int>(cache_y.size()))
 					continue;
 				if (!slot_info.has(E->key()))
 					continue;
@@ -533,7 +533,7 @@ Vector2 GraphNode::get_connection_input_position(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_input_cache.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_input_cache.size()), Vector2());
 	Vector2 pos = conn_input_cache[p_idx].pos;
 	pos.x *= get_scale().x;
 	pos.y *= get_scale().y;
@@ -545,7 +545,7 @@ int GraphNode::get_connection_input_type(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_input_cache.size(), 0);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_input_cache.size()), 0);
 	return conn_input_cache[p_idx].type;
 }
 
@@ -554,7 +554,7 @@ Color GraphNode::get_connection_input_color(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_input_cache.size(), Color());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_input_cache.size()), Color());
 	return conn_input_cache[p_idx].color;
 }
 
@@ -563,7 +563,7 @@ Vector2 GraphNode::get_connection_output_position(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_output_cache.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_output_cache.size()), Vector2());
 	Vector2 pos = conn_output_cache[p_idx].pos;
 	pos.x *= get_scale().x;
 	pos.y *= get_scale().y;
@@ -575,7 +575,7 @@ int GraphNode::get_connection_output_type(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_output_cache.size(), 0);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_output_cache.size()), 0);
 	return conn_output_cache[p_idx].type;
 }
 
@@ -584,7 +584,7 @@ Color GraphNode::get_connection_output_color(int p_idx) {
 	if (connpos_dirty)
 		_connpos_update();
 
-	ERR_FAIL_INDEX_V(p_idx, conn_output_cache.size(), Color());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(conn_output_cache.size()), Color());
 	return conn_output_cache[p_idx].color;
 }
 
