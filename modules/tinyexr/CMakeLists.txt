@@ -8,3 +8,5 @@ add_library(${PROJECT_NAME} ${header} ${cpp})
 target_link_libraries(${PROJECT_NAME} PRIVATE tinyexr)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DTINYEXR_USE_THREAD)
