@@ -285,7 +285,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 spoint = f.get_closest_point_to(p_start);
@@ -327,7 +327,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 
 	List<Polygon *> open_list;
 
-	for (int i = 0; i < begin_poly->edges.size(); i++) {
+	for (decltype(begin_poly->edges.size()) i = 0; i < begin_poly->edges.size(); i++) {
 
 		if (begin_poly->edges[i].C) {
 
@@ -384,7 +384,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 			break;
 		}
 
-		for (int i = 0; i < p->edges.size(); i++) {
+		for (decltype(p->edges.size()) i = 0; i < p->edges.size(); i++) {
 
 			Polygon::Edge &e = p->edges[i];
 
@@ -562,7 +562,7 @@ Vector3 Navigation::get_closest_point_to_segment(const Vector3 &p_from, const Ve
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters;
@@ -582,7 +582,7 @@ Vector3 Navigation::get_closest_point_to_segment(const Vector3 &p_from, const Ve
 
 			if (!use_collision) {
 
-				for (int i = 0; i < p.edges.size(); i++) {
+				for (decltype(p.edges.size()) i = 0; i < p.edges.size(); i++) {
 
 					Vector3 a, b;
 
@@ -614,7 +614,7 @@ Vector3 Navigation::get_closest_point(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);
@@ -643,7 +643,7 @@ Vector3 Navigation::get_closest_point_normal(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);
@@ -673,7 +673,7 @@ Object *Navigation::get_closest_point_owner(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);
