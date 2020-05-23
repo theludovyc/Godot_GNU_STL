@@ -20,5 +20,8 @@ add_subdirectory(jpeg-compressor)
 add_subdirectory(pvrtccompressor)
 add_subdirectory(recastnavigation)
 add_subdirectory(squish)
+add_subdirectory(libtheora)
+add_subdirectory(libogg)
+add_subdirectory(libvorbis)
 
 remove_definitions(-w)
