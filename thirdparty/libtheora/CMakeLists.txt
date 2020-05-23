@@ -43,4 +43,6 @@ set(c
 
 add_library(${PROJECT_NAME} ${header} ${c})
 
+target_link_libraries(${PROJECT_NAME} PRIVATE libogg)
+
 target_include_directories(${PROJECT_NAME} PUBLIC ".")
