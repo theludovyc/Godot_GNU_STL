@@ -66,7 +66,7 @@ void Bone2D::_notification(int p_what) {
 
 	if (p_what == NOTIFICATION_EXIT_TREE) {
 		if (skeleton) {
-			for (int i = 0; i < skeleton->bones.size(); i++) {
+			for (decltype(skeleton->bones.size()) i = 0; i < skeleton->bones.size(); i++) {
 				if (skeleton->bones[i].bone == this) {
 					skeleton->bones.erase(skeleton->bones.begin() + i);
 					break;
@@ -190,7 +190,7 @@ void Skeleton2D::_update_bone_setup() {
 
 	std::sort(bones.begin(), bones.end()); //sorty so they are always in the same order/index
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 		bones[i].rest_inverse = bones[i].bone->get_skeleton_rest().affine_inverse(); //bind pose
 		bones[i].bone->skeleton_index = i;
 		Bone2D *parent_bone = Object::cast_to<Bone2D>(bones[i].bone->get_parent());
@@ -227,7 +227,7 @@ void Skeleton2D::_update_transform() {
 
 	transform_dirty = false;
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (int i = 0; i < static_cast<int>(bones.size()); i++) {
 
 		ERR_CONTINUE(bones[i].parent_index >= i);
 		if (bones[i].parent_index >= 0) {
@@ -237,7 +237,7 @@ void Skeleton2D::_update_transform() {
 		}
 	}
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 
 		Transform2D final_xform = bones[i].accum_transform * bones[i].rest_inverse;
 		VS::get_singleton()->skeleton_bone_set_transform_2d(skeleton, i, final_xform);
@@ -258,7 +258,7 @@ int Skeleton2D::get_bone_count() const {
 Bone2D *Skeleton2D::get_bone(int p_idx) {
 
 	ERR_FAIL_COND_V(!is_inside_tree(), NULL);
-	ERR_FAIL_INDEX_V(p_idx, bones.size(), NULL);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(bones.size()), NULL);
 
 	return bones[p_idx].bone;
 }
