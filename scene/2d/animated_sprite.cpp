@@ -108,7 +108,7 @@ void SpriteFrames::add_frame(const StringName &p_anim, const Ref<Texture> &p_fra
 	Map<StringName, Anim>::Element *E = animations.find(p_anim);
 	ERR_FAIL_COND_MSG(!E, "Animation '" + String(p_anim) + "' doesn't exist.");
 
-	if (p_at_pos >= 0 && p_at_pos < E->get().frames.size())
+	if (p_at_pos >= 0 && p_at_pos < static_cast<int>(E->get().frames.size()))
 		E->get().frames.insert(E->get().frames.begin() + p_at_pos, p_frame);
 	else
 		E->get().frames.push_back(p_frame);
@@ -236,7 +236,7 @@ void SpriteFrames::_set_frames(const Array &p_frames) {
 	ERR_FAIL_COND(!E);
 
 	E->get().frames.resize(p_frames.size());
-	for (int i = 0; i < E->get().frames.size(); i++)
+	for (decltype(E->get().frames.size()) i = 0; i < E->get().frames.size(); i++)
 		E->get().frames[i] = p_frames[i];
 }
 Array SpriteFrames::_get_frames() const {
@@ -253,7 +253,7 @@ Array SpriteFrames::_get_animations() const {
 		d["speed"] = E->get().speed;
 		d["loop"] = E->get().loop;
 		Array frames;
-		for (int i = 0; i < E->get().frames.size(); i++) {
+		for (decltype(E->get().frames.size()) i = 0; i < E->get().frames.size(); i++) {
 			frames.push_back(E->get().frames[i]);
 		}
 		d["frames"] = frames;
