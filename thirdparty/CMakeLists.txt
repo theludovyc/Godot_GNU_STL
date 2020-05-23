@@ -24,5 +24,6 @@ add_subdirectory(libtheora)
 add_subdirectory(libogg)
 add_subdirectory(libvorbis)
 add_subdirectory(tinyexr)
+add_subdirectory(miniupnpc)
 
 remove_definitions(-w)
