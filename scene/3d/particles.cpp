@@ -200,7 +200,7 @@ int Particles::get_draw_passes() const {
 
 void Particles::set_draw_pass_mesh(int p_pass, const Ref<Mesh> &p_mesh) {
 
-	ERR_FAIL_INDEX(p_pass, draw_passes.size());
+	ERR_FAIL_INDEX(p_pass, static_cast<int>(draw_passes.size()));
 
 	draw_passes[p_pass] = p_mesh;
 
@@ -215,7 +215,7 @@ void Particles::set_draw_pass_mesh(int p_pass, const Ref<Mesh> &p_mesh) {
 
 Ref<Mesh> Particles::get_draw_pass_mesh(int p_pass) const {
 
-	ERR_FAIL_INDEX_V(p_pass, draw_passes.size(), Ref<Mesh>());
+	ERR_FAIL_INDEX_V(p_pass, static_cast<int>(draw_passes.size()), Ref<Mesh>());
 
 	return draw_passes[p_pass];
 }
@@ -249,7 +249,7 @@ String Particles::get_configuration_warning() const {
 	bool meshes_found = false;
 	bool anim_material_found = false;
 
-	for (int i = 0; i < draw_passes.size(); i++) {
+	for (decltype(draw_passes.size()) i = 0; i < draw_passes.size(); i++) {
 		if (draw_passes[i].is_valid()) {
 			meshes_found = true;
 			for (int j = 0; j < draw_passes[i]->get_surface_count(); j++) {
@@ -304,7 +304,7 @@ void Particles::_validate_property(PropertyInfo &property) const {
 
 	if (property.name.begins_with("draw_pass_")) {
 		int index = property.name.get_slicec('_', 2).to_int() - 1;
-		if (index >= draw_passes.size()) {
+		if (index >= static_cast<int>(draw_passes.size())) {
 			property.usage = 0;
 			return;
 		}
