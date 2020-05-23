@@ -23,5 +23,6 @@ add_subdirectory(squish)
 add_subdirectory(libtheora)
 add_subdirectory(libogg)
 add_subdirectory(libvorbis)
+add_subdirectory(tinyexr)
 
 remove_definitions(-w)
