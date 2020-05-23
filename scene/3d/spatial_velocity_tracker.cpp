@@ -51,7 +51,7 @@ void SpatialVelocityTracker::update_position(const Vector3 &p_position) {
 	}
 
 	if (position_history_len == 0 || position_history[0].frame != ph.frame) { //in same frame, use latest
-		position_history_len = MIN(position_history.size(), position_history_len + 1);
+		position_history_len = MIN(static_cast<int>(position_history.size()), position_history_len + 1);
 		for (int i = position_history_len - 1; i > 0; i--) {
 			position_history[i] = position_history[i - 1];
 		}
