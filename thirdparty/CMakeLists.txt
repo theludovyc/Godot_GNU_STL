@@ -25,5 +25,6 @@ add_subdirectory(libogg)
 add_subdirectory(libvorbis)
 add_subdirectory(tinyexr)
 add_subdirectory(miniupnpc)
+add_subdirectory(vhacd)
 
 remove_definitions(-w)

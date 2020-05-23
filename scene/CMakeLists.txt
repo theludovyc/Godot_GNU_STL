@@ -40,9 +40,10 @@ add_library(${PROJECT_NAME} ${header} ${cpp})
 target_link_libraries(${PROJECT_NAME} PRIVATE misc)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 
-# TODO: suppress
-target_include_directories(${PROJECT_NAME} PRIVATE "../")
-target_include_directories(${PROJECT_NAME} PRIVATE "../platform/${target}")
+# TODO : need to change
+target_link_libraries(${PROJECT_NAME} PUBLIC godotCore)
+
+target_include_directories(${PROJECT_NAME} PUBLIC "..")
 
 # TODO : remove 
 # why this existe : if not define cant be compile
