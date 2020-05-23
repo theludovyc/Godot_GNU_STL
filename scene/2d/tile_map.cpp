@@ -554,7 +554,7 @@ void TileMap::update_dirty_quadrants() {
 
 			std::vector<TileSet::ShapeData> shapes = tile_set->tile_get_shapes(c.id);
 
-			for (int j = 0; j < shapes.size(); j++) {
+			for (decltype(shapes.size()) j = 0; j < shapes.size(); j++) {
 				Ref<Shape2D> shape = shapes[j].shape;
 				if (shape.is_valid()) {
 					if (tile_set->tile_get_tile_mode(c.id) == TileSet::SINGLE_TILE || (shapes[j].autotile_coord.x == c.autotile_coord_x && shapes[j].autotile_coord.y == c.autotile_coord_y)) {
@@ -646,7 +646,7 @@ void TileMap::update_dirty_quadrants() {
 								for (int j = 0; j < navpoly->get_polygon_count(); j++) {
 									std::vector<int> polygon = navpoly->get_polygon(j);
 
-									for (int k = 2; k < polygon.size(); k++) {
+									for (int k = 2; k < static_cast<int>(polygon.size()); k++) {
 
 										int kofs[3] = { 0, k - 1, k };
 										for (int l = 0; l < 3; l++) {
