@@ -58,12 +58,12 @@ bool SurfaceTool::Vertex::operator==(const Vertex &p_vertex) const {
 	if (bones.size() != p_vertex.bones.size())
 		return false;
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 		if (bones[i] != p_vertex.bones[i])
 			return false;
 	}
 
-	for (int i = 0; i < weights.size(); i++) {
+	for (decltype(weights.size()) i = 0; i < weights.size(); i++) {
 		if (weights[i] != p_vertex.weights[i])
 			return false;
 	}
@@ -123,7 +123,7 @@ void SurfaceTool::add_vertex(const Vector3 &p_vertex) {
 		} else if (vtx.weights.size() > expected_vertices) {
 			//more than required, sort, cap and normalize.
 			std::vector<WeightSort> weights;
-			for (int i = 0; i < vtx.weights.size(); i++) {
+			for (decltype(vtx.weights.size()) i = 0; i < vtx.weights.size(); i++) {
 				WeightSort ws;
 				ws.index = vtx.bones[i];
 				ws.weight = vtx.weights[i];
@@ -255,7 +255,7 @@ void SurfaceTool::add_triangle_fan(const std::vector<Vector3> &p_vertices, const
 		add_vertex(p_vertices[n]);      \
 	}
 
-	for (int i = 0; i < p_vertices.size() - 2; i++) {
+	for (decltype(p_vertices.size()) i = 0; i < p_vertices.size() - 2; i++) {
 		ADD_POINT(0);
 		ADD_POINT(i + 1);
 		ADD_POINT(i + 2);
@@ -518,7 +518,7 @@ void SurfaceTool::deindex() {
 	vertex_array.clear();
 	for (List<int>::Element *E = index_array.front(); E; E = E->next()) {
 
-		ERR_FAIL_INDEX(E->get(), varr.size());
+		ERR_FAIL_INDEX(E->get(), static_cast<int>(varr.size()));
 		vertex_array.push_back(varr[E->get()]);
 	}
 	format &= ~Mesh::ARRAY_FORMAT_INDEX;
@@ -857,7 +857,7 @@ void SurfaceTool::mikktGetPosition(const SMikkTSpaceContext *pContext, float fvP
 	Vector3 v;
 	if (triangle_data.indices.size() > 0) {
 		int index = triangle_data.indices[iFace * 3 + iVert]->get();
-		if (index < triangle_data.vertices.size()) {
+		if (index < static_cast<int>(triangle_data.vertices.size())) {
 			v = triangle_data.vertices[index]->get().vertex;
 		}
 	} else {
@@ -875,7 +875,7 @@ void SurfaceTool::mikktGetNormal(const SMikkTSpaceContext *pContext, float fvNor
 	Vector3 v;
 	if (triangle_data.indices.size() > 0) {
 		int index = triangle_data.indices[iFace * 3 + iVert]->get();
-		if (index < triangle_data.vertices.size()) {
+		if (index < static_cast<int>(triangle_data.vertices.size())) {
 			v = triangle_data.vertices[index]->get().normal;
 		}
 	} else {
@@ -892,7 +892,7 @@ void SurfaceTool::mikktGetTexCoord(const SMikkTSpaceContext *pContext, float fvT
 	Vector2 v;
 	if (triangle_data.indices.size() > 0) {
 		int index = triangle_data.indices[iFace * 3 + iVert]->get();
-		if (index < triangle_data.vertices.size()) {
+		if (index < static_cast<int>(triangle_data.vertices.size())) {
 			v = triangle_data.vertices[index]->get().uv;
 		}
 	} else {
@@ -910,7 +910,7 @@ void SurfaceTool::mikktSetTSpaceDefault(const SMikkTSpaceContext *pContext, cons
 	Vertex *vtx = NULL;
 	if (triangle_data.indices.size() > 0) {
 		int index = triangle_data.indices[iFace * 3 + iVert]->get();
-		if (index < triangle_data.vertices.size()) {
+		if (index < static_cast<int>(triangle_data.vertices.size())) {
 			vtx = &triangle_data.vertices[index]->get();
 		}
 	} else {
