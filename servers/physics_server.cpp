@@ -185,7 +185,7 @@ int PhysicsShapeQueryParameters::get_collision_mask() const {
 void PhysicsShapeQueryParameters::set_exclude(const std::vector<RID> &p_exclude) {
 
 	exclude.clear();
-	for (int i = 0; i < p_exclude.size(); i++)
+	for (decltype(p_exclude.size()) i = 0; i < p_exclude.size(); i++)
 		exclude.insert(p_exclude[i]);
 }
 
@@ -264,7 +264,7 @@ Dictionary PhysicsDirectSpaceState::_intersect_ray(const Vector3 &p_from, const 
 
 	RayResult inters;
 	Set<RID> exclude;
-	for (int i = 0; i < p_exclude.size(); i++)
+	for (decltype(p_exclude.size()) i = 0; i < p_exclude.size(); i++)
 		exclude.insert(p_exclude[i]);
 
 	bool res = intersect_ray(p_from, p_to, inters, exclude, p_collision_mask, p_collide_with_bodies, p_collide_with_areas);
