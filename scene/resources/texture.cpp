@@ -625,7 +625,7 @@ Error StreamTexture::_load_data(const String &p_path, int &tw, int &th, int &tw_
 				PoolVector<uint8_t>::Write w = img_data.write();
 
 				int ofs = 0;
-				for (int i = 0; i < mipmap_images.size(); i++) {
+				for (decltype(mipmap_images.size()) i = 0; i < mipmap_images.size(); i++) {
 
 					PoolVector<uint8_t> id = mipmap_images[i]->get_data();
 					int len = id.size();
@@ -1290,7 +1290,7 @@ RID LargeTexture::get_rid() const {
 
 bool LargeTexture::has_alpha() const {
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 		if (pieces[i].texture->has_alpha())
 			return true;
 	}
@@ -1300,7 +1300,7 @@ bool LargeTexture::has_alpha() const {
 
 void LargeTexture::set_flags(uint32_t p_flags) {
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 		pieces[i].texture->set_flags(p_flags);
 	}
 }
@@ -1326,7 +1326,7 @@ int LargeTexture::add_piece(const Point2 &p_offset, const Ref<Texture> &p_textur
 
 void LargeTexture::set_piece_offset(int p_idx, const Point2 &p_offset) {
 
-	ERR_FAIL_INDEX(p_idx, pieces.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(pieces.size()));
 	pieces[p_idx].offset = p_offset;
 };
 
@@ -1334,7 +1334,7 @@ void LargeTexture::set_piece_texture(int p_idx, const Ref<Texture> &p_texture) {
 
 	ERR_FAIL_COND(p_texture == this);
 	ERR_FAIL_COND(p_texture.is_null());
-	ERR_FAIL_INDEX(p_idx, pieces.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(pieces.size()));
 	pieces[p_idx].texture = p_texture;
 };
 
@@ -1351,7 +1351,7 @@ void LargeTexture::clear() {
 Array LargeTexture::_get_data() const {
 
 	Array arr;
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 		arr.push_back(pieces[i].offset);
 		arr.push_back(pieces[i].texture);
 	}
@@ -1375,18 +1375,18 @@ int LargeTexture::get_piece_count() const {
 }
 Vector2 LargeTexture::get_piece_offset(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, pieces.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(pieces.size()), Vector2());
 	return pieces[p_idx].offset;
 }
 Ref<Texture> LargeTexture::get_piece_texture(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, pieces.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(pieces.size()), Ref<Texture>());
 	return pieces[p_idx].texture;
 }
 Ref<Image> LargeTexture::to_image() const {
 
 	Ref<Image> img = memnew(Image(this->get_width(), this->get_height(), false, Image::FORMAT_RGBA8));
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 
 		Ref<Image> src_img = pieces[i].texture->get_data();
 		img->blit_rect(src_img, Rect2(0, 0, src_img->get_width(), src_img->get_height()), pieces[i].offset);
@@ -1415,7 +1415,7 @@ void LargeTexture::_bind_methods() {
 
 void LargeTexture::draw(RID p_canvas_item, const Point2 &p_pos, const Color &p_modulate, bool p_transpose, const Ref<Texture> &p_normal_map) const {
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 
 		// TODO
 		pieces[i].texture->draw(p_canvas_item, pieces[i].offset + p_pos, p_modulate, p_transpose, p_normal_map);
@@ -1430,7 +1430,7 @@ void LargeTexture::draw_rect(RID p_canvas_item, const Rect2 &p_rect, bool p_tile
 
 	Size2 scale = p_rect.size / size;
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 
 		// TODO
 		pieces[i].texture->draw_rect(p_canvas_item, Rect2(pieces[i].offset * scale + p_rect.position, pieces[i].texture->get_size() * scale), false, p_modulate, p_transpose, p_normal_map);
@@ -1444,7 +1444,7 @@ void LargeTexture::draw_rect_region(RID p_canvas_item, const Rect2 &p_rect, cons
 
 	Size2 scale = p_rect.size / p_src_rect.size;
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 
 		// TODO
 		Rect2 rect(pieces[i].offset, pieces[i].texture->get_size());
@@ -1461,7 +1461,7 @@ void LargeTexture::draw_rect_region(RID p_canvas_item, const Rect2 &p_rect, cons
 
 bool LargeTexture::is_pixel_opaque(int p_x, int p_y) const {
 
-	for (int i = 0; i < pieces.size(); i++) {
+	for (decltype(pieces.size()) i = 0; i < pieces.size(); i++) {
 
 		// TODO
 		if (!pieces[i].texture.is_valid())
@@ -2492,7 +2492,7 @@ RES ResourceFormatLoaderTextureLayered::load(const String &p_path, const String 
 					PoolVector<uint8_t>::Write w = img_data.write();
 
 					int ofs = 0;
-					for (int i = 0; i < mipmap_images.size(); i++) {
+					for (decltype(mipmap_images.size()) i = 0; i < mipmap_images.size(); i++) {
 
 						PoolVector<uint8_t> id = mipmap_images[i]->get_data();
 						int len = id.size();
