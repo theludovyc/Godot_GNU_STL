@@ -88,7 +88,7 @@ void ConvexPolygonShape2D::draw(const RID &p_to_rid, const Color &p_color) {
 Rect2 ConvexPolygonShape2D::get_rect() const {
 
 	Rect2 rect;
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 		if (i == 0)
 			rect.position = points[i];
 		else
