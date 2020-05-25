@@ -27,5 +27,6 @@ add_subdirectory(tinyexr)
 add_subdirectory(miniupnpc)
 add_subdirectory(vhacd)
 add_subdirectory(libwebp)
+add_subdirectory(wslay)
 
 remove_definitions(-w)
