@@ -41,7 +41,7 @@
 
 void AnimatedValuesBackup::update_skeletons() {
 
-	for (int i = 0; i < entries.size(); i++) {
+	for (decltype(entries.size()) i = 0; i < entries.size(); i++) {
 		if (entries[i].bone_idx != -1) {
 			// 3D bone
 			Object::cast_to<Skeleton>(entries[i].object)->notification(Skeleton::NOTIFICATION_UPDATE_SKELETON);
@@ -131,7 +131,7 @@ bool AnimationPlayer::_get(const StringName &p_name, Variant &r_ret) const {
 		std::sort(keys.begin(), keys.end());
 
 		Array array;
-		for (int i = 0; i < keys.size(); i++) {
+		for (decltype(keys.size()) i = 0; i < keys.size(); i++) {
 
 			array.push_back(keys[i].from);
 			array.push_back(keys[i].to);
@@ -239,7 +239,7 @@ void AnimationPlayer::_notification(int p_what) {
 void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim) {
 
 	// Already cached?
-	if (p_anim->node_cache.size() == p_anim->animation->get_track_count())
+	if (static_cast<int>(p_anim->node_cache.size()) == p_anim->animation->get_track_count())
 		return;
 
 	Node *parent = get_node(root);
@@ -352,7 +352,7 @@ void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim) {
 void AnimationPlayer::_animation_process_animation(AnimationData *p_anim, float p_time, float p_delta, float p_interp, bool p_is_current, bool p_seeked, bool p_started) {
 
 	_ensure_node_caches(p_anim);
-	ERR_FAIL_COND(p_anim->node_cache.size() != p_anim->animation->get_track_count());
+	ERR_FAIL_COND(static_cast<int>(p_anim->node_cache.size()) != p_anim->animation->get_track_count());
 
 	Animation *a = p_anim->animation.operator->();
 	bool can_call = is_inside_tree() && !Engine::get_singleton()->is_editor_hint();
@@ -361,7 +361,7 @@ void AnimationPlayer::_animation_process_animation(AnimationData *p_anim, float 
 
 		// If an animation changes this animation (or it animates itself)
 		// we need to recreate our animation cache
-		if (p_anim->node_cache.size() != a->get_track_count()) {
+		if (static_cast<int>(p_anim->node_cache.size()) != a->get_track_count()) {
 			_ensure_node_caches(p_anim);
 		}
 
@@ -1572,7 +1572,7 @@ AnimatedValuesBackup AnimationPlayer::backup_animated_values() {
 
 	AnimatedValuesBackup backup;
 
-	for (int i = 0; i < playback.current.from->node_cache.size(); i++) {
+	for (decltype(playback.current.from->node_cache.size()) i = 0; i < playback.current.from->node_cache.size(); i++) {
 		TrackNodeCache *nc = playback.current.from->node_cache[i];
 		if (!nc)
 			continue;
@@ -1614,7 +1614,7 @@ AnimatedValuesBackup AnimationPlayer::backup_animated_values() {
 
 void AnimationPlayer::restore_animated_values(const AnimatedValuesBackup &p_backup) {
 
-	for (int i = 0; i < p_backup.entries.size(); i++) {
+	for (decltype(p_backup.entries.size()) i = 0; i < p_backup.entries.size(); i++) {
 
 		const AnimatedValuesBackup::Entry *entry = &p_backup.entries[i];
 		if (entry->bone_idx == -1) {
