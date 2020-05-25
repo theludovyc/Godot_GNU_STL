@@ -278,7 +278,7 @@ Array MeshLibrary::_get_item_shapes(int p_item) const {
 
 	std::vector<ShapeData> shapes = get_item_shapes(p_item);
 	Array ret;
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 		ret.push_back(shapes[i].shape);
 		ret.push_back(shapes[i].local_transform);
 	}
