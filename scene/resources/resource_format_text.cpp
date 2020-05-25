@@ -1151,7 +1151,7 @@ Error ResourceInteractiveLoaderText::save_as_binary(FileAccess *p_f, const Strin
 	wf->seek(sub_res_count_pos); //plus one because the saved one
 	wf->store_32(local_offsets.size());
 
-	for (int i = 0; i < local_offsets.size(); i++) {
+	for (decltype(local_offsets.size()) i = 0; i < local_offsets.size(); i++) {
 		wf->seek(local_pointers_pos[i]);
 		wf->store_64(local_offsets[i] + offset_from);
 	}
@@ -1566,7 +1566,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const RES &p_r
 
 	std::sort(sorted_er.begin(), sorted_er.end());
 
-	for (int i = 0; i < sorted_er.size(); i++) {
+	for (decltype(sorted_er.size()) i = 0; i < sorted_er.size(); i++) {
 		String p = sorted_er[i].resource->get_path();
 
 		f->store_string("[ext_resource path=\"" + p + "\" type=\"" + sorted_er[i].resource->get_save_class() + "\" id=" + itos(sorted_er[i].index) + "]\n"); //bundled
@@ -1704,7 +1704,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const RES &p_r
 				std::sort(groups.begin(), groups.end(), StringName::AlphCompare{});
 
 				String sgroups = " groups=[\n";
-				for (int j = 0; j < groups.size(); j++) {
+				for (decltype(groups.size()) j = 0; j < groups.size(); j++) {
 					sgroups += "\"" + String(groups[j]).c_escape() + "\",\n";
 				}
 				sgroups += "]";
@@ -1767,7 +1767,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const RES &p_r
 		}
 
 		std::vector<NodePath> editable_instances = state->get_editable_instances();
-		for (int i = 0; i < editable_instances.size(); i++) {
+		for (decltype(editable_instances.size()) i = 0; i < editable_instances.size(); i++) {
 			f->store_line("\n[editable path=\"" + editable_instances[i].operator String() + "\"]");
 		}
 	}
