@@ -63,7 +63,7 @@ void PolygonPathFinder::setup(const std::vector<Vector2> &p_points, const std::v
 	points.resize(point_count + 2);
 	bounds = Rect2();
 
-	for (int i = 0; i < p_points.size(); i++) {
+	for (decltype(p_points.size()) i = 0; i < p_points.size(); i++) {
 
 		points[i].pos = p_points[i];
 		points[i].penalty = 0;
@@ -83,7 +83,7 @@ void PolygonPathFinder::setup(const std::vector<Vector2> &p_points, const std::v
 
 	//insert edges (which are also connetions)
 
-	for (int i = 0; i < p_connections.size(); i += 2) {
+	for (decltype(p_connections.size()) i = 0; i < p_connections.size(); i += 2) {
 
 		Edge e(p_connections[i], p_connections[i + 1]);
 		ERR_FAIL_INDEX(e.points[0], point_count);
@@ -236,7 +236,7 @@ std::vector<Vector2> PolygonPathFinder::find_path(const Vector2 &p_from, const V
 	points[aidx].penalty = 0;
 	points[bidx].penalty = 0;
 
-	for (int i = 0; i < points.size() - 2; i++) {
+	for (int i = 0; i < static_cast<int>(points.size()) - 2; i++) {
 
 		bool valid_a = true;
 		bool valid_b = true;
@@ -390,7 +390,7 @@ std::vector<Vector2> PolygonPathFinder::find_path(const Vector2 &p_from, const V
 		std::reverse(path.begin(), path.end());
 	}
 
-	for (int i = 0; i < points.size() - 2; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 2; i++) {
 
 		points[i].connections.erase(aidx);
 		points[i].connections.erase(bidx);
@@ -567,13 +567,13 @@ Rect2 PolygonPathFinder::get_bounds() const {
 
 void PolygonPathFinder::set_point_penalty(int p_point, float p_penalty) {
 
-	ERR_FAIL_INDEX(p_point, points.size() - 2);
+	ERR_FAIL_INDEX(p_point, static_cast<int>(points.size()) - 2);
 	points[p_point].penalty = p_penalty;
 }
 
 float PolygonPathFinder::get_point_penalty(int p_point) const {
 
-	ERR_FAIL_INDEX_V(p_point, points.size() - 2, 0);
+	ERR_FAIL_INDEX_V(p_point, static_cast<int>(points.size()) - 2, 0);
 	return points[p_point].penalty;
 }
 
