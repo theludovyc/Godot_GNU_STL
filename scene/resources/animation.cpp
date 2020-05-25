@@ -44,7 +44,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 		int track = name.get_slicec('/', 1).to_int();
 		String what = name.get_slicec('/', 2);
 
-		if (tracks.size() == track && what == "type") {
+		if (static_cast<int>(tracks.size()) == track && what == "type") {
 
 			String type = p_value;
 
@@ -74,7 +74,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 			return true;
 		}
 
-		ERR_FAIL_INDEX_V(track, tracks.size(), false);
+		ERR_FAIL_INDEX_V(track, static_cast<int>(tracks.size()), false);
 
 		if (what == "path")
 			track_set_path(track, p_value);
@@ -344,7 +344,7 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 
 		int track = name.get_slicec('/', 1).to_int();
 		String what = name.get_slicec('/', 2);
-		ERR_FAIL_INDEX_V(track, tracks.size(), false);
+		ERR_FAIL_INDEX_V(track, static_cast<int>(tracks.size()), false);
 		if (what == "type") {
 
 			switch (track_get_type(track)) {
@@ -614,7 +614,7 @@ bool Animation::_get(const StringName &p_name, Variant &r_ret) const {
 }
 
 void Animation::_get_property_list(List<PropertyInfo> *p_list) const {
-	for (int i = 0; i < tracks.size(); i++) {
+	for (decltype(tracks.size()) i = 0; i < tracks.size(); i++) {
 
 		p_list->push_back(PropertyInfo(Variant::STRING, "tracks/" + itos(i) + "/type", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 		p_list->push_back(PropertyInfo(Variant::NODE_PATH, "tracks/" + itos(i) + "/path", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
@@ -628,7 +628,7 @@ void Animation::_get_property_list(List<PropertyInfo> *p_list) const {
 
 int Animation::add_track(TrackType p_type, int p_at_pos) {
 
-	if (p_at_pos < 0 || p_at_pos >= tracks.size())
+	if (p_at_pos < 0 || p_at_pos >= static_cast<int>(tracks.size()))
 		p_at_pos = tracks.size();
 
 	switch (p_type) {
@@ -675,7 +675,7 @@ int Animation::add_track(TrackType p_type, int p_at_pos) {
 
 void Animation::remove_track(int p_track) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -731,13 +731,13 @@ int Animation::get_track_count() const {
 
 Animation::TrackType Animation::track_get_type(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), TYPE_TRANSFORM);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), TYPE_TRANSFORM);
 	return tracks[p_track]->type;
 }
 
 void Animation::track_set_path(int p_track, const NodePath &p_path) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	tracks[p_track]->path = p_path;
 	emit_changed();
 	emit_signal(SceneStringNames::get_singleton()->tracks_changed);
@@ -745,23 +745,23 @@ void Animation::track_set_path(int p_track, const NodePath &p_path) {
 
 NodePath Animation::track_get_path(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), NodePath());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), NodePath());
 	return tracks[p_track]->path;
 }
 
 int Animation::find_track(const NodePath &p_path) const {
 
-	for (int i = 0; i < tracks.size(); i++) {
+	for (decltype(tracks.size()) i = 0; i < tracks.size(); i++) {
 
 		if (tracks[i]->path == p_path)
 			return i;
-	};
+	}
 	return -1;
 };
 
 void Animation::track_set_interpolation_type(int p_track, InterpolationType p_interp) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	ERR_FAIL_INDEX(p_interp, 3);
 	tracks[p_track]->interpolation = p_interp;
 	emit_changed();
@@ -769,19 +769,19 @@ void Animation::track_set_interpolation_type(int p_track, InterpolationType p_in
 
 Animation::InterpolationType Animation::track_get_interpolation_type(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), INTERPOLATION_NEAREST);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), INTERPOLATION_NEAREST);
 	return tracks[p_track]->interpolation;
 }
 
 void Animation::track_set_interpolation_loop_wrap(int p_track, bool p_enable) {
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	tracks[p_track]->loop_wrap = p_enable;
 	emit_changed();
 }
 
 bool Animation::track_get_interpolation_loop_wrap(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), INTERPOLATION_NEAREST);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), INTERPOLATION_NEAREST);
 	return tracks[p_track]->loop_wrap;
 }
 
@@ -846,12 +846,12 @@ void Animation::_clear(T &p_keys) {
 
 Error Animation::transform_track_get_key(int p_track, int p_key, Vector3 *r_loc, Quat *r_rot, Vector3 *r_scale) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), ERR_INVALID_PARAMETER);
 	Track *t = tracks[p_track];
 
 	TransformTrack *tt = static_cast<TransformTrack *>(t);
 	ERR_FAIL_COND_V(t->type != TYPE_TRANSFORM, ERR_INVALID_PARAMETER);
-	ERR_FAIL_INDEX_V(p_key, tt->transforms.size(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_INDEX_V(p_key, static_cast<int>(tt->transforms.size()), ERR_INVALID_PARAMETER);
 
 	if (r_loc)
 		*r_loc = tt->transforms[p_key].value.loc;
@@ -865,7 +865,7 @@ Error Animation::transform_track_get_key(int p_track, int p_key, Vector3 *r_loc,
 
 int Animation::transform_track_insert_key(int p_track, float p_time, const Vector3 &p_loc, const Quat &p_rot, const Vector3 &p_scale) {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_TRANSFORM, -1);
 
@@ -891,49 +891,49 @@ void Animation::track_remove_key_at_position(int p_track, float p_pos) {
 
 void Animation::track_remove_key(int p_track, int p_idx) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, tt->transforms.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(tt->transforms.size()));
 			tt->transforms.erase(tt->transforms.begin() + p_idx);
 
 		} break;
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, vt->values.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(vt->values.size()));
 			vt->values.erase(vt->values.begin() + p_idx);
 
 		} break;
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, mt->methods.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(mt->methods.size()));
 			mt->methods.erase(mt->methods.begin() + p_idx);
 
 		} break;
 		case TYPE_BEZIER: {
 
 			BezierTrack *bz = static_cast<BezierTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, bz->values.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(bz->values.size()));
 			bz->values.erase(bz->values.begin() + p_idx);
 
 		} break;
 		case TYPE_AUDIO: {
 
 			AudioTrack *ad = static_cast<AudioTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, ad->values.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(ad->values.size()));
 			ad->values.erase(ad->values.begin() + p_idx);
 
 		} break;
 		case TYPE_ANIMATION: {
 
 			AnimationTrack *an = static_cast<AnimationTrack *>(t);
-			ERR_FAIL_INDEX(p_idx, an->values.size());
+			ERR_FAIL_INDEX(p_idx, static_cast<int>(an->values.size()));
 			an->values.erase(an->values.begin() + p_idx);
 
 		} break;
@@ -944,7 +944,7 @@ void Animation::track_remove_key(int p_track, int p_idx) {
 
 int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -952,7 +952,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
 			int k = _find(tt->transforms, p_time);
-			if (k < 0 || k >= tt->transforms.size())
+			if (k < 0 || k >= static_cast<int>(tt->transforms.size()))
 				return -1;
 			if (tt->transforms[k].time != p_time && p_exact)
 				return -1;
@@ -963,7 +963,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
 			int k = _find(vt->values, p_time);
-			if (k < 0 || k >= vt->values.size())
+			if (k < 0 || k >= static_cast<int>(vt->values.size()))
 				return -1;
 			if (vt->values[k].time != p_time && p_exact)
 				return -1;
@@ -974,7 +974,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
 			int k = _find(mt->methods, p_time);
-			if (k < 0 || k >= mt->methods.size())
+			if (k < 0 || k >= static_cast<int>(mt->methods.size()))
 				return -1;
 			if (mt->methods[k].time != p_time && p_exact)
 				return -1;
@@ -985,7 +985,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			BezierTrack *bt = static_cast<BezierTrack *>(t);
 			int k = _find(bt->values, p_time);
-			if (k < 0 || k >= bt->values.size())
+			if (k < 0 || k >= static_cast<int>(bt->values.size()))
 				return -1;
 			if (bt->values[k].time != p_time && p_exact)
 				return -1;
@@ -996,7 +996,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			AudioTrack *at = static_cast<AudioTrack *>(t);
 			int k = _find(at->values, p_time);
-			if (k < 0 || k >= at->values.size())
+			if (k < 0 || k >= static_cast<int>(at->values.size()))
 				return -1;
 			if (at->values[k].time != p_time && p_exact)
 				return -1;
@@ -1007,7 +1007,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 			AnimationTrack *at = static_cast<AnimationTrack *>(t);
 			int k = _find(at->values, p_time);
-			if (k < 0 || k >= at->values.size())
+			if (k < 0 || k >= static_cast<int>(at->values.size()))
 				return -1;
 			if (at->values[k].time != p_time && p_exact)
 				return -1;
@@ -1021,7 +1021,7 @@ int Animation::track_find_key(int p_track, float p_time, bool p_exact) const {
 
 void Animation::track_insert_key(int p_track, float p_time, const Variant &p_key, float p_transition) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1128,7 +1128,7 @@ void Animation::track_insert_key(int p_track, float p_time, const Variant &p_key
 
 int Animation::track_get_key_count(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1171,7 +1171,7 @@ int Animation::track_get_key_count(int p_track) const {
 
 Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), Variant());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), Variant());
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1179,7 +1179,7 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, tt->transforms.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(tt->transforms.size()), Variant());
 
 			Dictionary d;
 			d["location"] = tt->transforms[p_key_idx].value.loc;
@@ -1191,14 +1191,14 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, vt->values.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(vt->values.size()), Variant());
 			return vt->values[p_key_idx].value;
 
 		} break;
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, mt->methods.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(mt->methods.size()), Variant());
 			Dictionary d;
 			d["method"] = mt->methods[p_key_idx].method;
 			d["args"] = mt->methods[p_key_idx].params;
@@ -1208,7 +1208,7 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 		case TYPE_BEZIER: {
 
 			BezierTrack *bt = static_cast<BezierTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, bt->values.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(bt->values.size()), Variant());
 
 			Array arr;
 			arr.resize(5);
@@ -1223,7 +1223,7 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 		case TYPE_AUDIO: {
 
 			AudioTrack *at = static_cast<AudioTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, at->values.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(at->values.size()), Variant());
 
 			Dictionary k;
 			k["start_offset"] = at->values[p_key_idx].value.start_offset;
@@ -1235,7 +1235,7 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 		case TYPE_ANIMATION: {
 
 			AnimationTrack *at = static_cast<AnimationTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, at->values.size(), Variant());
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(at->values.size()), Variant());
 
 			return at->values[p_key_idx].value;
 
@@ -1247,7 +1247,7 @@ Variant Animation::track_get_key_value(int p_track, int p_key_idx) const {
 
 float Animation::track_get_key_time(int p_track, int p_key_idx) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1255,41 +1255,41 @@ float Animation::track_get_key_time(int p_track, int p_key_idx) const {
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, tt->transforms.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(tt->transforms.size()), -1);
 			return tt->transforms[p_key_idx].time;
 		} break;
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, vt->values.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(vt->values.size()), -1);
 			return vt->values[p_key_idx].time;
 
 		} break;
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, mt->methods.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(mt->methods.size()), -1);
 			return mt->methods[p_key_idx].time;
 
 		} break;
 		case TYPE_BEZIER: {
 
 			BezierTrack *bt = static_cast<BezierTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, bt->values.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(bt->values.size()), -1);
 			return bt->values[p_key_idx].time;
 
 		} break;
 		case TYPE_AUDIO: {
 
 			AudioTrack *at = static_cast<AudioTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, at->values.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(at->values.size()), -1);
 			return at->values[p_key_idx].time;
 
 		} break;
 		case TYPE_ANIMATION: {
 
 			AnimationTrack *at = static_cast<AnimationTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, at->values.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(at->values.size()), -1);
 			return at->values[p_key_idx].time;
 
 		} break;
@@ -1300,7 +1300,7 @@ float Animation::track_get_key_time(int p_track, int p_key_idx) const {
 
 void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1308,7 +1308,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, tt->transforms.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(tt->transforms.size()));
 			TKey<TransformKey> key = tt->transforms[p_key_idx];
 			key.time = p_time;
 			tt->transforms.erase(tt->transforms.begin() + p_key_idx);
@@ -1318,7 +1318,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, vt->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(vt->values.size()));
 			TKey<Variant> key = vt->values[p_key_idx];
 			key.time = p_time;
 			vt->values.erase(vt->values.begin() + p_key_idx);
@@ -1328,7 +1328,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, mt->methods.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(mt->methods.size()));
 			MethodKey key = mt->methods[p_key_idx];
 			key.time = p_time;
 			mt->methods.erase(mt->methods.begin() + p_key_idx);
@@ -1338,7 +1338,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_BEZIER: {
 
 			BezierTrack *bt = static_cast<BezierTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, bt->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(bt->values.size()));
 			TKey<BezierKey> key = bt->values[p_key_idx];
 			key.time = p_time;
 			bt->values.erase(bt->values.begin() + p_key_idx);
@@ -1348,7 +1348,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_AUDIO: {
 
 			AudioTrack *at = static_cast<AudioTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, at->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(at->values.size()));
 			TKey<AudioKey> key = at->values[p_key_idx];
 			key.time = p_time;
 			at->values.erase(at->values.begin() + p_key_idx);
@@ -1358,7 +1358,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 		case TYPE_ANIMATION: {
 
 			AnimationTrack *at = static_cast<AnimationTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, at->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(at->values.size()));
 			TKey<StringName> key = at->values[p_key_idx];
 			key.time = p_time;
 			at->values.erase(at->values.begin() + p_key_idx);
@@ -1372,7 +1372,7 @@ void Animation::track_set_key_time(int p_track, int p_key_idx, float p_time) {
 
 float Animation::track_get_key_transition(int p_track, int p_key_idx) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1380,20 +1380,20 @@ float Animation::track_get_key_transition(int p_track, int p_key_idx) const {
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, tt->transforms.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(tt->transforms.size()), -1);
 			return tt->transforms[p_key_idx].transition;
 		} break;
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, vt->values.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(vt->values.size()), -1);
 			return vt->values[p_key_idx].transition;
 
 		} break;
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX_V(p_key_idx, mt->methods.size(), -1);
+			ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(mt->methods.size()), -1);
 			return mt->methods[p_key_idx].transition;
 
 		} break;
@@ -1416,7 +1416,7 @@ float Animation::track_get_key_transition(int p_track, int p_key_idx) const {
 
 void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p_value) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1424,7 +1424,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, tt->transforms.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(tt->transforms.size()));
 
 			Dictionary d = p_value;
 
@@ -1439,7 +1439,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, vt->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(vt->values.size()));
 
 			vt->values[p_key_idx].value = p_value;
 
@@ -1447,7 +1447,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, mt->methods.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(mt->methods.size()));
 
 			Dictionary d = p_value;
 
@@ -1460,7 +1460,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_BEZIER: {
 
 			BezierTrack *bt = static_cast<BezierTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, bt->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(bt->values.size()));
 
 			Array arr = p_value;
 			ERR_FAIL_COND(arr.size() != 5);
@@ -1475,7 +1475,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_AUDIO: {
 
 			AudioTrack *at = static_cast<AudioTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, at->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(at->values.size()));
 
 			Dictionary k = p_value;
 			ERR_FAIL_COND(!k.has("start_offset"));
@@ -1490,7 +1490,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 		case TYPE_ANIMATION: {
 
 			AnimationTrack *at = static_cast<AnimationTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, at->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(at->values.size()));
 
 			at->values[p_key_idx].value = p_value;
 
@@ -1502,7 +1502,7 @@ void Animation::track_set_key_value(int p_track, int p_key_idx, const Variant &p
 
 void Animation::track_set_key_transition(int p_track, int p_key_idx, float p_transition) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 
 	switch (t->type) {
@@ -1510,20 +1510,20 @@ void Animation::track_set_key_transition(int p_track, int p_key_idx, float p_tra
 		case TYPE_TRANSFORM: {
 
 			TransformTrack *tt = static_cast<TransformTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, tt->transforms.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(tt->transforms.size()));
 			tt->transforms[p_key_idx].transition = p_transition;
 		} break;
 		case TYPE_VALUE: {
 
 			ValueTrack *vt = static_cast<ValueTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, vt->values.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(vt->values.size()));
 			vt->values[p_key_idx].transition = p_transition;
 
 		} break;
 		case TYPE_METHOD: {
 
 			MethodTrack *mt = static_cast<MethodTrack *>(t);
-			ERR_FAIL_INDEX(p_key_idx, mt->methods.size());
+			ERR_FAIL_INDEX(p_key_idx, static_cast<int>(mt->methods.size()));
 			mt->methods[p_key_idx].transition = p_transition;
 
 		} break;
@@ -1865,7 +1865,7 @@ T Animation::_interpolate(const std::vector<TKey<T> > &p_keys, float p_time, Int
 
 Error Animation::transform_track_interpolate(int p_track, float p_time, Vector3 *r_loc, Quat *r_rot, Vector3 *r_scale) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), ERR_INVALID_PARAMETER);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_TRANSFORM, ERR_INVALID_PARAMETER);
 
@@ -1892,7 +1892,7 @@ Error Animation::transform_track_interpolate(int p_track, float p_time, Vector3 
 
 Variant Animation::value_track_interpolate(int p_track, float p_time) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), 0);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), 0);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_VALUE, Variant());
 	ValueTrack *vt = static_cast<ValueTrack *>(t);
@@ -1946,7 +1946,7 @@ void Animation::_value_track_get_key_indices_in_range(const ValueTrack *vt, floa
 
 void Animation::value_track_get_key_indices(int p_track, float p_time, float p_delta, List<int> *p_indices) const {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_VALUE);
 
@@ -1987,7 +1987,7 @@ void Animation::value_track_get_key_indices(int p_track, float p_time, float p_d
 
 void Animation::value_track_set_update_mode(int p_track, UpdateMode p_mode) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_VALUE);
 	ERR_FAIL_INDEX((int)p_mode, 4);
@@ -1998,7 +1998,7 @@ void Animation::value_track_set_update_mode(int p_track, UpdateMode p_mode) {
 
 Animation::UpdateMode Animation::value_track_get_update_mode(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), UPDATE_CONTINUOUS);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), UPDATE_CONTINUOUS);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_VALUE, UPDATE_CONTINUOUS);
 
@@ -2040,7 +2040,7 @@ void Animation::_track_get_key_indices_in_range(const std::vector<T> &p_array, f
 
 void Animation::track_get_key_indices_in_range(int p_track, float p_time, float p_delta, List<int> *p_indices) const {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	const Track *t = tracks[p_track];
 
 	float from_time = p_time - p_delta;
@@ -2194,7 +2194,7 @@ void Animation::_method_track_get_key_indices_in_range(const MethodTrack *mt, fl
 
 void Animation::method_track_get_key_indices(int p_track, float p_time, float p_delta, List<int> *p_indices) const {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_METHOD);
 
@@ -2237,13 +2237,13 @@ void Animation::method_track_get_key_indices(int p_track, float p_time, float p_
 }
 std::vector<Variant> Animation::method_track_get_params(int p_track, int p_key_idx) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), std::vector<Variant>());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), std::vector<Variant>());
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_METHOD, std::vector<Variant>());
 
 	MethodTrack *pm = static_cast<MethodTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key_idx, pm->methods.size(), std::vector<Variant>());
+	ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(pm->methods.size()), std::vector<Variant>());
 
 	const MethodKey &mk = pm->methods[p_key_idx];
 
@@ -2251,20 +2251,20 @@ std::vector<Variant> Animation::method_track_get_params(int p_track, int p_key_i
 }
 StringName Animation::method_track_get_name(int p_track, int p_key_idx) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), StringName());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), StringName());
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_METHOD, StringName());
 
 	MethodTrack *pm = static_cast<MethodTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key_idx, pm->methods.size(), StringName());
+	ERR_FAIL_INDEX_V(p_key_idx, static_cast<int>(pm->methods.size()), StringName());
 
 	return pm->methods[p_key_idx].method;
 }
 
 int Animation::bezier_track_insert_key(int p_track, float p_time, float p_value, const Vector2 &p_in_handle, const Vector2 &p_out_handle) {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_BEZIER, -1);
 
@@ -2291,13 +2291,13 @@ int Animation::bezier_track_insert_key(int p_track, float p_time, float p_value,
 
 void Animation::bezier_track_set_key_value(int p_track, int p_index, float p_value) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_BEZIER);
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX(p_index, bt->values.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(bt->values.size()));
 
 	bt->values[p_index].value.value = p_value;
 	emit_changed();
@@ -2305,13 +2305,13 @@ void Animation::bezier_track_set_key_value(int p_track, int p_index, float p_val
 
 void Animation::bezier_track_set_key_in_handle(int p_track, int p_index, const Vector2 &p_handle) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_BEZIER);
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX(p_index, bt->values.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(bt->values.size()));
 
 	bt->values[p_index].value.in_handle = p_handle;
 	if (bt->values[p_index].value.in_handle.x > 0) {
@@ -2321,13 +2321,13 @@ void Animation::bezier_track_set_key_in_handle(int p_track, int p_index, const V
 }
 void Animation::bezier_track_set_key_out_handle(int p_track, int p_index, const Vector2 &p_handle) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_BEZIER);
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX(p_index, bt->values.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(bt->values.size()));
 
 	bt->values[p_index].value.out_handle = p_handle;
 	if (bt->values[p_index].value.out_handle.x < 0) {
@@ -2337,37 +2337,37 @@ void Animation::bezier_track_set_key_out_handle(int p_track, int p_index, const 
 }
 float Animation::bezier_track_get_key_value(int p_track, int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), 0);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), 0);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_BEZIER, 0);
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_index, bt->values.size(), 0);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(bt->values.size()), 0);
 
 	return bt->values[p_index].value.value;
 }
 Vector2 Animation::bezier_track_get_key_in_handle(int p_track, int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), Vector2());
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_BEZIER, Vector2());
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_index, bt->values.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(bt->values.size()), Vector2());
 
 	return bt->values[p_index].value.in_handle;
 }
 Vector2 Animation::bezier_track_get_key_out_handle(int p_track, int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), Vector2());
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_BEZIER, Vector2());
 
 	BezierTrack *bt = static_cast<BezierTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_index, bt->values.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(bt->values.size()), Vector2());
 
 	return bt->values[p_index].value.out_handle;
 }
@@ -2385,7 +2385,7 @@ static _FORCE_INLINE_ Vector2 _bezier_interp(real_t t, const Vector2 &start, con
 
 float Animation::bezier_track_interpolate(int p_track, float p_time) const {
 	//this uses a different interpolation scheme
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), 0);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), 0);
 	Track *track = tracks[p_track];
 	ERR_FAIL_COND_V(track->type != TYPE_BEZIER, 0);
 
@@ -2410,7 +2410,7 @@ float Animation::bezier_track_interpolate(int p_track, float p_time) const {
 		return bt->values[0].value.value;
 	}
 
-	if (idx >= bt->values.size() - 1) {
+	if (idx >= static_cast<int>(bt->values.size()) - 1) {
 		return bt->values[bt->values.size() - 1].value.value;
 	}
 
@@ -2452,7 +2452,7 @@ float Animation::bezier_track_interpolate(int p_track, float p_time) const {
 
 int Animation::audio_track_insert_key(int p_track, float p_time, const RES &p_stream, float p_start_offset, float p_end_offset) {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_AUDIO, -1);
 
@@ -2477,13 +2477,13 @@ int Animation::audio_track_insert_key(int p_track, float p_time, const RES &p_st
 
 void Animation::audio_track_set_key_stream(int p_track, int p_key, const RES &p_stream) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_AUDIO);
 
 	AudioTrack *at = static_cast<AudioTrack *>(t);
 
-	ERR_FAIL_INDEX(p_key, at->values.size());
+	ERR_FAIL_INDEX(p_key, static_cast<int>(at->values.size()));
 
 	at->values[p_key].value.stream = p_stream;
 
@@ -2492,13 +2492,13 @@ void Animation::audio_track_set_key_stream(int p_track, int p_key, const RES &p_
 
 void Animation::audio_track_set_key_start_offset(int p_track, int p_key, float p_offset) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_AUDIO);
 
 	AudioTrack *at = static_cast<AudioTrack *>(t);
 
-	ERR_FAIL_INDEX(p_key, at->values.size());
+	ERR_FAIL_INDEX(p_key, static_cast<int>(at->values.size()));
 
 	if (p_offset < 0)
 		p_offset = 0;
@@ -2510,13 +2510,13 @@ void Animation::audio_track_set_key_start_offset(int p_track, int p_key, float p
 
 void Animation::audio_track_set_key_end_offset(int p_track, int p_key, float p_offset) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_AUDIO);
 
 	AudioTrack *at = static_cast<AudioTrack *>(t);
 
-	ERR_FAIL_INDEX(p_key, at->values.size());
+	ERR_FAIL_INDEX(p_key, static_cast<int>(at->values.size()));
 
 	if (p_offset < 0)
 		p_offset = 0;
@@ -2528,37 +2528,37 @@ void Animation::audio_track_set_key_end_offset(int p_track, int p_key, float p_o
 
 RES Animation::audio_track_get_key_stream(int p_track, int p_key) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), RES());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), RES());
 	const Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_AUDIO, RES());
 
 	const AudioTrack *at = static_cast<const AudioTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key, at->values.size(), RES());
+	ERR_FAIL_INDEX_V(p_key, static_cast<int>(at->values.size()), RES());
 
 	return at->values[p_key].value.stream;
 }
 float Animation::audio_track_get_key_start_offset(int p_track, int p_key) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), 0);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), 0);
 	const Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_AUDIO, 0);
 
 	const AudioTrack *at = static_cast<const AudioTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key, at->values.size(), 0);
+	ERR_FAIL_INDEX_V(p_key, static_cast<int>(at->values.size()), 0);
 
 	return at->values[p_key].value.start_offset;
 }
 float Animation::audio_track_get_key_end_offset(int p_track, int p_key) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), 0);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), 0);
 	const Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_AUDIO, 0);
 
 	const AudioTrack *at = static_cast<const AudioTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key, at->values.size(), 0);
+	ERR_FAIL_INDEX_V(p_key, static_cast<int>(at->values.size()), 0);
 
 	return at->values[p_key].value.end_offset;
 }
@@ -2567,7 +2567,7 @@ float Animation::audio_track_get_key_end_offset(int p_track, int p_key) const {
 
 int Animation::animation_track_insert_key(int p_track, float p_time, const StringName &p_animation) {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), -1);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), -1);
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_ANIMATION, -1);
 
@@ -2586,13 +2586,13 @@ int Animation::animation_track_insert_key(int p_track, float p_time, const Strin
 
 void Animation::animation_track_set_key_animation(int p_track, int p_key, const StringName &p_animation) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	Track *t = tracks[p_track];
 	ERR_FAIL_COND(t->type != TYPE_ANIMATION);
 
 	AnimationTrack *at = static_cast<AnimationTrack *>(t);
 
-	ERR_FAIL_INDEX(p_key, at->values.size());
+	ERR_FAIL_INDEX(p_key, static_cast<int>(at->values.size()));
 
 	at->values[p_key].value = p_animation;
 
@@ -2601,13 +2601,13 @@ void Animation::animation_track_set_key_animation(int p_track, int p_key, const 
 
 StringName Animation::animation_track_get_key_animation(int p_track, int p_key) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), StringName());
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), StringName());
 	const Track *t = tracks[p_track];
 	ERR_FAIL_COND_V(t->type != TYPE_ANIMATION, StringName());
 
 	const AnimationTrack *at = static_cast<const AnimationTrack *>(t);
 
-	ERR_FAIL_INDEX_V(p_key, at->values.size(), StringName());
+	ERR_FAIL_INDEX_V(p_key, static_cast<int>(at->values.size()), StringName());
 
 	return at->values[p_key].value;
 }
@@ -2637,32 +2637,32 @@ bool Animation::has_loop() const {
 
 void Animation::track_set_imported(int p_track, bool p_imported) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	tracks[p_track]->imported = p_imported;
 }
 
 bool Animation::track_is_imported(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), false);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), false);
 	return tracks[p_track]->imported;
 }
 
 void Animation::track_set_enabled(int p_track, bool p_enabled) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
 	tracks[p_track]->enabled = p_enabled;
 	emit_changed();
 }
 
 bool Animation::track_is_enabled(int p_track) const {
 
-	ERR_FAIL_INDEX_V(p_track, tracks.size(), false);
+	ERR_FAIL_INDEX_V(p_track, static_cast<int>(tracks.size()), false);
 	return tracks[p_track]->enabled;
 }
 
 void Animation::track_move_up(int p_track) {
 
-	if (p_track >= 0 && p_track < (tracks.size() - 1)) {
+	if (p_track >= 0 && p_track < (static_cast<int>(tracks.size()) - 1)) {
 
 		SWAP(tracks[p_track], tracks[p_track + 1]);
 	}
@@ -2673,7 +2673,7 @@ void Animation::track_move_up(int p_track) {
 
 void Animation::track_move_down(int p_track) {
 
-	if (p_track > 0 && p_track < tracks.size()) {
+	if (p_track > 0 && p_track < static_cast<int>(tracks.size())) {
 
 		SWAP(tracks[p_track], tracks[p_track - 1]);
 	}
@@ -2684,8 +2684,8 @@ void Animation::track_move_down(int p_track) {
 
 void Animation::track_move_to(int p_track, int p_to_index) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
-	ERR_FAIL_INDEX(p_to_index, tracks.size() + 1);
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
+	ERR_FAIL_INDEX(p_to_index, static_cast<int>(tracks.size()) + 1);
 	if (p_track == p_to_index || p_track == p_to_index - 1)
 		return;
 
@@ -2700,8 +2700,8 @@ void Animation::track_move_to(int p_track, int p_to_index) {
 
 void Animation::track_swap(int p_track, int p_with_track) {
 
-	ERR_FAIL_INDEX(p_track, tracks.size());
-	ERR_FAIL_INDEX(p_with_track, tracks.size());
+	ERR_FAIL_INDEX(p_track, static_cast<int>(tracks.size()));
+	ERR_FAIL_INDEX(p_with_track, static_cast<int>(tracks.size()));
 	if (p_track == p_with_track)
 		return;
 	SWAP(tracks[p_track], tracks[p_with_track]);
@@ -2850,7 +2850,7 @@ void Animation::_bind_methods() {
 
 void Animation::clear() {
 
-	for (int i = 0; i < tracks.size(); i++)
+	for (decltype(tracks.size()) i = 0; i < tracks.size(); i++)
 		memdelete(tracks[i]);
 	tracks.clear();
 	loop = false;
@@ -3031,7 +3031,7 @@ bool Animation::_transform_track_optimize_key(const TKey<TransformKey> &t0, cons
 
 void Animation::_transform_track_optimize(int p_idx, float p_allowed_linear_err, float p_allowed_angular_err, float p_max_optimizable_angle) {
 
-	ERR_FAIL_INDEX(p_idx, tracks.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(tracks.size()));
 	ERR_FAIL_COND(tracks[p_idx]->type != TYPE_TRANSFORM);
 	TransformTrack *tt = static_cast<TransformTrack *>(tracks[p_idx]);
 	bool prev_erased = false;
@@ -3039,7 +3039,7 @@ void Animation::_transform_track_optimize(int p_idx, float p_allowed_linear_err,
 
 	Vector3 norm;
 
-	for (int i = 1; i < tt->transforms.size() - 1; i++) {
+	for (decltype(tt->transforms.size()) i = 1; i < tt->transforms.size() - 1; i++) {
 
 		TKey<TransformKey> &t0 = tt->transforms[i - 1];
 		TKey<TransformKey> &t1 = tt->transforms[i];
@@ -3074,7 +3074,7 @@ void Animation::_transform_track_optimize(int p_idx, float p_allowed_linear_err,
 
 void Animation::optimize(float p_allowed_linear_err, float p_allowed_angular_err, float p_max_optimizable_angle) {
 
-	for (int i = 0; i < tracks.size(); i++) {
+	for (decltype(tracks.size()) i = 0; i < tracks.size(); i++) {
 
 		if (tracks[i]->type == TYPE_TRANSFORM)
 			_transform_track_optimize(i, p_allowed_linear_err, p_allowed_angular_err, p_max_optimizable_angle);
@@ -3090,6 +3090,6 @@ Animation::Animation() {
 
 Animation::~Animation() {
 
-	for (int i = 0; i < tracks.size(); i++)
+	for (decltype(tracks.size()) i = 0; i < tracks.size(); i++)
 		memdelete(tracks[i]);
 }
