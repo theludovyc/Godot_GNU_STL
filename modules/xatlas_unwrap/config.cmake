@@ -1,0 +1,5 @@
+if(tools AND NOT ${target} STREQUAL "android" AND NOT ${target} STREQUAL "ios")
+    set(module_ENABLED ON)
+else()
+    set(module_ENABLED OFF)
+endif()

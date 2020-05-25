@@ -28,5 +28,6 @@ add_subdirectory(miniupnpc)
 add_subdirectory(vhacd)
 add_subdirectory(libwebp)
 add_subdirectory(wslay)
+add_subdirectory(xatlas)
 
 remove_definitions(-w)
