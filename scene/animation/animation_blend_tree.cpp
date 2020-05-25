@@ -51,7 +51,7 @@ void AnimationNodeAnimation::_validate_property(PropertyInfo &property) const {
 	if (property.name == "animation" && get_editable_animation_list) {
 		std::vector<String> names = get_editable_animation_list();
 		String anims;
-		for (int i = 0; i < names.size(); i++) {
+		for (decltype(names.size()) i = 0; i < names.size(); i++) {
 
 			if (i > 0) {
 				anims += ",";
@@ -925,7 +925,7 @@ void AnimationNodeBlendTree::get_child_nodes(List<ChildNode> *r_child_nodes) {
 	// need_update : StringName::AlphCompare{} => StringName::AlphCompare, but for now it's used by List.find<>
 	std::sort(ns.begin(), ns.end(), StringName::AlphCompare{});
 
-	for (int i = 0; i < ns.size(); i++) {
+	for (decltype(ns.size()) i = 0; i < ns.size(); i++) {
 		ChildNode cn;
 		cn.name = ns[i];
 		cn.node = nodes[cn.name].node;
@@ -956,7 +956,7 @@ void AnimationNodeBlendTree::remove_node(const StringName &p_name) {
 
 	//erase connections to name
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); i++) {
 			if (E->get().connections[i] == p_name) {
 				E->get().connections[i] = StringName();
 			}
@@ -982,7 +982,7 @@ void AnimationNodeBlendTree::rename_node(const StringName &p_name, const StringN
 	//rename connections
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
 
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); i++) {
 			if (E->get().connections[i] == p_name) {
 				E->get().connections[i] = p_new_name;
 			}
@@ -1002,10 +1002,10 @@ void AnimationNodeBlendTree::connect_node(const StringName &p_input_node, int p_
 	ERR_FAIL_COND(p_input_node == p_output_node);
 
 	Ref<AnimationNode> input = nodes[p_input_node].node;
-	ERR_FAIL_INDEX(p_input_index, nodes[p_input_node].connections.size());
+	ERR_FAIL_INDEX(p_input_index, static_cast<int>(nodes[p_input_node].connections.size()));
 
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); i++) {
 			StringName output = E->get().connections[i];
 			ERR_FAIL_COND(output == p_output_node);
 		}
@@ -1021,7 +1021,7 @@ void AnimationNodeBlendTree::disconnect_node(const StringName &p_node, int p_inp
 	ERR_FAIL_COND(!nodes.has(p_node));
 
 	Ref<AnimationNode> input = nodes[p_node].node;
-	ERR_FAIL_INDEX(p_input_index, nodes[p_node].connections.size());
+	ERR_FAIL_INDEX(p_input_index, static_cast<int>(nodes[p_node].connections.size()));
 
 	nodes[p_node].connections[p_input_index] = StringName();
 }
@@ -1042,7 +1042,7 @@ AnimationNodeBlendTree::ConnectionError AnimationNodeBlendTree::can_connect_node
 
 	Ref<AnimationNode> input = nodes[p_input_node].node;
 
-	if (p_input_index < 0 || p_input_index >= nodes[p_input_node].connections.size()) {
+	if (p_input_index < 0 || p_input_index >= static_cast<int>(nodes[p_input_node].connections.size())) {
 		return CONNECTION_ERROR_NO_INPUT_INDEX;
 	}
 
@@ -1051,7 +1051,7 @@ AnimationNodeBlendTree::ConnectionError AnimationNodeBlendTree::can_connect_node
 	}
 
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); i++) {
 			StringName output = E->get().connections[i];
 			if (output == p_output_node) {
 				return CONNECTION_ERROR_CONNECTION_EXISTS;
@@ -1064,7 +1064,7 @@ AnimationNodeBlendTree::ConnectionError AnimationNodeBlendTree::can_connect_node
 void AnimationNodeBlendTree::get_node_connections(List<NodeConnection> *r_connections) const {
 
 	for (Map<StringName, Node>::Element *E = nodes.front(); E; E = E->next()) {
-		for (int i = 0; i < E->get().connections.size(); i++) {
+		for (decltype(E->get().connections.size()) i = 0; i < E->get().connections.size(); i++) {
 			StringName output = E->get().connections[i];
 			if (output != StringName()) {
 				NodeConnection nc;
