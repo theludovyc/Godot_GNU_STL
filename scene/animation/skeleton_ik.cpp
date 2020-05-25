@@ -145,7 +145,7 @@ void FabrikInverseKinematic::update_chain(const Skeleton *p_sk, ChainItem *p_cha
 	p_chain_item->current_pos = p_chain_item->initial_transform.origin;
 
 	ChainItem *items = p_chain_item->children.data();
-	for (int i = 0; i < p_chain_item->children.size(); i += 1) {
+	for (decltype(p_chain_item->children.size()) i = 0; i < p_chain_item->children.size(); i += 1) {
 		update_chain(p_sk, items + i);
 	}
 }
@@ -293,7 +293,7 @@ void FabrikInverseKinematic::solve(Task *p_task, real_t blending_delta, bool ove
 		p_task->skeleton->set_bone_global_pose_override(p_task->chain.middle_chain_item->bone, Transform(), 0.0, true);
 	}
 
-	for (int i = 0; i < p_task->chain.tips.size(); i += 1) {
+	for (decltype(p_task->chain.tips.size()) i = 0; i < p_task->chain.tips.size(); i += 1) {
 		p_task->skeleton->set_bone_global_pose_override(p_task->chain.tips[i].chain_item->bone, Transform(), 0.0, true);
 	}
 
