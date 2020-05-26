@@ -1,4 +1,8 @@
-set(exe_name "${PROJECT_NAME}-windows")
+if(${tools})
+    set(exe_name "${PROJECT_NAME}-windows-editor.${CMAKE_BUILD_TYPE}")
+else()
+    set(exe_name "${PROJECT_NAME}-windows-template.${CMAKE_BUILD_TYPE}")
+endif()
 
 file(GLOB header "*.h")
 file(GLOB cpp "*.cpp")

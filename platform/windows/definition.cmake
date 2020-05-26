@@ -1,4 +1,4 @@
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR ${tools})
     add_definitions(-DDEBUG_ENABLED)
     add_definitions(-DDEBUG_MEMORY_ENABLED)
     add_definitions(-DD3D_DEBUG_INFO)

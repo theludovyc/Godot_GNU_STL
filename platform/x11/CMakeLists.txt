@@ -1,4 +1,10 @@
-set(exe_name "${PROJECT_NAME}-linux")
+if(${tools})
+    set(exe_name "${PROJECT_NAME}-linux-editor.${CMAKE_BUILD_TYPE}")
+else()
+    set(exe_name "${PROJECT_NAME}-linux-template.${CMAKE_BUILD_TYPE}")
+endif()
+
+
 
 file(GLOB header "*.h")
 file(GLOB cpp "*.cpp")
