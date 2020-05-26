@@ -1,5 +1,8 @@
 project(godotCore)
 
+
+
+
 set(generateFile)
 
 add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/script_encryption_key.gen.cpp"
@@ -23,11 +26,18 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/io/certs_compressed.gen.h
 	)
 list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/io/certs_compressed.gen.h")
 
-add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc"
-  COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_binders.py"
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
-	)
-list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc")
+
+# TODO : need to be change
+generateBindings(generateFile)
+
+# add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc"
+#   COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_binders.py"
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
+# 	)
+# list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/method_bind.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_ext.gen.inc" "${CMAKE_CURRENT_SOURCE_DIR}/method_bind_free_func.gen.inc")
+
+
+
 
 add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/authors.gen.h"
   COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_authors_header.py"

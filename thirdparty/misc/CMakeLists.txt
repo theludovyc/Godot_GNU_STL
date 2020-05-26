@@ -15,7 +15,8 @@ if(${target} STREQUAL "windows")
 endif()
 
 # TODO : need to be remove
-set(generateFile "${CMAKE_SOURCE_DIR}/core/method_bind.gen.inc" "${CMAKE_SOURCE_DIR}/core/method_bind_ext.gen.inc" "${CMAKE_SOURCE_DIR}/core/method_bind_free_func.gen.inc")
+set(generateFile)
+generateBindings(generateFile)
 
 add_library(${PROJECT_NAME} ${header} ${c} ${header_cpp} ${cpp} ${cpp_bis} ${generateFile})
 
