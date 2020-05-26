@@ -32,3 +32,8 @@ add_library(${PROJECT_NAME} ${header} ${c})
 target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ".")
+
+if(${target} STREQUAL "windows")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DMINIUPNP_STATICLIB)
+endif()
+
