@@ -1930,7 +1930,7 @@ Variant GDScriptFunctionState::resume(const Variant &p_arg) {
 void GDScriptFunctionState::_clear_stack() {
 
 	if (state.stack_size) {
-		Variant *stack = (Variant *)state.stack.ptr();
+		Variant *stack = (Variant *)state.stack.data();
 		for (int i = 0; i < state.stack_size; i++)
 			stack[i].~Variant();
 		state.stack_size = 0;
