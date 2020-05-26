@@ -396,7 +396,7 @@ bool GDScript::_update_exports(bool *r_err, bool p_recursive_call) {
 
 #ifdef TOOLS_ENABLED
 
-	static Vector<GDScript *> base_caches;
+	static std::vector<GDScript *> base_caches;
 	if (!p_recursive_call)
 		base_caches.clear();
 	base_caches.push_back(this);
