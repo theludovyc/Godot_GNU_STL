@@ -52,7 +52,7 @@ void CollisionObjectSW::add_shape(ShapeSW *p_shape, const Transform &p_transform
 
 void CollisionObjectSW::set_shape(int p_index, ShapeSW *p_shape) {
 
-	ERR_FAIL_INDEX(p_index, shapes.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
 	shapes[p_index].shape->remove_owner(this);
 	shapes[p_index].shape = p_shape;
 
@@ -65,7 +65,7 @@ void CollisionObjectSW::set_shape(int p_index, ShapeSW *p_shape) {
 }
 void CollisionObjectSW::set_shape_transform(int p_index, const Transform &p_transform) {
 
-	ERR_FAIL_INDEX(p_index, shapes.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
 
 	shapes[p_index].xform = p_transform;
 	shapes[p_index].xform_inv = p_transform.affine_inverse();
@@ -86,7 +86,7 @@ void CollisionObjectSW::set_shape_as_disabled(int p_idx, bool p_enable) {
 void CollisionObjectSW::remove_shape(ShapeSW *p_shape) {
 
 	//remove a shape, all the times it appears
-	for (int i = 0; i < shapes.size(); i++) {
+	for (int i = 0; i < static_cast<int>(shapes.size()); i++) {
 
 		if (shapes[i].shape == p_shape) {
 			remove_shape(i);
@@ -98,8 +98,8 @@ void CollisionObjectSW::remove_shape(ShapeSW *p_shape) {
 void CollisionObjectSW::remove_shape(int p_index) {
 
 	//remove anything from shape to be erased to end, so subindices don't change
-	ERR_FAIL_INDEX(p_index, shapes.size());
-	for (int i = p_index; i < shapes.size(); i++) {
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
+	for (int i = p_index; i < static_cast<int>(shapes.size()); i++) {
 
 		if (shapes[i].bpid == 0)
 			continue;
@@ -134,7 +134,7 @@ void CollisionObjectSW::_set_static(bool p_static) {
 
 void CollisionObjectSW::_unregister_shapes() {
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 		if (s.bpid > 0) {
@@ -149,7 +149,7 @@ void CollisionObjectSW::_update_shapes() {
 	if (!space)
 		return;
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 		if (s.bpid == 0) {
@@ -176,7 +176,7 @@ void CollisionObjectSW::_update_shapes_with_motion(const Vector3 &p_motion) {
 	if (!space)
 		return;
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 		if (s.bpid == 0) {
@@ -201,7 +201,7 @@ void CollisionObjectSW::_set_space(SpaceSW *p_space) {
 
 		space->remove_object(this);
 
-		for (int i = 0; i < shapes.size(); i++) {
+		for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 			Shape &s = shapes[i];
 			if (s.bpid) {
