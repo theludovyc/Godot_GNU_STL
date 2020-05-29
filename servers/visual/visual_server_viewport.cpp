@@ -283,7 +283,7 @@ void VisualServerViewport::draw_viewports() {
 	std::sort(active_viewports.begin(), active_viewports.end(), ViewportSort);
 
 	//draw viewports
-	for (int i = 0; i < active_viewports.size(); i++) {
+	for (decltype(active_viewports.size()) i = 0; i < active_viewports.size(); i++) {
 
 		Viewport *vp = active_viewports[i];
 
