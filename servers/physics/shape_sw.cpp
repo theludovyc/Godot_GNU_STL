@@ -960,7 +960,7 @@ void ConvexPolygonShapeSW::_setup(const std::vector<Vector3> &p_vertices) {
 
 	AABB _aabb;
 
-	for (int i = 0; i < mesh.vertices.size(); i++) {
+	for (decltype(mesh.vertices.size()) i = 0; i < mesh.vertices.size(); i++) {
 
 		if (i == 0)
 			_aabb.position = mesh.vertices[i];
