@@ -53,7 +53,7 @@ int FileAccessBuffered::cache_data_left() const {
 		return 0;
 	}
 
-	if (cache.offset == -1 || file.offset < cache.offset || file.offset >= cache.offset + cache.buffer.size()) {
+	if (cache.offset == -1 || file.offset < cache.offset || file.offset >= cache.offset + static_cast<int>(cache.buffer.size())) {
 
 		return read_data_block(file.offset, cache_size);
 	}
@@ -109,7 +109,7 @@ int FileAccessBuffered::get_buffer(uint8_t *p_dest, int p_length) const {
 
 		int total_read = 0;
 
-		if (!(cache.offset == -1 || file.offset < cache.offset || file.offset >= cache.offset + cache.buffer.size())) {
+		if (!(cache.offset == -1 || file.offset < cache.offset || file.offset >= cache.offset + static_cast<int>(cache.buffer.size()))) {
 
 			int size = (cache.buffer.size() - (file.offset - cache.offset));
 			size = size - (size % 4);
