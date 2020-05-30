@@ -160,7 +160,7 @@ bool ProjectSettings::_set(const StringName &p_name, const Variant &p_value) {
 
 		if (p_name == CoreStringNames::get_singleton()->_custom_features) {
 			std::vector<String> custom_feature_array = String(p_value).split(",");
-			for (int i = 0; i < custom_feature_array.size(); i++) {
+			for (decltype(custom_feature_array.size()) i = 0; i < custom_feature_array.size(); i++) {
 
 				custom_features.insert(custom_feature_array[i]);
 			}
@@ -173,7 +173,7 @@ bool ProjectSettings::_set(const StringName &p_name, const Variant &p_value) {
 				std::vector<String> s = p_name.operator String().split(".");
 
 				bool override_valid = false;
-				for (int i = 1; i < s.size(); i++) {
+				for (decltype(s.size()) i = 1; i < s.size(); i++) {
 					String feature = s[i].strip_edges();
 					if (OS::get_singleton()->has_feature(feature) || custom_features.has(feature)) {
 						override_valid = true;
@@ -861,7 +861,7 @@ Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_cust
 
 	String custom_features;
 
-	for (int i = 0; i < p_custom_features.size(); i++) {
+	for (decltype(p_custom_features.size()) i = 0; i < p_custom_features.size(); i++) {
 		if (i > 0)
 			custom_features += ",";
 
