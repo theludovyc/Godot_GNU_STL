@@ -176,7 +176,7 @@ Error DirAccess::make_dir_recursive(String p_dir) {
 	std::vector<String> subdirs = full_dir.split("/");
 
 	String curpath = base;
-	for (int i = 0; i < subdirs.size(); i++) {
+	for (decltype(subdirs.size()) i = 0; i < subdirs.size(); i++) {
 
 		curpath = curpath.plus_file(subdirs[i]);
 		Error err = make_dir(curpath);
