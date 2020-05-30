@@ -416,17 +416,17 @@ int XMLParser::get_attribute_count() const {
 }
 String XMLParser::get_attribute_name(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, attributes.size(), "");
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(attributes.size()), "");
 	return attributes[p_idx].name;
 }
 String XMLParser::get_attribute_value(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, attributes.size(), "");
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(attributes.size()), "");
 	return attributes[p_idx].value;
 }
 bool XMLParser::has_attribute(const String &p_name) const {
 
-	for (int i = 0; i < attributes.size(); i++) {
+	for (decltype(attributes.size()) i = 0; i < attributes.size(); i++) {
 		if (attributes[i].name == p_name)
 			return true;
 	}
@@ -436,7 +436,7 @@ bool XMLParser::has_attribute(const String &p_name) const {
 String XMLParser::get_attribute_value(const String &p_name) const {
 
 	int idx = -1;
-	for (int i = 0; i < attributes.size(); i++) {
+	for (decltype(attributes.size()) i = 0; i < attributes.size(); i++) {
 		if (attributes[i].name == p_name) {
 			idx = i;
 			break;
@@ -451,7 +451,7 @@ String XMLParser::get_attribute_value(const String &p_name) const {
 String XMLParser::get_attribute_value_safe(const String &p_name) const {
 
 	int idx = -1;
-	for (int i = 0; i < attributes.size(); i++) {
+	for (decltype(attributes.size()) i = 0; i < attributes.size(); i++) {
 		if (attributes[i].name == p_name) {
 			idx = i;
 			break;
