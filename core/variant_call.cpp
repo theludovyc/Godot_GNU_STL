@@ -1361,7 +1361,7 @@ void Variant::get_method_list(List<MethodInfo> *p_list) const {
 			mi.flags |= METHOD_FLAG_CONST;
 		}
 
-		for (int i = 0; i < fd.arg_types.size(); i++) {
+		for (decltype(fd.arg_types.size()) i = 0; i < fd.arg_types.size(); i++) {
 
 			PropertyInfo pi;
 			pi.type = fd.arg_types[i];
