@@ -106,7 +106,7 @@ StringName ResourceInteractiveLoaderBinary::_get_string() {
 	uint32_t id = f->get_32();
 	if (id & 0x80000000) {
 		uint32_t len = id & 0x7FFFFFFF;
-		if ((int)len > str_buf.size()) {
+		if ((int)len > static_cast<int>(str_buf.size())) {
 			str_buf.resize(len);
 		}
 		if (len == 0)
@@ -341,7 +341,7 @@ Error ResourceInteractiveLoaderBinary::parse_variant(Variant &r_v) {
 					//new file format, just refers to an index in the external list
 					int erindex = f->get_32();
 
-					if (erindex < 0 || erindex >= external_resources.size()) {
+					if (erindex < 0 || erindex >= static_cast<int>(external_resources.size())) {
 						WARN_PRINT("Broken external resource! (index out of size)");
 						r_v = Variant();
 					} else {
@@ -636,7 +636,7 @@ Error ResourceInteractiveLoaderBinary::poll() {
 
 	int s = stage;
 
-	if (s < external_resources.size()) {
+	if (s < static_cast<int>(external_resources.size())) {
 
 		String path = external_resources[s].path;
 
@@ -665,13 +665,14 @@ Error ResourceInteractiveLoaderBinary::poll() {
 
 	s -= external_resources.size();
 
-	if (s >= internal_resources.size()) {
+	int internal_resources_count = internal_resources.size();
+	if (s >= internal_resources_count) {
 
 		error = ERR_BUG;
-		ERR_FAIL_COND_V(s >= internal_resources.size(), error);
+		ERR_FAIL_COND_V(s >= internal_resources_count, error);
 	}
 
-	bool main = s == (internal_resources.size() - 1);
+	bool main = s == (internal_resources_count - 1);
 
 	//maybe it is loaded already
 	String path;
@@ -799,7 +800,7 @@ static String get_ustring(FileAccess *f) {
 String ResourceInteractiveLoaderBinary::get_unicode_string() {
 
 	int len = f->get_32();
-	if (len > str_buf.size()) {
+	if (len > static_cast<int>(str_buf.size())) {
 		str_buf.resize(len);
 	}
 	if (len == 0)
@@ -816,7 +817,7 @@ void ResourceInteractiveLoaderBinary::get_dependencies(FileAccess *p_f, List<Str
 	if (error)
 		return;
 
-	for (int i = 0; i < external_resources.size(); i++) {
+	for (decltype(external_resources.size()) i = 0; i < external_resources.size(); i++) {
 
 		String dep = external_resources[i].path;
 
@@ -1856,7 +1857,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 	}
 
 	f->store_32(strings.size()); //string table size
-	for (int i = 0; i < strings.size(); i++) {
+	for (decltype(strings.size()) i = 0; i < strings.size(); i++) {
 		save_unicode_string(f, strings[i]);
 	}
 
@@ -1869,7 +1870,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 		save_order[E->get()] = E->key();
 	}
 
-	for (int i = 0; i < save_order.size(); i++) {
+	for (decltype(save_order.size()) i = 0; i < save_order.size(); i++) {
 
 		save_unicode_string(f, save_order[i]->get_save_class());
 		String path = save_order[i]->get_path();
@@ -1943,7 +1944,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 		}
 	}
 
-	for (int i = 0; i < ofs_table.size(); i++) {
+	for (decltype(ofs_table.size()) i = 0; i < ofs_table.size(); i++) {
 		f->seek(ofs_pos[i]);
 		f->store_64(ofs_table[i]);
 	}
