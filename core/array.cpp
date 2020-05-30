@@ -103,7 +103,7 @@ uint32_t Array::hash() const {
 
 	uint32_t h = hash_djb2_one_32(0);
 
-	for (int i = 0; i < _p->array.size(); i++) {
+	for (decltype(_p->array.size()) i = 0; i < _p->array.size(); i++) {
 
 		h = hash_djb2_one_32(_p->array[i].hash(), h);
 	}
@@ -161,7 +161,7 @@ int Array::rfind(const Variant &p_value, int p_from) const {
 		// Relative offset from the end
 		p_from = _p->array.size() + p_from;
 	}
-	if (p_from < 0 || p_from >= _p->array.size()) {
+	if (p_from < 0 || p_from >= static_cast<int>(_p->array.size())) {
 		// Limit to array boundaries
 		p_from = _p->array.size() - 1;
 	}
@@ -187,7 +187,7 @@ int Array::count(const Variant &p_value) const {
 		return 0;
 
 	int amount = 0;
-	for (int i = 0; i < _p->array.size(); i++) {
+	for (decltype(_p->array.size()) i = 0; i < _p->array.size(); i++) {
 
 		if (_p->array[i] == p_value) {
 			amount++;
