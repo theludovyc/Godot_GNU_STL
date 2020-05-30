@@ -138,7 +138,7 @@ void FileAccessEncrypted::close() {
 
 		compressed.resize(len);
 		zeromem(compressed.data(), len);
-		for (int i = 0; i < data.size(); i++) {
+		for (decltype(data.size()) i = 0; i < data.size(); i++) {
 			compressed[i] = data[i];
 		}
 
@@ -222,7 +222,7 @@ bool FileAccessEncrypted::eof_reached() const {
 uint8_t FileAccessEncrypted::get_8() const {
 
 	ERR_FAIL_COND_V_MSG(writing, 0, "File has not been opened in read mode.");
-	if (pos >= data.size()) {
+	if (pos >= static_cast<int>(data.size())) {
 		eofed = true;
 		return 0;
 	}
@@ -235,7 +235,7 @@ int FileAccessEncrypted::get_buffer(uint8_t *p_dst, int p_length) const {
 
 	ERR_FAIL_COND_V_MSG(writing, 0, "File has not been opened in read mode.");
 
-	int to_copy = MIN(p_length, data.size() - pos);
+	int to_copy = MIN(p_length, static_cast<int>(data.size()) - pos);
 	for (int i = 0; i < to_copy; i++) {
 
 		p_dst[i] = data[pos++];
@@ -257,13 +257,13 @@ void FileAccessEncrypted::store_buffer(const uint8_t *p_src, int p_length) {
 
 	ERR_FAIL_COND_MSG(!writing, "File has not been opened in read mode.");
 
-	if (pos < data.size()) {
+	if (pos < static_cast<int>(data.size())) {
 
 		for (int i = 0; i < p_length; i++) {
 
 			store_8(p_src[i]);
 		}
-	} else if (pos == data.size()) {
+	} else if (pos == static_cast<int>(data.size())) {
 
 		data.resize(pos + p_length);
 		for (int i = 0; i < p_length; i++) {
@@ -284,10 +284,11 @@ void FileAccessEncrypted::store_8(uint8_t p_dest) {
 
 	ERR_FAIL_COND_MSG(!writing, "File has not been opened in read mode.");
 
-	if (pos < data.size()) {
+	int data_count = data.size();
+	if (pos < data_count) {
 		data[pos] = p_dest;
 		pos++;
-	} else if (pos == data.size()) {
+	} else if (pos == data_count) {
 		data.push_back(p_dest);
 		pos++;
 	}
