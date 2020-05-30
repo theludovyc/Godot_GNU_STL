@@ -148,7 +148,7 @@ void ResourceFormatImporter::get_recognized_extensions(List<String> *p_extension
 
 	Set<String> found;
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 		List<String> local_exts;
 		importers[i]->get_recognized_extensions(&local_exts);
 		for (List<String>::Element *F = local_exts.front(); F; F = F->next()) {
@@ -169,7 +169,7 @@ void ResourceFormatImporter::get_recognized_extensions_for_type(const String &p_
 
 	Set<String> found;
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 		String res_type = importers[i]->get_resource_type();
 		if (res_type == String())
 			continue;
@@ -228,7 +228,7 @@ int ResourceFormatImporter::get_import_order(const String &p_path) const {
 
 bool ResourceFormatImporter::handles_type(const String &p_type) const {
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 
 		String res_type = importers[i]->get_resource_type();
 		if (res_type == String())
@@ -355,7 +355,7 @@ void ResourceFormatImporter::get_dependencies(const String &p_path, List<String>
 
 Ref<ResourceImporter> ResourceFormatImporter::get_importer_by_name(const String &p_name) const {
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 		if (importers[i]->get_importer_name() == p_name) {
 			return importers[i];
 		}
@@ -366,7 +366,7 @@ Ref<ResourceImporter> ResourceFormatImporter::get_importer_by_name(const String 
 
 void ResourceFormatImporter::get_importers_for_extension(const String &p_extension, List<Ref<ResourceImporter> > *r_importers) {
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 		List<String> local_exts;
 		importers[i]->get_recognized_extensions(&local_exts);
 		for (List<String>::Element *F = local_exts.front(); F; F = F->next()) {
@@ -382,7 +382,7 @@ Ref<ResourceImporter> ResourceFormatImporter::get_importer_by_extension(const St
 	Ref<ResourceImporter> importer;
 	float priority = 0;
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 
 		List<String> local_exts;
 		importers[i]->get_recognized_extensions(&local_exts);
@@ -412,7 +412,7 @@ bool ResourceFormatImporter::are_import_settings_valid(const String &p_path) con
 		return false;
 	}
 
-	for (int i = 0; i < importers.size(); i++) {
+	for (decltype(importers.size()) i = 0; i < importers.size(); i++) {
 		if (importers[i]->get_importer_name() == pat.importer) {
 			if (!importers[i]->are_import_settings_valid(p_path)) { //importer thinks this is not valid
 				return false;
@@ -430,7 +430,7 @@ String ResourceFormatImporter::get_import_settings_hash() const {
 	std::sort(sorted_importers.begin(), sorted_importers.end(), SortImporterByName);
 
 	String hash;
-	for (int i = 0; i < sorted_importers.size(); i++) {
+	for (decltype(sorted_importers.size()) i = 0; i < sorted_importers.size(); i++) {
 		hash += ":" + sorted_importers[i]->get_importer_name() + ":" + sorted_importers[i]->get_import_settings_string();
 	}
 	return hash.md5_text();
