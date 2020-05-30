@@ -127,7 +127,7 @@ Error HTTPClient::request_raw(Method p_method, const String &p_url, const std::v
 	bool add_clen = p_body.size() > 0;
 	bool add_uagent = true;
 	bool add_accept = true;
-	for (int i = 0; i < p_headers.size(); i++) {
+	for (decltype(p_headers.size()) i = 0; i < p_headers.size(); i++) {
 		request += p_headers[i] + "\r\n";
 		if (add_clen && p_headers[i].findn("Content-Length:") == 0) {
 			add_clen = false;
@@ -195,7 +195,7 @@ Error HTTPClient::request(Method p_method, const String &p_url, const std::vecto
 	bool add_uagent = true;
 	bool add_accept = true;
 	bool add_clen = p_body.length() > 0;
-	for (int i = 0; i < p_headers.size(); i++) {
+	for (decltype(p_headers.size()) i = 0; i < p_headers.size(); i++) {
 		request += p_headers[i] + "\r\n";
 		if (add_clen && p_headers[i].findn("Content-Length:") == 0) {
 			add_clen = false;
@@ -254,7 +254,7 @@ Error HTTPClient::get_response_headers(List<String> *r_response) {
 	if (!response_headers.size())
 		return ERR_INVALID_PARAMETER;
 
-	for (int i = 0; i < response_headers.size(); i++) {
+	for (decltype(response_headers.size()) i = 0; i < response_headers.size(); i++) {
 
 		r_response->push_back(response_headers[i]);
 	}
@@ -444,7 +444,7 @@ Error HTTPClient::poll() {
 					// Broken web servers should be fixed.
 					bool keep_alive = true;
 
-					for (int i = 0; i < responses.size(); i++) {
+					for (decltype(responses.size()) i = 0; i < responses.size(); i++) {
 
 						String header = responses[i].strip_edges();
 						String s = header.to_lower();
@@ -571,7 +571,7 @@ PoolByteArray HTTPClient::read_response_body_chunk() {
 				if (chunk.size() > 2 && chunk[chunk.size() - 2] == '\r' && chunk[chunk.size() - 1] == '\n') {
 
 					int len = 0;
-					for (int i = 0; i < chunk.size() - 2; i++) {
+					for (decltype(chunk.size()) i = 0; i < chunk.size() - 2; i++) {
 						char c = chunk[i];
 						int v = 0;
 						if (c >= '0' && c <= '9')
