@@ -30,19 +30,12 @@ set(c
         #"rate.c"
         "state.c"
         #"tokenize.c"
-
-        #"x86/mmxencfrag.c"
-        #"x86/mmxfdct.c"
-        "x86/mmxfrag.c"
-        "x86/mmxidct.c"
-        "x86/mmxstate.c"
-        #"x86/sse2fdct.c"
-        #"x86/x86enc.c"
-        "x86/x86state.c"
 )
 
 add_library(${PROJECT_NAME} ${header} ${c})
-target_compile_definitions(${PROJECT_NAME} PRIVATE -DOC_X86_ASM)
+
+#target_compile_definitions(${PROJECT_NAME} PRIVATE -DOC_X86_ASM)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE libogg)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ".")
