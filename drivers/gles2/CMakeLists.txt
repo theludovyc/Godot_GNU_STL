@@ -28,6 +28,4 @@ add_library(${PROJECT_NAME} ${header} ${cpp} ${gen})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 
-# TODO : remove
-target_include_directories(${PROJECT_NAME} PRIVATE "../../")
-target_include_directories(${PROJECT_NAME} PRIVATE "../../platform/${target}")
+target_link_libraries(${PROJECT_NAME} PRIVATE godotCore)
