@@ -1,10 +1,9 @@
 from io import StringIO
 import os
+import glob
 
-def make_editor_icons_action(target, source):
-
-    dst = target
-    svg_icons = source
+def make_editor_icons_action(target, sourceDir):
+    svg_icons = glob.glob(sourceDir + "/*.svg")
 
     icons_string = StringIO()
 
@@ -78,7 +77,7 @@ def make_editor_icons_action(target, source):
 
     s.write("#endif\n")
 
-    with open(dst, "w") as f:
+    with open(target, "w") as f:
         f.write(s.getvalue())
 
     s.close()
@@ -91,5 +90,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("usage : " + sys.argv[0] + " <destination> <source>")
         exit()
-    jsonstring = "[\"" + sys.argv[2].replace(";","\",\"") + "\"]"
-    make_editor_icons_action(sys.argv[1],json.loads(jsonstring))
+    make_editor_icons_action(sys.argv[1],sys.argv[2])

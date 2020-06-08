@@ -52,11 +52,10 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/doc_data_compressed.gen.h
 list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/doc_data_compressed.gen.h")
 
 set(icons)
-file(GLOB_RECURSE icons "./icons/*.svg")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/editor_icons.gen.h"
     COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/script/generate_editor_icone.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor_icons.gen.h"
-    "\"${icons}\""
+    "${CMAKE_CURRENT_SOURCE_DIR}/icons"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/script"
 )
 list(APPEND generateFile "${CMAKE_CURRENT_SOURCE_DIR}/editor_icons.gen.h")

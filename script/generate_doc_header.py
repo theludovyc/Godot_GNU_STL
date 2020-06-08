@@ -1,5 +1,4 @@
 def make_doc_header(target, source):
-
     dst = target
     g = open(dst, "w")
     buf = ""
@@ -8,7 +7,7 @@ def make_doc_header(target, source):
     for src in source:
         if not src.endswith(".xml"):
             continue
-        with open(src, "r") as f:
+        with open(src, "r", encoding="utf-8") as f:
             content = f.read()
         buf += content
 
