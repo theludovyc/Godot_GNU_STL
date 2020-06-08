@@ -8,7 +8,7 @@ def make_donors_header(target, source):
 
     src = source
     dst = target
-    f = open(src, "r")
+    f = open(src, "r", encoding="utf-8")
     g = open(dst, "w")
 
     g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
@@ -51,4 +51,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("usage : " + sys.argv[0] + " <destination> <source>")
         exit()
+
+    print("hello")
+
     make_donors_header(sys.argv[1],sys.argv[2])
