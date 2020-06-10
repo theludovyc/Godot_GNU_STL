@@ -21,8 +21,9 @@ local.properties
 .idea
 .gradletasknamecache
 project.properties
-platform/android/java/libs/*
 platform/android/java/app/libs/*
+platform/android/java/libs/*
+platform/android/java/lib/.cxx/
 
 # General c++ generated files
 *.lib
@@ -86,6 +87,9 @@ logs/
 # User-specific files
 *.suo
 *.user
+
+# Custom SCons configuration override
+/custom.py
 
 # Build results
 [Dd]ebug/

@@ -60,7 +60,6 @@ class OS {
 	bool _allow_layered;
 	bool _use_vsync;
 	bool _vsync_via_compositor;
-	bool _disable_wintab;
 
 	char *last_error;
 
@@ -192,6 +191,11 @@ public:
 
 	virtual int get_audio_driver_count() const;
 	virtual const char *get_audio_driver_name(int p_driver) const;
+
+	virtual int get_tablet_driver_count() const { return 0; };
+	virtual String get_tablet_driver_name(int p_driver) const { return ""; };
+	virtual String get_current_tablet_driver() const { return ""; };
+	virtual void set_current_tablet_driver(const String &p_driver){};
 
 	virtual PoolStringArray get_connected_midi_inputs();
 	virtual void open_midi_inputs();
@@ -376,7 +380,7 @@ public:
 	};
 
 	virtual bool has_virtual_keyboard() const;
-	virtual void show_virtual_keyboard(const String &p_existing_text, const Rect2 &p_screen_rect = Rect2(), int p_max_input_length = -1);
+	virtual void show_virtual_keyboard(const String &p_existing_text, const Rect2 &p_screen_rect = Rect2(), int p_max_input_length = -1, int p_cursor_start = -1, int p_cursor_end = -1);
 	virtual void hide_virtual_keyboard();
 
 	// returns height of the currently shown virtual keyboard (0 if keyboard is hidden)
@@ -524,7 +528,6 @@ public:
 
 	bool is_layered_allowed() const { return _allow_layered; }
 	bool is_hidpi_allowed() const { return _allow_hidpi; }
-	bool is_wintab_disabled() const { return _disable_wintab; }
 
 	void set_restart_on_exit(bool p_restart, const List<String> &p_restart_arguments);
 	bool is_restart_on_exit_set() const;

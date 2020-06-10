@@ -1501,11 +1501,14 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 #ifdef DEBUG_ENABLED
 				GET_VARIANT_PTR(test, 1);
-				GET_VARIANT_PTR(message, 2);
 				bool result = test->booleanize();
 
 				if (!result) {
-					const String &message_str = *message;
+					String message_str;
+					if (_code_ptr[ip + 2] != 0) {
+						GET_VARIANT_PTR(message, 2);
+						message_str = *message;
+					}
 					if (message_str.empty()) {
 						err_text = "Assertion failed.";
 					} else {
@@ -1910,8 +1913,6 @@ Variant GDScriptFunctionState::resume(const Variant &p_arg) {
 	state.result = Variant();
 
 	if (completed) {
-		_clear_stack();
-
 		if (first_state.is_valid()) {
 			first_state->emit_signal("completed", ret);
 		} else {

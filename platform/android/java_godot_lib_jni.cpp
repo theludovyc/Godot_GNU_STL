@@ -91,6 +91,13 @@ static void _initialize_java_modules() {
 
 			String m = mods[i];
 
+			// Deprecated in Godot 3.2.2, it's now a plugin to enable in export preset.
+			if (m == "org/godotengine/godot/GodotPaymentV3") {
+				WARN_PRINT("GodotPaymentV3 is deprecated and is replaced by the 'GodotPayment' plugin, which should be enabled in the Android export preset.");
+				print_line("Skipping Android module: " + m);
+				continue;
+			}
+
 			print_line("Loading Android module: " + m);
 			jstring strClassName = env->NewStringUTF(m.utf8().get_data());
 			jclass singletonClass = (jclass)env->CallObjectMethod(cls, findClass, strClassName);
@@ -441,8 +448,7 @@ JNIEXPORT jstring JNICALL Java_org_godotengine_godot_GodotLib_getGlobal(JNIEnv *
 	return env->NewStringUTF(ProjectSettings::get_singleton()->get(js).operator String().utf8().get_data());
 }
 
-JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_callobject(JNIEnv *env, jclass clazz, jint ID, jstring method, jobjectArray params) {
-
+JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_callobject(JNIEnv *env, jclass clazz, jlong ID, jstring method, jobjectArray params) {
 	Object *obj = ObjectDB::get_instance(ID);
 	ERR_FAIL_COND(!obj);
 
@@ -473,8 +479,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_callobject(JNIEnv *en
 	env->PopLocalFrame(NULL);
 }
 
-JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_calldeferred(JNIEnv *env, jclass clazz, jint ID, jstring method, jobjectArray params) {
-
+JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_calldeferred(JNIEnv *env, jclass clazz, jlong ID, jstring method, jobjectArray params) {
 	Object *obj = ObjectDB::get_instance(ID);
 	ERR_FAIL_COND(!obj);
 
