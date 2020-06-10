@@ -1,5 +1,5 @@
 if(${tools})
-    set(exe_name "${PROJECT_NAME}-windows-editor.${CMAKE_BUILD_TYPE}")
+    set(exe_name "${PROJECT_NAME}-windows-editor${CMAKE_BUILD_TYPE}")
 else()
     set(exe_name "${PROJECT_NAME}-windows-template.${CMAKE_BUILD_TYPE}")
 endif()
