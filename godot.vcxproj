@@ -649,6 +649,8 @@
     <ClInclude Include="modules\xatlas_unwrap\register_types.h" />
     <ClInclude Include="modules\register_module_types.h" />
     <ClInclude Include="platform\android\export\export.h" />
+    <ClInclude Include="platform\android\plugin\godot_plugin_config.h" />
+    <ClInclude Include="platform\android\plugin\godot_plugin_jni.h" />
     <ClInclude Include="platform\iphone\export\export.h" />
     <ClInclude Include="platform\javascript\export\export.h" />
     <ClInclude Include="platform\osx\export\export.h" />
@@ -1852,6 +1854,7 @@
     <ClCompile Include="modules\websocket\wsl_server.cpp" />
     <ClCompile Include="modules\xatlas_unwrap\register_types.cpp" />
     <ClCompile Include="platform\android\export\export.cpp" />
+    <ClCompile Include="platform\android\plugin\godot_plugin_jni.cpp" />
     <ClCompile Include="platform\iphone\export\export.cpp" />
     <ClCompile Include="platform\javascript\export\export.cpp" />
     <ClCompile Include="platform\osx\export\export.cpp" />
