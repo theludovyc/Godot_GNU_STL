@@ -250,7 +250,7 @@ typedef struct {
 class JoypadWindows;
 class OS_Windows : public OS {
 	String tablet_driver;
-	Vector<String> tablet_drivers;
+	std::vector<String> tablet_drivers;
 
 	// WinTab API
 	static bool wintab_available;

@@ -631,7 +631,7 @@ Error EditorExportPlatformOSX::export_project(const Ref<EditorExportPreset> &p_p
 			if (err == OK) {
 				FileAccess *f = FileAccess::open(file, FileAccess::WRITE);
 				if (f) {
-					f->store_buffer(data.ptr(), data.size());
+					f->store_buffer(data.data(), data.size());
 					f->close();
 					if (is_execute) {
 						// chmod with 0755 if the file is executable.
@@ -775,8 +775,8 @@ void EditorExportPlatformOSX::_zip_folder_recursive(zipFile &p_zip, const String
 					0x0314, // "version made by", 0x03 - Unix, 0x14 - ZIP specification version 2.0, required to store Unix file permissions
 					0);
 
-			Vector<uint8_t> array = FileAccess::get_file_as_array(dir.plus_file(f));
-			zipWriteInFileInZip(p_zip, array.ptr(), array.size());
+			std::vector<uint8_t> array = FileAccess::get_file_as_array(dir.plus_file(f));
+			zipWriteInFileInZip(p_zip, array.data(), array.size());
 			zipCloseFileInZip(p_zip);
 		}
 	}

@@ -79,9 +79,9 @@ struct PluginConfig {
 	String binary;
 
 	// Optional dependencies section
-	Vector<String> local_dependencies;
-	Vector<String> remote_dependencies;
-	Vector<String> custom_maven_repos;
+	std::vector<String> local_dependencies;
+	std::vector<String> remote_dependencies;
+	std::vector<String> custom_maven_repos;
 };
 
 /*
@@ -123,8 +123,8 @@ static inline PluginConfig resolve_prebuilt_plugin(PluginConfig prebuilt_plugin,
 	return resolved;
 }
 
-static inline Vector<PluginConfig> get_prebuilt_plugins(String plugins_base_dir) {
-	Vector<PluginConfig> prebuilt_plugins;
+static inline std::vector<PluginConfig> get_prebuilt_plugins(String plugins_base_dir) {
+	std::vector<PluginConfig> prebuilt_plugins;
 	prebuilt_plugins.push_back(resolve_prebuilt_plugin(GODOT_PAYMENT, plugins_base_dir));
 	return prebuilt_plugins;
 }
@@ -158,7 +158,7 @@ static inline uint64_t get_plugin_modification_time(const PluginConfig &plugin_c
 	last_updated = MAX(last_updated, FileAccess::get_modified_time(plugin_config.binary));
 
 	for (int i = 0; i < plugin_config.local_dependencies.size(); i++) {
-		String binary = plugin_config.local_dependencies.get(i);
+		String binary = plugin_config.local_dependencies[i];
 		last_updated = MAX(last_updated, FileAccess::get_modified_time(binary));
 	}
 
@@ -180,15 +180,15 @@ static inline PluginConfig load_plugin_config(Ref<ConfigFile> config_file, const
 			plugin_config.binary = plugin_config.binary_type == BINARY_TYPE_LOCAL ? resolve_local_dependency_path(config_base_dir, binary_path) : binary_path;
 
 			if (config_file->has_section(DEPENDENCIES_SECTION)) {
-				Vector<String> local_dependencies_paths = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_LOCAL_KEY, Vector<String>());
+				std::vector<String> local_dependencies_paths = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_LOCAL_KEY, std::vector<String>());
 				if (!local_dependencies_paths.empty()) {
 					for (int i = 0; i < local_dependencies_paths.size(); i++) {
 						plugin_config.local_dependencies.push_back(resolve_local_dependency_path(config_base_dir, local_dependencies_paths[i]));
 					}
 				}
 
-				plugin_config.remote_dependencies = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_REMOTE_KEY, Vector<String>());
-				plugin_config.custom_maven_repos = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_CUSTOM_MAVEN_REPOS_KEY, Vector<String>());
+				plugin_config.remote_dependencies = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_REMOTE_KEY, std::vector<String>());
+				plugin_config.custom_maven_repos = config_file->get_value(DEPENDENCIES_SECTION, DEPENDENCIES_CUSTOM_MAVEN_REPOS_KEY, std::vector<String>());
 			}
 
 			plugin_config.valid_config = is_plugin_config_valid(plugin_config);
@@ -199,10 +199,10 @@ static inline PluginConfig load_plugin_config(Ref<ConfigFile> config_file, const
 	return plugin_config;
 }
 
-static inline String get_plugins_binaries(String binary_type, Vector<PluginConfig> plugins_configs) {
+static inline String get_plugins_binaries(String binary_type, std::vector<PluginConfig> plugins_configs) {
 	String plugins_binaries;
 	if (!plugins_configs.empty()) {
-		Vector<String> binaries;
+		std::vector<String> binaries;
 		for (int i = 0; i < plugins_configs.size(); i++) {
 			PluginConfig config = plugins_configs[i];
 			if (!config.valid_config) {
@@ -214,11 +214,11 @@ static inline String get_plugins_binaries(String binary_type, Vector<PluginConfi
 			}
 
 			if (binary_type == BINARY_TYPE_LOCAL) {
-				binaries.append_array(config.local_dependencies);
+				std_h::appendArray(binaries, config.local_dependencies);
 			}
 
 			if (binary_type == BINARY_TYPE_REMOTE) {
-				binaries.append_array(config.remote_dependencies);
+				std_h::appendArray(binaries, config.remote_dependencies);
 			}
 		}
 
@@ -228,17 +228,17 @@ static inline String get_plugins_binaries(String binary_type, Vector<PluginConfi
 	return plugins_binaries;
 }
 
-static inline String get_plugins_custom_maven_repos(Vector<PluginConfig> plugins_configs) {
+static inline String get_plugins_custom_maven_repos(std::vector<PluginConfig> plugins_configs) {
 	String custom_maven_repos;
 	if (!plugins_configs.empty()) {
-		Vector<String> repos_urls;
+		std::vector<String> repos_urls;
 		for (int i = 0; i < plugins_configs.size(); i++) {
 			PluginConfig config = plugins_configs[i];
 			if (!config.valid_config) {
 				continue;
 			}
 
-			repos_urls.append_array(config.custom_maven_repos);
+			std_h::appendArray(repos_urls, config.custom_maven_repos);
 		}
 
 		custom_maven_repos = String(PLUGIN_VALUE_SEPARATOR).join(repos_urls);
@@ -246,10 +246,10 @@ static inline String get_plugins_custom_maven_repos(Vector<PluginConfig> plugins
 	return custom_maven_repos;
 }
 
-static inline String get_plugins_names(Vector<PluginConfig> plugins_configs) {
+static inline String get_plugins_names(std::vector<PluginConfig> plugins_configs) {
 	String plugins_names;
 	if (!plugins_configs.empty()) {
-		Vector<String> names;
+		std::vector<String> names;
 		for (int i = 0; i < plugins_configs.size(); i++) {
 			PluginConfig config = plugins_configs[i];
 			if (!config.valid_config) {

@@ -275,7 +275,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 			{
 				// Nothing to do if we already know the plugins have changed.
 				if (!ea->plugins_changed) {
-					Vector<PluginConfig> loaded_plugins = get_plugins();
+					std::vector<PluginConfig> loaded_plugins = get_plugins();
 
 					ea->plugins_lock->lock();
 
@@ -620,8 +620,8 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 	}
 
 	/// List the gdap files in the directory specified by the p_path parameter.
-	static Vector<String> list_gdap_files(const String &p_path) {
-		Vector<String> dir_files;
+	static std::vector<String> list_gdap_files(const String &p_path) {
+		std::vector<String> dir_files;
 		DirAccessRef da = DirAccess::open(p_path);
 		if (da) {
 			da->list_dir_begin();
@@ -645,16 +645,16 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		return dir_files;
 	}
 
-	static Vector<PluginConfig> get_plugins() {
-		Vector<PluginConfig> loaded_plugins;
+	static std::vector<PluginConfig> get_plugins() {
+		std::vector<PluginConfig> loaded_plugins;
 
 		String plugins_dir = ProjectSettings::get_singleton()->get_resource_path().plus_file("android/plugins");
 
 		// Add the prebuilt plugins
-		loaded_plugins.append_array(get_prebuilt_plugins(plugins_dir));
+		std_h::appendArray(loaded_plugins, get_prebuilt_plugins(plugins_dir));
 
 		if (DirAccess::exists(plugins_dir)) {
-			Vector<String> plugins_filenames = list_gdap_files(plugins_dir);
+			std::vector<String> plugins_filenames = list_gdap_files(plugins_dir);
 
 			if (!plugins_filenames.empty()) {
 				Ref<ConfigFile> config_file = memnew(ConfigFile);
@@ -672,9 +672,9 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		return loaded_plugins;
 	}
 
-	static Vector<PluginConfig> get_enabled_plugins(const Ref<EditorExportPreset> &p_presets) {
-		Vector<PluginConfig> enabled_plugins;
-		Vector<PluginConfig> all_plugins = get_plugins();
+	static std::vector<PluginConfig> get_enabled_plugins(const Ref<EditorExportPreset> &p_presets) {
+		std::vector<PluginConfig> enabled_plugins;
+		std::vector<PluginConfig> all_plugins = get_plugins();
 		for (int i = 0; i < all_plugins.size(); i++) {
 			PluginConfig plugin = all_plugins[i];
 			bool enabled = p_presets->get("plugins/" + plugin.name);
@@ -686,7 +686,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		return enabled_plugins;
 	}
 
-	static Error store_in_apk(APKExportData *ed, const String &p_path, const Vector<uint8_t> &p_data, int compression_method = Z_DEFLATED) {
+	static Error store_in_apk(APKExportData *ed, const String &p_path, const std::vector<uint8_t> &p_data, int compression_method = Z_DEFLATED) {
 		zip_fileinfo zipfi = get_zip_fileinfo();
 		zipOpenNewFileInZip(ed->apk,
 				p_path.utf8().get_data(),
@@ -963,7 +963,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 						if (tname == "meta-data" && attrname == "value" && value == "oculus_focus_aware_value") {
 							// Update the focus awareness meta-data value
-							string_table.write[attr_value] = xr_mode_index == /* XRMode.OVR */ 1 && focus_awareness ? "true" : "false";
+							string_table[attr_value] = xr_mode_index == /* XRMode.OVR */ 1 && focus_awareness ? "true" : "false";
 						}
 
 						if (tname == "meta-data" && attrname == "value" && value == "plugins_value" && !plugins_names.empty()) {
@@ -1504,7 +1504,7 @@ public:
 		r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "custom_template/release", PROPERTY_HINT_GLOBAL_FILE, "*.apk"), ""));
 		r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "custom_template/use_custom_build"), false));
 
-		Vector<PluginConfig> plugins_configs = get_plugins();
+		std::vector<PluginConfig> plugins_configs = get_plugins();
 		for (int i = 0; i < plugins_configs.size(); i++) {
 			print_verbose("Found Android plugin " + plugins_configs[i].name);
 			r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "plugins/" + plugins_configs[i].name), false));
@@ -2254,7 +2254,7 @@ public:
 		}
 	}
 
-	inline bool is_clean_build_required(Vector<PluginConfig> enabled_plugins) {
+	inline bool is_clean_build_required(std::vector<PluginConfig> enabled_plugins) {
 		String plugin_names = get_plugins_names(enabled_plugins);
 		bool first_build = last_custom_build_time == 0;
 		bool have_plugins_changed = false;
@@ -2263,7 +2263,7 @@ public:
 			have_plugins_changed = plugin_names != last_plugin_names;
 			if (!have_plugins_changed) {
 				for (int i = 0; i < enabled_plugins.size(); i++) {
-					if (enabled_plugins.get(i).last_updated > last_custom_build_time) {
+					if (enabled_plugins[i].last_updated > last_custom_build_time) {
 						have_plugins_changed = true;
 						break;
 					}
@@ -2322,7 +2322,7 @@ public:
 
 			String package_name = get_package_name(p_preset->get("package/unique_name"));
 
-			Vector<PluginConfig> enabled_plugins = get_enabled_plugins(p_preset);
+			std::vector<PluginConfig> enabled_plugins = get_enabled_plugins(p_preset);
 			String local_plugins_binaries = get_plugins_binaries(BINARY_TYPE_LOCAL, enabled_plugins);
 			String remote_plugins_binaries = get_plugins_binaries(BINARY_TYPE_REMOTE, enabled_plugins);
 			String custom_maven_repos = get_plugins_custom_maven_repos(enabled_plugins);

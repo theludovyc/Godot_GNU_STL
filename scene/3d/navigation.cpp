@@ -463,7 +463,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 					right = begin_point;
 				} else {
 					int edge_count = p->edges.size();
-					ERR_FAIL_COND_V_MSG(edge_count == 0, Vector<Vector3>(), "Polygon has no edges.");
+					ERR_FAIL_COND_V_MSG(edge_count == 0, std::vector<Vector3>(), "Polygon has no edges.");
 					int prev = p->prev_edge;
 					int prev_n = (p->prev_edge + 1) % edge_count;
 					left = _get_vertex(p->edges[prev].point);
