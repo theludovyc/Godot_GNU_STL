@@ -63,7 +63,7 @@ static SegmentIntersectionResult segment_intersection(
 
 static float calculate_total_distance(const std::vector<Vector2> &points) {
 	float d = 0.f;
-	for (int i = 1; i < points.size(); ++i) {
+	for (decltype(points.size()) i = 1; i < points.size(); ++i) {
 		d += points[i].distance_to(points[i - 1]);
 	}
 	return d;

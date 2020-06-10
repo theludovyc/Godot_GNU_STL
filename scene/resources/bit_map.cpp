@@ -375,7 +375,7 @@ static std::vector<Vector2> rdp(const std::vector<Vector2> &v, float optimizatio
 			left[i] = v[i];
 		}
 		right.resize(v.size() - index);
-		for (int i = 0; i < right.size(); i++) {
+		for (decltype(right.size()) i = 0; i < right.size(); i++) {
 			right[i] = v[index + i];
 		}
 		std::vector<Vector2> r1 = rdp(left, optimization);
@@ -383,7 +383,7 @@ static std::vector<Vector2> rdp(const std::vector<Vector2> &v, float optimizatio
 
 		int middle = r1.size();
 		r1.resize(r1.size() + r2.size());
-		for (int i = 0; i < r2.size(); i++) {
+		for (decltype(r2.size()) i = 0; i < r2.size(); i++) {
 			r1[middle + i] = r2[i];
 		}
 		return r1;
@@ -597,7 +597,7 @@ Array BitMap::_opaque_to_polygons_bind(const Rect2 &p_rect, float p_epsilon) con
 
 	Array result_array;
 	result_array.resize(result.size());
-	for (int i = 0; i < result.size(); i++) {
+	for (decltype(result.size()) i = 0; i < result.size(); i++) {
 
 		const std::vector<Vector2> &polygon = result[i];
 
@@ -606,7 +606,7 @@ Array BitMap::_opaque_to_polygons_bind(const Rect2 &p_rect, float p_epsilon) con
 
 		{
 			PoolVector2Array::Write w = polygon_array.write();
-			for (int j = 0; j < polygon.size(); j++) {
+			for (decltype(polygon.size()) j = 0; j < polygon.size(); j++) {
 				w[j] = polygon[j];
 			}
 		}

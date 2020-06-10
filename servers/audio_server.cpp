@@ -93,12 +93,12 @@ void AudioDriver::input_buffer_init(int driver_buffer_frames) {
 
 void AudioDriver::input_buffer_write(int32_t sample) {
 
-	if ((int)input_position < input_buffer.size()) {
+	if ((int)input_position < static_cast<int>(input_buffer.size())) {
 		input_buffer[input_position++] = sample;
-		if ((int)input_position >= input_buffer.size()) {
+		if ((int)input_position >= static_cast<int>(input_buffer.size())) {
 			input_position = 0;
 		}
-		if ((int)input_size < input_buffer.size()) {
+		if ((int)input_size < static_cast<int>(input_buffer.size())) {
 			input_size++;
 		}
 	} else {
@@ -296,10 +296,10 @@ void AudioServer::_mix_step() {
 
 	bool solo_mode = false;
 
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 		Bus *bus = buses[i];
 		bus->index_cache = i; //might be moved around by editor, so..
-		for (int k = 0; k < bus->channels.size(); k++) {
+		for (decltype(bus->channels.size()) k = 0; k < bus->channels.size(); k++) {
 
 			bus->channels[k].used = false;
 		}
@@ -343,7 +343,7 @@ void AudioServer::_mix_step() {
 		//go bus by bus
 		Bus *bus = buses[i];
 
-		for (int k = 0; k < bus->channels.size(); k++) {
+		for (decltype(bus->channels.size()) k = 0; k < bus->channels.size(); k++) {
 
 			if (bus->channels[k].active && !bus->channels[k].used) {
 				//buffer was not used, but it's still active, so it must be cleaned
@@ -358,7 +358,7 @@ void AudioServer::_mix_step() {
 
 		//process effects
 		if (!bus->bypass) {
-			for (int j = 0; j < bus->effects.size(); j++) {
+			for (decltype(bus->effects.size()) j = 0; j < bus->effects.size(); j++) {
 
 				if (!bus->effects[j].enabled)
 					continue;
@@ -367,7 +367,7 @@ void AudioServer::_mix_step() {
 				uint64_t ticks = OS::get_singleton()->get_ticks_usec();
 #endif
 
-				for (int k = 0; k < bus->channels.size(); k++) {
+				for (decltype(bus->channels.size()) k = 0; k < bus->channels.size(); k++) {
 
 					if (!(bus->channels[k].active || bus->channels[k].effect_instances[j]->process_silence()))
 						continue;
@@ -375,7 +375,7 @@ void AudioServer::_mix_step() {
 				}
 
 				//swap buffers, so internal buffer always has the right data
-				for (int k = 0; k < bus->channels.size(); k++) {
+				for (decltype(bus->channels.size()) k = 0; k < bus->channels.size(); k++) {
 
 					if (!(buses[i]->channels[k].active || bus->channels[k].effect_instances[j]->process_silence()))
 						continue;
@@ -404,7 +404,7 @@ void AudioServer::_mix_step() {
 			}
 		}
 
-		for (int k = 0; k < bus->channels.size(); k++) {
+		for (decltype(bus->channels.size()) k = 0; k < bus->channels.size(); k++) {
 
 			if (!bus->channels[k].active)
 				continue;
@@ -469,17 +469,17 @@ void AudioServer::_mix_step() {
 }
 
 bool AudioServer::thread_has_channel_mix_buffer(int p_bus, int p_buffer) const {
-	if (p_bus < 0 || p_bus >= buses.size())
+	if (p_bus < 0 || p_bus >= static_cast<int>(buses.size()))
 		return false;
-	if (p_buffer < 0 || p_buffer >= buses[p_bus]->channels.size())
+	if (p_buffer < 0 || p_buffer >= static_cast<int>(buses[p_bus]->channels.size()))
 		return false;
 	return true;
 }
 
 AudioFrame *AudioServer::thread_get_channel_mix_buffer(int p_bus, int p_buffer) {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), NULL);
-	ERR_FAIL_INDEX_V(p_buffer, buses[p_bus]->channels.size(), NULL);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), NULL);
+	ERR_FAIL_INDEX_V(p_buffer, static_cast<int>(buses[p_bus]->channels.size()), NULL);
 
 	AudioFrame *data = buses[p_bus]->channels[p_buffer].buffer.data();
 
@@ -519,8 +519,8 @@ void AudioServer::set_bus_count(int p_count) {
 	lock();
 	int cb = buses.size();
 
-	if (p_count < buses.size()) {
-		for (int i = p_count; i < buses.size(); i++) {
+	if (p_count < cb) {
+		for (int i = p_count; i < cb; i++) {
 			bus_map.erase(buses[i]->name);
 			memdelete(buses[i]);
 		}
@@ -528,7 +528,7 @@ void AudioServer::set_bus_count(int p_count) {
 
 	buses.resize(p_count);
 
-	for (int i = cb; i < buses.size(); i++) {
+	for (int i = cb; i < static_cast<int>(buses.size()); i++) {
 
 		String attempt = "New Bus";
 		int attempts = 1;
@@ -575,7 +575,7 @@ void AudioServer::set_bus_count(int p_count) {
 
 void AudioServer::remove_bus(int p_index) {
 
-	ERR_FAIL_INDEX(p_index, buses.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(buses.size()));
 	ERR_FAIL_COND(p_index == 0);
 
 	MARK_EDITED
@@ -593,7 +593,7 @@ void AudioServer::add_bus(int p_at_pos) {
 
 	MARK_EDITED
 
-	if (p_at_pos >= buses.size()) {
+	if (p_at_pos >= static_cast<int>(buses.size())) {
 		p_at_pos = -1;
 	} else if (p_at_pos == 0) {
 		if (buses.size() > 1)
@@ -607,7 +607,7 @@ void AudioServer::add_bus(int p_at_pos) {
 	while (true) {
 
 		bool name_free = true;
-		for (int j = 0; j < buses.size(); j++) {
+		for (decltype(buses.size()) j = 0; j < buses.size(); j++) {
 
 			if (buses[j]->name == attempt) {
 				name_free = false;
@@ -646,8 +646,8 @@ void AudioServer::add_bus(int p_at_pos) {
 
 void AudioServer::move_bus(int p_bus, int p_to_pos) {
 
-	ERR_FAIL_COND(p_bus < 1 || p_bus >= buses.size());
-	ERR_FAIL_COND(p_to_pos != -1 && (p_to_pos < 1 || p_to_pos > buses.size()));
+	ERR_FAIL_COND(p_bus < 1 || p_bus >= static_cast<int>(buses.size()));
+	ERR_FAIL_COND(p_to_pos != -1 && (p_to_pos < 1 || p_to_pos > static_cast<int>(buses.size())));
 
 	MARK_EDITED
 
@@ -675,7 +675,7 @@ int AudioServer::get_bus_count() const {
 
 void AudioServer::set_bus_name(int p_bus, const String &p_name) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 	if (p_bus == 0 && p_name != "Master")
 		return; //bus 0 is always master
 
@@ -694,7 +694,7 @@ void AudioServer::set_bus_name(int p_bus, const String &p_name) {
 	while (true) {
 
 		bool name_free = true;
-		for (int i = 0; i < buses.size(); i++) {
+		for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 
 			if (buses[i]->name == attempt) {
 				name_free = false;
@@ -718,12 +718,12 @@ void AudioServer::set_bus_name(int p_bus, const String &p_name) {
 }
 String AudioServer::get_bus_name(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), String());
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), String());
 	return buses[p_bus]->name;
 }
 
 int AudioServer::get_bus_index(const StringName &p_bus_name) const {
-	for (int i = 0; i < buses.size(); ++i) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); ++i) {
 		if (buses[i]->name == p_bus_name) {
 			return i;
 		}
@@ -733,7 +733,7 @@ int AudioServer::get_bus_index(const StringName &p_bus_name) const {
 
 void AudioServer::set_bus_volume_db(int p_bus, float p_volume_db) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -741,19 +741,19 @@ void AudioServer::set_bus_volume_db(int p_bus, float p_volume_db) {
 }
 float AudioServer::get_bus_volume_db(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), 0);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), 0);
 	return buses[p_bus]->volume_db;
 }
 
 int AudioServer::get_bus_channels(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), 0);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), 0);
 	return buses[p_bus]->channels.size();
 }
 
 void AudioServer::set_bus_send(int p_bus, const StringName &p_send) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -762,13 +762,13 @@ void AudioServer::set_bus_send(int p_bus, const StringName &p_send) {
 
 StringName AudioServer::get_bus_send(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), StringName());
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), StringName());
 	return buses[p_bus]->send;
 }
 
 void AudioServer::set_bus_solo(int p_bus, bool p_enable) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -777,14 +777,14 @@ void AudioServer::set_bus_solo(int p_bus, bool p_enable) {
 
 bool AudioServer::is_bus_solo(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), false);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), false);
 
 	return buses[p_bus]->solo;
 }
 
 void AudioServer::set_bus_mute(int p_bus, bool p_enable) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -792,14 +792,14 @@ void AudioServer::set_bus_mute(int p_bus, bool p_enable) {
 }
 bool AudioServer::is_bus_mute(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), false);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), false);
 
 	return buses[p_bus]->mute;
 }
 
 void AudioServer::set_bus_bypass_effects(int p_bus, bool p_enable) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -807,16 +807,16 @@ void AudioServer::set_bus_bypass_effects(int p_bus, bool p_enable) {
 }
 bool AudioServer::is_bus_bypassing_effects(int p_bus) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), false);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), false);
 
 	return buses[p_bus]->bypass;
 }
 
 void AudioServer::_update_bus_effects(int p_bus) {
 
-	for (int i = 0; i < buses[p_bus]->channels.size(); i++) {
+	for (decltype(buses[p_bus]->channels.size()) i = 0; i < buses[p_bus]->channels.size(); i++) {
 		buses[p_bus]->channels[i].effect_instances.resize(buses[p_bus]->effects.size());
-		for (int j = 0; j < buses[p_bus]->effects.size(); j++) {
+		for (decltype(buses[p_bus]->effects.size()) j = 0; j < buses[p_bus]->effects.size(); j++) {
 			Ref<AudioEffectInstance> fx = buses[p_bus]->effects[j].effect->instance();
 			if (Object::cast_to<AudioEffectCompressorInstance>(*fx)) {
 				Object::cast_to<AudioEffectCompressorInstance>(*fx)->set_current_channel(i);
@@ -829,7 +829,7 @@ void AudioServer::_update_bus_effects(int p_bus) {
 void AudioServer::add_bus_effect(int p_bus, const Ref<AudioEffect> &p_effect, int p_at_pos) {
 
 	ERR_FAIL_COND(p_effect.is_null());
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -843,7 +843,7 @@ void AudioServer::add_bus_effect(int p_bus, const Ref<AudioEffect> &p_effect, in
 	fx.prof_time = 0;
 #endif
 
-	if (p_at_pos >= buses[p_bus]->effects.size() || p_at_pos < 0) {
+	if (p_at_pos >= static_cast<int>(buses[p_bus]->effects.size()) || p_at_pos < 0) {
 		buses[p_bus]->effects.push_back(fx);
 	} else {
 		buses[p_bus]->effects.insert(buses[p_bus]->effects.begin() + p_at_pos, fx);
@@ -856,7 +856,7 @@ void AudioServer::add_bus_effect(int p_bus, const Ref<AudioEffect> &p_effect, in
 
 void AudioServer::remove_bus_effect(int p_bus, int p_effect) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
 
 	MARK_EDITED
 
@@ -870,33 +870,33 @@ void AudioServer::remove_bus_effect(int p_bus, int p_effect) {
 
 int AudioServer::get_bus_effect_count(int p_bus) {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), 0);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), 0);
 
 	return buses[p_bus]->effects.size();
 }
 
 Ref<AudioEffectInstance> AudioServer::get_bus_effect_instance(int p_bus, int p_effect, int p_channel) {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), Ref<AudioEffectInstance>());
-	ERR_FAIL_INDEX_V(p_effect, buses[p_bus]->effects.size(), Ref<AudioEffectInstance>());
-	ERR_FAIL_INDEX_V(p_channel, buses[p_bus]->channels.size(), Ref<AudioEffectInstance>());
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), Ref<AudioEffectInstance>());
+	ERR_FAIL_INDEX_V(p_effect, static_cast<int>(buses[p_bus]->effects.size()), Ref<AudioEffectInstance>());
+	ERR_FAIL_INDEX_V(p_channel, static_cast<int>(buses[p_bus]->channels.size()), Ref<AudioEffectInstance>());
 
 	return buses[p_bus]->channels[p_channel].effect_instances[p_effect];
 }
 
 Ref<AudioEffect> AudioServer::get_bus_effect(int p_bus, int p_effect) {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), Ref<AudioEffect>());
-	ERR_FAIL_INDEX_V(p_effect, buses[p_bus]->effects.size(), Ref<AudioEffect>());
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), Ref<AudioEffect>());
+	ERR_FAIL_INDEX_V(p_effect, static_cast<int>(buses[p_bus]->effects.size()), Ref<AudioEffect>());
 
 	return buses[p_bus]->effects[p_effect].effect;
 }
 
 void AudioServer::swap_bus_effects(int p_bus, int p_effect, int p_by_effect) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
-	ERR_FAIL_INDEX(p_effect, buses[p_bus]->effects.size());
-	ERR_FAIL_INDEX(p_by_effect, buses[p_bus]->effects.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
+	ERR_FAIL_INDEX(p_effect, static_cast<int>(buses[p_bus]->effects.size()));
+	ERR_FAIL_INDEX(p_by_effect, static_cast<int>(buses[p_bus]->effects.size()));
 
 	MARK_EDITED
 
@@ -908,8 +908,8 @@ void AudioServer::swap_bus_effects(int p_bus, int p_effect, int p_by_effect) {
 
 void AudioServer::set_bus_effect_enabled(int p_bus, int p_effect, bool p_enabled) {
 
-	ERR_FAIL_INDEX(p_bus, buses.size());
-	ERR_FAIL_INDEX(p_effect, buses[p_bus]->effects.size());
+	ERR_FAIL_INDEX(p_bus, static_cast<int>(buses.size()));
+	ERR_FAIL_INDEX(p_effect, static_cast<int>(buses[p_bus]->effects.size()));
 
 	MARK_EDITED
 
@@ -917,30 +917,30 @@ void AudioServer::set_bus_effect_enabled(int p_bus, int p_effect, bool p_enabled
 }
 bool AudioServer::is_bus_effect_enabled(int p_bus, int p_effect) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), false);
-	ERR_FAIL_INDEX_V(p_effect, buses[p_bus]->effects.size(), false);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), false);
+	ERR_FAIL_INDEX_V(p_effect, static_cast<int>(buses[p_bus]->effects.size()), false);
 	return buses[p_bus]->effects[p_effect].enabled;
 }
 
 float AudioServer::get_bus_peak_volume_left_db(int p_bus, int p_channel) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), 0);
-	ERR_FAIL_INDEX_V(p_channel, buses[p_bus]->channels.size(), 0);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), 0);
+	ERR_FAIL_INDEX_V(p_channel, static_cast<int>(buses[p_bus]->channels.size()), 0);
 
 	return buses[p_bus]->channels[p_channel].peak_volume.l;
 }
 float AudioServer::get_bus_peak_volume_right_db(int p_bus, int p_channel) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), 0);
-	ERR_FAIL_INDEX_V(p_channel, buses[p_bus]->channels.size(), 0);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), 0);
+	ERR_FAIL_INDEX_V(p_channel, static_cast<int>(buses[p_bus]->channels.size()), 0);
 
 	return buses[p_bus]->channels[p_channel].peak_volume.r;
 }
 
 bool AudioServer::is_bus_channel_active(int p_bus, int p_channel) const {
 
-	ERR_FAIL_INDEX_V(p_bus, buses.size(), false);
-	ERR_FAIL_INDEX_V(p_channel, buses[p_bus]->channels.size(), false);
+	ERR_FAIL_INDEX_V(p_bus, static_cast<int>(buses.size()), false);
+	ERR_FAIL_INDEX_V(p_channel, static_cast<int>(buses[p_bus]->channels.size()), false);
 
 	return buses[p_bus]->channels[p_channel].active;
 }
@@ -958,11 +958,11 @@ void AudioServer::init_channels_and_buffers() {
 	channel_count = get_channel_count();
 	temp_buffer.resize(channel_count);
 
-	for (int i = 0; i < temp_buffer.size(); i++) {
+	for (decltype(temp_buffer.size()) i = 0; i < temp_buffer.size(); i++) {
 		temp_buffer[i].resize(buffer_size);
 	}
 
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 		buses[i]->channels.resize(channel_count);
 		for (int j = 0; j < channel_count; j++) {
 			buses[i]->channels[j].buffer.resize(buffer_size);
@@ -1013,7 +1013,7 @@ void AudioServer::update() {
 			if (bus->bypass)
 				continue;
 
-			for (int j = 0; j < bus->effects.size(); j++) {
+			for (decltype(bus->effects.size()) j = 0; j < bus->effects.size(); j++) {
 				if (!bus->effects[j].enabled)
 					continue;
 
@@ -1042,7 +1042,7 @@ void AudioServer::update() {
 		if (bus->bypass)
 			continue;
 
-		for (int j = 0; j < bus->effects.size(); j++) {
+		for (decltype(bus->effects.size()) j = 0; j < bus->effects.size(); j++) {
 			if (!bus->effects[j].enabled)
 				continue;
 
@@ -1078,7 +1078,7 @@ void AudioServer::finish() {
 		AudioDriverManager::get_driver(i)->finish();
 	}
 
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 		memdelete(buses[i]);
 	}
 
@@ -1215,12 +1215,12 @@ void AudioServer::set_bus_layout(const Ref<AudioBusLayout> &p_bus_layout) {
 	ERR_FAIL_COND(p_bus_layout.is_null() || p_bus_layout->buses.size() == 0);
 
 	lock();
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 		memdelete(buses[i]);
 	}
 	buses.resize(p_bus_layout->buses.size());
 	bus_map.clear();
-	for (int i = 0; i < p_bus_layout->buses.size(); i++) {
+	for (decltype(p_bus_layout->buses.size()) i = 0; i < p_bus_layout->buses.size(); i++) {
 		Bus *bus = memnew(Bus);
 		if (i == 0) {
 			bus->name = "Master";
@@ -1234,7 +1234,7 @@ void AudioServer::set_bus_layout(const Ref<AudioBusLayout> &p_bus_layout) {
 		bus->bypass = p_bus_layout->buses[i].bypass;
 		bus->volume_db = p_bus_layout->buses[i].volume_db;
 
-		for (int j = 0; j < p_bus_layout->buses[i].effects.size(); j++) {
+		for (decltype(p_bus_layout->buses[i].effects.size()) j = 0; j < p_bus_layout->buses[i].effects.size(); j++) {
 
 			Ref<AudioEffect> fx = p_bus_layout->buses[i].effects[j].effect;
 
@@ -1269,7 +1269,7 @@ Ref<AudioBusLayout> AudioServer::generate_bus_layout() const {
 
 	state->buses.resize(buses.size());
 
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 
 		state->buses[i].name = buses[i]->name;
 		state->buses[i].send = buses[i]->send;
@@ -1277,7 +1277,7 @@ Ref<AudioBusLayout> AudioServer::generate_bus_layout() const {
 		state->buses[i].solo = buses[i]->solo;
 		state->buses[i].bypass = buses[i]->bypass;
 		state->buses[i].volume_db = buses[i]->volume_db;
-		for (int j = 0; j < buses[i]->effects.size(); j++) {
+		for (decltype(buses[i]->effects.size()) j = 0; j < buses[i]->effects.size(); j++) {
 			AudioBusLayout::Bus::Effect fx;
 			fx.effect = buses[i]->effects[j].effect;
 			fx.enabled = buses[i]->effects[j].enabled;
@@ -1427,7 +1427,7 @@ bool AudioBusLayout::_set(const StringName &p_name, const Variant &p_value) {
 	String s = p_name;
 	if (s.begins_with("bus/")) {
 		int index = s.get_slice("/", 1).to_int();
-		if (buses.size() <= index) {
+		if (static_cast<int>(buses.size()) <= index) {
 			buses.resize(index + 1);
 		}
 
@@ -1449,7 +1449,7 @@ bool AudioBusLayout::_set(const StringName &p_name, const Variant &p_value) {
 			bus.send = p_value;
 		} else if (what == "effect") {
 			int which = s.get_slice("/", 3).to_int();
-			if (bus.effects.size() <= which) {
+			if (static_cast<int>(bus.effects.size()) <= which) {
 				bus.effects.resize(which + 1);
 			}
 
@@ -1481,7 +1481,7 @@ bool AudioBusLayout::_get(const StringName &p_name, Variant &r_ret) const {
 	if (s.begins_with("bus/")) {
 
 		int index = s.get_slice("/", 1).to_int();
-		if (index < 0 || index >= buses.size())
+		if (index < 0 || index >= static_cast<int>(buses.size()))
 			return false;
 
 		const Bus &bus = buses[index];
@@ -1502,7 +1502,7 @@ bool AudioBusLayout::_get(const StringName &p_name, Variant &r_ret) const {
 			r_ret = bus.send;
 		} else if (what == "effect") {
 			int which = s.get_slice("/", 3).to_int();
-			if (which < 0 || which >= bus.effects.size()) {
+			if (which < 0 || which >= static_cast<int>(bus.effects.size())) {
 				return false;
 			}
 
@@ -1529,7 +1529,7 @@ bool AudioBusLayout::_get(const StringName &p_name, Variant &r_ret) const {
 }
 void AudioBusLayout::_get_property_list(List<PropertyInfo> *p_list) const {
 
-	for (int i = 0; i < buses.size(); i++) {
+	for (decltype(buses.size()) i = 0; i < buses.size(); i++) {
 		p_list->push_back(PropertyInfo(Variant::STRING, "bus/" + itos(i) + "/name", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 		p_list->push_back(PropertyInfo(Variant::BOOL, "bus/" + itos(i) + "/solo", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 		p_list->push_back(PropertyInfo(Variant::BOOL, "bus/" + itos(i) + "/mute", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
@@ -1537,7 +1537,7 @@ void AudioBusLayout::_get_property_list(List<PropertyInfo> *p_list) const {
 		p_list->push_back(PropertyInfo(Variant::REAL, "bus/" + itos(i) + "/volume_db", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 		p_list->push_back(PropertyInfo(Variant::REAL, "bus/" + itos(i) + "/send", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 
-		for (int j = 0; j < buses[i].effects.size(); j++) {
+		for (decltype(buses[i].effects.size()) j = 0; j < buses[i].effects.size(); j++) {
 			p_list->push_back(PropertyInfo(Variant::OBJECT, "bus/" + itos(i) + "/effect/" + itos(j) + "/effect", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 			p_list->push_back(PropertyInfo(Variant::BOOL, "bus/" + itos(i) + "/effect/" + itos(j) + "/enabled", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL));
 		}

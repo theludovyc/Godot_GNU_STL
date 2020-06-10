@@ -578,7 +578,7 @@ void VoxelLightBaker::plot_mesh(const Transform &p_xform, Ref<Mesh> &p_mesh, con
 
 		if (p_override_material.is_valid()) {
 			src_material = p_override_material;
-		} else if (i < p_materials.size() && p_materials[i].is_valid()) {
+		} else if (i < static_cast<int>(p_materials.size()) && p_materials[i].is_valid()) {
 			src_material = p_materials[i];
 		} else {
 			src_material = p_mesh->surface_get_material(i);
@@ -2112,7 +2112,7 @@ Error VoxelLightBaker::make_lightmap(const Transform &p_xform, Ref<Mesh> &p_mesh
 			r_lightmap.height = height;
 			r_lightmap.light.resize(lightmap.size() * 3);
 			PoolVector<float>::Write w = r_lightmap.light.write();
-			for (int i = 0; i < lightmap.size(); i++) {
+			for (decltype(lightmap.size()) i = 0; i < lightmap.size(); i++) {
 				w[i * 3 + 0] = lightmap[i].light.x;
 				w[i * 3 + 1] = lightmap[i].light.y;
 				w[i * 3 + 2] = lightmap[i].light.z;
@@ -2224,7 +2224,7 @@ PoolVector<int> VoxelLightBaker::create_gi_probe_data() {
 
 		int ofs = 16;
 
-		for (int i = 0; i < bake_cells.size(); i++) {
+		for (decltype(bake_cells.size()) i = 0; i < bake_cells.size(); i++) {
 
 			for (int j = 0; j < 8; j++) {
 				w32[ofs++] = bake_cells[i].children[j];

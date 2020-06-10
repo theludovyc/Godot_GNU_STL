@@ -156,7 +156,7 @@ RES TranslationLoaderPO::load_translation(FileAccess *f, Error *r_error, const S
 	ERR_FAIL_COND_V_MSG(config == "", RES(), "No config found in file: " + p_path + ".");
 
 	std::vector<String> configs = config.split("\n");
-	for (int i = 0; i < configs.size(); i++) {
+	for (decltype(configs.size()) i = 0; i < configs.size(); i++) {
 
 		String c = configs[i].strip_edges();
 		int p = c.find(":");

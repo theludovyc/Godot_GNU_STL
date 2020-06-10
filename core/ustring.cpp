@@ -788,7 +788,7 @@ std::vector<String> String::split(const String &p_splitter, bool p_allow_empty, 
 			else {
 
 				// Put rest of the string and leave cycle.
-				if (p_maxsplit == ret.size()) {
+				if (p_maxsplit == static_cast<int>(ret.size())) {
 					ret.push_back(substr(from, len));
 					break;
 				}
@@ -815,7 +815,7 @@ std::vector<String> String::rsplit(const String &p_splitter, bool p_allow_empty,
 
 	while (true) {
 
-		if (remaining_len < p_splitter.length() || (p_maxsplit > 0 && p_maxsplit == ret.size())) {
+		if (remaining_len < p_splitter.length() || (p_maxsplit > 0 && p_maxsplit == static_cast<int>(ret.size()))) {
 			// no room for another splitter or hit max splits, push what's left and we're done
 			if (p_allow_empty || remaining_len > 0) {
 				ret.push_back(substr(0, remaining_len));
@@ -950,7 +950,7 @@ std::vector<int> String::split_ints_mk(const std::vector<String> &p_splitters, b
 
 String String::join(std::vector<String> parts) {
 	String ret;
-	for (int i = 0; i < parts.size(); ++i) {
+	for (decltype(parts.size()) i = 0; i < parts.size(); ++i) {
 		if (i > 0) {
 			ret += *this;
 		}
@@ -3271,7 +3271,7 @@ String String::simplify_path() const {
 	}
 	std::vector<String> dirs = s.split("/", false);
 
-	for (int i = 0; i < dirs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(dirs.size()); i++) {
 
 		String d = dirs[i];
 		if (d == ".") {
@@ -3292,7 +3292,7 @@ String String::simplify_path() const {
 
 	s = "";
 
-	for (int i = 0; i < dirs.size(); i++) {
+	for (decltype(dirs.size()) i = 0; i < dirs.size(); i++) {
 
 		if (i > 0)
 			s += "/";
@@ -3326,7 +3326,7 @@ String String::humanize_size(uint64_t p_size) {
 
 	int prefix_idx = 0;
 
-	while (prefix_idx < prefixes.size() - 1 && p_size > (_div * 1024)) {
+	while (prefix_idx < static_cast<int>(prefixes.size()) - 1 && p_size > (_div * 1024)) {
 		_div *= 1024;
 		prefix_idx++;
 	}
@@ -3855,9 +3855,9 @@ String String::path_to(const String &p_path) const {
 	int common_parent = 0;
 
 	while (true) {
-		if (src_dirs.size() == common_parent)
+		if (static_cast<int>(src_dirs.size()) == common_parent)
 			break;
-		if (dst_dirs.size() == common_parent)
+		if (static_cast<int>(dst_dirs.size()) == common_parent)
 			break;
 		if (src_dirs[common_parent] != dst_dirs[common_parent])
 			break;
@@ -3873,7 +3873,7 @@ String String::path_to(const String &p_path) const {
 		dir += "../";
 	}
 
-	for (int i = common_parent + 1; i < dst_dirs.size(); i++) {
+	for (decltype(dst_dirs.size()) i = common_parent + 1; i < dst_dirs.size(); i++) {
 
 		dir += dst_dirs[i] + "/";
 	}
@@ -3907,7 +3907,7 @@ bool String::is_valid_ip_address() const {
 	if (find(":") >= 0) {
 
 		std::vector<String> ip = split(":");
-		for (int i = 0; i < ip.size(); i++) {
+		for (decltype(ip.size()) i = 0; i < ip.size(); i++) {
 
 			String n = ip[i];
 			if (n.empty())
@@ -3926,7 +3926,7 @@ bool String::is_valid_ip_address() const {
 		std::vector<String> ip = split(".");
 		if (ip.size() != 4)
 			return false;
-		for (int i = 0; i < ip.size(); i++) {
+		for (decltype(ip.size()) i = 0; i < ip.size(); i++) {
 
 			String n = ip[i];
 			if (!n.is_valid_integer())

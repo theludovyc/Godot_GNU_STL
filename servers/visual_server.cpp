@@ -93,7 +93,7 @@ Array VisualServer::_shader_get_param_list_bind(RID p_shader) const {
 static Array to_array(const std::vector<ObjectID> &ids) {
 	Array a;
 	a.resize(ids.size());
-	for (int i = 0; i < ids.size(); ++i) {
+	for (decltype(ids.size()) i = 0; i < ids.size(); ++i) {
 		a[i] = ids[i];
 	}
 	return a;
@@ -1616,7 +1616,7 @@ Array VisualServer::mesh_surface_get_blend_shape_arrays(RID p_mesh, int p_surfac
 
 		Array blend_shape_array;
 		blend_shape_array.resize(blend_shape_data.size());
-		for (int i = 0; i < blend_shape_data.size(); i++) {
+		for (decltype(blend_shape_data.size()) i = 0; i < blend_shape_data.size(); i++) {
 			blend_shape_array.set(i, _get_array_from_surface(format, blend_shape_data[i], vertex_len, index_data, index_len));
 		}
 
@@ -1630,7 +1630,7 @@ Array VisualServer::_mesh_surface_get_skeleton_aabb_bind(RID p_mesh, int p_surfa
 
 	std::vector<AABB> vec = VS::get_singleton()->mesh_surface_get_skeleton_aabb(p_mesh, p_surface);
 	Array arr;
-	for (int i = 0; i < vec.size(); i++) {
+	for (decltype(vec.size()) i = 0; i < vec.size(); i++) {
 		arr[i] = vec[i];
 	}
 	return arr;
@@ -2327,11 +2327,11 @@ void VisualServer::mesh_add_surface_from_mesh_data(RID p_mesh, const Geometry::M
 	PoolVector<Vector3> vertices;
 	PoolVector<Vector3> normals;
 
-	for (int i = 0; i < p_mesh_data.faces.size(); i++) {
+	for (decltype(p_mesh_data.faces.size()) i = 0; i < p_mesh_data.faces.size(); i++) {
 
 		const Geometry::MeshData::Face &f = p_mesh_data.faces[i];
 
-		for (int j = 2; j < f.indices.size(); j++) {
+		for (decltype(f.indices.size()) j = 2; j < f.indices.size(); j++) {
 
 #define _ADD_VERTEX(m_idx)                                      \
 	vertices.push_back(p_mesh_data.vertices[f.indices[m_idx]]); \

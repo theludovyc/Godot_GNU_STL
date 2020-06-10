@@ -138,7 +138,7 @@ String Shader::get_custom_defines() {
 	VS::get_singleton()->shader_get_custom_defines(shader, &custom_defines);
 
 	String concatenated_defines;
-	for (int i = 0; i < custom_defines.size(); i++) {
+	for (decltype(custom_defines.size()) i = 0; i < custom_defines.size(); i++) {
 		if (i != 0) {
 			concatenated_defines += "\n";
 		}

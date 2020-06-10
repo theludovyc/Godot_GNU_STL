@@ -343,7 +343,7 @@ bool AnimationTreePlayer::_get(const StringName &p_name, Variant &r_ret) const {
 				node["xfade"] = tn->xfade;
 				Array transitions;
 
-				for (int i = 0; i < tn->input_data.size(); i++) {
+				for (decltype(tn->input_data.size()) i = 0; i < tn->input_data.size(); i++) {
 
 					Dictionary d;
 					d["auto_advance"] = tn->input_data[i].auto_advance;
@@ -979,7 +979,7 @@ void AnimationTreePlayer::add_node(NodeType p_type, const StringName &p_node) {
 StringName AnimationTreePlayer::node_get_input_source(const StringName &p_node, int p_input) const {
 
 	ERR_FAIL_COND_V(!node_map.has(p_node), StringName());
-	ERR_FAIL_INDEX_V(p_input, node_map[p_node]->inputs.size(), StringName());
+	ERR_FAIL_INDEX_V(p_input, static_cast<int>(node_map[p_node]->inputs.size()), StringName());
 	return node_map[p_node]->inputs[p_input].node;
 }
 
@@ -1155,7 +1155,7 @@ void AnimationTreePlayer::transition_node_set_input_count(const StringName &p_no
 void AnimationTreePlayer::transition_node_set_input_auto_advance(const StringName &p_node, int p_input, bool p_auto_advance) {
 
 	GET_NODE(NODE_TRANSITION, TransitionNode);
-	ERR_FAIL_INDEX(p_input, n->input_data.size());
+	ERR_FAIL_INDEX(p_input, static_cast<int>(n->input_data.size()));
 
 	n->input_data[p_input].auto_advance = p_auto_advance;
 }
@@ -1167,7 +1167,7 @@ void AnimationTreePlayer::transition_node_set_xfade_time(const StringName &p_nod
 
 void AnimationTreePlayer::TransitionNode::set_current(int p_current) {
 
-	ERR_FAIL_INDEX(p_current, inputs.size());
+	ERR_FAIL_INDEX(p_current, static_cast<int>(inputs.size()));
 
 	if (current == p_current)
 		return;
@@ -1314,7 +1314,7 @@ float AnimationTreePlayer::timescale_node_get_scale(const StringName &p_node) co
 void AnimationTreePlayer::transition_node_delete_input(const StringName &p_node, int p_input) {
 
 	GET_NODE(NODE_TRANSITION, TransitionNode);
-	ERR_FAIL_INDEX(p_input, n->inputs.size());
+	ERR_FAIL_INDEX(p_input, static_cast<int>(n->inputs.size()));
 
 	if (n->inputs.size() <= 1)
 		return;
@@ -1333,7 +1333,7 @@ int AnimationTreePlayer::transition_node_get_input_count(const StringName &p_nod
 bool AnimationTreePlayer::transition_node_has_input_auto_advance(const StringName &p_node, int p_input) const {
 
 	GET_NODE_V(NODE_TRANSITION, TransitionNode, false);
-	ERR_FAIL_INDEX_V(p_input, n->inputs.size(), false);
+	ERR_FAIL_INDEX_V(p_input, static_cast<int>(n->inputs.size()), false);
 	return n->input_data[p_input].auto_advance;
 }
 float AnimationTreePlayer::transition_node_get_xfade_time(const StringName &p_node) const {
@@ -1365,7 +1365,7 @@ void AnimationTreePlayer::remove_node(const StringName &p_node) {
 	for (Map<StringName, NodeBase *>::Element *E = node_map.front(); E; E = E->next()) {
 
 		NodeBase *nb = E->get();
-		for (int i = 0; i < nb->inputs.size(); i++) {
+		for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 
 			if (nb->inputs[i].node == p_node)
 				nb->inputs[i].node = StringName();
@@ -1391,7 +1391,7 @@ AnimationTreePlayer::ConnectError AnimationTreePlayer::_cycle_test(const StringN
 
 	nb->cycletest = true;
 
-	for (int i = 0; i < nb->inputs.size(); i++) {
+	for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 		if (nb->inputs[i].node == StringName())
 			return CONNECT_INCOMPLETE;
 
@@ -1419,14 +1419,14 @@ Error AnimationTreePlayer::connect_nodes(const StringName &p_src_node, const Str
 
 	//NodeBase *src = node_map[p_src_node];
 	NodeBase *dst = node_map[p_dst_node];
-	ERR_FAIL_INDEX_V(p_dst_input, dst->inputs.size(), ERR_INVALID_PARAMETER);
+	ERR_FAIL_INDEX_V(p_dst_input, static_cast<int>(dst->inputs.size()), ERR_INVALID_PARAMETER);
 
 	//int oldval = dst->inputs[p_dst_input].node;
 
 	for (Map<StringName, NodeBase *>::Element *E = node_map.front(); E; E = E->next()) {
 
 		NodeBase *nb = E->get();
-		for (int i = 0; i < nb->inputs.size(); i++) {
+		for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 
 			if (nb->inputs[i].node == p_src_node)
 				nb->inputs[i].node = StringName();
@@ -1465,7 +1465,7 @@ void AnimationTreePlayer::disconnect_nodes(const StringName &p_node, int p_input
 	ERR_FAIL_COND(!node_map.has(p_node));
 
 	NodeBase *dst = node_map[p_node];
-	ERR_FAIL_INDEX(p_input, dst->inputs.size());
+	ERR_FAIL_INDEX(p_input, static_cast<int>(dst->inputs.size()));
 	dst->inputs[p_input].node = StringName();
 	last_error = CONNECT_INCOMPLETE;
 	dirty_caches = true;
@@ -1476,7 +1476,7 @@ void AnimationTreePlayer::get_connection_list(List<Connection> *p_connections) c
 	for (Map<StringName, NodeBase *>::Element *E = node_map.front(); E; E = E->next()) {
 
 		NodeBase *nb = E->get();
-		for (int i = 0; i < nb->inputs.size(); i++) {
+		for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 
 			if (nb->inputs[i].node != StringName()) {
 				Connection c;
@@ -1571,7 +1571,7 @@ void AnimationTreePlayer::_recompute_caches(const StringName &p_node) {
 		}
 	}
 
-	for (int i = 0; i < nb->inputs.size(); i++) {
+	for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 
 		_recompute_caches(nb->inputs[i].node);
 	}
@@ -1703,7 +1703,7 @@ Error AnimationTreePlayer::node_rename(const StringName &p_node, const StringNam
 	for (Map<StringName, NodeBase *>::Element *E = node_map.front(); E; E = E->next()) {
 
 		NodeBase *nb = E->get();
-		for (int i = 0; i < nb->inputs.size(); i++) {
+		for (decltype(nb->inputs.size()) i = 0; i < nb->inputs.size(); i++) {
 
 			if (nb->inputs[i].node == p_node) {
 				nb->inputs[i].node = p_new_name;

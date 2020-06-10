@@ -75,13 +75,13 @@ bool Skeleton::_set(const StringName &p_path, const Variant &p_value) {
 	int which = path.get_slicec('/', 1).to_int();
 	String what = path.get_slicec('/', 2);
 
-	if (which == bones.size() && what == "name") {
+	if (which == static_cast<int>(bones.size()) && what == "name") {
 
 		add_bone(p_value);
 		return true;
 	}
 
-	ERR_FAIL_INDEX_V(which, bones.size(), false);
+	ERR_FAIL_INDEX_V(which, static_cast<int>(bones.size()), false);
 
 	if (what == "parent")
 		set_bone_parent(which, p_value);
@@ -123,7 +123,7 @@ bool Skeleton::_get(const StringName &p_path, Variant &r_ret) const {
 	int which = path.get_slicec('/', 1).to_int();
 	String what = path.get_slicec('/', 2);
 
-	ERR_FAIL_INDEX_V(which, bones.size(), false);
+	ERR_FAIL_INDEX_V(which, static_cast<int>(bones.size()), false);
 
 	if (what == "name")
 		r_ret = get_bone_name(which);
@@ -156,7 +156,7 @@ bool Skeleton::_get(const StringName &p_path, Variant &r_ret) const {
 }
 void Skeleton::_get_property_list(List<PropertyInfo> *p_list) const {
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 
 		String prep = "bones/" + itos(i) + "/";
 		p_list->push_back(PropertyInfo(Variant::STRING, prep + "name"));
@@ -376,7 +376,7 @@ void Skeleton::_notification(int p_what) {
 }
 
 void Skeleton::clear_bones_global_pose_override() {
-	for (int i = 0; i < bones.size(); i += 1) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i += 1) {
 		bones[i].global_pose_override_amount = 0;
 	}
 	_make_dirty();
@@ -384,7 +384,7 @@ void Skeleton::clear_bones_global_pose_override() {
 
 void Skeleton::set_bone_global_pose_override(int p_bone, const Transform &p_pose, float p_amount, bool p_persistent) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	bones[p_bone].global_pose_override_amount = p_amount;
 	bones[p_bone].global_pose_override = p_pose;
 	bones[p_bone].global_pose_override_reset = !p_persistent;
@@ -393,7 +393,7 @@ void Skeleton::set_bone_global_pose_override(int p_bone, const Transform &p_pose
 
 Transform Skeleton::get_bone_global_pose(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), Transform());
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), Transform());
 	if (dirty)
 		const_cast<Skeleton *>(this)->notification(NOTIFICATION_UPDATE_SKELETON);
 	return bones[p_bone].pose_global;
@@ -404,7 +404,7 @@ void Skeleton::add_bone(const String &p_name) {
 
 	ERR_FAIL_COND(p_name == "" || p_name.find(":") != -1 || p_name.find("/") != -1);
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 
 		ERR_FAIL_COND(bones[i].name == p_name);
 	}
@@ -419,7 +419,7 @@ void Skeleton::add_bone(const String &p_name) {
 }
 int Skeleton::find_bone(const String &p_name) const {
 
-	for (int i = 0; i < bones.size(); i++) {
+	for (decltype(bones.size()) i = 0; i < bones.size(); i++) {
 
 		if (bones[i].name == p_name)
 			return i;
@@ -429,7 +429,7 @@ int Skeleton::find_bone(const String &p_name) const {
 }
 String Skeleton::get_bone_name(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), "");
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), "");
 
 	return bones[p_bone].name;
 }
@@ -454,7 +454,7 @@ int Skeleton::get_bone_count() const {
 
 void Skeleton::set_bone_parent(int p_bone, int p_parent) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	ERR_FAIL_COND(p_parent != -1 && (p_parent < 0));
 
 	bones[p_bone].parent = p_parent;
@@ -464,7 +464,7 @@ void Skeleton::set_bone_parent(int p_bone, int p_parent) {
 
 void Skeleton::unparent_bone_and_rest(int p_bone) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	_update_process_order();
 
@@ -482,54 +482,54 @@ void Skeleton::unparent_bone_and_rest(int p_bone) {
 
 void Skeleton::set_bone_disable_rest(int p_bone, bool p_disable) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	bones[p_bone].disable_rest = p_disable;
 }
 
 bool Skeleton::is_bone_rest_disabled(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), false);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), false);
 	return bones[p_bone].disable_rest;
 }
 
 int Skeleton::get_bone_parent(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), -1);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), -1);
 
 	return bones[p_bone].parent;
 }
 
 void Skeleton::set_bone_rest(int p_bone, const Transform &p_rest) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	bones[p_bone].rest = p_rest;
 	_make_dirty();
 }
 Transform Skeleton::get_bone_rest(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), Transform());
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), Transform());
 
 	return bones[p_bone].rest;
 }
 
 void Skeleton::set_bone_enabled(int p_bone, bool p_enabled) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	bones[p_bone].enabled = p_enabled;
 	_make_dirty();
 }
 bool Skeleton::is_bone_enabled(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), false);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), false);
 	return bones[p_bone].enabled;
 }
 
 void Skeleton::bind_child_node_to_bone(int p_bone, Node *p_node) {
 
 	ERR_FAIL_NULL(p_node);
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	uint32_t id = p_node->get_instance_id();
 
@@ -544,14 +544,14 @@ void Skeleton::bind_child_node_to_bone(int p_bone, Node *p_node) {
 void Skeleton::unbind_child_node_from_bone(int p_bone, Node *p_node) {
 
 	ERR_FAIL_NULL(p_node);
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	uint32_t id = p_node->get_instance_id();
 	bones[p_bone].nodes_bound.erase(id);
 }
 void Skeleton::get_bound_child_nodes_to_bone(int p_bone, List<Node *> *p_bound) const {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	for (const List<uint32_t>::Element *E = bones[p_bone].nodes_bound.front(); E; E = E->next()) {
 
@@ -573,7 +573,7 @@ void Skeleton::clear_bones() {
 
 void Skeleton::set_bone_pose(int p_bone, const Transform &p_pose) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 
 	bones[p_bone].pose = p_pose;
 	if (is_inside_tree()) {
@@ -582,13 +582,13 @@ void Skeleton::set_bone_pose(int p_bone, const Transform &p_pose) {
 }
 Transform Skeleton::get_bone_pose(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), Transform());
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), Transform());
 	return bones[p_bone].pose;
 }
 
 void Skeleton::set_bone_custom_pose(int p_bone, const Transform &p_custom_pose) {
 
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	//ERR_FAIL_COND( !is_inside_scene() );
 
 	bones[p_bone].custom_pose_enable = (p_custom_pose != Transform());
@@ -599,7 +599,7 @@ void Skeleton::set_bone_custom_pose(int p_bone, const Transform &p_custom_pose) 
 
 Transform Skeleton::get_bone_custom_pose(int p_bone) const {
 
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), Transform());
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), Transform());
 	return bones[p_bone].custom_pose;
 }
 
@@ -613,7 +613,7 @@ void Skeleton::_make_dirty() {
 }
 
 int Skeleton::get_process_order(int p_idx) {
-	ERR_FAIL_INDEX_V(p_idx, bones.size(), -1);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(bones.size()), -1);
 	_update_process_order();
 	return process_order[p_idx];
 }
@@ -633,7 +633,7 @@ void Skeleton::localize_rests() {
 #ifndef _3D_DISABLED
 
 void Skeleton::bind_physical_bone_to_bone(int p_bone, PhysicalBone *p_physical_bone) {
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	ERR_FAIL_COND(bones[p_bone].physical_bone);
 	ERR_FAIL_COND(!p_physical_bone);
 	bones[p_bone].physical_bone = p_physical_bone;
@@ -642,20 +642,20 @@ void Skeleton::bind_physical_bone_to_bone(int p_bone, PhysicalBone *p_physical_b
 }
 
 void Skeleton::unbind_physical_bone_from_bone(int p_bone) {
-	ERR_FAIL_INDEX(p_bone, bones.size());
+	ERR_FAIL_INDEX(p_bone, static_cast<int>(bones.size()));
 	bones[p_bone].physical_bone = NULL;
 
 	_rebuild_physical_bones_cache();
 }
 
 PhysicalBone *Skeleton::get_physical_bone(int p_bone) {
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), NULL);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), NULL);
 
 	return bones[p_bone].physical_bone;
 }
 
 PhysicalBone *Skeleton::get_physical_bone_parent(int p_bone) {
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), NULL);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), NULL);
 
 	if (bones[p_bone].cache_parent_physical_bone) {
 		return bones[p_bone].cache_parent_physical_bone;
@@ -665,7 +665,7 @@ PhysicalBone *Skeleton::get_physical_bone_parent(int p_bone) {
 }
 
 PhysicalBone *Skeleton::_get_physical_bone_parent(int p_bone) {
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), NULL);
+	ERR_FAIL_INDEX_V(p_bone, static_cast<int>(bones.size()), NULL);
 
 	const int parent_bone = bones[p_bone].parent;
 	if (0 > parent_bone) {

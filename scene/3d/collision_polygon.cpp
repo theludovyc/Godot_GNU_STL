@@ -51,7 +51,7 @@ void CollisionPolygon::_build_polygon() {
 	//here comes the sun, lalalala
 	//decompose concave into multiple convex polygons and add them
 
-	for (int i = 0; i < decomp.size(); i++) {
+	for (decltype(decomp.size()) i = 0; i < decomp.size(); i++) {
 		Ref<ConvexPolygonShape> convex = memnew(ConvexPolygonShape);
 		PoolVector<Vector3> cp;
 		int cs = decomp[i].size();

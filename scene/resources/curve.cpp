@@ -139,7 +139,7 @@ void Curve::clean_dupes() {
 
 	bool dirty = false;
 
-	for (int i = 1; i < _points.size(); ++i) {
+	for (decltype(_points.size()) i = 1; i < _points.size(); ++i) {
 		real_t diff = _points[i - 1].pos.x - _points[i].pos.x;
 		if (diff <= CMP_EPSILON) {
 			_points.erase(_points.begin() + i);
@@ -153,21 +153,21 @@ void Curve::clean_dupes() {
 }
 
 void Curve::set_point_left_tangent(int i, real_t tangent) {
-	ERR_FAIL_INDEX(i, _points.size());
+	ERR_FAIL_INDEX(i, static_cast<int>(_points.size()));
 	_points[i].left_tangent = tangent;
 	_points[i].left_mode = TANGENT_FREE;
 	mark_dirty();
 }
 
 void Curve::set_point_right_tangent(int i, real_t tangent) {
-	ERR_FAIL_INDEX(i, _points.size());
+	ERR_FAIL_INDEX(i, static_cast<int>(_points.size()));
 	_points[i].right_tangent = tangent;
 	_points[i].right_mode = TANGENT_FREE;
 	mark_dirty();
 }
 
 void Curve::set_point_left_mode(int i, TangentMode p_mode) {
-	ERR_FAIL_INDEX(i, _points.size());
+	ERR_FAIL_INDEX(i, static_cast<int>(_points.size()));
 	_points[i].left_mode = p_mode;
 	if (i > 0) {
 		if (p_mode == TANGENT_LINEAR) {
@@ -179,9 +179,9 @@ void Curve::set_point_left_mode(int i, TangentMode p_mode) {
 }
 
 void Curve::set_point_right_mode(int i, TangentMode p_mode) {
-	ERR_FAIL_INDEX(i, _points.size());
+	ERR_FAIL_INDEX(i, static_cast<int>(_points.size()));
 	_points[i].right_mode = p_mode;
-	if (i + 1 < _points.size()) {
+	if (i + 1 < static_cast<int>(_points.size())) {
 		if (p_mode == TANGENT_LINEAR) {
 			Vector2 v = (_points[i + 1].pos - _points[i].pos).normalized();
 			_points[i].right_tangent = v.y / v.x;
@@ -191,27 +191,27 @@ void Curve::set_point_right_mode(int i, TangentMode p_mode) {
 }
 
 real_t Curve::get_point_left_tangent(int i) const {
-	ERR_FAIL_INDEX_V(i, _points.size(), 0);
+	ERR_FAIL_INDEX_V(i, static_cast<int>(_points.size()), 0);
 	return _points[i].left_tangent;
 }
 
 real_t Curve::get_point_right_tangent(int i) const {
-	ERR_FAIL_INDEX_V(i, _points.size(), 0);
+	ERR_FAIL_INDEX_V(i, static_cast<int>(_points.size()), 0);
 	return _points[i].right_tangent;
 }
 
 Curve::TangentMode Curve::get_point_left_mode(int i) const {
-	ERR_FAIL_INDEX_V(i, _points.size(), TANGENT_FREE);
+	ERR_FAIL_INDEX_V(i, static_cast<int>(_points.size()), TANGENT_FREE);
 	return _points[i].left_mode;
 }
 
 Curve::TangentMode Curve::get_point_right_mode(int i) const {
-	ERR_FAIL_INDEX_V(i, _points.size(), TANGENT_FREE);
+	ERR_FAIL_INDEX_V(i, static_cast<int>(_points.size()), TANGENT_FREE);
 	return _points[i].right_mode;
 }
 
 void Curve::remove_point(int p_index) {
-	ERR_FAIL_INDEX(p_index, _points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(_points.size()));
 	_points.erase(_points.begin() + p_index);
 	mark_dirty();
 }
@@ -222,14 +222,14 @@ void Curve::clear_points() {
 }
 
 void Curve::set_point_value(int p_index, real_t pos) {
-	ERR_FAIL_INDEX(p_index, _points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(_points.size()));
 	_points[p_index].pos.y = pos;
 	update_auto_tangents(p_index);
 	mark_dirty();
 }
 
 int Curve::set_point_offset(int p_index, float offset) {
-	ERR_FAIL_INDEX_V(p_index, _points.size(), -1);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(_points.size()), -1);
 	Point p = _points[p_index];
 	remove_point(p_index);
 	int i = add_point(Vector2(offset, p.pos.y));
@@ -244,12 +244,12 @@ int Curve::set_point_offset(int p_index, float offset) {
 }
 
 Vector2 Curve::get_point_position(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, _points.size(), Vector2(0, 0));
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(_points.size()), Vector2(0, 0));
 	return _points[p_index].pos;
 }
 
 Curve::Point Curve::get_point(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, _points.size(), Point());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(_points.size()), Point());
 	return _points[p_index];
 }
 
@@ -268,7 +268,7 @@ void Curve::update_auto_tangents(int i) {
 		}
 	}
 
-	if (i + 1 < _points.size()) {
+	if (i + 1 < static_cast<int>(_points.size())) {
 		if (p.right_mode == TANGENT_LINEAR) {
 			Vector2 v = (_points[i + 1].pos - p.pos).normalized();
 			p.right_tangent = v.y / v.x;
@@ -312,7 +312,7 @@ real_t Curve::interpolate(real_t offset) const {
 
 	int i = get_index(offset);
 
-	if (i == _points.size() - 1)
+	if (i == static_cast<int>(_points.size()) - 1)
 		return _points[i].pos.y;
 
 	real_t local = offset - _points[i].pos.x;
@@ -367,7 +367,7 @@ Array Curve::get_data() const {
 	const unsigned int ELEMS = 5;
 	output.resize(_points.size() * ELEMS);
 
-	for (int j = 0; j < _points.size(); ++j) {
+	for (decltype(_points.size()) j = 0; j < _points.size(); ++j) {
 
 		const Point p = _points[j];
 		int i = j * ELEMS;
@@ -405,7 +405,7 @@ void Curve::set_data(Array input) {
 
 	_points.resize(input.size() / ELEMS);
 
-	for (int j = 0; j < _points.size(); ++j) {
+	for (decltype(_points.size()) j = 0; j < _points.size(); ++j) {
 
 		Point &p = _points[j];
 		int i = j * ELEMS;
@@ -470,13 +470,13 @@ real_t Curve::interpolate_baked(real_t offset) {
 	if (i < 0) {
 		i = 0;
 		fi = 0;
-	} else if (i >= _baked_cache.size()) {
+	} else if (i >= static_cast<int>(_baked_cache.size())) {
 		i = _baked_cache.size() - 1;
 		fi = 0;
 	}
 
 	// Interpolate
-	if (i + 1 < _baked_cache.size()) {
+	if (i + 1 < static_cast<int>(_baked_cache.size())) {
 		real_t t = fi - i;
 		return Math::lerp(_baked_cache[i], _baked_cache[i + 1], t);
 	} else {
@@ -546,7 +546,7 @@ void Curve2D::add_point(const Vector2 &p_pos, const Vector2 &p_in, const Vector2
 	n.pos = p_pos;
 	n.in = p_in;
 	n.out = p_out;
-	if (p_atpos >= 0 && p_atpos < points.size())
+	if (p_atpos >= 0 && p_atpos < static_cast<int>(points.size()))
 		points.insert(points.begin() + p_atpos, n);
 	else
 		points.push_back(n);
@@ -557,7 +557,7 @@ void Curve2D::add_point(const Vector2 &p_pos, const Vector2 &p_in, const Vector2
 
 void Curve2D::set_point_position(int p_index, const Vector2 &p_pos) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].pos = p_pos;
 	baked_cache_dirty = true;
@@ -565,13 +565,13 @@ void Curve2D::set_point_position(int p_index, const Vector2 &p_pos) {
 }
 Vector2 Curve2D::get_point_position(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector2());
 	return points[p_index].pos;
 }
 
 void Curve2D::set_point_in(int p_index, const Vector2 &p_in) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].in = p_in;
 	baked_cache_dirty = true;
@@ -579,13 +579,13 @@ void Curve2D::set_point_in(int p_index, const Vector2 &p_in) {
 }
 Vector2 Curve2D::get_point_in(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector2());
 	return points[p_index].in;
 }
 
 void Curve2D::set_point_out(int p_index, const Vector2 &p_out) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].out = p_out;
 	baked_cache_dirty = true;
@@ -594,13 +594,13 @@ void Curve2D::set_point_out(int p_index, const Vector2 &p_out) {
 
 Vector2 Curve2D::get_point_out(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector2());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector2());
 	return points[p_index].out;
 }
 
 void Curve2D::remove_point(int p_index) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 	points.erase(points.begin() + p_index);
 	baked_cache_dirty = true;
 	emit_signal(CoreStringNames::get_singleton()->changed);
@@ -689,7 +689,7 @@ void Curve2D::_bake() const {
 
 	pointlist.push_back(pos); //start always from origin
 
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		float step = 0.1; // at least 10 substeps ought to be enough?
 		float p = 0;
@@ -903,7 +903,7 @@ Dictionary Curve2D::_get_data() const {
 	d.resize(points.size() * 3);
 	PoolVector2Array::Write w = d.write();
 
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		w[i * 3 + 0] = points[i].in;
 		w[i * 3 + 1] = points[i].out;
@@ -926,7 +926,7 @@ void Curve2D::_set_data(const Dictionary &p_data) {
 	points.resize(pc / 3);
 	PoolVector2Array::Read r = rp.read();
 
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		points[i].in = r[i * 3 + 0];
 		points[i].out = r[i * 3 + 1];
@@ -948,7 +948,7 @@ PoolVector2Array Curve2D::tessellate(int p_max_stages, float p_tolerance) const 
 	midpoints.resize(points.size() - 1);
 
 	int pc = 1;
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		_bake_segment2d(midpoints[i], 0, 1, points[i].pos, points[i].out, points[i + 1].pos, points[i + 1].in, 0, p_max_stages, p_tolerance);
 		pc++;
@@ -960,7 +960,7 @@ PoolVector2Array Curve2D::tessellate(int p_max_stages, float p_tolerance) const 
 	bpw[0] = points[0].pos;
 	int pidx = 0;
 
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		for (Map<float, Vector2>::Element *E = midpoints[i].front(); E; E = E->next()) {
 
@@ -1035,7 +1035,7 @@ void Curve3D::add_point(const Vector3 &p_pos, const Vector3 &p_in, const Vector3
 	n.pos = p_pos;
 	n.in = p_in;
 	n.out = p_out;
-	if (p_atpos >= 0 && p_atpos < points.size())
+	if (p_atpos >= 0 && p_atpos < static_cast<int>(points.size()))
 		points.insert(points.begin() + p_atpos, n);
 	else
 		points.push_back(n);
@@ -1045,7 +1045,7 @@ void Curve3D::add_point(const Vector3 &p_pos, const Vector3 &p_in, const Vector3
 }
 void Curve3D::set_point_position(int p_index, const Vector3 &p_pos) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].pos = p_pos;
 	baked_cache_dirty = true;
@@ -1053,13 +1053,13 @@ void Curve3D::set_point_position(int p_index, const Vector3 &p_pos) {
 }
 Vector3 Curve3D::get_point_position(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector3());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector3());
 	return points[p_index].pos;
 }
 
 void Curve3D::set_point_tilt(int p_index, float p_tilt) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].tilt = p_tilt;
 	baked_cache_dirty = true;
@@ -1067,13 +1067,13 @@ void Curve3D::set_point_tilt(int p_index, float p_tilt) {
 }
 float Curve3D::get_point_tilt(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), 0);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), 0);
 	return points[p_index].tilt;
 }
 
 void Curve3D::set_point_in(int p_index, const Vector3 &p_in) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].in = p_in;
 	baked_cache_dirty = true;
@@ -1081,13 +1081,13 @@ void Curve3D::set_point_in(int p_index, const Vector3 &p_in) {
 }
 Vector3 Curve3D::get_point_in(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector3());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector3());
 	return points[p_index].in;
 }
 
 void Curve3D::set_point_out(int p_index, const Vector3 &p_out) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 
 	points[p_index].out = p_out;
 	baked_cache_dirty = true;
@@ -1096,13 +1096,13 @@ void Curve3D::set_point_out(int p_index, const Vector3 &p_out) {
 
 Vector3 Curve3D::get_point_out(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, points.size(), Vector3());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(points.size()), Vector3());
 	return points[p_index].out;
 }
 
 void Curve3D::remove_point(int p_index) {
 
-	ERR_FAIL_INDEX(p_index, points.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(points.size()));
 	points.erase(points.begin() + p_index);
 	baked_cache_dirty = true;
 	emit_signal(CoreStringNames::get_singleton()->changed);
@@ -1202,7 +1202,7 @@ void Curve3D::_bake() const {
 	List<Plane> pointlist;
 	pointlist.push_back(Plane(pos, points[0].tilt));
 
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		float step = 0.1; // at least 10 substeps ought to be enough?
 		float p = 0;
@@ -1575,7 +1575,7 @@ Dictionary Curve3D::_get_data() const {
 	t.resize(points.size());
 	PoolRealArray::Write wt = t.write();
 
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		w[i * 3 + 0] = points[i].in;
 		w[i * 3 + 1] = points[i].out;
@@ -1604,7 +1604,7 @@ void Curve3D::_set_data(const Dictionary &p_data) {
 	PoolRealArray rtl = p_data["tilts"];
 	PoolRealArray::Read rt = rtl.read();
 
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		points[i].in = r[i * 3 + 0];
 		points[i].out = r[i * 3 + 1];
@@ -1627,7 +1627,7 @@ PoolVector3Array Curve3D::tessellate(int p_max_stages, float p_tolerance) const 
 	midpoints.resize(points.size() - 1);
 
 	int pc = 1;
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		_bake_segment3d(midpoints[i], 0, 1, points[i].pos, points[i].out, points[i + 1].pos, points[i + 1].in, 0, p_max_stages, p_tolerance);
 		pc++;
@@ -1639,7 +1639,7 @@ PoolVector3Array Curve3D::tessellate(int p_max_stages, float p_tolerance) const 
 	bpw[0] = points[0].pos;
 	int pidx = 0;
 
-	for (int i = 0; i < points.size() - 1; i++) {
+	for (decltype(points.size()) i = 0; i < points.size() - 1; i++) {
 
 		for (Map<float, Vector3>::Element *E = midpoints[i].front(); E; E = E->next()) {
 

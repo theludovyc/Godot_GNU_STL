@@ -156,7 +156,7 @@ void TextEdit::Text::_update_line_cache(int p_line) const {
 
 		int left = len - i;
 
-		for (int j = 0; j < color_regions->size(); j++) {
+		for (decltype(color_regions->size()) j = 0; j < color_regions->size(); j++) {
 
 			const ColorRegion &cr = color_regions->operator[](j);
 
@@ -223,7 +223,7 @@ void TextEdit::Text::_update_line_cache(int p_line) const {
 const Map<int, TextEdit::Text::ColorRegionInfo> &TextEdit::Text::get_color_region_info(int p_line) const {
 
 	static Map<int, ColorRegionInfo> cri;
-	ERR_FAIL_INDEX_V(p_line, text.size(), cri);
+	ERR_FAIL_INDEX_V(p_line, static_cast<int>(text.size()), cri);
 
 	if (text[p_line].width_cache == -1) {
 		_update_line_cache(p_line);
@@ -234,7 +234,7 @@ const Map<int, TextEdit::Text::ColorRegionInfo> &TextEdit::Text::get_color_regio
 
 int TextEdit::Text::get_line_width(int p_line) const {
 
-	ERR_FAIL_INDEX_V(p_line, text.size(), -1);
+	ERR_FAIL_INDEX_V(p_line, static_cast<int>(text.size()), -1);
 
 	if (text[p_line].width_cache == -1) {
 		_update_line_cache(p_line);
@@ -245,34 +245,34 @@ int TextEdit::Text::get_line_width(int p_line) const {
 
 void TextEdit::Text::set_line_wrap_amount(int p_line, int p_wrap_amount) const {
 
-	ERR_FAIL_INDEX(p_line, text.size());
+	ERR_FAIL_INDEX(p_line, static_cast<int>(text.size()));
 
 	text[p_line].wrap_amount_cache = p_wrap_amount;
 }
 
 int TextEdit::Text::get_line_wrap_amount(int p_line) const {
 
-	ERR_FAIL_INDEX_V(p_line, text.size(), -1);
+	ERR_FAIL_INDEX_V(p_line, static_cast<int>(text.size()), -1);
 
 	return text[p_line].wrap_amount_cache;
 }
 
 void TextEdit::Text::clear_width_cache() {
 
-	for (int i = 0; i < text.size(); i++) {
+	for (decltype(text.size()) i = 0; i < text.size(); i++) {
 		text[i].width_cache = -1;
 	}
 }
 
 void TextEdit::Text::clear_wrap_cache() {
 
-	for (int i = 0; i < text.size(); i++) {
+	for (decltype(text.size()) i = 0; i < text.size(); i++) {
 		text[i].wrap_amount_cache = -1;
 	}
 }
 
 void TextEdit::Text::clear_info_icons() {
-	for (int i = 0; i < text.size(); i++) {
+	for (decltype(text.size()) i = 0; i < text.size(); i++) {
 		text[i].has_info = false;
 	}
 }
@@ -287,7 +287,7 @@ int TextEdit::Text::get_max_width(bool p_exclude_hidden) const {
 	// Quite some work, but should be fast enough.
 
 	int max = 0;
-	for (int i = 0; i < text.size(); i++) {
+	for (decltype(text.size()) i = 0; i < text.size(); i++) {
 		if (!p_exclude_hidden || !is_hidden(i))
 			max = MAX(max, get_line_width(i));
 	}
@@ -296,7 +296,7 @@ int TextEdit::Text::get_max_width(bool p_exclude_hidden) const {
 
 void TextEdit::Text::set(int p_line, const String &p_text) {
 
-	ERR_FAIL_INDEX(p_line, text.size());
+	ERR_FAIL_INDEX(p_line, static_cast<int>(text.size()));
 
 	text[p_line].width_cache = -1;
 	text[p_line].wrap_amount_cache = -1;
@@ -1638,7 +1638,7 @@ void TextEdit::_notification(int p_what) {
 					int l = line_from + i;
 					ERR_CONTINUE(l < 0 || l >= completion_options_size);
 					Color text_color = cache.completion_font_color;
-					for (int j = 0; j < color_regions.size(); j++) {
+					for (decltype(color_regions.size()) j = 0; j < color_regions.size(); j++) {
 						if (completion_options[l].insert_text.begins_with(color_regions[j].begin_key)) {
 							text_color = color_regions[j].color;
 						}
@@ -2260,7 +2260,7 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 			}
 			if (mb->get_button_index() == BUTTON_WHEEL_DOWN) {
 
-				if (completion_index < completion_options.size() - 1) {
+				if (completion_index < static_cast<int>(completion_options.size()) - 1) {
 					completion_index++;
 					completion_current = completion_options[completion_index];
 					update();
@@ -2619,7 +2619,7 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 
 					if (k->get_scancode() == KEY_DOWN) {
 
-						if (completion_index < completion_options.size() - 1) {
+						if (completion_index < static_cast<int>(completion_options.size()) - 1) {
 							completion_index++;
 						} else {
 							completion_index = 0;
@@ -2645,7 +2645,7 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 					if (k->get_scancode() == KEY_PAGEDOWN) {
 
 						completion_index += get_constant("completion_lines");
-						if (completion_index >= completion_options.size())
+						if (completion_index >= static_cast<int>(completion_options.size()))
 							completion_index = completion_options.size() - 1;
 						completion_current = completion_options[completion_index];
 						update();
@@ -2662,7 +2662,7 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 						return;
 					}
 
-					if (k->get_scancode() == KEY_END && completion_index < completion_options.size() - 1) {
+					if (k->get_scancode() == KEY_END && completion_index < static_cast<int>(completion_options.size()) - 1) {
 
 						completion_index = completion_options.size() - 1;
 						completion_current = completion_options[completion_index];
@@ -3519,7 +3519,7 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 				for (int i = 0; i < wi + 1; i++) {
 					row_end_col += rows[i].length();
 				}
-				if (wi == rows.size() - 1 || cursor.column == row_end_col) {
+				if (wi == static_cast<int>(rows.size()) - 1 || cursor.column == row_end_col) {
 					cursor_set_column(text[cursor.line].length());
 				} else {
 					cursor_set_column(row_end_col);
@@ -3957,7 +3957,7 @@ void TextEdit::_base_insert_text(int p_line, int p_char, const String &p_text, i
 	String preinsert_text = text[p_line].substr(0, p_char);
 	String postinsert_text = text[p_line].substr(p_char, text[p_line].size());
 
-	for (int j = 0; j < substrings.size(); j++) {
+	for (decltype(substrings.size()) j = 0; j < substrings.size(); j++) {
 		// Insert the substrings.
 
 		if (j == 0) {
@@ -4478,7 +4478,7 @@ int TextEdit::get_line_wrap_index_at_col(int p_line, int p_column) const {
 	int wrap_index = 0;
 	int col = 0;
 	std::vector<String> rows = get_wrap_rows_text(p_line);
-	for (int i = 0; i < rows.size(); i++) {
+	for (decltype(rows.size()) i = 0; i < rows.size(); i++) {
 		wrap_index = i;
 		String s = rows[wrap_index];
 		col += s.length();
@@ -4698,7 +4698,7 @@ int TextEdit::get_column_x_offset_for_line(int p_char, int p_line) const {
 		int col = 0;
 		std::vector<String> rows = get_wrap_rows_text(p_line);
 		int wrap_index = 0;
-		for (int i = 0; i < rows.size(); i++) {
+		for (decltype(rows.size()) i = 0; i < rows.size(); i++) {
 			wrap_index = i;
 			String s = rows[wrap_index];
 			col += s.length();
@@ -5136,7 +5136,7 @@ int TextEdit::_is_line_in_region(int p_line) {
 }
 
 TextEdit::ColorRegion TextEdit::_get_color_region(int p_region) const {
-	if (p_region < 0 || p_region >= color_regions.size()) {
+	if (p_region < 0 || p_region >= static_cast<int>(color_regions.size())) {
 		return ColorRegion();
 	}
 	return color_regions[p_region];
@@ -6430,7 +6430,7 @@ void TextEdit::set_completion(bool p_enabled, const std::vector<String> &p_prefi
 
 	completion_prefixes.clear();
 	completion_enabled = p_enabled;
-	for (int i = 0; i < p_prefixes.size(); i++)
+	for (decltype(p_prefixes.size()) i = 0; i < p_prefixes.size(); i++)
 		completion_prefixes.insert(p_prefixes[i]);
 }
 
@@ -6658,7 +6658,7 @@ void TextEdit::query_code_comple() {
 	if (ignored) {
 		ScriptCodeCompletionOption::Kind kind = ScriptCodeCompletionOption::KIND_PLAIN_TEXT;
 		const ScriptCodeCompletionOption *previous_option = NULL;
-		for (int i = 0; i < completion_options.size(); i++) {
+		for (decltype(completion_options.size()) i = 0; i < completion_options.size(); i++) {
 			const ScriptCodeCompletionOption &current_option = completion_options[i];
 			if (!previous_option) {
 				previous_option = &current_option;

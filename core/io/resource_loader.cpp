@@ -755,7 +755,7 @@ String ResourceLoader::_path_remap(const String &p_path, bool *r_translation_rem
 		std::vector<String> &res_remaps = *translation_remaps.getptr(new_path);
 		bool near_match = false;
 
-		for (int i = 0; i < res_remaps.size(); i++) {
+		for (decltype(res_remaps.size()) i = 0; i < res_remaps.size(); i++) {
 			int split = res_remaps[i].find_last(":");
 			if (split == -1) {
 				continue;
@@ -995,7 +995,7 @@ void ResourceLoader::remove_custom_loaders() {
 		}
 	}
 
-	for (int i = 0; i < custom_loaders.size(); ++i) {
+	for (decltype(custom_loaders.size()) i = 0; i < custom_loaders.size(); ++i) {
 		remove_resource_format_loader(custom_loaders[i]);
 	}
 }

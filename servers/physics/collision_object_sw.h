@@ -119,7 +119,7 @@ public:
 	void set_shape_transform(int p_index, const Transform &p_transform);
 	_FORCE_INLINE_ int get_shape_count() const { return shapes.size(); }
 	_FORCE_INLINE_ bool is_shape_disabled(int p_index) const {
-		CRASH_BAD_INDEX(p_index, shapes.size());
+		CRASH_BAD_INDEX(p_index, static_cast<int>(shapes.size()));
 		return shapes[p_index].disabled;
 	}
 	_FORCE_INLINE_ ShapeSW *get_shape(int p_index) const { return shapes[p_index].shape; }
@@ -137,7 +137,7 @@ public:
 
 	void set_shape_as_disabled(int p_idx, bool p_enable);
 	_FORCE_INLINE_ bool is_shape_set_as_disabled(int p_idx) const {
-		CRASH_BAD_INDEX(p_idx, shapes.size());
+		CRASH_BAD_INDEX(p_idx, static_cast<int>(shapes.size()));
 		return shapes[p_idx].disabled;
 	}
 

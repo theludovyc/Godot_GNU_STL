@@ -270,7 +270,7 @@ void ScriptDebuggerLocal::print_variables(const List<String> &names, const List<
 
 			print_line(E->get() + ":");
 			value_lines = value.split("\n");
-			for (int i = 0; i < value_lines.size(); ++i) {
+			for (decltype(value_lines.size()) i = 0; i < value_lines.size(); ++i) {
 				print_line(variable_prefix + value_lines[i]);
 			}
 		}

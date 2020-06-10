@@ -410,7 +410,7 @@ static int _bsp_create_node(const Face3 *p_faces, const std::vector<int> &p_indi
 	// find existing divisor plane
 	int divisor_plane_idx = -1;
 
-	for (int i = 0; i < p_planes.size(); i++) {
+	for (decltype(p_planes.size()) i = 0; i < p_planes.size(); i++) {
 
 		if (p_planes[i].is_equal_approx(divisor_plane)) {
 			divisor_plane_idx = i;
@@ -443,7 +443,7 @@ BSP_Tree::operator Variant() const {
 	std::vector<real_t> plane_values;
 	plane_values.resize(planes.size() * 4);
 
-	for (int i = 0; i < planes.size(); i++) {
+	for (decltype(planes.size()) i = 0; i < planes.size(); i++) {
 
 		plane_values[i * 4 + 0] = planes[i].normal.x;
 		plane_values[i * 4 + 1] = planes[i].normal.y;
@@ -456,7 +456,7 @@ BSP_Tree::operator Variant() const {
 	PoolVector<int> dst_nodes;
 	dst_nodes.resize(nodes.size() * 3);
 
-	for (int i = 0; i < nodes.size(); i++) {
+	for (decltype(nodes.size()) i = 0; i < nodes.size(); i++) {
 
 		dst_nodes.set(i * 3 + 0, nodes[i].over);
 		dst_nodes.set(i * 3 + 1, nodes[i].under);
@@ -514,7 +514,7 @@ BSP_Tree::BSP_Tree(const Variant &p_variant) {
 
 	PoolVector<int>::Read r = src_nodes.read();
 
-	for (int i = 0; i < nodes.size(); i++) {
+	for (decltype(nodes.size()) i = 0; i < nodes.size(); i++) {
 
 		nodes[i].over = r[i * 3 + 0];
 		nodes[i].under = r[i * 3 + 1];

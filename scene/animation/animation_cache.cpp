@@ -38,7 +38,7 @@ void AnimationCache::_node_exit_tree(Node *p_node) {
 
 	connected_nodes.erase(p_node);
 
-	for (int i = 0; i < path_cache.size(); i++) {
+	for (decltype(path_cache.size()) i = 0; i < path_cache.size(); i++) {
 
 		if (path_cache[i].node != p_node)
 			continue;
@@ -188,7 +188,7 @@ void AnimationCache::set_track_transform(int p_idx, const Transform &p_transform
 		_update_cache();
 
 	ERR_FAIL_COND(!cache_valid);
-	ERR_FAIL_INDEX(p_idx, path_cache.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(path_cache.size()));
 	Path &p = path_cache[p_idx];
 	if (!p.valid)
 		return;
@@ -209,7 +209,7 @@ void AnimationCache::set_track_value(int p_idx, const Variant &p_value) {
 		_update_cache();
 
 	ERR_FAIL_COND(!cache_valid);
-	ERR_FAIL_INDEX(p_idx, path_cache.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(path_cache.size()));
 	Path &p = path_cache[p_idx];
 	if (!p.valid)
 		return;
@@ -224,7 +224,7 @@ void AnimationCache::call_track(int p_idx, const StringName &p_method, const Var
 		_update_cache();
 
 	ERR_FAIL_COND(!cache_valid);
-	ERR_FAIL_INDEX(p_idx, path_cache.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(path_cache.size()));
 	Path &p = path_cache[p_idx];
 	if (!p.valid)
 		return;
@@ -292,7 +292,7 @@ void AnimationCache::set_all(float p_time, float p_delta) {
 
 						std::vector<const Variant *> argptrs;
 						argptrs.resize(args.size());
-						for (int j = 0; j < args.size(); j++) {
+						for (decltype(args.size()) j = 0; j < args.size(); j++) {
 
 							argptrs[j] = &args[j];
 						}

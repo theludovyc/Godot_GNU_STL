@@ -52,7 +52,7 @@ int TabContainer::_get_top_margin() const {
 	int content_height = font->get_height();
 
 	std::vector<Control *> tabs = _get_tabs();
-	for (int i = 0; i < tabs.size(); i++) {
+	for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 
 		Control *c = tabs[i];
 		if (!c->has_meta("_tab_icon"))
@@ -110,7 +110,7 @@ void TabContainer::_gui_input(const Ref<InputEvent> &p_event) {
 			Ref<Texture> increment = get_icon("increment");
 			Ref<Texture> decrement = get_icon("decrement");
 			if (pos.x > size.width - increment->get_width() - popup_ofs) {
-				if (last_tab_cache < tabs.size() - 1) {
+				if (last_tab_cache < static_cast<int>(tabs.size()) - 1) {
 					first_tab_cache += 1;
 					update();
 				}
@@ -240,7 +240,7 @@ void TabContainer::_notification(int p_what) {
 
 			// Find the width of all tabs after first_tab_cache.
 			int all_tabs_width = 0;
-			for (int i = first_tab_cache; i < tabs.size(); i++) {
+			for (int i = first_tab_cache; i < static_cast<int>(tabs.size()); i++) {
 				int tab_width = _get_tab_width(i);
 				all_tabs_width += tab_width;
 			}
@@ -294,7 +294,7 @@ void TabContainer::_notification(int p_what) {
 
 			// Check if all tabs would fit into the header area.
 			int all_tabs_width = 0;
-			for (int i = 0; i < tabs.size(); i++) {
+			for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 				if (get_tab_hidden(i)) {
 					continue;
 				}
@@ -322,7 +322,7 @@ void TabContainer::_notification(int p_what) {
 			// Go through the visible tabs to find the width they occupy.
 			all_tabs_width = 0;
 			std::vector<int> tab_widths;
-			for (int i = first_tab_cache; i < tabs.size(); i++) {
+			for (int i = first_tab_cache; i < static_cast<int>(tabs.size()); i++) {
 				if (get_tab_hidden(i)) {
 					continue;
 				}
@@ -351,7 +351,7 @@ void TabContainer::_notification(int p_what) {
 
 			// Draw all visible tabs.
 			int x = 0;
-			for (int i = 0; i < tab_widths.size(); i++) {
+			for (int i = 0; i < static_cast<int>(tab_widths.size()); i++) {
 				if (get_tab_hidden(i)) {
 					continue;
 				}
@@ -414,7 +414,7 @@ void TabContainer::_notification(int p_what) {
 			if (buttons_visible_cache) {
 
 				x -= increment->get_width();
-				if (last_tab_cache < tabs.size() - 1) {
+				if (last_tab_cache < static_cast<int>(tabs.size()) - 1) {
 					draw_texture(highlight_arrow == 1 ? increment_hl : increment, Point2(x, (header_height - increment->get_height()) / 2));
 				} else {
 					draw_texture(increment, Point2(x, (header_height - increment->get_height()) / 2), Color(1, 1, 1, 0.5));
@@ -556,7 +556,7 @@ void TabContainer::set_current_tab(int p_current) {
 
 	Ref<StyleBox> sb = get_stylebox("panel");
 	std::vector<Control *> tabs = _get_tabs();
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 		Control *c = tabs[i];
 		if (i == current) {
@@ -599,7 +599,7 @@ int TabContainer::get_previous_tab() const {
 Control *TabContainer::get_tab_control(int p_idx) const {
 
 	std::vector<Control *> tabs = _get_tabs();
-	if (p_idx >= 0 && p_idx < tabs.size())
+	if (p_idx >= 0 && p_idx < static_cast<int>(tabs.size()))
 		return tabs[p_idx];
 	else
 		return NULL;
@@ -608,7 +608,7 @@ Control *TabContainer::get_tab_control(int p_idx) const {
 Control *TabContainer::get_current_tab_control() const {
 
 	std::vector<Control *> tabs = _get_tabs();
-	if (current >= 0 && current < tabs.size())
+	if (current >= 0 && current < static_cast<int>(tabs.size()))
 		return tabs[current];
 	else
 		return NULL;
@@ -793,7 +793,7 @@ void TabContainer::set_tabs_visible(bool p_visible) {
 	tabs_visible = p_visible;
 
 	std::vector<Control *> tabs = _get_tabs();
-	for (int i = 0; i < tabs.size(); i++) {
+	for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 
 		Control *c = tabs[i];
 		if (p_visible)
@@ -902,7 +902,7 @@ bool TabContainer::get_tab_hidden(int p_tab) const {
 void TabContainer::get_translatable_strings(List<String> *p_strings) const {
 
 	std::vector<Control *> tabs = _get_tabs();
-	for (int i = 0; i < tabs.size(); i++) {
+	for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 
 		Control *c = tabs[i];
 
@@ -921,7 +921,7 @@ Size2 TabContainer::get_minimum_size() const {
 	Size2 ms;
 
 	std::vector<Control *> tabs = _get_tabs();
-	for (int i = 0; i < tabs.size(); i++) {
+	for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 
 		Control *c = tabs[i];
 

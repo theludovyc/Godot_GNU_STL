@@ -502,7 +502,7 @@ int _OS::execute(const String &p_path, const std::vector<String> &p_arguments, b
 	OS::ProcessID pid = -2;
 	int exitcode = 0;
 	List<String> args;
-	for (int i = 0; i < p_arguments.size(); i++)
+	for (decltype(p_arguments.size()) i = 0; i < p_arguments.size(); i++)
 		args.push_back(p_arguments[i]);
 	String pipe;
 	Error err = OS::get_singleton()->execute(p_path, args, p_blocking, &pid, &pipe, &exitcode, p_read_stderr);
@@ -1021,7 +1021,7 @@ void _OS::print_resources_by_type(const std::vector<String> &p_types) {
 
 		bool found = false;
 
-		for (int i = 0; i < p_types.size(); i++) {
+		for (decltype(p_types.size()) i = 0; i < p_types.size(); i++) {
 			if (r->is_class(p_types[i]))
 				found = true;
 		}
@@ -1680,7 +1680,7 @@ Array _Geometry::merge_polygons_2d(const std::vector<Vector2> &p_polygon_a, cons
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1692,7 +1692,7 @@ Array _Geometry::clip_polygons_2d(const std::vector<Vector2> &p_polygon_a, const
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1704,7 +1704,7 @@ Array _Geometry::intersect_polygons_2d(const std::vector<Vector2> &p_polygon_a, 
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1716,7 +1716,7 @@ Array _Geometry::exclude_polygons_2d(const std::vector<Vector2> &p_polygon_a, co
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1728,7 +1728,7 @@ Array _Geometry::clip_polyline_with_polygon_2d(const std::vector<Vector2> &p_pol
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1740,7 +1740,7 @@ Array _Geometry::intersect_polyline_with_polygon_2d(const std::vector<Vector2> &
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1752,7 +1752,7 @@ Array _Geometry::offset_polygon_2d(const std::vector<Vector2> &p_polygon, real_t
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1764,7 +1764,7 @@ Array _Geometry::offset_polyline_2d(const std::vector<Vector2> &p_polygon, real_
 
 	Array ret;
 
-	for (int i = 0; i < polys.size(); ++i) {
+	for (decltype(polys.size()) i = 0; i < polys.size(); ++i) {
 		ret.push_back(polys[i]);
 	}
 	return ret;
@@ -1775,7 +1775,7 @@ Dictionary _Geometry::make_atlas(const std::vector<Size2> &p_rects) {
 	Dictionary ret;
 
 	std::vector<Size2i> rects;
-	for (int i = 0; i < p_rects.size(); i++) {
+	for (decltype(p_rects.size()) i = 0; i < p_rects.size(); i++) {
 
 		rects.push_back(p_rects[i]);
 	};
@@ -1787,7 +1787,7 @@ Dictionary _Geometry::make_atlas(const std::vector<Size2> &p_rects) {
 
 	Size2 r_size = size;
 	std::vector<Point2> r_result;
-	for (int i = 0; i < result.size(); i++) {
+	for (decltype(result.size()) i = 0; i < result.size(); i++) {
 
 		r_result.push_back(result[i]);
 	};

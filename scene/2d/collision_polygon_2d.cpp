@@ -51,7 +51,7 @@ void CollisionPolygon2D::_build_polygon() {
 		//here comes the sun, lalalala
 		//decompose concave into multiple convex polygons and add them
 		std::vector<std::vector<Vector2> > decomp = _decompose_in_convex();
-		for (int i = 0; i < decomp.size(); i++) {
+		for (decltype(decomp.size()) i = 0; i < decomp.size(); i++) {
 			Ref<ConvexPolygonShape2D> convex = memnew(ConvexPolygonShape2D);
 			convex->set_points(decomp[i]);
 			parent->shape_owner_add_shape(owner_id, convex);
@@ -65,10 +65,9 @@ void CollisionPolygon2D::_build_polygon() {
 		segments.resize(polygon.size() * 2);
 		PoolVector<Vector2>::Write w = segments.write();
 
-		int polygon_count = polygon.size();
-		for (int i = 0; i < polygon_count; i++) {
+		for (decltype(polygon.size()) i = 0; i < polygon.size(); i++) {
 			w[(i << 1) + 0] = polygon[i];
-			w[(i << 1) + 1] = polygon[(i + 1) % polygon_count];
+			w[(i << 1) + 1] = polygon[(i + 1) % polygon.size()];
 		}
 
 		w.release();
@@ -140,11 +139,10 @@ void CollisionPolygon2D::_notification(int p_what) {
 				break;
 			}
 
-			int polygon_count = polygon.size();
-			for (int i = 0; i < polygon_count; i++) {
+			for (decltype(polygon.size()) i = 0; i < polygon.size(); i++) {
 
 				Vector2 p = polygon[i];
-				Vector2 n = polygon[(i + 1) % polygon_count];
+				Vector2 n = polygon[(i + 1) % polygon.size()];
 				// draw line with width <= 1, so it does not scale with zoom and break pixel exact editing
 				draw_line(p, n, Color(0.9, 0.2, 0.0, 0.8), 1);
 			}
@@ -154,7 +152,7 @@ void CollisionPolygon2D::_notification(int p_what) {
 			std::vector<std::vector<Vector2> > decomp = _decompose_in_convex();
 
 			Color c(0.4, 0.9, 0.1);
-			for (int i = 0; i < decomp.size(); i++) {
+			for (decltype(decomp.size()) i = 0; i < decomp.size(); i++) {
 
 				c.set_hsv(Math::fmod(c.get_h() + 0.738, 1), c.get_s(), c.get_v(), 0.5);
 				draw_colored_polygon(decomp[i], c);
@@ -188,7 +186,7 @@ void CollisionPolygon2D::set_polygon(const std::vector<Point2> &p_polygon) {
 	polygon = p_polygon;
 
 	{
-		for (int i = 0; i < polygon.size(); i++) {
+		for (decltype(polygon.size()) i = 0; i < polygon.size(); i++) {
 			if (i == 0)
 				aabb = Rect2(polygon[i], Size2());
 			else

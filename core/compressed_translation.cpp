@@ -118,7 +118,7 @@ void PHashTranslation::generate(const Ref<Translation> &p_from) {
 		int d = 1;
 		int item = 0;
 
-		while (item < b.size()) {
+		while (item < static_cast<int>(b.size())) {
 
 			uint32_t slot = hash(d, b[item].second.get_data());
 			if (t.has(slot)) {
@@ -176,7 +176,7 @@ void PHashTranslation::generate(const Ref<Translation> &p_from) {
 	strings.resize(total_compression_size);
 	PoolVector<uint8_t>::Write cw = strings.write();
 
-	for (int i = 0; i < compressed.size(); i++) {
+	for (decltype(compressed.size()) i = 0; i < compressed.size(); i++) {
 		memcpy(&cw[compressed[i].offset], compressed[i].compressed.get_data(), compressed[i].compressed.size());
 	}
 

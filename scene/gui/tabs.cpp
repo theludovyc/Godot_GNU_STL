@@ -44,7 +44,7 @@ Size2 Tabs::get_minimum_size() const {
 
 	Size2 ms(0, MAX(MAX(tab_bg->get_minimum_size().height, tab_fg->get_minimum_size().height), tab_disabled->get_minimum_size().height) + font->get_height());
 
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 		Ref<Texture> tex = tabs[i].icon;
 		if (tex.is_valid()) {
@@ -184,7 +184,7 @@ void Tabs::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 
 			int found = -1;
-			for (int i = 0; i < tabs.size(); i++) {
+			for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 				if (i < offset)
 					continue;
@@ -223,7 +223,7 @@ void Tabs::_notification(int p_what) {
 	switch (p_what) {
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
-			for (int i = 0; i < tabs.size(); ++i) {
+			for (decltype(tabs.size()) i = 0; i < tabs.size(); ++i) {
 				tabs[i].xl_text = tr(tabs[i].text);
 			}
 			minimum_size_changed();
@@ -251,7 +251,7 @@ void Tabs::_notification(int p_what) {
 			int w = 0;
 			int mw = 0;
 
-			for (int i = 0; i < tabs.size(); i++) {
+			for (decltype(tabs.size()) i = 0; i < tabs.size(); i++) {
 
 				tabs[i].ofs_cache = mw;
 				mw += get_tab_width(i);
@@ -276,7 +276,7 @@ void Tabs::_notification(int p_what) {
 
 			missing_right = false;
 
-			for (int i = 0; i < tabs.size(); i++) {
+			for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 				if (i < offset)
 					continue;
@@ -436,7 +436,7 @@ bool Tabs::get_offset_buttons_visible() const {
 
 void Tabs::set_tab_title(int p_tab, const String &p_title) {
 
-	ERR_FAIL_INDEX(p_tab, tabs.size());
+	ERR_FAIL_INDEX(p_tab, static_cast<int>(tabs.size()));
 	tabs[p_tab].text = p_title;
 	tabs[p_tab].xl_text = tr(p_title);
 	update();
@@ -445,13 +445,13 @@ void Tabs::set_tab_title(int p_tab, const String &p_title) {
 
 String Tabs::get_tab_title(int p_tab) const {
 
-	ERR_FAIL_INDEX_V(p_tab, tabs.size(), "");
+	ERR_FAIL_INDEX_V(p_tab, static_cast<int>(tabs.size()), "");
 	return tabs[p_tab].text;
 }
 
 void Tabs::set_tab_icon(int p_tab, const Ref<Texture> &p_icon) {
 
-	ERR_FAIL_INDEX(p_tab, tabs.size());
+	ERR_FAIL_INDEX(p_tab, static_cast<int>(tabs.size()));
 	tabs[p_tab].icon = p_icon;
 	update();
 	minimum_size_changed();
@@ -459,25 +459,25 @@ void Tabs::set_tab_icon(int p_tab, const Ref<Texture> &p_icon) {
 
 Ref<Texture> Tabs::get_tab_icon(int p_tab) const {
 
-	ERR_FAIL_INDEX_V(p_tab, tabs.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_tab, static_cast<int>(tabs.size()), Ref<Texture>());
 	return tabs[p_tab].icon;
 }
 
 void Tabs::set_tab_disabled(int p_tab, bool p_disabled) {
 
-	ERR_FAIL_INDEX(p_tab, tabs.size());
+	ERR_FAIL_INDEX(p_tab, static_cast<int>(tabs.size()));
 	tabs[p_tab].disabled = p_disabled;
 	update();
 }
 bool Tabs::get_tab_disabled(int p_tab) const {
 
-	ERR_FAIL_INDEX_V(p_tab, tabs.size(), false);
+	ERR_FAIL_INDEX_V(p_tab, static_cast<int>(tabs.size()), false);
 	return tabs[p_tab].disabled;
 }
 
 void Tabs::set_tab_right_button(int p_tab, const Ref<Texture> &p_right_button) {
 
-	ERR_FAIL_INDEX(p_tab, tabs.size());
+	ERR_FAIL_INDEX(p_tab, static_cast<int>(tabs.size()));
 	tabs[p_tab].right_button = p_right_button;
 	_update_cache();
 	update();
@@ -485,7 +485,7 @@ void Tabs::set_tab_right_button(int p_tab, const Ref<Texture> &p_right_button) {
 }
 Ref<Texture> Tabs::get_tab_right_button(int p_tab) const {
 
-	ERR_FAIL_INDEX_V(p_tab, tabs.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_tab, static_cast<int>(tabs.size()), Ref<Texture>());
 	return tabs[p_tab].right_button;
 }
 
@@ -499,7 +499,7 @@ void Tabs::_update_hover() {
 	// test hovering to display right or close button
 	int hover_now = -1;
 	int hover_buttons = -1;
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 		if (i < offset)
 			continue;
@@ -544,7 +544,7 @@ void Tabs::_update_cache() {
 	int mw = 0;
 	int size_fixed = 0;
 	int count_resize = 0;
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 		tabs[i].ofs_cache = mw;
 		tabs[i].size_cache = get_tab_width(i);
 		tabs[i].size_text = Math::ceil(font->get_string_size(tabs[i].xl_text).width);
@@ -559,7 +559,7 @@ void Tabs::_update_cache() {
 	if (count_resize > 0) {
 		m_width = MAX((limit - size_fixed) / count_resize, min_width);
 	}
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 		if (i < offset)
 			continue;
 		Ref<StyleBox> sb;
@@ -630,7 +630,7 @@ void Tabs::clear_tabs() {
 
 void Tabs::remove_tab(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, tabs.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(tabs.size()));
 	tabs.erase(tabs.begin() + p_idx);
 	if (current >= p_idx)
 		current--;
@@ -641,7 +641,7 @@ void Tabs::remove_tab(int p_idx) {
 
 	if (current < 0)
 		current = 0;
-	if (current >= tabs.size())
+	if (current >= static_cast<int>(tabs.size()))
 		current = tabs.size() - 1;
 
 	_ensure_no_over_offset();
@@ -753,7 +753,7 @@ void Tabs::drop_data(const Point2 &p_point, const Variant &p_data) {
 int Tabs::get_tab_idx_at_point(const Point2 &p_point) const {
 
 	int hover_now = -1;
-	for (int i = 0; i < tabs.size(); i++) {
+	for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 		if (i < offset)
 			continue;
@@ -784,8 +784,8 @@ void Tabs::move_tab(int from, int to) {
 	if (from == to)
 		return;
 
-	ERR_FAIL_INDEX(from, tabs.size());
-	ERR_FAIL_INDEX(to, tabs.size());
+	ERR_FAIL_INDEX(from, static_cast<int>(tabs.size()));
+	ERR_FAIL_INDEX(to, static_cast<int>(tabs.size()));
 
 	Tab tab_from = tabs[from];
 	tabs.erase(tabs.begin() + from);
@@ -797,7 +797,7 @@ void Tabs::move_tab(int from, int to) {
 
 int Tabs::get_tab_width(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, tabs.size(), 0);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(tabs.size()), 0);
 
 	Ref<StyleBox> tab_bg = get_stylebox("tab_bg");
 	Ref<StyleBox> tab_fg = get_stylebox("tab_fg");
@@ -850,7 +850,7 @@ void Tabs::_ensure_no_over_offset() {
 	while (offset > 0) {
 
 		int total_w = 0;
-		for (int i = 0; i < tabs.size(); i++) {
+		for (int i = 0; i < static_cast<int>(tabs.size()); i++) {
 
 			if (i < offset - 1)
 				continue;
@@ -873,7 +873,7 @@ void Tabs::ensure_tab_visible(int p_idx) {
 		return;
 
 	if (tabs.size() == 0) return;
-	ERR_FAIL_INDEX(p_idx, tabs.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(tabs.size()));
 
 	if (p_idx == offset) {
 		return;
@@ -901,7 +901,7 @@ void Tabs::ensure_tab_visible(int p_idx) {
 
 Rect2 Tabs::get_tab_rect(int p_tab) const {
 
-	ERR_FAIL_INDEX_V(p_tab, tabs.size(), Rect2());
+	ERR_FAIL_INDEX_V(p_tab, static_cast<int>(tabs.size()), Rect2());
 	return Rect2(tabs[p_tab].ofs_cache, 0, tabs[p_tab].size_cache, get_size().height);
 }
 
