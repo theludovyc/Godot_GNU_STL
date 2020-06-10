@@ -137,7 +137,8 @@ static void _plot_triangle(Vector2 *vertices, const Vector2 &p_offset, bool p_tr
 	double dx_low = double(x[2] - x[1]) / (y[2] - y[1] + 1);
 	double xf = x[0];
 	double xt = x[0] + dx_upper; // if y[0] == y[1], special case
-	for (int yi = y[0]; yi <= (y[2] > height - 1 ? height - 1 : y[2]); yi++) {
+	int max_y = MIN(y[2], height - p_offset.y - 1);
+	for (int yi = y[0]; yi <= max_y; yi++) {
 		if (yi >= 0) {
 			for (int xi = (xf > 0 ? int(xf) : 0); xi <= (xt < width ? xt : width - 1); xi++) {
 
@@ -253,14 +254,14 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 			bit_map->create_from_image_alpha(image);
 			std::vector<std::vector<Vector2> > polygons = bit_map->clip_opaque_to_polygons(Rect2(0, 0, image->get_width(), image->get_height()));
 
-			for (int j = 0; j < polygons.size(); j++) {
+			for (decltype(polygons.size()) j = 0; j < polygons.size(); j++) {
 
 				EditorAtlasPacker::Chart chart;
 				chart.vertices = polygons[j];
 				chart.can_transpose = true;
 
 				std::vector<int> poly = Geometry::triangulate_polygon(polygons[j]);
-				for (int i = 0; i < poly.size(); i += 3) {
+				for (decltype(poly.size()) i = 0; i < poly.size(); i += 3) {
 
 					EditorAtlasPacker::Chart::Face f;
 					f.vertex[0] = poly[i + 0];
@@ -288,13 +289,13 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 
 	new_atlas->lock();
 
-	for (int i = 0; i < pack_data_files.size(); i++) {
+	for (decltype(pack_data_files.size()) i = 0; i < pack_data_files.size(); i++) {
 
 		PackData &pack_data = pack_data_files[i];
 		pack_data.image->lock();
-		for (int j = 0; j < pack_data.chart_pieces.size(); j++) {
+		for (decltype(pack_data.chart_pieces.size()) j = 0; j < pack_data.chart_pieces.size(); j++) {
 			const EditorAtlasPacker::Chart &chart = charts[pack_data.chart_pieces[j]];
-			for (int k = 0; k < chart.faces.size(); k++) {
+			for (decltype(chart.faces.size()) k = 0; k < chart.faces.size(); k++) {
 				Vector2 positions[3];
 				for (int l = 0; l < 3; l++) {
 					int vertex_idx = chart.faces[k].vertex[l];
@@ -348,7 +349,7 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 			Ref<ArrayMesh> mesh;
 			mesh.instance();
 
-			for (int i = 0; i < pack_data.chart_pieces.size(); i++) {
+			for (decltype(pack_data.chart_pieces.size()) i = 0; i < pack_data.chart_pieces.size(); i++) {
 				const EditorAtlasPacker::Chart &chart = charts[pack_data.chart_pieces[i]];
 				PoolVector<Vector2> vertices;
 				PoolVector<int> indices;

@@ -215,7 +215,7 @@ void Polygon2D::_notification(int p_what) {
 
 				uvs.resize(len);
 
-				if (points.size() == uv.size()) {
+				if (static_cast<int>(points.size()) == uv.size()) {
 
 					PoolVector<Vector2>::Read uvr = uv.read();
 
@@ -244,8 +244,8 @@ void Polygon2D::_notification(int p_what) {
 					weightsw[i] = 0;
 				}
 
-				for (int i = 0; i < bone_weights.size(); i++) {
-					if (bone_weights[i].weights.size() != points.size()) {
+				for (decltype(bone_weights.size()) i = 0; i < bone_weights.size(); i++) {
+					if (bone_weights[i].weights.size() != static_cast<int>(points.size())) {
 						continue; //different number of vertices, sorry not using.
 					}
 					if (!skeleton_node->has_node(bone_weights[i].path)) {
@@ -294,7 +294,7 @@ void Polygon2D::_notification(int p_what) {
 			}
 
 			std::vector<Color> colors;
-			if (vertex_colors.size() == points.size()) {
+			if (vertex_colors.size() == static_cast<int>(points.size())) {
 				colors.resize(len);
 				PoolVector<Color>::Read color_r = vertex_colors.read();
 				for (int i = 0; i < len; i++) {
@@ -327,7 +327,7 @@ void Polygon2D::_notification(int p_what) {
 
 					for (int j = 0; j < ic; j++) {
 						int idx = r[j];
-						ERR_CONTINUE(idx < 0 || idx >= points.size());
+						ERR_CONTINUE(idx < 0 || idx >= static_cast<int>(points.size()));
 						tmp_points[j] = points[r[j]];
 					}
 					std::vector<int> indices = Geometry::triangulate_polygon(tmp_points);
@@ -526,17 +526,17 @@ int Polygon2D::get_bone_count() const {
 	return bone_weights.size();
 }
 NodePath Polygon2D::get_bone_path(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, bone_weights.size(), NodePath());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(bone_weights.size()), NodePath());
 	return bone_weights[p_index].path;
 }
 PoolVector<float> Polygon2D::get_bone_weights(int p_index) const {
 
-	ERR_FAIL_INDEX_V(p_index, bone_weights.size(), PoolVector<float>());
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(bone_weights.size()), PoolVector<float>());
 	return bone_weights[p_index].weights;
 }
 void Polygon2D::erase_bone(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, bone_weights.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(bone_weights.size()));
 	bone_weights.erase(bone_weights.begin() + p_idx);
 }
 
@@ -545,12 +545,12 @@ void Polygon2D::clear_bones() {
 }
 
 void Polygon2D::set_bone_weights(int p_index, const PoolVector<float> &p_weights) {
-	ERR_FAIL_INDEX(p_index, bone_weights.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(bone_weights.size()));
 	bone_weights[p_index].weights = p_weights;
 	update();
 }
 void Polygon2D::set_bone_path(int p_index, const NodePath &p_path) {
-	ERR_FAIL_INDEX(p_index, bone_weights.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(bone_weights.size()));
 	bone_weights[p_index].path = p_path;
 	update();
 }

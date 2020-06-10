@@ -57,13 +57,15 @@ void CreateDialog::popup_create(bool p_dont_clear, bool p_replace_mode, const St
 
 		TreeItem *root = recent->create_item();
 
+		String icon_fallback = has_icon(base_type, "EditorIcons") ? base_type : "Object";
+
 		while (!f->eof_reached()) {
 			String l = f->get_line().strip_edges();
 			String name = l.split(" ")[0];
 			if ((ClassDB::class_exists(name) || ScriptServer::is_global_class(name)) && !_is_class_disabled_by_feature_profile(name)) {
 				TreeItem *ti = recent->create_item(root);
 				ti->set_text(0, l);
-				ti->set_icon(0, EditorNode::get_singleton()->get_class_icon(l, base_type));
+				ti->set_icon(0, EditorNode::get_singleton()->get_class_icon(name, icon_fallback));
 			}
 		}
 
@@ -253,7 +255,8 @@ void CreateDialog::add_type(const String &p_type, HashMap<String, TreeItem *> &p
 	const String &description = EditorHelp::get_doc_data()->class_list[p_type].brief_description;
 	item->set_tooltip(0, description);
 
-	item->set_icon(0, EditorNode::get_singleton()->get_class_icon(p_type, base_type));
+	String icon_fallback = has_icon(base_type, "EditorIcons") ? base_type : "Object";
+	item->set_icon(0, EditorNode::get_singleton()->get_class_icon(p_type, icon_fallback));
 
 	p_types[p_type] = item;
 }
@@ -312,9 +315,8 @@ void CreateDialog::_update_search() {
 	EditorData &ed = EditorNode::get_editor_data();
 
 	root->set_text(0, base_type);
-	if (has_icon(base_type, "EditorIcons")) {
-		root->set_icon(0, get_icon(base_type, "EditorIcons"));
-	}
+	String base_icon = has_icon(base_type, "EditorIcons") ? base_type : "Object";
+	root->set_icon(0, get_icon(base_icon, "EditorIcons"));
 
 	TreeItem *to_select = search_box->get_text() == base_type ? root : NULL;
 
@@ -378,7 +380,7 @@ void CreateDialog::_update_search() {
 			//there are custom types based on this... cool.
 
 			const std::vector<EditorData::CustomType> &ct = EditorNode::get_editor_data().get_custom_types()[type];
-			for (int i = 0; i < ct.size(); i++) {
+			for (decltype(ct.size()) i = 0; i < ct.size(); i++) {
 
 				bool show = search_box->get_text().is_subsequence_ofi(ct[i].name);
 
@@ -397,9 +399,7 @@ void CreateDialog::_update_search() {
 				TreeItem *item = search_options->create_item(ti);
 				item->set_metadata(0, type);
 				item->set_text(0, ct[i].name);
-				if (ct[i].icon.is_valid()) {
-					item->set_icon(0, ct[i].icon);
-				}
+				item->set_icon(0, ct[i].icon.is_valid() ? ct[i].icon : get_icon(base_icon, "EditorIcons"));
 
 				if (!to_select || ct[i].name == search_box->get_text()) {
 					to_select = item;
@@ -589,7 +589,7 @@ void CreateDialog::_save_favorite_list() {
 
 	if (f) {
 
-		for (int i = 0; i < favorite_list.size(); i++) {
+		for (decltype(favorite_list.size()) i = 0; i < favorite_list.size(); i++) {
 			String l = favorite_list[i];
 			String name = l.split(" ")[0];
 			if (!(ClassDB::class_exists(name) || ScriptServer::is_global_class(name)))
@@ -603,15 +603,20 @@ void CreateDialog::_save_favorite_list() {
 void CreateDialog::_update_favorite_list() {
 
 	favorites->clear();
+
 	TreeItem *root = favorites->create_item();
-	for (int i = 0; i < favorite_list.size(); i++) {
+
+	String icon_fallback = has_icon(base_type, "EditorIcons") ? base_type : "Object";
+
+	for (decltype(favorite_list.size()) i = 0; i < favorite_list.size(); i++) {
 		String l = favorite_list[i];
 		String name = l.split(" ")[0];
 		if (!((ClassDB::class_exists(name) || ScriptServer::is_global_class(name)) && !_is_class_disabled_by_feature_profile(name)))
 			continue;
+
 		TreeItem *ti = favorites->create_item(root);
 		ti->set_text(0, l);
-		ti->set_icon(0, EditorNode::get_singleton()->get_class_icon(l, base_type));
+		ti->set_icon(0, EditorNode::get_singleton()->get_class_icon(name, icon_fallback));
 	}
 	emit_signal("favorites_updated");
 }
@@ -711,7 +716,7 @@ void CreateDialog::drop_data_fw(const Point2 &p_point, const Variant &p_data, Co
 	if (ds < 0) {
 		favorite_list.insert(favorite_list.begin() + drop_idx, type);
 	} else {
-		if (drop_idx >= favorite_list.size() - 1) {
+		if (drop_idx >= static_cast<int>(favorite_list.size()) - 1) {
 			favorite_list.push_back(type);
 		} else {
 			favorite_list.insert(favorite_list.begin() + drop_idx + 1, type);

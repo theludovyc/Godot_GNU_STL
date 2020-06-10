@@ -1453,7 +1453,7 @@ Expression::ENode *Expression::_parse_expression() {
 					str_ofs = cofs;
 
 					int input_index = -1;
-					for (int i = 0; i < input_names.size(); i++) {
+					for (decltype(input_names.size()) i = 0; i < input_names.size(); i++) {
 						if (input_names[i] == identifier) {
 							input_index = i;
 							break;
@@ -1571,7 +1571,7 @@ Expression::ENode *Expression::_parse_expression() {
 				}
 
 				int expected_args = get_func_argument_count(bifunc->func);
-				if (bifunc->arguments.size() != expected_args) {
+				if (static_cast<int>(bifunc->arguments.size()) != expected_args) {
 					_set_error("Builtin func '" + get_func_name(bifunc->func) + "' expects " + itos(expected_args) + " arguments.");
 				}
 
@@ -1763,7 +1763,7 @@ Expression::ENode *Expression::_parse_expression() {
 		int min_priority = 0xFFFFF;
 		bool is_unary = false;
 
-		for (int i = 0; i < expression.size(); i++) {
+		for (decltype(expression.size()) i = 0; i < expression.size(); i++) {
 
 			if (!expression[i].is_op) {
 
@@ -1845,7 +1845,7 @@ Expression::ENode *Expression::_parse_expression() {
 			while (expression[expr_pos].is_op) {
 
 				expr_pos++;
-				if (expr_pos == expression.size()) {
+				if (expr_pos == static_cast<int>(expression.size())) {
 					//can happen..
 					_set_error("Unexpected end of expression...");
 					return NULL;
@@ -1866,7 +1866,7 @@ Expression::ENode *Expression::_parse_expression() {
 
 		} else {
 
-			if (next_op < 1 || next_op >= (expression.size() - 1)) {
+			if (next_op < 1 || next_op >= (static_cast<int>(expression.size()) - 1)) {
 				_set_error("Parser bug...");
 				ERR_FAIL_V(NULL);
 			}
@@ -2029,7 +2029,7 @@ bool Expression::_execute(const Array &p_inputs, Object *p_instance, Expression:
 
 			Array arr;
 			arr.resize(array->array.size());
-			for (int i = 0; i < array->array.size(); i++) {
+			for (decltype(array->array.size()) i = 0; i < array->array.size(); i++) {
 
 				Variant value;
 				bool ret = _execute(p_inputs, p_instance, array->array[i], value, r_error_str);
@@ -2046,7 +2046,7 @@ bool Expression::_execute(const Array &p_inputs, Object *p_instance, Expression:
 			const Expression::DictionaryNode *dictionary = static_cast<const Expression::DictionaryNode *>(p_node);
 
 			Dictionary d;
-			for (int i = 0; i < dictionary->dict.size(); i += 2) {
+			for (decltype(dictionary->dict.size()) i = 0; i < dictionary->dict.size(); i += 2) {
 
 				Variant key;
 				bool ret = _execute(p_inputs, p_instance, dictionary->dict[i + 0], key, r_error_str);
@@ -2073,7 +2073,7 @@ bool Expression::_execute(const Array &p_inputs, Object *p_instance, Expression:
 			arr.resize(constructor->arguments.size());
 			argp.resize(constructor->arguments.size());
 
-			for (int i = 0; i < constructor->arguments.size(); i++) {
+			for (decltype(constructor->arguments.size()) i = 0; i < constructor->arguments.size(); i++) {
 
 				Variant value;
 				bool ret = _execute(p_inputs, p_instance, constructor->arguments[i], value, r_error_str);
@@ -2102,7 +2102,7 @@ bool Expression::_execute(const Array &p_inputs, Object *p_instance, Expression:
 			arr.resize(bifunc->arguments.size());
 			argp.resize(bifunc->arguments.size());
 
-			for (int i = 0; i < bifunc->arguments.size(); i++) {
+			for (decltype(bifunc->arguments.size()) i = 0; i < bifunc->arguments.size(); i++) {
 
 				Variant value;
 				bool ret = _execute(p_inputs, p_instance, bifunc->arguments[i], value, r_error_str);
@@ -2136,7 +2136,7 @@ bool Expression::_execute(const Array &p_inputs, Object *p_instance, Expression:
 			arr.resize(call->arguments.size());
 			argp.resize(call->arguments.size());
 
-			for (int i = 0; i < call->arguments.size(); i++) {
+			for (decltype(call->arguments.size()) i = 0; i < call->arguments.size(); i++) {
 
 				Variant value;
 				ret = _execute(p_inputs, p_instance, call->arguments[i], value, r_error_str);

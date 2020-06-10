@@ -115,7 +115,7 @@ void ViewportRotationControl::_draw() {
 
 	std::vector<Axis2D> axis_to_draw;
 	_get_sorted_axis(axis_to_draw);
-	for (int i = 0; i < axis_to_draw.size(); ++i) {
+	for (decltype(axis_to_draw.size()) i = 0; i < axis_to_draw.size(); ++i) {
 		_draw_axis(axis_to_draw[i]);
 	}
 }
@@ -197,12 +197,20 @@ void ViewportRotationControl::_gui_input(Ref<InputEvent> p_event) {
 				_update_focus();
 			}
 			orbiting = false;
+			if (Input::get_singleton()->get_mouse_mode() == Input::MOUSE_MODE_CAPTURED) {
+				Input::get_singleton()->set_mouse_mode(Input::MOUSE_MODE_VISIBLE);
+				Input::get_singleton()->warp_mouse_position(orbiting_mouse_start);
+			}
 		}
 	}
 
 	const Ref<InputEventMouseMotion> mm = p_event;
 	if (mm.is_valid()) {
 		if (orbiting) {
+			if (Input::get_singleton()->get_mouse_mode() == Input::MOUSE_MODE_VISIBLE) {
+				Input::get_singleton()->set_mouse_mode(Input::MOUSE_MODE_CAPTURED);
+				orbiting_mouse_start = mm->get_global_position();
+			}
 			viewport->_nav_orbit(mm, viewport->_get_warped_mouse_motion(mm));
 			focused_axis = -1;
 		} else {
@@ -223,7 +231,7 @@ void ViewportRotationControl::_update_focus() {
 	std::vector<Axis2D> axes;
 	_get_sorted_axis(axes);
 
-	for (int i = 0; i < axes.size(); i++) {
+	for (decltype(axes.size()) i = 0; i < axes.size(); i++) {
 		const Axis2D &axis = axes[i];
 		if (mouse_pos.distance_to(axis.screen_point) < AXIS_CIRCLE_RADIUS) {
 			focused_axis = axis.axis;
@@ -502,7 +510,7 @@ ObjectID SpatialEditorViewport::_select_ray(const Point2 &p_pos, bool p_append, 
 	float closest_dist = 1e20;
 	int selected_handle = -1;
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		Spatial *spat = Object::cast_to<Spatial>(ObjectDB::get_instance(instances[i]));
 
@@ -565,7 +573,7 @@ void SpatialEditorViewport::_find_items_at_pos(const Point2 &p_pos, bool &r_incl
 
 	r_includes_current = false;
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		Spatial *spat = Object::cast_to<Spatial>(ObjectDB::get_instance(instances[i]));
 
@@ -684,7 +692,7 @@ void SpatialEditorViewport::_select_region() {
 
 	Node *edited_scene = get_tree()->get_edited_scene_root();
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		Spatial *sp = Object::cast_to<Spatial>(ObjectDB::get_instance(instances[i]));
 		if (!sp || _is_node_locked(sp))
@@ -723,7 +731,7 @@ void SpatialEditorViewport::_select_region() {
 	}
 
 	bool single = selected.size() == 1;
-	for (int i = 0; i < selected.size(); i++) {
+	for (decltype(selected.size()) i = 0; i < selected.size(); i++) {
 		_select(selected[i], true, single);
 	}
 }
@@ -1022,7 +1030,7 @@ void SpatialEditorViewport::_list_select(Ref<InputEventMouseButton> b) {
 
 	Node *scene = editor->get_edited_scene();
 
-	for (int i = 0; i < selection_results.size(); i++) {
+	for (int i = 0; i < static_cast<int>(selection_results.size()); i++) {
 		Spatial *item = selection_results[i].item;
 		if (item != scene && item->get_owner() != scene && !scene->is_editable_instance(item->get_owner())) {
 			//invalid result
@@ -1048,7 +1056,7 @@ void SpatialEditorViewport::_list_select(Ref<InputEventMouseButton> b) {
 		NodePath root_path = get_tree()->get_edited_scene_root()->get_path();
 		StringName root_name = root_path.get_name(root_path.get_name_count() - 1);
 
-		for (int i = 0; i < selection_results.size(); i++) {
+		for (decltype(selection_results.size()) i = 0; i < selection_results.size(); i++) {
 
 			Spatial *spat = selection_results[i].item;
 
@@ -2184,14 +2192,14 @@ void SpatialEditorViewport::set_freelook_active(bool active_now) {
 		}
 
 		// Hide mouse like in an FPS (warping doesn't work)
-		OS::get_singleton()->set_mouse_mode(OS::MOUSE_MODE_CAPTURED);
+		Input::get_singleton()->set_mouse_mode(Input::MOUSE_MODE_CAPTURED);
 
 	} else if (freelook_active && !active_now) {
 		// Sync camera cursor to cursor to "cut" interpolation jumps due to changing referential
 		cursor = camera_cursor;
 
 		// Restore mouse
-		OS::get_singleton()->set_mouse_mode(OS::MOUSE_MODE_VISIBLE);
+		Input::get_singleton()->set_mouse_mode(Input::MOUSE_MODE_VISIBLE);
 	}
 
 	freelook_active = active_now;
@@ -3092,6 +3100,8 @@ void SpatialEditorViewport::_toggle_camera_preview(bool p_activate) {
 	ERR_FAIL_COND(p_activate && !preview);
 	ERR_FAIL_COND(!p_activate && !previewing);
 
+	rotation_control->set_visible(!p_activate);
+
 	if (!p_activate) {
 
 		previewing->disconnect("tree_exiting", this, "_preview_exited_scene");
@@ -3133,7 +3143,7 @@ void SpatialEditorViewport::_toggle_cinema_preview(bool p_activate) {
 
 void SpatialEditorViewport::_selection_result_pressed(int p_result) {
 
-	if (selection_results.size() <= p_result)
+	if (static_cast<int>(selection_results.size()) <= p_result)
 		return;
 
 	clicked = selection_results[p_result].item->get_instance_id();
@@ -3457,7 +3467,7 @@ Vector3 SpatialEditorViewport::_get_instance_position(const Point2 &p_pos) const
 	Vector3 point = world_pos + world_ray * MAX_DISTANCE;
 	Vector3 normal = Vector3(0.0, 0.0, 0.0);
 
-	for (int i = 0; i < instances.size(); i++) {
+	for (decltype(instances.size()) i = 0; i < instances.size(); i++) {
 
 		MeshInstance *mesh_instance = Object::cast_to<MeshInstance>(ObjectDB::get_instance(instances[i]));
 
@@ -3533,7 +3543,7 @@ AABB SpatialEditorViewport::_calculate_spatial_bounds(const Spatial *p_parent, b
 }
 
 void SpatialEditorViewport::_create_preview(const std::vector<String> &files) const {
-	for (int i = 0; i < files.size(); i++) {
+	for (decltype(files.size()) i = 0; i < files.size(); i++) {
 		String path = files[i];
 		RES res = ResourceLoader::load(path);
 		ERR_CONTINUE(res.is_null());
@@ -3633,14 +3643,19 @@ bool SpatialEditorViewport::_create_instance(Node *parent, String &path, const P
 	editor_data->get_undo_redo().add_do_method(sed, "live_debug_instance_node", editor->get_edited_scene()->get_path_to(parent), path, new_name);
 	editor_data->get_undo_redo().add_undo_method(sed, "live_debug_remove_node", NodePath(String(editor->get_edited_scene()->get_path_to(parent)) + "/" + new_name));
 
-	Transform global_transform;
-	Spatial *parent_spatial = Object::cast_to<Spatial>(parent);
-	if (parent_spatial)
-		global_transform = parent_spatial->get_global_gizmo_transform();
+	Spatial *spatial = Object::cast_to<Spatial>(instanced_scene);
+	if (spatial) {
+		Transform global_transform;
+		Spatial *parent_spatial = Object::cast_to<Spatial>(parent);
+		if (parent_spatial) {
+			global_transform = parent_spatial->get_global_gizmo_transform();
+		}
 
-	global_transform.origin = spatial_editor->snap_point(_get_instance_position(p_point));
+		global_transform.origin = spatial_editor->snap_point(_get_instance_position(p_point));
+		global_transform.basis *= spatial->get_transform().basis;
 
-	editor_data->get_undo_redo().add_do_method(instanced_scene, "set_global_transform", global_transform);
+		editor_data->get_undo_redo().add_do_method(instanced_scene, "set_global_transform", global_transform);
+	}
 
 	return true;
 }
@@ -3652,7 +3667,7 @@ void SpatialEditorViewport::_perform_drop_data() {
 
 	editor_data->get_undo_redo().create_action(TTR("Create Node"));
 
-	for (int i = 0; i < selected_files.size(); i++) {
+	for (decltype(selected_files.size()) i = 0; i < selected_files.size(); i++) {
 		String path = selected_files[i];
 		RES res = ResourceLoader::load(path);
 		if (res.is_null()) {
@@ -3672,7 +3687,7 @@ void SpatialEditorViewport::_perform_drop_data() {
 
 	if (error_files.size() > 0) {
 		String files_str;
-		for (int i = 0; i < error_files.size(); i++) {
+		for (decltype(error_files.size()) i = 0; i < error_files.size(); i++) {
 			files_str += error_files[i].get_file().get_basename() + ",";
 		}
 		files_str = files_str.substr(0, files_str.length() - 1);
@@ -3695,7 +3710,7 @@ bool SpatialEditorViewport::can_drop_data_fw(const Point2 &p_point, const Varian
 			List<String> mesh_extensions;
 			ResourceLoader::get_recognized_extensions_for_type("Mesh", &mesh_extensions);
 
-			for (int i = 0; i < files.size(); i++) {
+			for (decltype(files.size()) i = 0; i < files.size(); i++) {
 				if (mesh_extensions.find(files[i].get_extension()) || scene_extensions.find(files[i].get_extension())) {
 					RES res = ResourceLoader::load(files[i]);
 					if (res.is_null()) {
@@ -4502,7 +4517,7 @@ Dictionary SpatialEditor::get_state() const {
 	d["zfar"] = get_zfar();
 
 	Dictionary gizmos_status;
-	for (int i = 0; i < gizmo_plugins_by_name.size(); i++) {
+	for (decltype(gizmo_plugins_by_name.size()) i = 0; i < gizmo_plugins_by_name.size(); i++) {
 		if (!gizmo_plugins_by_name[i]->can_be_hidden()) continue;
 		int state = gizmos_menu->get_item_state(gizmos_menu->get_item_index(i));
 		String name = gizmo_plugins_by_name[i]->get_name();
@@ -4596,7 +4611,7 @@ void SpatialEditor::set_state(const Dictionary &p_state) {
 		List<Variant> keys;
 		gizmos_status.get_key_list(&keys);
 
-		for (int j = 0; j < gizmo_plugins_by_name.size(); ++j) {
+		for (decltype(gizmo_plugins_by_name.size()) j = 0; j < gizmo_plugins_by_name.size(); ++j) {
 			if (!gizmo_plugins_by_name[j]->can_be_hidden()) continue;
 			int state = EditorSpatialGizmoPlugin::VISIBLE;
 			for (int i = 0; i < keys.size(); i++) {
@@ -5361,7 +5376,7 @@ void SpatialEditor::_update_gizmos_menu() {
 
 	gizmos_menu->clear();
 
-	for (int i = 0; i < gizmo_plugins_by_name.size(); ++i) {
+	for (decltype(gizmo_plugins_by_name.size()) i = 0; i < gizmo_plugins_by_name.size(); ++i) {
 		if (!gizmo_plugins_by_name[i]->can_be_hidden()) continue;
 		String plugin_name = gizmo_plugins_by_name[i]->get_name();
 		const int plugin_state = gizmo_plugins_by_name[i]->get_state();
@@ -5382,7 +5397,7 @@ void SpatialEditor::_update_gizmos_menu() {
 }
 
 void SpatialEditor::_update_gizmos_menu_theme() {
-	for (int i = 0; i < gizmo_plugins_by_name.size(); ++i) {
+	for (decltype(gizmo_plugins_by_name.size()) i = 0; i < gizmo_plugins_by_name.size(); ++i) {
 		if (!gizmo_plugins_by_name[i]->can_be_hidden()) continue;
 		const int plugin_state = gizmo_plugins_by_name[i]->get_state();
 		const int idx = gizmos_menu->get_item_index(i);
@@ -5776,7 +5791,7 @@ void SpatialEditor::_request_gizmo(Object *p_obj) {
 
 		Ref<EditorSpatialGizmo> seg;
 
-		for (int i = 0; i < gizmo_plugins_by_priority.size(); ++i) {
+		for (decltype(gizmo_plugins_by_priority.size()) i = 0; i < gizmo_plugins_by_priority.size(); ++i) {
 			seg = gizmo_plugins_by_priority[i]->get_gizmo(sp);
 
 			if (seg.is_valid()) {

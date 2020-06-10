@@ -44,7 +44,7 @@
 
 void AnimationNodeBlendTreeEditor::add_custom_type(const String &p_name, const Ref<Script> &p_script) {
 
-	for (int i = 0; i < add_options.size(); i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 		ERR_FAIL_COND(add_options[i].script == p_script);
 	}
 
@@ -58,7 +58,7 @@ void AnimationNodeBlendTreeEditor::add_custom_type(const String &p_name, const R
 
 void AnimationNodeBlendTreeEditor::remove_custom_type(const Ref<Script> &p_script) {
 
-	for (int i = 0; i < add_options.size(); i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 		if (add_options[i].script == p_script) {
 			add_options.erase(add_options.begin() + i);
 			return;
@@ -71,7 +71,7 @@ void AnimationNodeBlendTreeEditor::remove_custom_type(const Ref<Script> &p_scrip
 void AnimationNodeBlendTreeEditor::_update_options_menu() {
 
 	add_node->get_popup()->clear();
-	for (int i = 0; i < add_options.size(); i++) {
+	for (decltype(add_options.size()) i = 0; i < add_options.size(); i++) {
 		add_node->get_popup()->add_item(add_options[i].name, i);
 	}
 
@@ -778,7 +778,7 @@ void AnimationNodeBlendTreeEditor::_notification(int p_what) {
 			}
 		}
 
-		for (int i = 0; i < visible_properties.size(); i++) {
+		for (decltype(visible_properties.size()) i = 0; i < visible_properties.size(); i++) {
 			visible_properties[i]->update_property();
 		}
 	}
@@ -864,7 +864,7 @@ void AnimationNodeBlendTreeEditor::_node_renamed(const String &p_text, Ref<Anima
 	gn->set_size(gn->get_minimum_size());
 
 	//change editors accordingly
-	for (int i = 0; i < visible_properties.size(); i++) {
+	for (decltype(visible_properties.size()) i = 0; i < visible_properties.size(); i++) {
 		String pname = visible_properties[i]->get_edited_property().operator String();
 		if (pname.begins_with(base_path + prev_name)) {
 			String new_name2 = pname.replace_first(base_path + prev_name, base_path + name);

@@ -48,7 +48,7 @@ void ConnectionInfoDialog::popup_connections(String p_method, std::vector<Node *
 	tree->clear();
 	TreeItem *root = tree->create_item();
 
-	for (int i = 0; i < p_nodes.size(); i++) {
+	for (decltype(p_nodes.size()) i = 0; i < p_nodes.size(); i++) {
 		List<Connection> all_connections;
 		p_nodes[i]->get_signals_connected_to_this(&all_connections);
 
@@ -627,6 +627,18 @@ void ScriptTextEditor::_validate_script() {
 	for (List<ScriptLanguage::Warning>::Element *E = warnings.front(); E; E = E->next()) {
 		ScriptLanguage::Warning w = E->get();
 
+		Dictionary ignore_meta;
+		ignore_meta["line"] = w.line;
+		ignore_meta["code"] = w.string_code.to_lower();
+		warnings_panel->push_cell();
+		warnings_panel->push_meta(ignore_meta);
+		warnings_panel->push_color(
+				warnings_panel->get_color("accent_color", "Editor").linear_interpolate(warnings_panel->get_color("mono_color", "Editor"), 0.5));
+		warnings_panel->add_text(TTR("[Ignore]"));
+		warnings_panel->pop(); // Color.
+		warnings_panel->pop(); // Meta ignore.
+		warnings_panel->pop(); // Cell.
+
 		warnings_panel->push_cell();
 		warnings_panel->push_meta(w.line - 1);
 		warnings_panel->push_color(warnings_panel->get_color("warning_color", "Editor"));
@@ -638,15 +650,6 @@ void ScriptTextEditor::_validate_script() {
 
 		warnings_panel->push_cell();
 		warnings_panel->add_text(w.message);
-		warnings_panel->pop(); // Cell.
-
-		Dictionary ignore_meta;
-		ignore_meta["line"] = w.line;
-		ignore_meta["code"] = w.string_code.to_lower();
-		warnings_panel->push_cell();
-		warnings_panel->push_meta(ignore_meta);
-		warnings_panel->add_text(TTR("(ignore)"));
-		warnings_panel->pop(); // Meta ignore.
 		warnings_panel->pop(); // Cell.
 	}
 	warnings_panel->pop(); // Table.
@@ -973,7 +976,33 @@ void ScriptTextEditor::_lookup_symbol(const String &p_symbol, int p_row, int p_c
 				emit_signal("go_to_help", "class_global:" + result.class_name + ":" + result.class_member);
 			} break;
 		}
+	} else if (ProjectSettings::get_singleton()->has_setting("autoload/" + p_symbol)) {
+		//check for Autoload scenes
+		String path = ProjectSettings::get_singleton()->get("autoload/" + p_symbol);
+		if (path.begins_with("*")) {
+			path = path.substr(1, path.length());
+			EditorNode::get_singleton()->load_scene(path);
+		}
+	} else if (p_symbol.is_rel_path()) {
+		// Every symbol other than absolute path is relative path so keep this condition at last.
+		String path = _get_absolute_path(p_symbol);
+		if (FileAccess::exists(path)) {
+			List<String> scene_extensions;
+			ResourceLoader::get_recognized_extensions_for_type("PackedScene", &scene_extensions);
+
+			if (scene_extensions.find(path.get_extension())) {
+				EditorNode::get_singleton()->load_scene(path);
+			} else {
+				EditorNode::get_singleton()->load_resource(path);
+			}
+		}
 	}
+}
+
+String ScriptTextEditor::_get_absolute_path(const String &rel_path) {
+	String base_path = script->get_path().get_base_dir();
+	String path = base_path.plus_file(rel_path);
+	return path.replace("///", "//").simplify_path();
 }
 
 void ScriptTextEditor::update_toggle_scripts_button() {
@@ -998,7 +1027,7 @@ void ScriptTextEditor::_update_connected_methods() {
 
 	std::vector<Node *> nodes = _find_all_node_for_script(base, base, script);
 	Set<StringName> methods_found;
-	for (int i = 0; i < nodes.size(); i++) {
+	for (decltype(nodes.size()) i = 0; i < nodes.size(); i++) {
 		List<Connection> connections;
 		nodes[i]->get_signals_connected_to_this(&connections);
 
@@ -1021,7 +1050,7 @@ void ScriptTextEditor::_update_connected_methods() {
 			if (!ClassDB::has_method(script->get_instance_base_type(), connection.method)) {
 				int line = -1;
 
-				for (int j = 0; j < functions.size(); j++) {
+				for (decltype(functions.size()) j = 0; j < functions.size(); j++) {
 					String name = functions[j].get_slice(":", 0);
 					if (name == connection.method) {
 						line = functions[j].get_slice(":", 1).to_int();
@@ -1217,7 +1246,7 @@ void ScriptTextEditor::_edit_option(int p_op) {
 			std::vector<String> lines = code_editor->get_text_edit()->get_selection_text().split("\n");
 			PoolStringArray results;
 
-			for (int i = 0; i < lines.size(); i++) {
+			for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 				String line = lines[i];
 				String whitespace = line.substr(0, line.size() - line.strip_edges(true, false).size()); //extract the whitespace at the beginning
 
@@ -1782,6 +1811,8 @@ ScriptTextEditor::ScriptTextEditor() {
 
 	warnings_panel = memnew(RichTextLabel);
 	editor_box->add_child(warnings_panel);
+	warnings_panel->add_font_override(
+			"normal_font", EditorNode::get_singleton()->get_gui_base()->get_font("main", "EditorFonts"));
 	warnings_panel->set_custom_minimum_size(Size2(0, 100 * EDSCALE));
 	warnings_panel->set_h_size_flags(SIZE_EXPAND_FILL);
 	warnings_panel->set_meta_underline(true);

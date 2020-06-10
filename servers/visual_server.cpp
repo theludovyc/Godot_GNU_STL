@@ -93,7 +93,7 @@ Array VisualServer::_shader_get_param_list_bind(RID p_shader) const {
 static Array to_array(const std::vector<ObjectID> &ids) {
 	Array a;
 	a.resize(ids.size());
-	for (int i = 0; i < ids.size(); ++i) {
+	for (decltype(ids.size()) i = 0; i < ids.size(); ++i) {
 		a[i] = ids[i];
 	}
 	return a;
@@ -1616,7 +1616,7 @@ Array VisualServer::mesh_surface_get_blend_shape_arrays(RID p_mesh, int p_surfac
 
 		Array blend_shape_array;
 		blend_shape_array.resize(blend_shape_data.size());
-		for (int i = 0; i < blend_shape_data.size(); i++) {
+		for (decltype(blend_shape_data.size()) i = 0; i < blend_shape_data.size(); i++) {
 			blend_shape_array.set(i, _get_array_from_surface(format, blend_shape_data[i], vertex_len, index_data, index_len));
 		}
 
@@ -1630,7 +1630,7 @@ Array VisualServer::_mesh_surface_get_skeleton_aabb_bind(RID p_mesh, int p_surfa
 
 	std::vector<AABB> vec = VS::get_singleton()->mesh_surface_get_skeleton_aabb(p_mesh, p_surface);
 	Array arr;
-	for (int i = 0; i < vec.size(); i++) {
+	for (decltype(vec.size()) i = 0; i < vec.size(); i++) {
 		arr[i] = vec[i];
 	}
 	return arr;
@@ -2044,6 +2044,7 @@ void VisualServer::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_boot_image", "image", "color", "scale", "use_filter"), &VisualServer::set_boot_image, DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("set_default_clear_color", "color"), &VisualServer::set_default_clear_color);
+	ClassDB::bind_method(D_METHOD("set_shader_time_scale", "scale"), &VisualServer::set_shader_time_scale);
 
 	ClassDB::bind_method(D_METHOD("has_feature", "feature"), &VisualServer::has_feature);
 	ClassDB::bind_method(D_METHOD("has_os_feature", "feature"), &VisualServer::has_os_feature);
@@ -2326,11 +2327,11 @@ void VisualServer::mesh_add_surface_from_mesh_data(RID p_mesh, const Geometry::M
 	PoolVector<Vector3> vertices;
 	PoolVector<Vector3> normals;
 
-	for (int i = 0; i < p_mesh_data.faces.size(); i++) {
+	for (decltype(p_mesh_data.faces.size()) i = 0; i < p_mesh_data.faces.size(); i++) {
 
 		const Geometry::MeshData::Face &f = p_mesh_data.faces[i];
 
-		for (int j = 2; j < f.indices.size(); j++) {
+		for (decltype(f.indices.size()) j = 2; j < f.indices.size(); j++) {
 
 #define _ADD_VERTEX(m_idx)                                      \
 	vertices.push_back(p_mesh_data.vertices[f.indices[m_idx]]); \
@@ -2419,25 +2420,25 @@ VisualServer::VisualServer() {
 
 	GLOBAL_DEF("rendering/quality/filters/use_nearest_mipmap_filter", false);
 
-	GLOBAL_DEF("rendering/gles2/batching/use_batching", true);
-	GLOBAL_DEF("rendering/gles2/batching/max_join_item_commands", 16);
-	GLOBAL_DEF("rendering/gles2/batching/colored_vertex_format_threshold", 0.25f);
-	GLOBAL_DEF("rendering/gles2/batching/light_scissor_area_threshold", 1.0f);
-	GLOBAL_DEF("rendering/gles2/batching/light_max_join_items", 32);
-	GLOBAL_DEF("rendering/gles2/batching/batch_buffer_size", 16384);
-	GLOBAL_DEF("rendering/gles2/batching/item_reordering_lookahead", 4);
-	GLOBAL_DEF("rendering/gles2/batching/single_rect_fallback", false);
-	GLOBAL_DEF("rendering/gles2/debug/flash_batching", false);
-	GLOBAL_DEF("rendering/gles2/debug/diagnose_frame", false);
-	GLOBAL_DEF_RST("rendering/gles2/debug/use_batching_in_editor", true);
-	GLOBAL_DEF("rendering/gles2/debug/disable_half_float", false);
+	GLOBAL_DEF("rendering/batching/options/use_batching", true);
+	GLOBAL_DEF_RST("rendering/batching/options/use_batching_in_editor", true);
+	GLOBAL_DEF("rendering/batching/options/single_rect_fallback", false);
+	GLOBAL_DEF("rendering/batching/parameters/max_join_item_commands", 16);
+	GLOBAL_DEF("rendering/batching/parameters/colored_vertex_format_threshold", 0.25f);
+	GLOBAL_DEF("rendering/batching/lights/scissor_area_threshold", 1.0f);
+	GLOBAL_DEF("rendering/batching/lights/max_join_items", 32);
+	GLOBAL_DEF("rendering/batching/parameters/batch_buffer_size", 16384);
+	GLOBAL_DEF("rendering/batching/parameters/item_reordering_lookahead", 4);
+	GLOBAL_DEF("rendering/batching/debug/flash_batching", false);
+	GLOBAL_DEF("rendering/batching/debug/diagnose_frame", false);
+	GLOBAL_DEF("rendering/gles2/compatibility/disable_half_float", false);
 
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/max_join_item_commands", PropertyInfo(Variant::INT, "rendering/gles2/batching/max_join_item_commands", PROPERTY_HINT_RANGE, "0,65535"));
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/colored_vertex_format_threshold", PropertyInfo(Variant::REAL, "rendering/gles2/batching/colored_vertex_format_threshold", PROPERTY_HINT_RANGE, "0.0,1.0,0.01"));
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/batch_buffer_size", PropertyInfo(Variant::INT, "rendering/gles2/batching/batch_buffer_size", PROPERTY_HINT_RANGE, "1024,65535,1024"));
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/light_scissor_area_threshold", PropertyInfo(Variant::REAL, "rendering/gles2/batching/light_scissor_area_threshold", PROPERTY_HINT_RANGE, "0.0,1.0"));
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/light_max_join_items", PropertyInfo(Variant::INT, "rendering/gles2/batching/light_max_join_items", PROPERTY_HINT_RANGE, "0,512"));
-	ProjectSettings::get_singleton()->set_custom_property_info("rendering/gles2/batching/item_reordering_lookahead", PropertyInfo(Variant::INT, "rendering/gles2/batching/item_reordering_lookahead", PROPERTY_HINT_RANGE, "0,256"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/parameters/max_join_item_commands", PropertyInfo(Variant::INT, "rendering/batching/parameters/max_join_item_commands", PROPERTY_HINT_RANGE, "0,65535"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/parameters/colored_vertex_format_threshold", PropertyInfo(Variant::REAL, "rendering/batching/parameters/colored_vertex_format_threshold", PROPERTY_HINT_RANGE, "0.0,1.0,0.01"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/parameters/batch_buffer_size", PropertyInfo(Variant::INT, "rendering/batching/parameters/batch_buffer_size", PROPERTY_HINT_RANGE, "1024,65535,1024"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/lights/scissor_area_threshold", PropertyInfo(Variant::REAL, "rendering/batching/lights/scissor_area_threshold", PROPERTY_HINT_RANGE, "0.0,1.0"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/lights/max_join_items", PropertyInfo(Variant::INT, "rendering/batching/lights/max_join_items", PROPERTY_HINT_RANGE, "0,512"));
+	ProjectSettings::get_singleton()->set_custom_property_info("rendering/batching/parameters/item_reordering_lookahead", PropertyInfo(Variant::INT, "rendering/batching/parameters/item_reordering_lookahead", PROPERTY_HINT_RANGE, "0,256"));
 }
 
 VisualServer::~VisualServer() {

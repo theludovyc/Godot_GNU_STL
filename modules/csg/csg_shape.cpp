@@ -197,7 +197,7 @@ CSGBrush *CSGShape::_get_brush() {
 
 		if (n) {
 			AABB aabb;
-			for (int i = 0; i < n->faces.size(); i++) {
+			for (decltype(n->faces.size()) i = 0; i < n->faces.size(); i++) {
 				for (int j = 0; j < 3; j++) {
 					if (i == 0 && j == 0)
 						aabb.position = n->faces[i].vertices[j];
@@ -288,13 +288,14 @@ void CSGShape::_update_shape() {
 
 	std::vector<int> face_count;
 	face_count.resize(n->materials.size() + 1);
-	for (int i = 0; i < face_count.size(); i++) {
+	for (decltype(face_count.size()) i = 0; i < face_count.size(); i++) {
 		face_count[i] = 0;
 	}
 
-	for (int i = 0; i < n->faces.size(); i++) {
+	for (decltype(n->faces.size()) i = 0; i < n->faces.size(); i++) {
 		int mat = n->faces[i].material;
-		ERR_CONTINUE(mat < -1 || mat >= face_count.size());
+		int size = face_count.size();
+		ERR_CONTINUE(mat < -1 || mat >= size);
 		int idx = mat == -1 ? face_count.size() - 1 : mat;
 
 		Plane p(n->faces[i].vertices[0], n->faces[i].vertices[1], n->faces[i].vertices[2]);
@@ -318,7 +319,8 @@ void CSGShape::_update_shape() {
 	surfaces.resize(face_count.size());
 
 	//create arrays
-	for (int i = 0; i < surfaces.size(); i++) {
+	auto len = surfaces.size();
+	for (decltype(len) i = 0; i < len; i++) {
 
 		surfaces[i].vertices.resize(face_count[i] * 3);
 		surfaces[i].normals.resize(face_count[i] * 3);
@@ -328,7 +330,7 @@ void CSGShape::_update_shape() {
 		}
 		surfaces[i].last_added = 0;
 
-		if (i != surfaces.size() - 1) {
+		if (i != len - 1) {
 			surfaces[i].material = n->materials[i];
 		}
 
@@ -340,21 +342,31 @@ void CSGShape::_update_shape() {
 		}
 	}
 
-	//fill arrays
-	PoolVector<Vector3> physics_faces;
-	bool fill_physics_faces = false;
+	// Update collision faces.
 	if (root_collision_shape.is_valid()) {
+
+		PoolVector<Vector3> physics_faces;
 		physics_faces.resize(n->faces.size() * 3);
-		fill_physics_faces = true;
-	}
+		PoolVector<Vector3>::Write physicsw = physics_faces.write();
 
-	{
-		PoolVector<Vector3>::Write physicsw;
+		for (decltype(n->faces.size()) i = 0; i < n->faces.size(); i++) {
 
-		if (fill_physics_faces) {
-			physicsw = physics_faces.write();
+			int order[3] = { 0, 1, 2 };
+
+			if (n->faces[i].invert) {
+				SWAP(order[1], order[2]);
+			}
+
+			physicsw[i * 3 + 0] = n->faces[i].vertices[order[0]];
+			physicsw[i * 3 + 1] = n->faces[i].vertices[order[1]];
+			physicsw[i * 3 + 2] = n->faces[i].vertices[order[2]];
 		}
 
+		root_collision_shape->set_faces(physics_faces);
+	}
+
+	//fill arrays
+	{
 		for (int i = 0; i < n->faces.size(); i++) {
 
 			int order[3] = { 0, 1, 2 };
@@ -363,15 +375,10 @@ void CSGShape::_update_shape() {
 				SWAP(order[1], order[2]);
 			}
 
-			if (fill_physics_faces) {
-				physicsw[i * 3 + 0] = n->faces[i].vertices[order[0]];
-				physicsw[i * 3 + 1] = n->faces[i].vertices[order[1]];
-				physicsw[i * 3 + 2] = n->faces[i].vertices[order[2]];
-			}
-
 			int mat = n->faces[i].material;
-			ERR_CONTINUE(mat < -1 || mat >= face_count.size());
-			int idx = mat == -1 ? face_count.size() - 1 : mat;
+			int size = face_count.size();
+			ERR_CONTINUE(mat < -1 || mat >= size);
+			int idx = mat == -1 ? size - 1 : mat;
 
 			int last = surfaces[idx].last_added;
 
@@ -414,7 +421,7 @@ void CSGShape::_update_shape() {
 	root_mesh.instance();
 	//create surfaces
 
-	for (int i = 0; i < surfaces.size(); i++) {
+	for (decltype(surfaces.size()) i = 0; i < surfaces.size(); i++) {
 		// calculate tangents for this surface
 		bool have_tangents = calculate_tangents;
 		if (have_tangents) {
@@ -456,10 +463,6 @@ void CSGShape::_update_shape() {
 		int idx = root_mesh->get_surface_count();
 		root_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, array);
 		root_mesh->surface_set_material(idx, surfaces[i].material);
-	}
-
-	if (root_collision_shape.is_valid()) {
-		root_collision_shape->set_faces(physics_faces);
 	}
 
 	set_base(root_mesh->get_rid());
@@ -1789,7 +1792,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 	// get bounds for our polygon
 	Vector2 final_polygon_min;
 	Vector2 final_polygon_max;
-	for (int i = 0; i < final_polygon.size(); i++) {
+	for (decltype(final_polygon.size()) i = 0; i < final_polygon.size(); i++) {
 		Vector2 p = final_polygon[i];
 		if (i == 0) {
 			final_polygon_min = p;
@@ -1884,7 +1887,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 				//add triangles, front and back
 				for (int i = 0; i < 2; i++) {
 
-					for (int j = 0; j < triangles.size(); j += 3) {
+					for (decltype(triangles.size()) j = 0; j < triangles.size(); j += 3) {
 						for (int k = 0; k < 3; k++) {
 							int src[3] = { 0, i == 0 ? 1 : 2, i == 0 ? 2 : 1 };
 							Vector2 p = final_polygon[triangles[j + src[k]]];
@@ -1907,7 +1910,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 				}
 
 				//add triangles for depth
-				for (int i = 0; i < final_polygon.size(); i++) {
+				for (decltype(final_polygon.size()) i = 0; i < final_polygon.size(); i++) {
 
 					int i_n = (i + 1) % final_polygon.size();
 
@@ -1971,7 +1974,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 					Vector3 normali_n = Vector3(Math::cos(angi_n), 0, Math::sin(angi_n));
 
 					//add triangles for depth
-					for (int j = 0; j < final_polygon.size(); j++) {
+					for (decltype(final_polygon.size()) j = 0; j < final_polygon.size(); j++) {
 
 						int j_n = (j + 1) % final_polygon.size();
 
@@ -2022,7 +2025,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 
 					if (i == 0 && spin_degrees < 360) {
 
-						for (int j = 0; j < triangles.size(); j += 3) {
+						for (decltype(triangles.size()) j = 0; j < triangles.size(); j += 3) {
 							for (int k = 0; k < 3; k++) {
 								int src[3] = { 0, 2, 1 };
 								Vector2 p = final_polygon[triangles[j + src[k]]];
@@ -2040,7 +2043,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 
 					if (i == spin_sides - 1 && spin_degrees < 360) {
 
-						for (int j = 0; j < triangles.size(); j += 3) {
+						for (decltype(triangles.size()) j = 0; j < triangles.size(); j += 3) {
 							for (int k = 0; k < 3; k++) {
 								int src[3] = { 0, 1, 2 };
 								Vector2 p = final_polygon[triangles[j + src[k]]];
@@ -2124,7 +2127,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 
 						//put triangles where they belong
 						//add triangles for depth
-						for (int j = 0; j < final_polygon.size(); j++) {
+						for (decltype(final_polygon.size()) j = 0; j < final_polygon.size(); j++) {
 
 							int j_n = (j + 1) % final_polygon.size();
 
@@ -2176,7 +2179,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 
 					if (i == 0 && !path_joined) {
 
-						for (int j = 0; j < triangles.size(); j += 3) {
+						for (decltype(triangles.size()) j = 0; j < triangles.size(); j += 3) {
 							for (int k = 0; k < 3; k++) {
 								int src[3] = { 0, 1, 2 };
 								Vector2 p = final_polygon[triangles[j + src[k]]];
@@ -2194,7 +2197,7 @@ CSGBrush *CSGPolygon::_build_brush() {
 
 					if (i == splits && !path_joined) {
 
-						for (int j = 0; j < triangles.size(); j += 3) {
+						for (decltype(triangles.size()) j = 0; j < triangles.size(); j += 3) {
 							for (int k = 0; k < 3; k++) {
 								int src[3] = { 0, 2, 1 };
 								Vector2 p = final_polygon[triangles[j + src[k]]];

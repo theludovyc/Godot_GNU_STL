@@ -342,7 +342,7 @@ bool EditorHelpSearch::Runner::_phase_match_classes() {
 		// Match members if the term is long enough.
 		if (term.length() > 1) {
 			if (search_flags & SEARCH_METHODS)
-				for (int i = 0; i < class_doc.methods.size(); i++) {
+				for (decltype(class_doc.methods.size()) i = 0; i < class_doc.methods.size(); i++) {
 					String method_name = (search_flags & SEARCH_CASE_SENSITIVE) ? class_doc.methods[i].name : class_doc.methods[i].name.to_lower();
 					String aux_term = (search_flags & SEARCH_CASE_SENSITIVE) ? term : term.to_lower();
 
@@ -356,19 +356,19 @@ bool EditorHelpSearch::Runner::_phase_match_classes() {
 						match.methods.push_back(const_cast<DocData::MethodDoc *>(&class_doc.methods[i]));
 				}
 			if (search_flags & SEARCH_SIGNALS)
-				for (int i = 0; i < class_doc.signals.size(); i++)
+				for (decltype(class_doc.signals.size()) i = 0; i < class_doc.signals.size(); i++)
 					if (_match_string(term, class_doc.signals[i].name))
 						match.signals.push_back(const_cast<DocData::MethodDoc *>(&class_doc.signals[i]));
 			if (search_flags & SEARCH_CONSTANTS)
-				for (int i = 0; i < class_doc.constants.size(); i++)
+				for (decltype(class_doc.constants.size()) i = 0; i < class_doc.constants.size(); i++)
 					if (_match_string(term, class_doc.constants[i].name))
 						match.constants.push_back(const_cast<DocData::ConstantDoc *>(&class_doc.constants[i]));
 			if (search_flags & SEARCH_PROPERTIES)
-				for (int i = 0; i < class_doc.properties.size(); i++)
+				for (decltype(class_doc.properties.size()) i = 0; i < class_doc.properties.size(); i++)
 					if (_match_string(term, class_doc.properties[i].name) || _match_string(term, class_doc.properties[i].getter) || _match_string(term, class_doc.properties[i].setter))
 						match.properties.push_back(const_cast<DocData::PropertyDoc *>(&class_doc.properties[i]));
 			if (search_flags & SEARCH_THEME_ITEMS)
-				for (int i = 0; i < class_doc.theme_properties.size(); i++)
+				for (decltype(class_doc.theme_properties.size()) i = 0; i < class_doc.theme_properties.size(); i++)
 					if (_match_string(term, class_doc.theme_properties[i].name))
 						match.theme_properties.push_back(const_cast<DocData::PropertyDoc *>(&class_doc.theme_properties[i]));
 		}
@@ -417,15 +417,15 @@ bool EditorHelpSearch::Runner::_phase_member_items() {
 	ClassMatch &match = iterator_match->value();
 
 	TreeItem *parent = (search_flags & SEARCH_SHOW_HIERARCHY) ? class_items[match.doc->name] : root_item;
-	for (int i = 0; i < match.methods.size(); i++)
+	for (decltype(match.methods.size()) i = 0; i < match.methods.size(); i++)
 		_create_method_item(parent, match.doc, match.methods[i]);
-	for (int i = 0; i < match.signals.size(); i++)
+	for (decltype(match.signals.size()) i = 0; i < match.signals.size(); i++)
 		_create_signal_item(parent, match.doc, match.signals[i]);
-	for (int i = 0; i < match.constants.size(); i++)
+	for (decltype(match.constants.size()) i = 0; i < match.constants.size(); i++)
 		_create_constant_item(parent, match.doc, match.constants[i]);
-	for (int i = 0; i < match.properties.size(); i++)
+	for (decltype(match.properties.size()) i = 0; i < match.properties.size(); i++)
 		_create_property_item(parent, match.doc, match.properties[i]);
-	for (int i = 0; i < match.theme_properties.size(); i++)
+	for (decltype(match.theme_properties.size()) i = 0; i < match.theme_properties.size(); i++)
 		_create_theme_property_item(parent, match.doc, match.theme_properties[i]);
 
 	iterator_match = iterator_match->next();
@@ -510,7 +510,7 @@ TreeItem *EditorHelpSearch::Runner::_create_class_item(TreeItem *p_parent, const
 TreeItem *EditorHelpSearch::Runner::_create_method_item(TreeItem *p_parent, const DocData::ClassDoc *p_class_doc, const DocData::MethodDoc *p_doc) {
 
 	String tooltip = p_doc->return_type + " " + p_class_doc->name + "." + p_doc->name + "(";
-	for (int i = 0; i < p_doc->arguments.size(); i++) {
+	for (decltype(p_doc->arguments.size()) i = 0; i < p_doc->arguments.size(); i++) {
 		const DocData::ArgumentDoc &arg = p_doc->arguments[i];
 		tooltip += arg.type + " " + arg.name;
 		if (arg.default_value != "")
@@ -525,7 +525,7 @@ TreeItem *EditorHelpSearch::Runner::_create_method_item(TreeItem *p_parent, cons
 TreeItem *EditorHelpSearch::Runner::_create_signal_item(TreeItem *p_parent, const DocData::ClassDoc *p_class_doc, const DocData::MethodDoc *p_doc) {
 
 	String tooltip = p_doc->return_type + " " + p_class_doc->name + "." + p_doc->name + "(";
-	for (int i = 0; i < p_doc->arguments.size(); i++) {
+	for (decltype(p_doc->arguments.size()) i = 0; i < p_doc->arguments.size(); i++) {
 		const DocData::ArgumentDoc &arg = p_doc->arguments[i];
 		tooltip += arg.type + " " + arg.name;
 		if (arg.default_value != "")

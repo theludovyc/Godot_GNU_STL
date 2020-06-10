@@ -84,7 +84,7 @@ void MIDIDriverALSAMidi::thread_func(void *p_udata) {
 
 		md->lock();
 
-		for (int i = 0; i < md->connected_inputs.size(); i++) {
+		for (decltype(md->connected_inputs.size()) i = 0; i < md->connected_inputs.size(); i++) {
 			snd_rawmidi_t *midi_in = md->connected_inputs[i];
 			do {
 				uint8_t byte = 0;
@@ -170,7 +170,7 @@ void MIDIDriverALSAMidi::close() {
 		mutex = NULL;
 	}
 
-	for (int i = 0; i < connected_inputs.size(); i++) {
+	for (decltype(connected_inputs.size()) i = 0; i < connected_inputs.size(); i++) {
 		snd_rawmidi_t *midi_in = connected_inputs[i];
 		snd_rawmidi_close(midi_in);
 	}
@@ -194,7 +194,7 @@ PoolStringArray MIDIDriverALSAMidi::get_connected_inputs() {
 	PoolStringArray list;
 
 	lock();
-	for (int i = 0; i < connected_inputs.size(); i++) {
+	for (decltype(connected_inputs.size()) i = 0; i < connected_inputs.size(); i++) {
 		snd_rawmidi_t *midi_in = connected_inputs[i];
 		snd_rawmidi_info_t *info;
 

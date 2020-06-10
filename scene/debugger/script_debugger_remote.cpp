@@ -682,15 +682,6 @@ void ScriptDebuggerRemote::_send_object_id(ObjectID p_id) {
 
 		RES res = var;
 
-		if (var.get_type() == Variant::OBJECT && var.is_ref()) {
-			REF r = var;
-			if (r.is_valid()) {
-				res = *r;
-			} else {
-				res = RES();
-			}
-		}
-
 		Array prop;
 		prop.push_back(pi.name);
 		prop.push_back(pi.type);
@@ -929,7 +920,7 @@ void ScriptDebuggerRemote::_send_profiling_data(bool p_for_frame) {
 
 		packet_peer_stream->put_var(profile_frame_data.size()); //how many profile framedatas to send
 		packet_peer_stream->put_var(to_send); //how many script functions to send
-		for (int i = 0; i < profile_frame_data.size(); i++) {
+		for (decltype(profile_frame_data.size()) i = 0; i < profile_frame_data.size(); i++) {
 
 			packet_peer_stream->put_var(profile_frame_data[i].name);
 			packet_peer_stream->put_var(profile_frame_data[i].data);
@@ -1099,7 +1090,7 @@ void ScriptDebuggerRemote::send_error(const String &p_func, const String &p_file
 	}
 
 	cstack.resize(p_stack_info.size() * 3);
-	for (int i = 0; i < p_stack_info.size(); i++) {
+	for (decltype(p_stack_info.size()) i = 0; i < p_stack_info.size(); i++) {
 		cstack[i * 3 + 0] = p_stack_info[i].file;
 		cstack[i * 3 + 1] = p_stack_info[i].func;
 		cstack[i * 3 + 2] = p_stack_info[i].line;
@@ -1150,7 +1141,7 @@ void ScriptDebuggerRemote::_print_handler(void *p_this, const String &p_string, 
 	String s = p_string;
 	int allowed_chars = MIN(MAX(sdr->max_cps - sdr->char_count, 0), s.length());
 
-	if (allowed_chars == 0)
+	if (allowed_chars == 0 && s.length() > 0)
 		return;
 
 	if (allowed_chars < s.length()) {
@@ -1191,7 +1182,7 @@ bool ScriptDebuggerRemote::is_profiling() const {
 void ScriptDebuggerRemote::add_profiling_frame_data(const StringName &p_name, const Array &p_data) {
 
 	int idx = -1;
-	for (int i = 0; i < profile_frame_data.size(); i++) {
+	for (decltype(profile_frame_data.size()) i = 0; i < profile_frame_data.size(); i++) {
 		if (profile_frame_data[i].name == p_name) {
 			idx = i;
 			break;

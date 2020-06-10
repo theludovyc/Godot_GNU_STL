@@ -138,7 +138,7 @@ Error ColladaImport::_populate_skeleton(Skeleton *p_skeleton, Collada::Node *p_n
 	}
 
 	int id = r_bone++;
-	for (int i = 0; i < p_node->children.size(); i++) {
+	for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++) {
 
 		Error err = _populate_skeleton(p_skeleton, p_node->children[i], r_bone, id);
 		if (err)
@@ -166,7 +166,7 @@ void ColladaImport::_pre_process_lights(Collada::Node *p_node) {
 		}
 	}
 
-	for (int i = 0; i < p_node->children.size(); i++)
+	for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++)
 		_pre_process_lights(p_node->children[i]);
 }
 
@@ -176,7 +176,7 @@ Error ColladaImport::_create_scene_skeletons(Collada::Node *p_node) {
 
 		Skeleton *sk = memnew(Skeleton);
 		int bone = 0;
-		for (int i = 0; i < p_node->children.size(); i++) {
+		for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++) {
 
 			_populate_skeleton(sk, p_node->children[i], bone, -1);
 		}
@@ -184,7 +184,7 @@ Error ColladaImport::_create_scene_skeletons(Collada::Node *p_node) {
 		skeleton_map[p_node] = sk;
 	}
 
-	for (int i = 0; i < p_node->children.size(); i++) {
+	for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++) {
 
 		Error err = _create_scene_skeletons(p_node->children[i]);
 		if (err)
@@ -346,7 +346,7 @@ Error ColladaImport::_create_scene(Collada::Node *p_node, Spatial *p_parent) {
 		node->set_meta("empty_draw_type", Variant(p_node->empty_draw_type));
 	}
 
-	for (int i = 0; i < p_node->children.size(); i++) {
+	for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++) {
 
 		Error err = _create_scene(p_node->children[i], node);
 		if (err)
@@ -513,7 +513,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 	}
 
 	int surface = 0;
-	for (int p_i = 0; p_i < meshdata.primitives.size(); p_i++) {
+	for (decltype(meshdata.primitives.size()) p_i = 0; p_i < meshdata.primitives.size(); p_i++) {
 
 		const Collada::MeshData::Primitives &p = meshdata.primitives[p_i];
 
@@ -636,7 +636,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 
 			int index_ofs = 0;
 			int wstride = p_skin_controller->weights.sources.size();
-			for (int w_i = 0; w_i < p_skin_controller->weights.sets.size(); w_i++) {
+			for (decltype(p_skin_controller->weights.sets.size()) w_i = 0; w_i < p_skin_controller->weights.sets.size(); w_i++) {
 
 				int amount = p_skin_controller->weights.sets[w_i];
 
@@ -647,16 +647,16 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 					Collada::Vertex::Weight w;
 
 					int read_from = index_ofs + a_i * wstride;
-					ERR_FAIL_INDEX_V(read_from + wstride - 1, p_skin_controller->weights.indices.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(read_from + wstride - 1, static_cast<int>(p_skin_controller->weights.indices.size()), ERR_INVALID_DATA);
 					int weight_index = p_skin_controller->weights.indices[read_from + weight_ofs];
-					ERR_FAIL_INDEX_V(weight_index, weight_src->array.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(weight_index, static_cast<int>(weight_src->array.size()), ERR_INVALID_DATA);
 
 					w.weight = weight_src->array[weight_index];
 
 					int bone_index = p_skin_controller->weights.indices[read_from + joint_ofs];
 					if (bone_index == -1)
 						continue; //ignore this weight (refers to bind shape)
-					ERR_FAIL_INDEX_V(bone_index, bone_remap.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(bone_index, static_cast<int>(bone_remap.size()), ERR_INVALID_DATA);
 
 					w.bone_idx = bone_remap[bone_index];
 
@@ -674,10 +674,10 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 
 				//make sure weights always add up to 1
 				float total = 0;
-				for (int i = 0; i < weights.size(); i++)
+				for (decltype(weights.size()) i = 0; i < weights.size(); i++)
 					total += weights[i].weight;
 				if (total)
-					for (int i = 0; i < weights.size(); i++)
+					for (decltype(weights.size()) i = 0; i < weights.size(); i++)
 						weights[i].weight /= total;
 
 				if (weights.size() == 0 || total == 0) { //if nothing, add a weight to bone 0
@@ -717,7 +717,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 			int amount;
 			if (p.polygons.size()) {
 
-				ERR_FAIL_INDEX_V(p_j, p.polygons.size(), ERR_INVALID_DATA);
+				ERR_FAIL_INDEX_V(p_j, static_cast<int>(p.polygons.size()), ERR_INVALID_DATA);
 				amount = p.polygons[p_j];
 			} else {
 				amount = 3; //triangles;
@@ -732,7 +732,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 				int src = _prim_ofs;
 				//_prim_ofs+=p.sources.size()
 
-				ERR_FAIL_INDEX_V(src, p.indices.size(), ERR_INVALID_DATA);
+				ERR_FAIL_INDEX_V(src, static_cast<int>(p.indices.size()), ERR_INVALID_DATA);
 
 				Collada::Vertex vertex;
 				if (!p_optimize)
@@ -740,7 +740,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 
 				int vertex_index = p.indices[src + vertex_ofs]; //used for index field (later used by controllers)
 				int vertex_pos = (vertex_src->stride ? vertex_src->stride : 3) * vertex_index;
-				ERR_FAIL_INDEX_V(vertex_pos, vertex_src->array.size(), ERR_INVALID_DATA);
+				ERR_FAIL_INDEX_V(vertex_pos, static_cast<int>(vertex_src->array.size()), ERR_INVALID_DATA);
 				vertex.vertex = Vector3(vertex_src->array[vertex_pos + 0], vertex_src->array[vertex_pos + 1], vertex_src->array[vertex_pos + 2]);
 
 				if (pre_weights.has(vertex_index)) {
@@ -750,17 +750,17 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 				if (normal_src) {
 
 					int normal_pos = (normal_src->stride ? normal_src->stride : 3) * p.indices[src + normal_ofs];
-					ERR_FAIL_INDEX_V(normal_pos, normal_src->array.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(normal_pos, static_cast<int>(normal_src->array.size()), ERR_INVALID_DATA);
 					vertex.normal = Vector3(normal_src->array[normal_pos + 0], normal_src->array[normal_pos + 1], normal_src->array[normal_pos + 2]);
 
 					if (tangent_src && binormal_src) {
 
 						int binormal_pos = (binormal_src->stride ? binormal_src->stride : 3) * p.indices[src + binormal_ofs];
-						ERR_FAIL_INDEX_V(binormal_pos, binormal_src->array.size(), ERR_INVALID_DATA);
+						ERR_FAIL_INDEX_V(binormal_pos, static_cast<int>(binormal_src->array.size()), ERR_INVALID_DATA);
 						Vector3 binormal = Vector3(binormal_src->array[binormal_pos + 0], binormal_src->array[binormal_pos + 1], binormal_src->array[binormal_pos + 2]);
 
 						int tangent_pos = (tangent_src->stride ? tangent_src->stride : 3) * p.indices[src + tangent_ofs];
-						ERR_FAIL_INDEX_V(tangent_pos, tangent_src->array.size(), ERR_INVALID_DATA);
+						ERR_FAIL_INDEX_V(tangent_pos, static_cast<int>(tangent_src->array.size()), ERR_INVALID_DATA);
 						Vector3 tangent = Vector3(tangent_src->array[tangent_pos + 0], tangent_src->array[tangent_pos + 1], tangent_src->array[tangent_pos + 2]);
 
 						vertex.tangent.normal = tangent;
@@ -771,21 +771,21 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 				if (uv_src) {
 
 					int uv_pos = (uv_src->stride ? uv_src->stride : 2) * p.indices[src + uv_ofs];
-					ERR_FAIL_INDEX_V(uv_pos, uv_src->array.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(uv_pos, static_cast<int>(uv_src->array.size()), ERR_INVALID_DATA);
 					vertex.uv = Vector3(uv_src->array[uv_pos + 0], 1.0 - uv_src->array[uv_pos + 1], 0);
 				}
 
 				if (uv2_src) {
 
 					int uv2_pos = (uv2_src->stride ? uv2_src->stride : 2) * p.indices[src + uv2_ofs];
-					ERR_FAIL_INDEX_V(uv2_pos, uv2_src->array.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(uv2_pos, static_cast<int>(uv2_src->array.size()), ERR_INVALID_DATA);
 					vertex.uv2 = Vector3(uv2_src->array[uv2_pos + 0], 1.0 - uv2_src->array[uv2_pos + 1], 0);
 				}
 
 				if (color_src) {
 
 					int color_pos = (color_src->stride ? color_src->stride : 3) * p.indices[src + color_ofs]; // colors are RGB in collada..
-					ERR_FAIL_INDEX_V(color_pos, color_src->array.size(), ERR_INVALID_DATA);
+					ERR_FAIL_INDEX_V(color_pos, static_cast<int>(color_src->array.size()), ERR_INVALID_DATA);
 					vertex.color = Color(color_src->array[color_pos + 0], color_src->array[color_pos + 1], color_src->array[color_pos + 2], (color_src->stride > 3) ? color_src->array[color_pos + 3] : 1.0);
 				}
 
@@ -858,7 +858,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 
 			//if skeleton, localize
 			Transform local_xform = p_local_xform;
-			for (int i = 0; i < vertex_array.size(); i++) {
+			for (decltype(vertex_array.size()) i = 0; i < vertex_array.size(); i++) {
 
 				vertex_array[i].vertex = local_xform.xform(vertex_array[i].vertex);
 				vertex_array[i].normal = local_xform.basis.xform(vertex_array[i].normal).normalized();
@@ -900,7 +900,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 			surftool.instance();
 			surftool->begin(Mesh::PRIMITIVE_TRIANGLES);
 
-			for (int k = 0; k < vertex_array.size(); k++) {
+			for (decltype(vertex_array.size()) k = 0; k < vertex_array.size(); k++) {
 				if (normal_src) {
 					surftool->add_normal(vertex_array[k].normal);
 					if (binormal_src && tangent_src) {
@@ -924,7 +924,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 					bones.resize(VS::ARRAY_WEIGHTS_SIZE);
 					//float sum=0.0;
 					for (int l = 0; l < VS::ARRAY_WEIGHTS_SIZE; l++) {
-						if (l < vertex_array[k].weights.size()) {
+						if (l < static_cast<int>(vertex_array[k].weights.size())) {
 							weights[l] = vertex_array[k].weights[l].weight;
 							bones[l] = vertex_array[k].weights[l].bone_idx;
 							//sum += vertex_array[k].weights[l].weight;
@@ -969,7 +969,7 @@ Error ColladaImport::_create_mesh_surfaces(bool p_optimize, Ref<ArrayMesh> &p_me
 			// THEN THE MORPH TARGETS //
 			////////////////////////////
 
-			for (int mi = 0; mi < p_morph_meshes.size(); mi++) {
+			for (decltype(p_morph_meshes.size()) mi = 0; mi < p_morph_meshes.size(); mi++) {
 
 				Array a = p_morph_meshes[mi]->surface_get_arrays(surface);
 				//add valid weight and bone arrays if they exist, TODO check if they are unique to shape (generally not)
@@ -1144,7 +1144,7 @@ Error ColladaImport::_create_resources(Collada::Node *p_node, bool p_use_compres
 
 					bone_remap.resize(joint_src->sarray.size());
 
-					for (int i = 0; i < bone_remap.size(); i++) {
+					for (decltype(bone_remap.size()) i = 0; i < bone_remap.size(); i++) {
 
 						String str = joint_src->sarray[i];
 						ERR_FAIL_COND_V(!bone_remap_map.has(str), ERR_INVALID_DATA);
@@ -1164,7 +1164,7 @@ Error ColladaImport::_create_resources(Collada::Node *p_node, bool p_use_compres
 						if (morph->sources.has(target)) {
 							valid = true;
 							std::vector<String> names = morph->sources[target].sarray;
-							for (int i = 0; i < names.size(); i++) {
+							for (decltype(names.size()) i = 0; i < names.size(); i++) {
 
 								String meshid2 = names[i];
 								if (collada.state.mesh_data_map.has(meshid2)) {
@@ -1220,7 +1220,7 @@ Error ColladaImport::_create_resources(Collada::Node *p_node, bool p_use_compres
 				if (!use_mesh_builtin_materials) {
 					const Collada::MeshData &meshdata = collada.state.mesh_data_map[meshid];
 
-					for (int i = 0; i < meshdata.primitives.size(); i++) {
+					for (decltype(meshdata.primitives.size()) i = 0; i < meshdata.primitives.size(); i++) {
 
 						String matname = meshdata.primitives[i].material;
 
@@ -1245,7 +1245,7 @@ Error ColladaImport::_create_resources(Collada::Node *p_node, bool p_use_compres
 		}
 	}
 
-	for (int i = 0; i < p_node->children.size(); i++) {
+	for (decltype(p_node->children.size()) i = 0; i < p_node->children.size(); i++) {
 
 		Error err = _create_resources(p_node->children[i], p_use_compression);
 		if (err)
@@ -1266,13 +1266,13 @@ Error ColladaImport::load(const String &p_path, int p_flags, bool p_force_make_t
 	scene = memnew(Spatial); // root
 
 	//determine what's going on with the lights
-	for (int i = 0; i < vs.root_nodes.size(); i++) {
+	for (decltype(vs.root_nodes.size()) i = 0; i < vs.root_nodes.size(); i++) {
 
 		_pre_process_lights(vs.root_nodes[i]);
 	}
 	//import scene
 
-	for (int i = 0; i < vs.root_nodes.size(); i++) {
+	for (decltype(vs.root_nodes.size()) i = 0; i < vs.root_nodes.size(); i++) {
 
 		Error err2 = _create_scene_skeletons(vs.root_nodes[i]);
 		if (err2 != OK) {
@@ -1281,7 +1281,7 @@ Error ColladaImport::load(const String &p_path, int p_flags, bool p_force_make_t
 		}
 	}
 
-	for (int i = 0; i < vs.root_nodes.size(); i++) {
+	for (decltype(vs.root_nodes.size()) i = 0; i < vs.root_nodes.size(); i++) {
 
 		Error err2 = _create_scene(vs.root_nodes[i], scene);
 		if (err2 != OK) {
@@ -1355,7 +1355,7 @@ void ColladaImport::_fix_param_animation_tracks() {
 
 								ERR_FAIL_COND(weight_src.array.size() != target_src.sarray.size());
 
-								for (int i = 0; i < weight_src.array.size(); i++) {
+								for (decltype(weight_src.array.size()) i = 0; i < weight_src.array.size(); i++) {
 
 									String track_name = weights + "(" + itos(i) + ")";
 									String mesh_name = target_src.sarray[i];
@@ -1363,7 +1363,7 @@ void ColladaImport::_fix_param_animation_tracks() {
 
 										const std::vector<int> &rt = collada.state.referenced_tracks[track_name];
 
-										for (int rti = 0; rti < rt.size(); rti++) {
+										for (decltype(rt.size()) rti = 0; rti < rt.size(); rti++) {
 											Collada::AnimationTrack *at = &collada.state.animation_tracks[rt[rti]];
 
 											at->target = E->key();
@@ -1390,13 +1390,13 @@ void ColladaImport::_fix_param_animation_tracks() {
 void ColladaImport::create_animations(bool p_make_tracks_in_all_bones, bool p_import_value_tracks) {
 
 	_fix_param_animation_tracks();
-	for (int i = 0; i < collada.state.animation_clips.size(); i++) {
+	for (decltype(collada.state.animation_clips.size()) i = 0; i < collada.state.animation_clips.size(); i++) {
 
-		for (int j = 0; j < collada.state.animation_clips[i].tracks.size(); j++)
+		for (decltype(collada.state.animation_clips[i].tracks.size()) j = 0; j < collada.state.animation_clips[i].tracks.size(); j++)
 			tracks_in_clips.insert(collada.state.animation_clips[i].tracks[j]);
 	}
 
-	for (int i = 0; i < collada.state.animation_tracks.size(); i++) {
+	for (decltype(collada.state.animation_tracks.size()) i = 0; i < collada.state.animation_tracks.size(); i++) {
 
 		const Collada::AnimationTrack &at = collada.state.animation_tracks[i];
 
@@ -1427,7 +1427,7 @@ void ColladaImport::create_animations(bool p_make_tracks_in_all_bones, bool p_im
 	}
 
 	create_animation(-1, p_make_tracks_in_all_bones, p_import_value_tracks);
-	for (int i = 0; i < collada.state.animation_clips.size(); i++)
+	for (decltype(collada.state.animation_clips.size()) i = 0; i < collada.state.animation_clips.size(); i++)
 		create_animation(i, p_make_tracks_in_all_bones, p_import_value_tracks);
 }
 
@@ -1457,7 +1457,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 
 	if (p_clip == -1) {
 
-		for (int i = 0; i < collada.state.animation_clips.size(); i++) {
+		for (decltype(collada.state.animation_clips.size()) i = 0; i < collada.state.animation_clips.size(); i++) {
 
 			int tc = collada.state.animation_clips[i].tracks.size();
 			for (int j = 0; j < tc; j++) {
@@ -1466,7 +1466,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 				if (collada.state.by_id_tracks.has(n)) {
 
 					const std::vector<int> &ti = collada.state.by_id_tracks[n];
-					for (int k = 0; k < ti.size(); k++) {
+					for (decltype(ti.size()) k = 0; k < ti.size(); k++) {
 						track_filter.insert(ti[k]);
 					}
 				}
@@ -1481,7 +1481,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 			if (collada.state.by_id_tracks.has(n)) {
 
 				const std::vector<int> &ti = collada.state.by_id_tracks[n];
-				for (int k = 0; k < ti.size(); k++) {
+				for (decltype(ti.size()) k = 0; k < ti.size(); k++) {
 					track_filter.insert(ti[k]);
 				}
 			}
@@ -1552,11 +1552,11 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 			//use snapshot keys from anim track instead, because this was most likely exported baked
 			const Collada::AnimationTrack &at = collada.state.animation_tracks[nm.anim_tracks.front()->get()];
 			snapshots.clear();
-			for (int i = 0; i < at.keys.size(); i++)
+			for (decltype(at.keys.size()) i = 0; i < at.keys.size(); i++)
 				snapshots.push_back(at.keys[i].time);
 		}
 
-		for (int i = 0; i < snapshots.size(); i++) {
+		for (decltype(snapshots.size()) i = 0; i < snapshots.size(); i++) {
 
 			for (List<int>::Element *ET = nm.anim_tracks.front(); ET; ET = ET->next()) {
 				//apply tracks
@@ -1578,7 +1578,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 				const Collada::AnimationTrack &at = collada.state.animation_tracks[ET->get()];
 
 				int xform_idx = -1;
-				for (int j = 0; j < cn->xform_list.size(); j++) {
+				for (decltype(cn->xform_list.size()) j = 0; j < cn->xform_list.size(); j++) {
 
 					if (cn->xform_list[j].id == at.param) {
 
@@ -1604,7 +1604,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 					xf.data[3] = data[0];
 				} else if (at.component == "X" || at.component == "Y" || at.component == "Z") {
 					int cn2 = at.component[0] - 'X';
-					ERR_CONTINUE(cn2 >= xf.data.size());
+					ERR_CONTINUE(cn2 >= static_cast<int>(xf.data.size()));
 					ERR_CONTINUE(data.size() > 1);
 					xf.data[cn2] = data[0];
 				} else if (data.size() == xf.data.size()) {
@@ -1692,7 +1692,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 	}
 
 	if (p_import_value_tracks) {
-		for (int i = 0; i < valid_animated_properties.size(); i++) {
+		for (decltype(valid_animated_properties.size()) i = 0; i < valid_animated_properties.size(); i++) {
 
 			int ti = valid_animated_properties[i];
 
@@ -1722,7 +1722,7 @@ void ColladaImport::create_animation(int p_clip, bool p_make_tracks_in_all_bones
 			animation->track_set_path(track, path);
 			animation->track_set_imported(track, true); //helps merging later
 
-			for (int j = 0; j < at.keys.size(); j++) {
+			for (decltype(at.keys.size()) j = 0; j < at.keys.size(); j++) {
 
 				float time = at.keys[j].time;
 				Variant value;
@@ -1787,7 +1787,7 @@ Node *EditorSceneImporterCollada::import_scene(const String &p_path, uint32_t p_
 
 		if (r_missing_deps) {
 
-			for (int i = 0; i < state.missing_textures.size(); i++) {
+			for (decltype(state.missing_textures.size()) i = 0; i < state.missing_textures.size(); i++) {
 				//EditorNode::add_io_error("Texture Not Found: "+state.missing_textures[i]);
 				r_missing_deps->push_back(state.missing_textures[i]);
 			}
@@ -1798,7 +1798,7 @@ Node *EditorSceneImporterCollada::import_scene(const String &p_path, uint32_t p_
 
 		state.create_animations(p_flags & IMPORT_ANIMATION_FORCE_ALL_TRACKS_IN_ALL_CLIPS, p_flags & EditorSceneImporter::IMPORT_ANIMATION_KEEP_VALUE_TRACKS);
 		AnimationPlayer *ap = memnew(AnimationPlayer);
-		for (int i = 0; i < state.animations.size(); i++) {
+		for (decltype(state.animations.size()) i = 0; i < state.animations.size(); i++) {
 			String name;
 			if (state.animations[i]->get_name() == "")
 				name = "default";

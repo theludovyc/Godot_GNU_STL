@@ -81,7 +81,7 @@ public:
 	void register_decoder_interface(const godot_videodecoder_interface_gdnative *p_interface) {
 		VideoDecoderGDNative *decoder = memnew(VideoDecoderGDNative(p_interface));
 		int index = decoders.size();
-		for (int i = 0; i < decoder->supported_extensions.size(); i++) {
+		for (decltype(decoder->supported_extensions.size()) i = 0; i < decoder->supported_extensions.size(); i++) {
 			extensions[decoder->supported_extensions[i]] = index;
 		}
 		decoders.push_back(decoder);
@@ -98,7 +98,7 @@ public:
 	}
 
 	~VideoDecoderServer() {
-		for (int i = 0; i < decoders.size(); i++) {
+		for (decltype(decoders.size()) i = 0; i < decoders.size(); i++) {
 			memdelete(decoders[i]);
 		}
 		decoders.clear();

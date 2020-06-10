@@ -172,7 +172,7 @@ void EditorExportPlatformIOS::get_preset_features(const Ref<EditorExportPreset> 
 	}
 
 	std::vector<String> architectures = _get_preset_architectures(p_preset);
-	for (int i = 0; i < architectures.size(); ++i) {
+	for (decltype(architectures.size()) i = 0; i < architectures.size(); ++i) {
 		r_features->push_back(architectures[i]);
 	}
 }
@@ -262,7 +262,7 @@ void EditorExportPlatformIOS::get_export_options(List<ExportOption> *r_options) 
 	}
 
 	std::vector<ExportArchitecture> architectures = _get_supported_architectures();
-	for (int i = 0; i < architectures.size(); ++i) {
+	for (decltype(architectures.size()) i = 0; i < architectures.size(); ++i) {
 		r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "architectures/" + architectures[i].name), architectures[i].is_default));
 	}
 }
@@ -278,7 +278,7 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 	String strnew;
 	str.parse_utf8((const char *)pfile.data(), pfile.size());
 	std::vector<String> lines = str.split("\n");
-	for (int i = 0; i < lines.size(); i++) {
+	for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 		if (lines[i].find("$binary") != -1) {
 			strnew += lines[i].replace("$binary", p_config.binary_name) + "\n";
 		} else if (lines[i].find("$modules_buildfile") != -1) {
@@ -404,7 +404,7 @@ void EditorExportPlatformIOS::_fix_config_file(const Ref<EditorExportPreset> &p_
 String EditorExportPlatformIOS::_get_additional_plist_content() {
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
 	String result;
-	for (int i = 0; i < export_plugins.size(); ++i) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); ++i) {
 		result += export_plugins[i]->get_ios_plist_content();
 	}
 	return result;
@@ -413,7 +413,7 @@ String EditorExportPlatformIOS::_get_additional_plist_content() {
 String EditorExportPlatformIOS::_get_linker_flags() {
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
 	String result;
-	for (int i = 0; i < export_plugins.size(); ++i) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); ++i) {
 		String flags = export_plugins[i]->get_ios_linker_flags();
 		if (flags.length() == 0) continue;
 		if (result.length() > 0) {
@@ -428,7 +428,7 @@ String EditorExportPlatformIOS::_get_linker_flags() {
 String EditorExportPlatformIOS::_get_cpp_code() {
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
 	String result;
-	for (int i = 0; i < export_plugins.size(); ++i) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); ++i) {
 		result += export_plugins[i]->get_ios_cpp_code();
 	}
 	return result;
@@ -559,7 +559,7 @@ Error EditorExportPlatformIOS::_walk_dir_recursive(DirAccess *p_da, FileHandler 
 	}
 	p_da->list_dir_end();
 
-	for (int i = 0; i < dirs.size(); ++i) {
+	for (decltype(dirs.size()) i = 0; i < dirs.size(); ++i) {
 		String dir = dirs[i];
 		p_da->change_dir(dir);
 		Error err = _walk_dir_recursive(p_da, p_handler, p_userdata);
@@ -645,9 +645,9 @@ struct ExportLibsData {
 void EditorExportPlatformIOS::_add_assets_to_project(const Ref<EditorExportPreset> &p_preset, std::vector<uint8_t> &p_project_data, const std::vector<IOSExportAsset> &p_additional_assets) {
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
 	std::vector<String> frameworks;
-	for (int i = 0; i < export_plugins.size(); ++i) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); ++i) {
 		std::vector<String> plugin_frameworks = export_plugins[i]->get_ios_frameworks();
-		for (int j = 0; j < plugin_frameworks.size(); ++j) {
+		for (decltype(plugin_frameworks.size()) j = 0; j < plugin_frameworks.size(); ++j) {
 			frameworks.push_back(plugin_frameworks[j]);
 		}
 	}
@@ -663,7 +663,7 @@ void EditorExportPlatformIOS::_add_assets_to_project(const Ref<EditorExportPrese
 
 	const String file_info_format = String("$build_id = {isa = PBXBuildFile; fileRef = $ref_id; };\n") +
 									"$ref_id = {isa = PBXFileReference; lastKnownFileType = $file_type; name = \"$name\"; path = \"$file_path\"; sourceTree = \"<group>\"; };\n";
-	for (int i = 0; i < p_additional_assets.size(); ++i) {
+	for (decltype(p_additional_assets.size()) i = 0; i < p_additional_assets.size(); ++i) {
 		String build_id = (++current_id).str();
 		String ref_id = (++current_id).str();
 		const IOSExportAsset &asset = p_additional_assets[i];
@@ -740,7 +740,7 @@ void EditorExportPlatformIOS::_add_assets_to_project(const Ref<EditorExportPrese
 Error EditorExportPlatformIOS::_export_additional_assets(const String &p_out_dir, const std::vector<String> &p_assets, bool p_is_framework, std::vector<IOSExportAsset> &r_exported_assets) {
 	DirAccess *filesystem_da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
 	ERR_FAIL_COND_V_MSG(!filesystem_da, ERR_CANT_CREATE, "Cannot create DirAccess for path '" + p_out_dir + "'.");
-	for (int f_idx = 0; f_idx < p_assets.size(); ++f_idx) {
+	for (decltype(p_assets.size()) f_idx = 0; f_idx < p_assets.size(); ++f_idx) {
 		String asset = p_assets[f_idx];
 		if (!asset.begins_with("res://")) {
 			// either SDK-builtin or already a part of the export template
@@ -788,13 +788,13 @@ Error EditorExportPlatformIOS::_export_additional_assets(const String &p_out_dir
 
 Error EditorExportPlatformIOS::_export_additional_assets(const String &p_out_dir, const std::vector<SharedObject> &p_libraries, std::vector<IOSExportAsset> &r_exported_assets) {
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
-	for (int i = 0; i < export_plugins.size(); i++) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); i++) {
 		std::vector<String> frameworks = export_plugins[i]->get_ios_frameworks();
 		Error err = _export_additional_assets(p_out_dir, frameworks, true, r_exported_assets);
 		ERR_FAIL_COND_V(err, err);
 
 		std::vector<String> project_static_libs = export_plugins[i]->get_ios_project_static_libs();
-		for (int j = 0; j < project_static_libs.size(); j++)
+		for (decltype(project_static_libs.size()) j = 0; j < project_static_libs.size(); j++)
 			project_static_libs[j] = project_static_libs[j].get_file(); // Only the file name as it's copied to the project
 		err = _export_additional_assets(p_out_dir, project_static_libs, true, r_exported_assets);
 		ERR_FAIL_COND_V(err, err);
@@ -805,7 +805,7 @@ Error EditorExportPlatformIOS::_export_additional_assets(const String &p_out_dir
 	}
 
 	std::vector<String> library_paths;
-	for (int i = 0; i < p_libraries.size(); ++i) {
+	for (decltype(p_libraries.size()) i = 0; i < p_libraries.size(); ++i) {
 		library_paths.push_back(p_libraries[i].path);
 	}
 	Error err = _export_additional_assets(p_out_dir, library_paths, true, r_exported_assets);
@@ -817,7 +817,7 @@ Error EditorExportPlatformIOS::_export_additional_assets(const String &p_out_dir
 std::vector<String> EditorExportPlatformIOS::_get_preset_architectures(const Ref<EditorExportPreset> &p_preset) {
 	std::vector<ExportArchitecture> all_archs = _get_supported_architectures();
 	std::vector<String> enabled_archs;
-	for (int i = 0; i < all_archs.size(); ++i) {
+	for (decltype(all_archs.size()) i = 0; i < all_archs.size(); ++i) {
 		bool is_enabled = p_preset->get("architectures/" + all_archs[i].name);
 		if (is_enabled) {
 			enabled_archs.push_back(all_archs[i].name);
@@ -1078,9 +1078,9 @@ Error EditorExportPlatformIOS::export_project(const Ref<EditorExportPreset> &p_p
 
 	// Copy project static libs to the project
 	std::vector<Ref<EditorExportPlugin> > export_plugins = EditorExport::get_singleton()->get_export_plugins();
-	for (int i = 0; i < export_plugins.size(); i++) {
+	for (decltype(export_plugins.size()) i = 0; i < export_plugins.size(); i++) {
 		std::vector<String> project_static_libs = export_plugins[i]->get_ios_project_static_libs();
-		for (int j = 0; j < project_static_libs.size(); j++) {
+		for (decltype(project_static_libs.size()) j = 0; j < project_static_libs.size(); j++) {
 			const String &static_lib_path = project_static_libs[j];
 			String dest_lib_file_path = dest_dir + static_lib_path.get_file();
 			Error lib_copy_err = tmp_app_path->copy(static_lib_path, dest_lib_file_path);

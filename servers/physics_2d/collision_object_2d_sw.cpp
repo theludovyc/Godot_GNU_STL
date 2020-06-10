@@ -54,7 +54,7 @@ void CollisionObject2DSW::add_shape(Shape2DSW *p_shape, const Transform2D &p_tra
 
 void CollisionObject2DSW::set_shape(int p_index, Shape2DSW *p_shape) {
 
-	ERR_FAIL_INDEX(p_index, shapes.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
 	shapes[p_index].shape->remove_owner(this);
 	shapes[p_index].shape = p_shape;
 
@@ -69,13 +69,13 @@ void CollisionObject2DSW::set_shape(int p_index, Shape2DSW *p_shape) {
 
 void CollisionObject2DSW::set_shape_metadata(int p_index, const Variant &p_metadata) {
 
-	ERR_FAIL_INDEX(p_index, shapes.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
 	shapes[p_index].metadata = p_metadata;
 }
 
 void CollisionObject2DSW::set_shape_transform(int p_index, const Transform2D &p_transform) {
 
-	ERR_FAIL_INDEX(p_index, shapes.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
 
 	shapes[p_index].xform = p_transform;
 	shapes[p_index].xform_inv = p_transform.affine_inverse();
@@ -88,7 +88,7 @@ void CollisionObject2DSW::set_shape_transform(int p_index, const Transform2D &p_
 }
 
 void CollisionObject2DSW::set_shape_as_disabled(int p_idx, bool p_disabled) {
-	ERR_FAIL_INDEX(p_idx, shapes.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(shapes.size()));
 
 	CollisionObject2DSW::Shape &shape = shapes[p_idx];
 	if (shape.disabled == p_disabled)
@@ -117,7 +117,7 @@ void CollisionObject2DSW::set_shape_as_disabled(int p_idx, bool p_disabled) {
 void CollisionObject2DSW::remove_shape(Shape2DSW *p_shape) {
 
 	//remove a shape, all the times it appears
-	for (int i = 0; i < shapes.size(); i++) {
+	for (int i = 0; i < static_cast<int>(shapes.size()); i++) {
 
 		if (shapes[i].shape == p_shape) {
 			remove_shape(i);
@@ -129,8 +129,8 @@ void CollisionObject2DSW::remove_shape(Shape2DSW *p_shape) {
 void CollisionObject2DSW::remove_shape(int p_index) {
 
 	//remove anything from shape to be erased to end, so subindices don't change
-	ERR_FAIL_INDEX(p_index, shapes.size());
-	for (int i = p_index; i < shapes.size(); i++) {
+	ERR_FAIL_INDEX(p_index, static_cast<int>(shapes.size()));
+	for (decltype(shapes.size()) i = p_index; i < shapes.size(); i++) {
 
 		if (shapes[i].bpid == 0)
 			continue;
@@ -165,7 +165,7 @@ void CollisionObject2DSW::_set_static(bool p_static) {
 
 void CollisionObject2DSW::_unregister_shapes() {
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 		if (s.bpid > 0) {
@@ -180,7 +180,7 @@ void CollisionObject2DSW::_update_shapes() {
 	if (!space)
 		return;
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 
@@ -208,7 +208,7 @@ void CollisionObject2DSW::_update_shapes_with_motion(const Vector2 &p_motion) {
 	if (!space)
 		return;
 
-	for (int i = 0; i < shapes.size(); i++) {
+	for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 		Shape &s = shapes[i];
 		if (s.disabled)
@@ -236,7 +236,7 @@ void CollisionObject2DSW::_set_space(Space2DSW *p_space) {
 
 		space->remove_object(this);
 
-		for (int i = 0; i < shapes.size(); i++) {
+		for (decltype(shapes.size()) i = 0; i < shapes.size(); i++) {
 
 			Shape &s = shapes[i];
 			if (s.bpid) {

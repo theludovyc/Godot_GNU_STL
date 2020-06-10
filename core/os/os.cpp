@@ -221,7 +221,7 @@ bool OS::has_virtual_keyboard() const {
 	return false;
 }
 
-void OS::show_virtual_keyboard(const String &p_existing_text, const Rect2 &p_screen_rect, int p_max_input_length) {
+void OS::show_virtual_keyboard(const String &p_existing_text, const Rect2 &p_screen_rect, int p_max_input_length, int p_cursor_start, int p_cursor_end) {
 }
 
 void OS::hide_virtual_keyboard() {
@@ -310,7 +310,7 @@ String OS::get_safe_dir_name(const String &p_dir_name, bool p_allow_dir_separato
 	}
 
 	String safe_dir_name = p_dir_name.replace("\\", "/").strip_edges();
-	for (int i = 0; i < invalid_chars.size(); i++) {
+	for (decltype(invalid_chars.size()) i = 0; i < invalid_chars.size(); i++) {
 		safe_dir_name = safe_dir_name.replace(invalid_chars[i], "-");
 	}
 	return safe_dir_name;
@@ -377,7 +377,7 @@ Error OS::dialog_show(String p_title, String p_description, std::vector<String> 
 	while (true) {
 
 		print("%ls\n--------\n%ls\n", p_title.c_str(), p_description.c_str());
-		for (int i = 0; i < p_buttons.size(); i++) {
+		for (int i = 0; i < static_cast<int>(p_buttons.size()); i++) {
 			if (i > 0) print(", ");
 			print("%i=%ls", i + 1, p_buttons[i].c_str());
 		};
@@ -386,7 +386,7 @@ Error OS::dialog_show(String p_title, String p_description, std::vector<String> 
 		if (!res.is_numeric())
 			continue;
 		int n = res.to_int();
-		if (n < 0 || n >= p_buttons.size())
+		if (n < 0 || n >= static_cast<int>(p_buttons.size()))
 			continue;
 		if (p_obj && p_callback != "")
 			p_obj->call_deferred(p_callback, n);
@@ -728,19 +728,25 @@ PoolStringArray OS::get_connected_midi_inputs() {
 		return MIDIDriver::get_singleton()->get_connected_inputs();
 
 	PoolStringArray list;
-	return list;
+	ERR_FAIL_V_MSG(list, vformat("MIDI input isn't supported on %s.", OS::get_singleton()->get_name()));
 }
 
 void OS::open_midi_inputs() {
 
-	if (MIDIDriver::get_singleton())
+	if (MIDIDriver::get_singleton()) {
 		MIDIDriver::get_singleton()->open();
+	} else {
+		ERR_PRINT(vformat("MIDI input isn't supported on %s.", OS::get_singleton()->get_name()));
+	}
 }
 
 void OS::close_midi_inputs() {
 
-	if (MIDIDriver::get_singleton())
+	if (MIDIDriver::get_singleton()) {
 		MIDIDriver::get_singleton()->close();
+	} else {
+		ERR_PRINT(vformat("MIDI input isn't supported on %s.", OS::get_singleton()->get_name()));
+	}
 }
 
 OS::OS() {

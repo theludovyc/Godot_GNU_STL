@@ -87,7 +87,7 @@ void GDNativeExportPlugin::_export_file(const String &p_path, const String &p_ty
 			std::vector<String> tags = key.split(".");
 
 			bool skip = false;
-			for (int i = 0; i < tags.size(); i++) {
+			for (decltype(tags.size()) i = 0; i < tags.size(); i++) {
 				bool has_feature = p_features.has(tags[i]);
 
 				if (!has_feature) {
@@ -120,7 +120,7 @@ void GDNativeExportPlugin::_export_file(const String &p_path, const String &p_ty
 			std::vector<String> tags = key.split(".");
 
 			bool skip = false;
-			for (int i = 0; i < tags.size(); i++) {
+			for (decltype(tags.size()) i = 0; i < tags.size(); i++) {
 				bool has_feature = p_features.has(tags[i]);
 
 				if (!has_feature) {
@@ -134,7 +134,7 @@ void GDNativeExportPlugin::_export_file(const String &p_path, const String &p_ty
 			}
 
 			std::vector<String> dependency_paths = config->get_value("dependencies", key);
-			for (int i = 0; i < dependency_paths.size(); i++) {
+			for (decltype(dependency_paths.size()) i = 0; i < dependency_paths.size(); i++) {
 				if (!dependency_paths[i].begins_with("res://")) {
 					print_line("Skipping export of out-of-project library " + dependency_paths[i]);
 					continue;
@@ -288,7 +288,7 @@ void register_gdnative_types() {
 
 void unregister_gdnative_types() {
 
-	for (int i = 0; i < singleton_gdnatives.size(); i++) {
+	for (decltype(singleton_gdnatives.size()) i = 0; i < singleton_gdnatives.size(); i++) {
 
 		if (singleton_gdnatives[i].is_null()) {
 			continue;

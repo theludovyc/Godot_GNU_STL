@@ -75,7 +75,7 @@ int NodePath::get_name_count() const {
 StringName NodePath::get_name(int p_idx) const {
 
 	ERR_FAIL_COND_V(!data, StringName());
-	ERR_FAIL_INDEX_V(p_idx, data->path.size(), StringName());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(data->path.size()), StringName());
 	return data->path[p_idx];
 }
 
@@ -89,7 +89,7 @@ int NodePath::get_subname_count() const {
 StringName NodePath::get_subname(int p_idx) const {
 
 	ERR_FAIL_COND_V(!data, StringName());
-	ERR_FAIL_INDEX_V(p_idx, data->subpath.size(), StringName());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(data->subpath.size()), StringName());
 	return data->subpath[p_idx];
 }
 
@@ -115,13 +115,13 @@ bool NodePath::operator==(const NodePath &p_path) const {
 
 	int path_size = data->path.size();
 
-	if (path_size != p_path.data->path.size()) {
+	if (path_size != static_cast<int>(p_path.data->path.size())) {
 		return false;
 	}
 
 	int subpath_size = data->subpath.size();
 
-	if (subpath_size != p_path.data->subpath.size()) {
+	if (subpath_size != static_cast<int>(p_path.data->subpath.size())) {
 		return false;
 	}
 
@@ -172,14 +172,14 @@ NodePath::operator String() const {
 	if (data->absolute)
 		ret = "/";
 
-	for (int i = 0; i < data->path.size(); i++) {
+	for (decltype(data->path.size()) i = 0; i < data->path.size(); i++) {
 
 		if (i > 0)
 			ret += "/";
 		ret += data->path[i].operator String();
 	}
 
-	for (int i = 0; i < data->subpath.size(); i++) {
+	for (decltype(data->subpath.size()) i = 0; i < data->subpath.size(); i++) {
 
 		ret += ":" + data->subpath[i].operator String();
 	}
@@ -238,9 +238,9 @@ NodePath NodePath::rel_path_to(const NodePath &p_np) const {
 	int common_parent = 0;
 
 	while (true) {
-		if (src_dirs.size() == common_parent)
+		if (static_cast<int>(src_dirs.size()) == common_parent)
 			break;
-		if (dst_dirs.size() == common_parent)
+		if (static_cast<int>(dst_dirs.size()) == common_parent)
 			break;
 		if (src_dirs[common_parent] != dst_dirs[common_parent])
 			break;
@@ -256,7 +256,7 @@ NodePath NodePath::rel_path_to(const NodePath &p_np) const {
 		relpath.push_back("..");
 	}
 
-	for (int i = common_parent + 1; i < dst_dirs.size(); i++) {
+	for (decltype(dst_dirs.size()) i = common_parent + 1; i < dst_dirs.size(); i++) {
 
 		relpath.push_back(dst_dirs[i]);
 	}
@@ -276,7 +276,7 @@ NodePath NodePath::get_as_property_path() const {
 
 		String initial_subname = data->path[0];
 
-		for (int i = 1; i < data->path.size(); i++) {
+		for (decltype(data->path.size()) i = 1; i < data->path.size(); i++) {
 			initial_subname += "/" + data->path[i];
 		}
 		new_path.insert(new_path.begin(), initial_subname);
@@ -320,7 +320,7 @@ void NodePath::simplify() {
 
 	if (!data)
 		return;
-	for (int i = 0; i < data->path.size(); i++) {
+	for (int i = 0; i < static_cast<int>(data->path.size()); i++) {
 		if (data->path.size() == 1)
 			break;
 		if (data->path[i].operator String() == ".") {
@@ -425,7 +425,7 @@ NodePath::NodePath(const String &p_path) {
 			if (!last_is_slash) {
 
 				String name = path.substr(from, i - from);
-				ERR_FAIL_INDEX(slice, data->path.size());
+				ERR_FAIL_INDEX(slice, static_cast<int>(data->path.size()));
 				data->path[slice++] = name;
 			}
 			from = i + 1;

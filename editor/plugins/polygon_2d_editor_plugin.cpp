@@ -715,7 +715,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 						PoolVector<int> points = polygons[i];
 						std::vector<Vector2> polys;
 						polys.resize(points.size());
-						for (int j = 0; j < polys.size(); j++) {
+						for (decltype(polys.size()) j = 0; j < polys.size(); j++) {
 							int idx = points[j];
 							if (idx < 0 || idx >= points_prev.size())
 								continue;
@@ -1131,7 +1131,7 @@ void Polygon2DEditor::_uv_draw() {
 	}
 
 	if (polygon_create.size()) {
-		for (int i = 0; i < polygon_create.size(); i++) {
+		for (decltype(polygon_create.size()) i = 0; i < polygon_create.size(); i++) {
 			Vector2 from = uvs[polygon_create[i]];
 			Vector2 to = (i + 1) < polygon_create.size() ? uvs[polygon_create[i + 1]] : uv_create_to;
 			uv_edit_draw->draw_line(mtx.xform(from), mtx.xform(to), polygon_line_color, Math::round(EDSCALE), true);

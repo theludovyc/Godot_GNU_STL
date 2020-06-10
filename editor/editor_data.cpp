@@ -40,11 +40,11 @@
 
 void EditorHistory::cleanup_history() {
 
-	for (int i = 0; i < history.size(); i++) {
+	for (int i = 0; i < static_cast<int>(history.size()); i++) {
 
 		bool fail = false;
 
-		for (int j = 0; j < history[i].path.size(); j++) {
+		for (int j = 0; j < static_cast<int>(history[i].path.size()); j++) {
 			if (!history[i].path[j].ref.is_null())
 				continue;
 
@@ -74,7 +74,7 @@ void EditorHistory::cleanup_history() {
 		}
 	}
 
-	if (current >= history.size())
+	if (current >= static_cast<int>(history.size()))
 		current = history.size() - 1;
 }
 
@@ -92,7 +92,7 @@ void EditorHistory::_add_object(ObjectID p_object, const String &p_property, int
 
 	History h;
 
-	bool has_prev = current >= 0 && current < history.size();
+	bool has_prev = current >= 0 && current < static_cast<int>(history.size());
 
 	if (has_prev) {
 		history.resize(current + 1); //clip history to next
@@ -109,7 +109,7 @@ void EditorHistory::_add_object(ObjectID p_object, const String &p_property, int
 		//add a sub property
 		History &pr = history[current];
 		h = pr;
-		ERR_FAIL_INDEX(p_level_change, h.path.size());
+		ERR_FAIL_INDEX(p_level_change, static_cast<int>(h.path.size()));
 		h.level = p_level_change;
 	} else {
 		//add a new node
@@ -150,14 +150,14 @@ int EditorHistory::get_history_pos() {
 
 bool EditorHistory::is_history_obj_inspector_only(int p_obj) const {
 
-	ERR_FAIL_INDEX_V(p_obj, history.size(), false);
-	ERR_FAIL_INDEX_V(history[p_obj].level, history[p_obj].path.size(), false);
+	ERR_FAIL_INDEX_V(p_obj, static_cast<int>(history.size()), false);
+	ERR_FAIL_INDEX_V(history[p_obj].level, static_cast<int>(history[p_obj].path.size()), false);
 	return history[p_obj].path[history[p_obj].level].inspector_only;
 }
 
 ObjectID EditorHistory::get_history_obj(int p_obj) const {
-	ERR_FAIL_INDEX_V(p_obj, history.size(), 0);
-	ERR_FAIL_INDEX_V(history[p_obj].level, history[p_obj].path.size(), 0);
+	ERR_FAIL_INDEX_V(p_obj, static_cast<int>(history.size()), 0);
+	ERR_FAIL_INDEX_V(history[p_obj].level, static_cast<int>(history[p_obj].path.size()), 0);
 	return history[p_obj].path[history[p_obj].level].object;
 }
 
@@ -166,14 +166,14 @@ bool EditorHistory::is_at_beginning() const {
 }
 bool EditorHistory::is_at_end() const {
 
-	return ((current + 1) >= history.size());
+	return ((current + 1) >= static_cast<int>(history.size()));
 }
 
 bool EditorHistory::next() {
 
 	cleanup_history();
 
-	if ((current + 1) < history.size())
+	if ((current + 1) < static_cast<int>(history.size()))
 		current++;
 	else
 		return false;
@@ -195,7 +195,7 @@ bool EditorHistory::previous() {
 
 bool EditorHistory::is_current_inspector_only() const {
 
-	if (current < 0 || current >= history.size())
+	if (current < 0 || current >= static_cast<int>(history.size()))
 		return false;
 
 	const History &h = history[current];
@@ -203,7 +203,7 @@ bool EditorHistory::is_current_inspector_only() const {
 }
 ObjectID EditorHistory::get_current() {
 
-	if (current < 0 || current >= history.size())
+	if (current < 0 || current >= static_cast<int>(history.size()))
 		return 0;
 
 	History &h = history[current];
@@ -216,7 +216,7 @@ ObjectID EditorHistory::get_current() {
 
 int EditorHistory::get_path_size() const {
 
-	if (current < 0 || current >= history.size())
+	if (current < 0 || current >= static_cast<int>(history.size()))
 		return 0;
 
 	const History &h = history[current];
@@ -225,12 +225,12 @@ int EditorHistory::get_path_size() const {
 
 ObjectID EditorHistory::get_path_object(int p_index) const {
 
-	if (current < 0 || current >= history.size())
+	if (current < 0 || current >= static_cast<int>(history.size()))
 		return 0;
 
 	const History &h = history[current];
 
-	ERR_FAIL_INDEX_V(p_index, h.path.size(), 0);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(h.path.size()), 0);
 
 	Object *obj = ObjectDB::get_instance(h.path[p_index].object);
 	if (!obj)
@@ -241,12 +241,12 @@ ObjectID EditorHistory::get_path_object(int p_index) const {
 
 String EditorHistory::get_path_property(int p_index) const {
 
-	if (current < 0 || current >= history.size())
+	if (current < 0 || current >= static_cast<int>(history.size()))
 		return "";
 
 	const History &h = history[current];
 
-	ERR_FAIL_INDEX_V(p_index, h.path.size(), "");
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(h.path.size()), "");
 
 	return h.path[p_index].property;
 }
@@ -264,7 +264,7 @@ EditorHistory::EditorHistory() {
 
 EditorPlugin *EditorData::get_editor(Object *p_object) {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		if (editor_plugins[i]->has_main_screen() && editor_plugins[i]->handles(p_object))
 			return editor_plugins[i];
@@ -275,7 +275,7 @@ EditorPlugin *EditorData::get_editor(Object *p_object) {
 
 EditorPlugin *EditorData::get_subeditor(Object *p_object) {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		if (!editor_plugins[i]->has_main_screen() && editor_plugins[i]->handles(p_object))
 			return editor_plugins[i];
@@ -286,7 +286,7 @@ EditorPlugin *EditorData::get_subeditor(Object *p_object) {
 
 std::vector<EditorPlugin *> EditorData::get_subeditors(Object *p_object) {
 	std::vector<EditorPlugin *> sub_plugins;
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 		if (!editor_plugins[i]->has_main_screen() && editor_plugins[i]->handles(p_object)) {
 			sub_plugins.push_back(editor_plugins[i]);
 		}
@@ -296,7 +296,7 @@ std::vector<EditorPlugin *> EditorData::get_subeditors(Object *p_object) {
 
 EditorPlugin *EditorData::get_editor(String p_name) {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		if (editor_plugins[i]->get_name() == p_name)
 			return editor_plugins[i];
@@ -326,7 +326,7 @@ void EditorData::copy_object_params(Object *p_object) {
 
 void EditorData::get_editor_breakpoints(List<String> *p_breakpoints) {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->get_breakpoints(p_breakpoints);
 	}
@@ -335,7 +335,7 @@ void EditorData::get_editor_breakpoints(List<String> *p_breakpoints) {
 Dictionary EditorData::get_editor_states() const {
 
 	Dictionary metadata;
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		Dictionary state = editor_plugins[i]->get_state();
 		if (state.empty())
@@ -347,7 +347,7 @@ Dictionary EditorData::get_editor_states() const {
 }
 
 Dictionary EditorData::get_scene_editor_states(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), Dictionary());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), Dictionary());
 	EditedScene es = edited_scene[p_idx];
 	return es.editor_states;
 }
@@ -362,7 +362,7 @@ void EditorData::set_editor_states(const Dictionary &p_states) {
 
 		String name = E->get();
 		int idx = -1;
-		for (int i = 0; i < editor_plugins.size(); i++) {
+		for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 			if (editor_plugins[i]->get_name() == name) {
 				idx = i;
@@ -378,7 +378,7 @@ void EditorData::set_editor_states(const Dictionary &p_states) {
 
 void EditorData::notify_edited_scene_changed() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->edited_scene_changed();
 		editor_plugins[i]->notify_scene_changed(get_edited_scene_root());
@@ -387,7 +387,7 @@ void EditorData::notify_edited_scene_changed() {
 
 void EditorData::notify_resource_saved(const Ref<Resource> &p_resource) {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->notify_resource_saved(p_resource);
 	}
@@ -395,7 +395,7 @@ void EditorData::notify_resource_saved(const Ref<Resource> &p_resource) {
 
 void EditorData::clear_editor_states() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->clear();
 	}
@@ -403,7 +403,7 @@ void EditorData::clear_editor_states() {
 
 void EditorData::save_editor_external_data() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->save_external_data();
 	}
@@ -411,7 +411,7 @@ void EditorData::save_editor_external_data() {
 
 void EditorData::apply_changes_in_editors() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->apply_changes();
 	}
@@ -419,7 +419,7 @@ void EditorData::apply_changes_in_editors() {
 
 void EditorData::save_editor_global_states() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->save_global_state();
 	}
@@ -427,7 +427,7 @@ void EditorData::save_editor_global_states() {
 
 void EditorData::restore_editor_global_states() {
 
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 
 		editor_plugins[i]->restore_global_state();
 	}
@@ -449,7 +449,7 @@ bool EditorData::call_build() {
 
 	bool result = true;
 
-	for (int i = 0; i < editor_plugins.size() && result; i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size() && result; i++) {
 
 		result &= editor_plugins[i]->build();
 	}
@@ -479,7 +479,7 @@ int EditorData::get_editor_plugin_count() const {
 }
 EditorPlugin *EditorData::get_editor_plugin(int p_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx, editor_plugins.size(), NULL);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(editor_plugins.size()), NULL);
 	return editor_plugins[p_idx];
 }
 
@@ -501,7 +501,7 @@ Object *EditorData::instance_custom_type(const String &p_type, const String &p_i
 
 	if (get_custom_types().has(p_inherits)) {
 
-		for (int i = 0; i < get_custom_types()[p_inherits].size(); i++) {
+		for (decltype(get_custom_types()[p_inherits].size()) i = 0; i < get_custom_types()[p_inherits].size(); i++) {
 			if (get_custom_types()[p_inherits][i].name == p_type) {
 				Ref<Script> script = get_custom_types()[p_inherits][i].script;
 
@@ -523,7 +523,7 @@ void EditorData::remove_custom_type(const String &p_type) {
 
 	for (Map<String, std::vector<CustomType> >::Element *E = custom_types.front(); E; E = E->next()) {
 
-		for (int i = 0; i < E->get().size(); i++) {
+		for (decltype(E->get().size()) i = 0; i < E->get().size(); i++) {
 			if (E->get()[i].name == p_type) {
 				E->get().erase(E->get().begin() + i);
 				if (E->get().empty()) {
@@ -538,7 +538,7 @@ void EditorData::remove_custom_type(const String &p_type) {
 int EditorData::add_edited_scene(int p_at_pos) {
 
 	if (p_at_pos < 0)
-		p_at_pos = edited_scene.size();
+		p_at_pos = static_cast<int>(edited_scene.size());
 	EditedScene es;
 	es.root = NULL;
 	es.path = String();
@@ -546,7 +546,7 @@ int EditorData::add_edited_scene(int p_at_pos) {
 	es.version = 0;
 	es.live_edit_root = NodePath(String("/root"));
 
-	if (p_at_pos == edited_scene.size())
+	if (p_at_pos == static_cast<int>(edited_scene.size()))
 		edited_scene.push_back(es);
 	else
 		edited_scene.insert(edited_scene.begin() + p_at_pos, es);
@@ -558,16 +558,16 @@ int EditorData::add_edited_scene(int p_at_pos) {
 
 void EditorData::move_edited_scene_index(int p_idx, int p_to_idx) {
 
-	ERR_FAIL_INDEX(p_idx, edited_scene.size());
-	ERR_FAIL_INDEX(p_to_idx, edited_scene.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(edited_scene.size()));
+	ERR_FAIL_INDEX(p_to_idx, static_cast<int>(edited_scene.size()));
 	SWAP(edited_scene[p_idx], edited_scene[p_to_idx]);
 }
 
 void EditorData::remove_scene(int p_idx) {
-	ERR_FAIL_INDEX(p_idx, edited_scene.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(edited_scene.size()));
 	if (edited_scene[p_idx].root) {
 
-		for (int i = 0; i < editor_plugins.size(); i++) {
+		for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 			editor_plugins[i]->notify_scene_closed(edited_scene[p_idx].root->get_filename());
 		}
 
@@ -624,7 +624,7 @@ bool EditorData::_find_updated_instances(Node *p_root, Node *p_node, Set<String>
 
 bool EditorData::check_and_update_scene(int p_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), false);
 	if (!edited_scene[p_idx].root)
 		return false;
 
@@ -674,22 +674,22 @@ int EditorData::get_edited_scene() const {
 }
 void EditorData::set_edited_scene(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, edited_scene.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(edited_scene.size()));
 	current_edited_scene = p_idx;
 	//swap
 }
 Node *EditorData::get_edited_scene_root(int p_idx) {
 	if (p_idx < 0) {
-		ERR_FAIL_INDEX_V(current_edited_scene, edited_scene.size(), NULL);
+		ERR_FAIL_INDEX_V(current_edited_scene, static_cast<int>(edited_scene.size()), NULL);
 		return edited_scene[current_edited_scene].root;
 	} else {
-		ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), NULL);
+		ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), NULL);
 		return edited_scene[p_idx].root;
 	}
 }
 void EditorData::set_edited_scene_root(Node *p_root) {
 
-	ERR_FAIL_INDEX(current_edited_scene, edited_scene.size());
+	ERR_FAIL_INDEX(current_edited_scene, static_cast<int>(edited_scene.size()));
 	edited_scene[current_edited_scene].root = p_root;
 	if (p_root) {
 		if (p_root->get_filename() != "")
@@ -708,7 +708,7 @@ std::vector<EditorData::EditedScene> EditorData::get_edited_scenes() const {
 
 	std::vector<EditedScene> out_edited_scenes_list = std::vector<EditedScene>();
 
-	for (int i = 0; i < edited_scene.size(); i++) {
+	for (decltype(edited_scene.size()) i = 0; i < edited_scene.size(); i++) {
 		out_edited_scenes_list.push_back(edited_scene[i]);
 	}
 
@@ -716,36 +716,36 @@ std::vector<EditorData::EditedScene> EditorData::get_edited_scenes() const {
 }
 
 void EditorData::set_edited_scene_version(uint64_t version, int p_scene_idx) {
-	ERR_FAIL_INDEX(current_edited_scene, edited_scene.size());
+	ERR_FAIL_INDEX(current_edited_scene, static_cast<int>(edited_scene.size()));
 	if (p_scene_idx < 0) {
 		edited_scene[current_edited_scene].version = version;
 	} else {
-		ERR_FAIL_INDEX(p_scene_idx, edited_scene.size());
+		ERR_FAIL_INDEX(p_scene_idx, static_cast<int>(edited_scene.size()));
 		edited_scene[p_scene_idx].version = version;
 	}
 }
 
 uint64_t EditorData::get_edited_scene_version() const {
 
-	ERR_FAIL_INDEX_V(current_edited_scene, edited_scene.size(), 0);
+	ERR_FAIL_INDEX_V(current_edited_scene, static_cast<int>(edited_scene.size()), 0);
 	return edited_scene[current_edited_scene].version;
 }
 uint64_t EditorData::get_scene_version(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), 0);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), 0);
 	return edited_scene[p_idx].version;
 }
 
 String EditorData::get_scene_type(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), String());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), String());
 	if (!edited_scene[p_idx].root)
 		return "";
 	return edited_scene[p_idx].root->get_class();
 }
 void EditorData::move_edited_scene_to_index(int p_idx) {
 
-	ERR_FAIL_INDEX(current_edited_scene, edited_scene.size());
-	ERR_FAIL_INDEX(p_idx, edited_scene.size());
+	ERR_FAIL_INDEX(current_edited_scene, static_cast<int>(edited_scene.size()));
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(edited_scene.size()));
 
 	EditedScene es = edited_scene[current_edited_scene];
 	edited_scene.erase(edited_scene.begin() + current_edited_scene);
@@ -755,7 +755,7 @@ void EditorData::move_edited_scene_to_index(int p_idx) {
 
 Ref<Script> EditorData::get_scene_root_script(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), Ref<Script>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), Ref<Script>());
 	if (!edited_scene[p_idx].root)
 		return Ref<Script>();
 	Ref<Script> s = edited_scene[p_idx].root->get_script();
@@ -770,7 +770,7 @@ Ref<Script> EditorData::get_scene_root_script(int p_idx) const {
 }
 
 String EditorData::get_scene_title(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), String());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), String());
 	if (!edited_scene[p_idx].root)
 		return TTR("[empty]");
 	if (edited_scene[p_idx].root->get_filename() == "")
@@ -785,7 +785,7 @@ String EditorData::get_scene_title(int p_idx) const {
 
 void EditorData::set_scene_path(int p_idx, const String &p_path) {
 
-	ERR_FAIL_INDEX(p_idx, edited_scene.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(edited_scene.size()));
 	edited_scene[p_idx].path = p_path;
 
 	if (!edited_scene[p_idx].root)
@@ -795,7 +795,7 @@ void EditorData::set_scene_path(int p_idx, const String &p_path) {
 
 String EditorData::get_scene_path(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), String());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(edited_scene.size()), String());
 
 	if (edited_scene[p_idx].root) {
 		if (edited_scene[p_idx].root->get_filename() == "")
@@ -808,20 +808,20 @@ String EditorData::get_scene_path(int p_idx) const {
 }
 
 void EditorData::set_edited_scene_live_edit_root(const NodePath &p_root) {
-	ERR_FAIL_INDEX(current_edited_scene, edited_scene.size());
+	ERR_FAIL_INDEX(current_edited_scene, static_cast<int>(edited_scene.size()));
 
 	edited_scene[current_edited_scene].live_edit_root = p_root;
 }
 NodePath EditorData::get_edited_scene_live_edit_root() {
 
-	ERR_FAIL_INDEX_V(current_edited_scene, edited_scene.size(), String());
+	ERR_FAIL_INDEX_V(current_edited_scene, static_cast<int>(edited_scene.size()), String());
 
 	return edited_scene[current_edited_scene].live_edit_root;
 }
 
 void EditorData::save_edited_scene_state(EditorSelection *p_selection, EditorHistory *p_history, const Dictionary &p_custom) {
 
-	ERR_FAIL_INDEX(current_edited_scene, edited_scene.size());
+	ERR_FAIL_INDEX(current_edited_scene, static_cast<int>(edited_scene.size()));
 
 	EditedScene &es = edited_scene[current_edited_scene];
 	es.selection = p_selection->get_full_selected_node_list();
@@ -832,7 +832,7 @@ void EditorData::save_edited_scene_state(EditorSelection *p_selection, EditorHis
 }
 
 Dictionary EditorData::restore_edited_scene_state(EditorSelection *p_selection, EditorHistory *p_history) {
-	ERR_FAIL_INDEX_V(current_edited_scene, edited_scene.size(), Dictionary());
+	ERR_FAIL_INDEX_V(current_edited_scene, static_cast<int>(edited_scene.size()), Dictionary());
 
 	EditedScene &es = edited_scene[current_edited_scene];
 
@@ -850,7 +850,7 @@ Dictionary EditorData::restore_edited_scene_state(EditorSelection *p_selection, 
 
 void EditorData::clear_edited_scenes() {
 
-	for (int i = 0; i < edited_scene.size(); i++) {
+	for (decltype(edited_scene.size()) i = 0; i < edited_scene.size(); i++) {
 		if (edited_scene[i].root) {
 			memdelete(edited_scene[i].root);
 		}
@@ -859,13 +859,13 @@ void EditorData::clear_edited_scenes() {
 }
 
 void EditorData::set_plugin_window_layout(Ref<ConfigFile> p_layout) {
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->set_window_layout(p_layout);
 	}
 }
 
 void EditorData::get_plugin_window_layout(Ref<ConfigFile> p_layout) {
-	for (int i = 0; i < editor_plugins.size(); i++) {
+	for (decltype(editor_plugins.size()) i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->get_window_layout(p_layout);
 	}
 }

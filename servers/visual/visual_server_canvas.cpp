@@ -204,10 +204,7 @@ void VisualServerCanvas::_render_canvas_item(Item *p_canvas_item, const Transfor
 	}
 }
 
-void VisualServerCanvas::_light_mask_canvas_items(int p_z, RasterizerCanvas::Item *p_canvas_item, RasterizerCanvas::Light *p_masked_lights) {
-
-	if (!p_masked_lights)
-		return;
+void VisualServerCanvas::_light_mask_canvas_items(int p_z, RasterizerCanvas::Item *p_canvas_item, RasterizerCanvas::Light *p_masked_lights, int p_canvas_layer_id) {
 
 	RasterizerCanvas::Item *ci = p_canvas_item;
 
@@ -216,7 +213,7 @@ void VisualServerCanvas::_light_mask_canvas_items(int p_z, RasterizerCanvas::Ite
 		RasterizerCanvas::Light *light = p_masked_lights;
 		while (light) {
 
-			if (ci->light_mask & light->item_mask && p_z >= light->z_min && p_z <= light->z_max && ci->global_rect_cache.intersects_transformed(light->xform_cache, light->rect_cache)) {
+			if ((p_canvas_layer_id >= light->layer_min) && (p_canvas_layer_id <= light->layer_max) && (ci->light_mask & light->item_mask) && (p_z >= light->z_min) && (p_z <= light->z_max) && (ci->global_rect_cache.intersects_transformed(light->xform_cache, light->rect_cache))) {
 				ci->light_masked = true;
 			}
 
@@ -227,7 +224,7 @@ void VisualServerCanvas::_light_mask_canvas_items(int p_z, RasterizerCanvas::Ite
 	}
 }
 
-void VisualServerCanvas::render_canvas(Canvas *p_canvas, const Transform2D &p_transform, RasterizerCanvas::Light *p_lights, RasterizerCanvas::Light *p_masked_lights, const Rect2 &p_clip_rect) {
+void VisualServerCanvas::render_canvas(Canvas *p_canvas, const Transform2D &p_transform, RasterizerCanvas::Light *p_lights, RasterizerCanvas::Light *p_masked_lights, const Rect2 &p_clip_rect, int p_canvas_layer_id) {
 
 	VSG::canvas_render->canvas_begin();
 
@@ -268,7 +265,7 @@ void VisualServerCanvas::render_canvas(Canvas *p_canvas, const Transform2D &p_tr
 				continue;
 
 			if (p_masked_lights) {
-				_light_mask_canvas_items(VS::CANVAS_ITEM_Z_MIN + i, z_list[i], p_masked_lights);
+				_light_mask_canvas_items(VS::CANVAS_ITEM_Z_MIN + i, z_list[i], p_masked_lights, p_canvas_layer_id);
 			}
 
 			VSG::canvas_render->canvas_render_items(z_list[i], VS::CANVAS_ITEM_Z_MIN + i, p_canvas->modulate, p_lights, p_transform);
@@ -546,10 +543,11 @@ void VisualServerCanvas::canvas_item_add_polyline(RID p_item, const std::vector<
 			}
 		}
 
-		for (int i = 0; i < p_points.size(); i++) {
+		int p_points_count = p_points.size();
+		for (int i = 0; i < p_points_count; i++) {
 
 			Vector2 t;
-			if (i == p_points.size() - 1) {
+			if (i == p_points_count - 1) {
 				t = prev_t;
 			} else {
 				t = (p_points[i + 1] - p_points[i]).normalized().tangent();
@@ -801,10 +799,10 @@ void VisualServerCanvas::canvas_item_add_triangle_array(RID p_item, const std::v
 
 	int vertex_count = p_points.size();
 	ERR_FAIL_COND(vertex_count == 0);
-	ERR_FAIL_COND(!p_colors.empty() && p_colors.size() != vertex_count && p_colors.size() != 1);
-	ERR_FAIL_COND(!p_uvs.empty() && p_uvs.size() != vertex_count);
-	ERR_FAIL_COND(!p_bones.empty() && p_bones.size() != vertex_count * 4);
-	ERR_FAIL_COND(!p_weights.empty() && p_weights.size() != vertex_count * 4);
+	ERR_FAIL_COND(!p_colors.empty() && static_cast<int>(p_colors.size()) != vertex_count && static_cast<int>(p_colors.size()) != 1);
+	ERR_FAIL_COND(!p_uvs.empty() && static_cast<int>(p_uvs.size()) != vertex_count);
+	ERR_FAIL_COND(!p_bones.empty() && static_cast<int>(p_bones.size()) != vertex_count * 4);
+	ERR_FAIL_COND(!p_weights.empty() && static_cast<int>(p_weights.size()) != vertex_count * 4);
 
 	const std::vector<int> &indices = p_indices;
 
@@ -1361,7 +1359,7 @@ bool VisualServerCanvas::free(RID p_rid) {
 			canvas->viewports.erase(canvas->viewports.front());
 		}
 
-		for (int i = 0; i < canvas->child_items.size(); i++) {
+		for (decltype(canvas->child_items.size()) i = 0; i < canvas->child_items.size(); i++) {
 
 			canvas->child_items[i].item->parent = RID();
 		}
@@ -1407,7 +1405,7 @@ bool VisualServerCanvas::free(RID p_rid) {
 			}
 		}
 
-		for (int i = 0; i < canvas_item->child_items.size(); i++) {
+		for (decltype(canvas_item->child_items.size()) i = 0; i < canvas_item->child_items.size(); i++) {
 
 			canvas_item->child_items[i]->parent = RID();
 		}

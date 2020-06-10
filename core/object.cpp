@@ -118,7 +118,7 @@ MethodInfo::operator Dictionary() const {
 	d["name"] = name;
 	d["args"] = convert_property_list(&arguments);
 	Array da;
-	for (int i = 0; i < default_arguments.size(); i++)
+	for (decltype(default_arguments.size()) i = 0; i < default_arguments.size(); i++)
 		da.push_back(default_arguments[i]);
 	d["default_args"] = da;
 	d["flags"] = flags;
@@ -572,7 +572,7 @@ void Object::set_indexed(const std::vector<StringName> &p_names, const Variant &
 		return;
 	}
 
-	for (int i = 1; i < p_names.size() - 1; i++) {
+	for (decltype(p_names.size()) i = 1; i < p_names.size() - 1; i++) {
 		value_stack.push_back(value_stack.back()->get().get_named(p_names[i], r_valid));
 
 		if (!*r_valid) {
@@ -609,7 +609,7 @@ Variant Object::get_indexed(const std::vector<StringName> &p_names, bool *r_vali
 	bool valid = false;
 
 	Variant current_value = get(p_names[0], &valid);
-	for (int i = 1; i < p_names.size(); i++) {
+	for (decltype(p_names.size()) i = 1; i < p_names.size(); i++) {
 		current_value = current_value.get_named(p_names[i], &valid);
 
 		if (!valid)
@@ -1233,7 +1233,7 @@ Error Object::emit_signal(const StringName &p_name, const Variant **p_args, int 
 			for (int j = 0; j < p_argcount; j++) {
 				bind_mem[j] = p_args[j];
 			}
-			for (int j = 0; j < c.binds.size(); j++) {
+			for (decltype(c.binds.size()) j = 0; j < c.binds.size(); j++) {
 				bind_mem[p_argcount + j] = &c.binds[j];
 			}
 
@@ -1885,7 +1885,7 @@ Variant::Type Object::get_static_property_type_indexed(const std::vector<StringN
 	Variant::CallError ce;
 	Variant check = Variant::construct(t, NULL, 0, ce);
 
-	for (int i = 1; i < p_path.size(); i++) {
+	for (decltype(p_path.size()) i = 1; i < p_path.size(); i++) {
 		if (check.get_type() == Variant::OBJECT || check.get_type() == Variant::DICTIONARY || check.get_type() == Variant::ARRAY) {
 			// We cannot be sure about the type of properties this types can have
 			if (r_valid)

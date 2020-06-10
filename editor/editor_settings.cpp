@@ -637,7 +637,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 		if (p_extra_config->has_section("init_projects") && p_extra_config->has_section_key("init_projects", "list")) {
 
 			std::vector<String> list = p_extra_config->get_value("init_projects", "list");
-			for (int i = 0; i < list.size(); i++) {
+			for (decltype(list.size()) i = 0; i < list.size(); i++) {
 
 				String name = list[i].replace("/", "::");
 				set("projects/" + name, list[i]);
@@ -959,7 +959,7 @@ fail:
 	// patch init projects
 	if (extra_config->has_section("init_projects")) {
 		std::vector<String> list = extra_config->get_value("init_projects", "list");
-		for (int i = 0; i < list.size(); i++) {
+		for (decltype(list.size()) i = 0; i < list.size(); i++) {
 
 			list[i] = exe_path.plus_file(list[i]);
 		};
@@ -1259,7 +1259,7 @@ void EditorSettings::set_favorites(const std::vector<String> &p_favorites) {
 	favorites = p_favorites;
 	FileAccess *f = FileAccess::open(get_project_settings_dir().plus_file("favorites"), FileAccess::WRITE);
 	if (f) {
-		for (int i = 0; i < favorites.size(); i++)
+		for (decltype(favorites.size()) i = 0; i < favorites.size(); i++)
 			f->store_line(favorites[i]);
 		memdelete(f);
 	}
@@ -1275,7 +1275,7 @@ void EditorSettings::set_recent_dirs(const std::vector<String> &p_recent_dirs) {
 	recent_dirs = p_recent_dirs;
 	FileAccess *f = FileAccess::open(get_project_settings_dir().plus_file("recent_dirs"), FileAccess::WRITE);
 	if (f) {
-		for (int i = 0; i < recent_dirs.size(); i++)
+		for (decltype(recent_dirs.size()) i = 0; i < recent_dirs.size(); i++)
 			f->store_line(recent_dirs[i]);
 		memdelete(f);
 	}

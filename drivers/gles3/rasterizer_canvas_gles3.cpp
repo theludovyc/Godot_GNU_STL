@@ -1005,7 +1005,7 @@ void RasterizerCanvasGLES3::_canvas_item_render_commands(Item *p_item, Item *cur
 				RasterizerStorageGLES3::Mesh *mesh_data = storage->mesh_owner.getornull(mesh->mesh);
 				if (mesh_data) {
 
-					for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+					for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 						RasterizerStorageGLES3::Surface *s = mesh_data->surfaces[j];
 						// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 						glBindVertexArray(s->array_id);
@@ -1058,7 +1058,7 @@ void RasterizerCanvasGLES3::_canvas_item_render_commands(Item *p_item, Item *cur
 					amount = multi_mesh->size;
 				}
 
-				for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+				for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 					RasterizerStorageGLES3::Surface *s = mesh_data->surfaces[j];
 					// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 					glBindVertexArray(s->instancing_array_id);
@@ -1365,7 +1365,7 @@ void RasterizerCanvasGLES3::_copy_texscreen(const Rect2 &p_rect) {
 
 	scene_render->_copy_screen();
 
-	for (int i = 0; i < storage->frame.current_rt->effects.mip_maps[1].sizes.size(); i++) {
+	for (decltype(storage->frame.current_rt->effects.mip_maps[1].sizes.size()) i = 0; i < storage->frame.current_rt->effects.mip_maps[1].sizes.size(); i++) {
 
 		int vp_w = storage->frame.current_rt->effects.mip_maps[1].sizes[i].width;
 		int vp_h = storage->frame.current_rt->effects.mip_maps[1].sizes[i].height;

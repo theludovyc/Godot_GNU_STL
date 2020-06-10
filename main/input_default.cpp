@@ -207,7 +207,7 @@ void InputDefault::joy_connection_changed(int p_idx, bool p_connected, String p_
 		js.uid = uidname;
 		js.connected = true;
 		int mapping = fallback_mapping;
-		for (int i = 0; i < map_db.size(); i++) {
+		for (decltype(map_db.size()) i = 0; i < map_db.size(); i++) {
 			if (js.uid == map_db[i].uid) {
 				mapping = i;
 				js.name = map_db[i].name;
@@ -739,7 +739,7 @@ InputDefault::InputDefault() {
 	String env_mapping = OS::get_singleton()->get_environment("SDL_GAMECONTROLLERCONFIG");
 	if (env_mapping != "") {
 		std::vector<String> entries = env_mapping.split("\n");
-		for (int i = 0; i < entries.size(); i++) {
+		for (decltype(entries.size()) i = 0; i < entries.size(); i++) {
 			if (entries[i] == "")
 				continue;
 			parse_mapping(entries[i]);
@@ -1012,7 +1012,8 @@ void InputDefault::parse_mapping(String p_mapping) {
 	mapping.name = entry[1];
 
 	int idx = 1;
-	while (++idx < entry.size()) {
+	int size = entry.size();
+	while (++idx < size) {
 
 		if (entry[idx] == "")
 			continue;
@@ -1086,7 +1087,7 @@ void InputDefault::remove_joy_mapping(String p_guid) {
 
 void InputDefault::set_fallback_mapping(String p_guid) {
 
-	for (int i = 0; i < map_db.size(); i++) {
+	for (decltype(map_db.size()) i = 0; i < map_db.size(); i++) {
 		if (map_db[i].uid == p_guid) {
 			fallback_mapping = i;
 			return;

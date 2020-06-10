@@ -180,11 +180,11 @@ void RasterizerSceneGLES2::shadow_atlas_set_quadrant_subdivision(RID p_atlas, in
 
 	subdiv = int(Math::sqrt((float)subdiv));
 
-	if (shadow_atlas->quadrants[p_quadrant].shadows.size() == (int)subdiv)
+	if (shadow_atlas->quadrants[p_quadrant].shadows.size() == subdiv)
 		return;
 
 	// erase all data from the quadrant
-	for (int i = 0; i < shadow_atlas->quadrants[p_quadrant].shadows.size(); i++) {
+	for (decltype(shadow_atlas->quadrants[p_quadrant].shadows.size()) i = 0; i < shadow_atlas->quadrants[p_quadrant].shadows.size(); i++) {
 		if (shadow_atlas->quadrants[p_quadrant].shadows[i].owner.is_valid()) {
 			shadow_atlas->shadow_owners.erase(shadow_atlas->quadrants[p_quadrant].shadows[i].owner);
 
@@ -1138,7 +1138,7 @@ void RasterizerSceneGLES2::_add_geometry_with_material(RasterizerStorageGLES2::G
 
 			//add omni / spots
 
-			for (int i = 0; i < e->instance->light_instances.size(); i++) {
+			for (decltype(e->instance->light_instances.size()) i = 0; i < e->instance->light_instances.size(); i++) {
 
 				LightInstance *li = light_instance_owner.getornull(e->instance->light_instances[i]);
 
@@ -2957,8 +2957,9 @@ void RasterizerSceneGLES2::_post_process(Environment *env, const CameraMatrix &p
 		for (int i = 0; i < VS::MAX_GLOW_LEVELS; i++) {
 			if (env->glow_levels & (1 << i)) {
 
-				if (i >= storage->frame.current_rt->mip_maps[1].sizes.size()) {
-					max_glow_level = storage->frame.current_rt->mip_maps[1].sizes.size() - 1;
+				int len = storage->frame.current_rt->mip_maps[1].sizes.size();
+				if (i >= len) {
+					max_glow_level = len - 1;
 					glow_mask |= 1 << max_glow_level;
 
 				} else {
@@ -3645,7 +3646,7 @@ void RasterizerSceneGLES2::render_shadow(RID p_light, RID p_shadow_atlas, int p_
 		uint32_t quadrant = (key >> ShadowAtlas::QUADRANT_SHIFT) & 0x03;
 		uint32_t shadow = key & ShadowAtlas::SHADOW_INDEX_MASK;
 
-		ERR_FAIL_INDEX((int)shadow, shadow_atlas->quadrants[quadrant].shadows.size());
+		ERR_FAIL_INDEX(shadow, shadow_atlas->quadrants[quadrant].shadows.size());
 
 		uint32_t quadrant_size = shadow_atlas->size >> 1;
 

@@ -252,11 +252,13 @@ FileAccessNetworkClient::~FileAccessNetworkClient() {
 void FileAccessNetwork::_set_block(int p_offset, const std::vector<uint8_t> &p_block) {
 
 	int page = p_offset / page_size;
-	ERR_FAIL_INDEX(page, pages.size());
-	if (page < pages.size() - 1) {
-		ERR_FAIL_COND(p_block.size() != page_size);
+	int pages_count = pages.size();
+	ERR_FAIL_INDEX(page, pages_count);
+	int p_block_count = p_block.size();
+	if (page < pages_count - 1) {
+		ERR_FAIL_COND(p_block_count != page_size);
 	} else {
-		ERR_FAIL_COND((p_block.size() != (int)(total_size % page_size)));
+		ERR_FAIL_COND((p_block_count != (int)(total_size % page_size)));
 	}
 
 	buffer_mutex->lock();
@@ -379,7 +381,7 @@ uint8_t FileAccessNetwork::get_8() const {
 
 void FileAccessNetwork::_queue_page(int p_page) const {
 
-	if (p_page >= pages.size())
+	if (p_page >= static_cast<int>(pages.size()))
 		return;
 	if (pages[p_page].buffer.empty() && !pages[p_page].queued) {
 

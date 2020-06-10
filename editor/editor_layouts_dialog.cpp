@@ -73,7 +73,7 @@ void EditorLayoutsDialog::ok_pressed() {
 	if (layout_names->is_anything_selected()) {
 
 		std::vector<int> const selected_items = layout_names->get_selected_items();
-		for (int i = 0; i < selected_items.size(); ++i) {
+		for (decltype(selected_items.size()) i = 0; i < selected_items.size(); ++i) {
 
 			emit_signal("name_confirmed", layout_names->get_item_text(selected_items[i]));
 		}

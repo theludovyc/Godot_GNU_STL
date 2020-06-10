@@ -422,7 +422,7 @@ void VisualServerScene::instance_set_base(RID p_instance, RID p_base) {
 
 		instance->blend_values.clear();
 
-		for (int i = 0; i < instance->materials.size(); i++) {
+		for (decltype(instance->materials.size()) i = 0; i < instance->materials.size(); i++) {
 			if (instance->materials[i].is_valid()) {
 				VSG::storage->material_remove_instance_owner(instance->materials[i], instance);
 			}
@@ -625,7 +625,7 @@ void VisualServerScene::instance_set_blend_shape_weight(RID p_instance, int p_sh
 		_update_dirty_instance(instance);
 	}
 
-	ERR_FAIL_INDEX(p_shape, instance->blend_values.size());
+	ERR_FAIL_INDEX(p_shape, static_cast<int>(instance->blend_values.size()));
 	instance->blend_values[p_shape] = p_weight;
 }
 
@@ -639,7 +639,7 @@ void VisualServerScene::instance_set_surface_material(RID p_instance, int p_surf
 		instance->materials.resize(VSG::storage->mesh_get_surface_count(instance->base));
 	}
 
-	ERR_FAIL_INDEX(p_surface, instance->materials.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(instance->materials.size()));
 
 	if (instance->materials[p_surface].is_valid()) {
 		VSG::storage->material_remove_instance_owner(instance->materials[p_surface], instance);
@@ -2934,7 +2934,7 @@ void VisualServerScene::_bake_gi_probe(Instance *p_gi_probe) {
 
 			int stage = header->cell_subdiv - i - 1;
 
-			if (stage >= probe_data->dynamic.mipmaps_3d.size())
+			if (stage >= static_cast<int>(probe_data->dynamic.mipmaps_3d.size()))
 				continue; //no mipmap for this one
 
 			//print_line("generating mipmap stage: " + itos(stage));
@@ -3306,7 +3306,7 @@ void VisualServerScene::_update_dirty_instance(Instance *p_instance) {
 			p_instance->materials.resize(new_mat_count);
 
 			int new_blend_shape_count = VSG::storage->mesh_get_blend_shape_count(p_instance->base);
-			if (new_blend_shape_count != p_instance->blend_values.size()) {
+			if (new_blend_shape_count != static_cast<int>(p_instance->blend_values.size())) {
 				p_instance->blend_values.resize(new_blend_shape_count);
 				for (int i = 0; i < new_blend_shape_count; i++) {
 					p_instance->blend_values[i] = 0;
@@ -3334,7 +3334,7 @@ void VisualServerScene::_update_dirty_instance(Instance *p_instance) {
 					if (mesh.is_valid()) {
 						bool cast_shadows = false;
 
-						for (int i = 0; i < p_instance->materials.size(); i++) {
+						for (decltype(p_instance->materials.size()) i = 0; i < p_instance->materials.size(); i++) {
 
 							RID mat = p_instance->materials[i].is_valid() ? p_instance->materials[i] : VSG::storage->mesh_surface_get_material(mesh, i);
 

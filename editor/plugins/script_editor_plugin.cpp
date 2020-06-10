@@ -179,7 +179,7 @@ void ScriptEditorQuickOpen::_update_search() {
 	search_options->clear();
 	TreeItem *root = search_options->create_item();
 
-	for (int i = 0; i < functions.size(); i++) {
+	for (decltype(functions.size()) i = 0; i < functions.size(); i++) {
 
 		String file = functions[i];
 		if ((search_box->get_text() == "" || file.findn(search_box->get_text()) != -1)) {
@@ -368,12 +368,12 @@ ScriptEditorBase *ScriptEditor::_get_current_editor() const {
 void ScriptEditor::_update_history_arrows() {
 
 	script_back->set_disabled(history_pos <= 0);
-	script_forward->set_disabled(history_pos >= history.size() - 1);
+	script_forward->set_disabled(history_pos >= static_cast<int>(history.size()) - 1);
 }
 
 void ScriptEditor::_save_history() {
 
-	if (history_pos >= 0 && history_pos < history.size() && history[history_pos].control == tab_container->get_current_tab_control()) {
+	if (history_pos >= 0 && history_pos < static_cast<int>(history.size()) && history[history_pos].control == tab_container->get_current_tab_control()) {
 
 		Node *n = tab_container->get_current_tab_control();
 
@@ -412,7 +412,7 @@ void ScriptEditor::_go_to_tab(int p_idx) {
 	if (!c)
 		return;
 
-	if (history_pos >= 0 && history_pos < history.size() && history[history_pos].control == tab_container->get_current_tab_control()) {
+	if (history_pos >= 0 && history_pos < static_cast<int>(history.size()) && history[history_pos].control == tab_container->get_current_tab_control()) {
 
 		Node *n = tab_container->get_current_tab_control();
 
@@ -601,7 +601,7 @@ void ScriptEditor::_close_tab(int p_idx, bool p_save, bool p_history_back) {
 	//remove from history
 	history.resize(history_pos + 1);
 
-	for (int i = 0; i < history.size(); i++) {
+	for (int i = 0; i < static_cast<int>(history.size()); i++) {
 		if (history[i].control == tselected) {
 			history.erase(history.begin() + i);
 			i--;
@@ -609,7 +609,7 @@ void ScriptEditor::_close_tab(int p_idx, bool p_save, bool p_history_back) {
 		}
 	}
 
-	if (history_pos >= history.size()) {
+	if (history_pos >= static_cast<int>(history.size())) {
 		history_pos = history.size() - 1;
 	}
 
@@ -1701,7 +1701,7 @@ void ScriptEditor::_update_members_overview() {
 		std::sort(functions.begin(), functions.end());
 	}
 
-	for (int i = 0; i < functions.size(); i++) {
+	for (decltype(functions.size()) i = 0; i < functions.size(); i++) {
 		String filter = filter_methods->get_text();
 		String name = functions[i].get_slice(":", 0);
 		if (filter == "" || filter.is_subsequence_ofi(name)) {
@@ -1756,7 +1756,7 @@ void ScriptEditor::_update_help_overview() {
 	}
 
 	std::vector<Pair<String, int> > sections = se->get_sections();
-	for (int i = 0; i < sections.size(); i++) {
+	for (decltype(sections.size()) i = 0; i < sections.size(); i++) {
 		help_overview->add_item(sections[i].first);
 		help_overview->set_item_metadata(i, sections[i].second);
 	}
@@ -1914,7 +1914,7 @@ void ScriptEditor::_update_script_names() {
 		int prev_tab = tab_container->get_previous_tab();
 		int new_cur_tab = -1;
 		int new_prev_tab = -1;
-		for (int i = 0; i < sedata.size(); i++) {
+		for (decltype(sedata.size()) i = 0; i < sedata.size(); i++) {
 			tab_container->move_child(sedata[i].ref, i);
 			if (new_prev_tab == -1 && sedata[i].index == prev_tab) {
 				new_prev_tab = i;
@@ -1933,14 +1933,14 @@ void ScriptEditor::_update_script_names() {
 	}
 
 	std::vector<_ScriptEditorItemData> sedata_filtered;
-	for (int i = 0; i < sedata.size(); i++) {
+	for (decltype(sedata.size()) i = 0; i < sedata.size(); i++) {
 		String filter = filter_scripts->get_text();
 		if (filter == "" || filter.is_subsequence_ofi(sedata[i].name)) {
 			sedata_filtered.push_back(sedata[i]);
 		}
 	}
 
-	for (int i = 0; i < sedata_filtered.size(); i++) {
+	for (decltype(sedata_filtered.size()) i = 0; i < sedata_filtered.size(); i++) {
 		script_list->add_item(sedata_filtered[i].name, sedata_filtered[i].icon);
 		int index = script_list->get_item_count() - 1;
 		script_list->set_item_tooltip(index, sedata_filtered[i].tooltip);
@@ -2489,7 +2489,7 @@ bool ScriptEditor::can_drop_data_fw(const Point2 &p_point, const Variant &p_data
 		if (files.size() == 0)
 			return false; //weird
 
-		for (int i = 0; i < files.size(); i++) {
+		for (decltype(files.size()) i = 0; i < files.size(); i++) {
 			String file = files[i];
 			if (file == "" || !FileAccess::exists(file))
 				continue;
@@ -2559,7 +2559,7 @@ void ScriptEditor::drop_data_fw(const Point2 &p_point, const Variant &p_data, Co
 			new_index = script_list->get_item_metadata(script_list->get_item_at_position(p_point));
 		}
 		int num_tabs_before = tab_container->get_child_count();
-		for (int i = 0; i < files.size(); i++) {
+		for (decltype(files.size()) i = 0; i < files.size(); i++) {
 			String file = files[i];
 			if (file == "" || !FileAccess::exists(file))
 				continue;
@@ -2924,7 +2924,7 @@ void ScriptEditor::_update_history_pos(int p_new_pos) {
 
 void ScriptEditor::_history_forward() {
 
-	if (history_pos < history.size() - 1) {
+	if (history_pos < static_cast<int>(history.size()) - 1) {
 		_update_history_pos(history_pos + 1);
 	}
 }

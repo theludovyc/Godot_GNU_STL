@@ -722,7 +722,7 @@ void ConcavePolygonShape2DSW::get_supports(const Vector2 &p_normal, Vector2 *r_s
 
 	real_t d = -1e10;
 	int idx = -1;
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 
 		real_t ld = p_normal.dot(points[i]);
 		if (ld > d) {
@@ -958,7 +958,7 @@ void ConcavePolygonShape2DSW::set_data(const Variant &p_data) {
 
 		std::vector<BVH> main_vbh;
 		main_vbh.resize(segments.size());
-		for (int i = 0; i < main_vbh.size(); i++) {
+		for (decltype(main_vbh.size()) i = 0; i < main_vbh.size(); i++) {
 
 			main_vbh[i].aabb.position = points[segments[i].points[0]];
 			main_vbh[i].aabb.expand_to(points[segments[i].points[1]]);

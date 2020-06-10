@@ -229,15 +229,16 @@ void VisualServerViewport::_draw_viewport(Viewport *p_viewport, ARVRInterface::E
 			RasterizerCanvas::Light *canvas_lights = NULL;
 
 			RasterizerCanvas::Light *ptr = lights;
+			int canvas_layer_id = E->get()->layer;
 			while (ptr) {
-				if (E->get()->layer >= ptr->layer_min && E->get()->layer <= ptr->layer_max) {
+				if (canvas_layer_id >= ptr->layer_min && canvas_layer_id <= ptr->layer_max) {
 					ptr->next_ptr = canvas_lights;
 					canvas_lights = ptr;
 				}
 				ptr = ptr->filter_next_ptr;
 			}
 
-			VSG::canvas->render_canvas(canvas, xform, canvas_lights, lights_with_mask, clip_rect);
+			VSG::canvas->render_canvas(canvas, xform, canvas_lights, lights_with_mask, clip_rect, canvas_layer_id);
 			i++;
 
 			if (scenario_draw_canvas_bg && E->key().get_layer() >= scenario_canvas_max_layer) {
@@ -283,7 +284,7 @@ void VisualServerViewport::draw_viewports() {
 	std::sort(active_viewports.begin(), active_viewports.end(), ViewportSort);
 
 	//draw viewports
-	for (int i = 0; i < active_viewports.size(); i++) {
+	for (decltype(active_viewports.size()) i = 0; i < active_viewports.size(); i++) {
 
 		Viewport *vp = active_viewports[i];
 

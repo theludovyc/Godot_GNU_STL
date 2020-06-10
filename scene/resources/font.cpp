@@ -95,6 +95,7 @@ void Font::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_descent"), &Font::get_descent);
 	ClassDB::bind_method(D_METHOD("get_height"), &Font::get_height);
 	ClassDB::bind_method(D_METHOD("is_distance_field_hint"), &Font::is_distance_field_hint);
+	ClassDB::bind_method(D_METHOD("get_char_size", "char", "next"), &Font::get_char_size, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("get_string_size", "string"), &Font::get_string_size);
 	ClassDB::bind_method(D_METHOD("get_wordwrap_string_size", "string", "width"), &Font::get_wordwrap_string_size);
 	ClassDB::bind_method(D_METHOD("has_outline"), &Font::has_outline);
@@ -181,7 +182,7 @@ PoolVector<int> BitmapFont::_get_kernings() const {
 void BitmapFont::_set_textures(const std::vector<Variant> &p_textures) {
 
 	textures.clear();
-	for (int i = 0; i < p_textures.size(); i++) {
+	for (decltype(p_textures.size()) i = 0; i < p_textures.size(); i++) {
 		Ref<Texture> tex = p_textures[i];
 		ERR_CONTINUE(!tex.is_valid());
 		add_texture(tex);
@@ -191,7 +192,7 @@ void BitmapFont::_set_textures(const std::vector<Variant> &p_textures) {
 std::vector<Variant> BitmapFont::_get_textures() const {
 
 	std::vector<Variant> rtextures;
-	for (int i = 0; i < textures.size(); i++)
+	for (decltype(textures.size()) i = 0; i < textures.size(); i++)
 		rtextures.push_back(textures[i].get_ref_ptr());
 	return rtextures;
 }
@@ -369,7 +370,7 @@ int BitmapFont::get_texture_count() const {
 
 Ref<Texture> BitmapFont::get_texture(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, textures.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(textures.size()), Ref<Texture>());
 	return textures[p_idx];
 };
 
@@ -507,12 +508,12 @@ Size2 Font::get_wordwrap_string_size(const String &p_string, float p_width) cons
 	float h = 0;
 	float space_w = get_char_size(' ').width;
 	std::vector<String> lines = p_string.split("\n");
-	for (int i = 0; i < lines.size(); i++) {
+	for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 		h += get_height();
 		String t = lines[i];
 		line_w = 0;
 		std::vector<String> words = t.split(" ");
-		for (int j = 0; j < words.size(); j++) {
+		for (decltype(words.size()) j = 0; j < words.size(); j++) {
 			line_w += get_string_size(words[j]).x;
 			if (line_w > p_width) {
 				h += get_height();
@@ -550,7 +551,7 @@ float BitmapFont::draw_char(RID p_canvas_item, const Point2 &p_pos, CharType p_c
 		return 0;
 	}
 
-	ERR_FAIL_COND_V(c->texture_idx < -1 || c->texture_idx >= textures.size(), 0);
+	ERR_FAIL_COND_V(c->texture_idx < -1 || c->texture_idx >= static_cast<int>(textures.size()), 0);
 	if (!p_outline && c->texture_idx != -1) {
 		Point2 cpos = p_pos;
 		cpos.x += c->h_align;
@@ -605,8 +606,6 @@ void BitmapFont::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_texture_count"), &BitmapFont::get_texture_count);
 	ClassDB::bind_method(D_METHOD("get_texture", "idx"), &BitmapFont::get_texture);
-
-	ClassDB::bind_method(D_METHOD("get_char_size", "char", "next"), &BitmapFont::get_char_size, DEFVAL(0));
 
 	ClassDB::bind_method(D_METHOD("set_distance_field_hint", "enable"), &BitmapFont::set_distance_field_hint);
 

@@ -102,18 +102,18 @@ int BakedLightmapData::get_user_count() const {
 }
 NodePath BakedLightmapData::get_user_path(int p_user) const {
 
-	ERR_FAIL_INDEX_V(p_user, users.size(), NodePath());
+	ERR_FAIL_INDEX_V(p_user, static_cast<int>(users.size()), NodePath());
 	return users[p_user].path;
 }
 Ref<Texture> BakedLightmapData::get_user_lightmap(int p_user) const {
 
-	ERR_FAIL_INDEX_V(p_user, users.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_user, static_cast<int>(users.size()), Ref<Texture>());
 	return users[p_user].lightmap;
 }
 
 int BakedLightmapData::get_user_instance(int p_user) const {
 
-	ERR_FAIL_INDEX_V(p_user, users.size(), -1);
+	ERR_FAIL_INDEX_V(p_user, static_cast<int>(users.size()), -1);
 	return users[p_user].instance_index;
 }
 
@@ -133,7 +133,7 @@ void BakedLightmapData::_set_user_data(const Array &p_data) {
 Array BakedLightmapData::_get_user_data() const {
 
 	Array ret;
-	for (int i = 0; i < users.size(); i++) {
+	for (decltype(users.size()) i = 0; i < users.size(); i++) {
 		ret.push_back(users[i].path);
 		ret.push_back(users[i].lightmap);
 		ret.push_back(users[i].instance_index);

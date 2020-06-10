@@ -275,7 +275,7 @@ public:
 		paths.push_back(p_path.get_base_dir().plus_file("../texture/" + path.get_file().get_basename() + extension));
 		paths.push_back(p_path.get_base_dir().plus_file("../texture/" + path.get_file() + extension));
 		paths.push_back(p_path.get_base_dir().plus_file("../texture/" + path.get_file()));
-		for (int i = 0; i < paths.size(); i++) {
+		for (decltype(paths.size()) i = 0; i < paths.size(); i++) {
 			if (dir.file_exists(paths[i])) {
 				found = true;
 				path = paths[i];

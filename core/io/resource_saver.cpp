@@ -263,7 +263,7 @@ void ResourceSaver::remove_custom_savers() {
 		}
 	}
 
-	for (int i = 0; i < custom_savers.size(); ++i) {
+	for (decltype(custom_savers.size()) i = 0; i < custom_savers.size(); ++i) {
 		remove_resource_format_saver(custom_savers[i]);
 	}
 }

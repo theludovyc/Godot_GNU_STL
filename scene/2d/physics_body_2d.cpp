@@ -1389,14 +1389,14 @@ int KinematicBody2D::get_slide_count() const {
 }
 
 KinematicBody2D::Collision KinematicBody2D::get_slide_collision(int p_bounce) const {
-	ERR_FAIL_INDEX_V(p_bounce, colliders.size(), Collision());
+	ERR_FAIL_INDEX_V(p_bounce, static_cast<int>(colliders.size()), Collision());
 	return colliders[p_bounce];
 }
 
 Ref<KinematicCollision2D> KinematicBody2D::_get_slide_collision(int p_bounce) {
 
-	ERR_FAIL_INDEX_V(p_bounce, colliders.size(), Ref<KinematicCollision2D>());
-	if (p_bounce >= slide_colliders.size()) {
+	ERR_FAIL_INDEX_V(p_bounce, static_cast<int>(colliders.size()), Ref<KinematicCollision2D>());
+	if (p_bounce >= static_cast<int>(slide_colliders.size())) {
 		slide_colliders.resize(p_bounce + 1);
 	}
 
@@ -1514,7 +1514,7 @@ KinematicBody2D::~KinematicBody2D() {
 		motion_cache->owner = NULL;
 	}
 
-	for (int i = 0; i < slide_colliders.size(); i++) {
+	for (decltype(slide_colliders.size()) i = 0; i < slide_colliders.size(); i++) {
 		if (slide_colliders[i].is_valid()) {
 			slide_colliders[i]->owner = NULL;
 		}

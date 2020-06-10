@@ -147,12 +147,12 @@ void Navigation::_navmesh_unlink(int p_id) {
 
 		Polygon &p = E->get();
 
-		int ec = p.edges.size();
+		int edge_count = p.edges.size();
 		Polygon::Edge *edges = p.edges.data();
 
-		for (int i = 0; i < ec; i++) {
-			int next = (i + 1) % ec;
+		for (int i = 0; i < edge_count; i++) {
 
+			int next = (i + 1) % edge_count;
 			EdgeKey ek(edges[i].point, edges[next].point);
 			Map<EdgeKey, Connection>::Element *C = connections.find(ek);
 
@@ -249,10 +249,12 @@ void Navigation::_clip_path(std::vector<Vector3> &path, Polygon *from_poly, cons
 	cut_plane.d = cut_plane.normal.dot(from);
 
 	while (from_poly != p_to_poly) {
-
+		int edge_count = from_poly->edges.size();
+		ERR_FAIL_COND_MSG(edge_count == 0, "Polygon has no edges.");
 		int pe = from_poly->prev_edge;
+		int next = (pe + 1) % edge_count;
 		Vector3 a = _get_vertex(from_poly->edges[pe].point);
-		Vector3 b = _get_vertex(from_poly->edges[(pe + 1) % from_poly->edges.size()].point);
+		Vector3 b = _get_vertex(from_poly->edges[next].point);
 
 		from_poly = from_poly->edges[pe].C;
 		ERR_FAIL_COND(!from_poly);
@@ -285,7 +287,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 spoint = f.get_closest_point_to(p_start);
@@ -327,7 +329,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 
 	List<Polygon *> open_list;
 
-	for (int i = 0; i < begin_poly->edges.size(); i++) {
+	for (decltype(begin_poly->edges.size()) i = 0; i < begin_poly->edges.size(); i++) {
 
 		if (begin_poly->edges[i].C) {
 
@@ -384,7 +386,7 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 			break;
 		}
 
-		for (int i = 0; i < p->edges.size(); i++) {
+		for (decltype(p->edges.size()) i = 0; i < p->edges.size(); i++) {
 
 			Polygon::Edge &e = p->edges[i];
 
@@ -456,8 +458,10 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 					left = begin_point;
 					right = begin_point;
 				} else {
+					int edge_count = p->edges.size();
+					ERR_FAIL_COND_V_MSG(edge_count == 0, std::vector<Vector3>(), "Polygon has no edges.");
 					int prev = p->prev_edge;
-					int prev_n = (p->prev_edge + 1) % p->edges.size();
+					int prev_n = (p->prev_edge + 1) % edge_count;
 					left = _get_vertex(p->edges[prev].point);
 					right = _get_vertex(p->edges[prev_n].point);
 
@@ -529,7 +533,9 @@ std::vector<Vector3> Navigation::get_simple_path(const Vector3 &p_start, const V
 #ifdef USE_ENTRY_POINT
 				Vector3 point = p->entry;
 #else
-				int prev_n = (p->prev_edge + 1) % p->edges.size();
+				int edge_count = p->edges.size();
+				ERR_FAIL_COND_V_MSG(edge_count == 0, Vector<Vector3>(), "Polygon has no edges.");
+				int prev_n = (p->prev_edge + 1) % edge_count;
 				Vector3 point = (_get_vertex(p->edges[prev].point) + _get_vertex(p->edges[prev_n].point)) * 0.5;
 #endif
 				path.push_back(point);
@@ -562,7 +568,7 @@ Vector3 Navigation::get_closest_point_to_segment(const Vector3 &p_from, const Ve
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters;
@@ -582,7 +588,7 @@ Vector3 Navigation::get_closest_point_to_segment(const Vector3 &p_from, const Ve
 
 			if (!use_collision) {
 
-				for (int i = 0; i < p.edges.size(); i++) {
+				for (decltype(p.edges.size()) i = 0; i < p.edges.size(); i++) {
 
 					Vector3 a, b;
 
@@ -614,7 +620,7 @@ Vector3 Navigation::get_closest_point(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);
@@ -643,7 +649,7 @@ Vector3 Navigation::get_closest_point_normal(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);
@@ -673,7 +679,7 @@ Object *Navigation::get_closest_point_owner(const Vector3 &p_point) {
 		for (List<Polygon>::Element *F = E->get().polygons.front(); F; F = F->next()) {
 
 			Polygon &p = F->get();
-			for (int i = 2; i < p.edges.size(); i++) {
+			for (decltype(p.edges.size()) i = 2; i < p.edges.size(); i++) {
 
 				Face3 f(_get_vertex(p.edges[0].point), _get_vertex(p.edges[i - 1].point), _get_vertex(p.edges[i].point));
 				Vector3 inters = f.get_closest_point_to(p_point);

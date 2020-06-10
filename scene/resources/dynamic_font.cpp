@@ -252,7 +252,7 @@ const Pair<const DynamicFontAtSize::Character *, DynamicFontAtSize *> DynamicFon
 	if (!chr->found) {
 
 		//not found, try in fallbacks
-		for (int i = 0; i < p_fallbacks.size(); i++) {
+		for (decltype(p_fallbacks.size()) i = 0; i < p_fallbacks.size(); i++) {
 
 			DynamicFontAtSize *fb = const_cast<DynamicFontAtSize *>(p_fallbacks[i].ptr());
 			if (!fb->valid)
@@ -299,7 +299,7 @@ Size2 DynamicFontAtSize::get_char_size(CharType p_char, CharType p_next, const s
 void DynamicFontAtSize::set_texture_flags(uint32_t p_flags) {
 
 	texture_flags = p_flags;
-	for (int i = 0; i < textures.size(); i++) {
+	for (decltype(textures.size()) i = 0; i < textures.size(); i++) {
 		Ref<ImageTexture> &tex = textures[i].texture;
 		if (!tex.is_null())
 			tex->set_flags(p_flags);
@@ -336,7 +336,7 @@ float DynamicFontAtSize::draw_char(RID p_canvas_item, const Point2 &p_pos, CharT
 	}
 
 	if (ch->found) {
-		ERR_FAIL_COND_V(ch->texture_idx < -1 || ch->texture_idx >= font->textures.size(), 0);
+		ERR_FAIL_COND_V(ch->texture_idx < -1 || ch->texture_idx >= static_cast<int>(font->textures.size()), 0);
 
 		if (!p_advance_only && ch->texture_idx != -1) {
 			Point2 cpos = p_pos;
@@ -396,7 +396,7 @@ DynamicFontAtSize::TexturePosition DynamicFontAtSize::_find_texture_pos_for_glyp
 	int mw = p_width;
 	int mh = p_height;
 
-	for (int i = 0; i < textures.size(); i++) {
+	for (decltype(textures.size()) i = 0; i < textures.size(); i++) {
 
 		const CharTexture &ct = textures[i];
 
@@ -577,7 +577,7 @@ DynamicFontAtSize::Character DynamicFontAtSize::_make_outline_char(CharType p_ch
 		goto cleanup_stroker;
 	if (FT_Glyph_Stroke(&glyph, stroker, 1) != 0)
 		goto cleanup_glyph;
-	if (FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, 0, 1) != 0)
+	if (FT_Glyph_To_Bitmap(&glyph, font->antialiased ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO, nullptr, 1) != 0)
 		goto cleanup_glyph;
 
 	glyph_bitmap = (FT_BitmapGlyph)glyph;
@@ -693,7 +693,7 @@ void DynamicFont::_reload_cache() {
 		fallback_outline_data_at_size.resize(0);
 	}
 
-	for (int i = 0; i < fallbacks.size(); i++) {
+	for (decltype(fallbacks.size()) i = 0; i < fallbacks.size(); i++) {
 		fallback_data_at_size[i] = fallbacks[i]->_get_dynamic_font_at_size(cache_id);
 		if (outline_cache_id.outline_size > 0)
 			fallback_outline_data_at_size[i] = fallbacks[i]->_get_dynamic_font_at_size(outline_cache_id);
@@ -902,7 +902,7 @@ float DynamicFont::draw_char(RID p_canvas_item, const Point2 &p_pos, CharType p_
 void DynamicFont::set_fallback(int p_idx, const Ref<DynamicFontData> &p_data) {
 
 	ERR_FAIL_COND(p_data.is_null());
-	ERR_FAIL_INDEX(p_idx, fallbacks.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(fallbacks.size()));
 	fallbacks[p_idx] = p_data;
 	fallback_data_at_size[p_idx] = fallbacks[p_idx]->_get_dynamic_font_at_size(cache_id);
 }
@@ -925,13 +925,13 @@ int DynamicFont::get_fallback_count() const {
 }
 Ref<DynamicFontData> DynamicFont::get_fallback(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, fallbacks.size(), Ref<DynamicFontData>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(fallbacks.size()), Ref<DynamicFontData>());
 
 	return fallbacks[p_idx];
 }
 void DynamicFont::remove_fallback(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, fallbacks.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(fallbacks.size()));
 	fallbacks.erase(fallbacks.begin() + p_idx);
 	fallback_data_at_size.erase(fallback_data_at_size.begin() + p_idx);
 	emit_changed();
@@ -946,16 +946,16 @@ bool DynamicFont::_set(const StringName &p_name, const Variant &p_value) {
 		Ref<DynamicFontData> fd = p_value;
 
 		if (fd.is_valid()) {
-			if (idx == fallbacks.size()) {
+			if (idx == static_cast<int>(fallbacks.size())) {
 				add_fallback(fd);
 				return true;
-			} else if (idx >= 0 && idx < fallbacks.size()) {
+			} else if (idx >= 0 && idx < static_cast<int>(fallbacks.size())) {
 				set_fallback(idx, fd);
 				return true;
 			} else {
 				return false;
 			}
-		} else if (idx >= 0 && idx < fallbacks.size()) {
+		} else if (idx >= 0 && idx < static_cast<int>(fallbacks.size())) {
 			remove_fallback(idx);
 			return true;
 		}
@@ -970,10 +970,10 @@ bool DynamicFont::_get(const StringName &p_name, Variant &r_ret) const {
 	if (str.begins_with("fallback/")) {
 		int idx = str.get_slicec('/', 1).to_int();
 
-		if (idx == fallbacks.size()) {
+		if (idx == static_cast<int>(fallbacks.size())) {
 			r_ret = Ref<DynamicFontData>();
 			return true;
-		} else if (idx >= 0 && idx < fallbacks.size()) {
+		} else if (idx >= 0 && idx < static_cast<int>(fallbacks.size())) {
 			r_ret = get_fallback(idx);
 			return true;
 		}
@@ -983,7 +983,7 @@ bool DynamicFont::_get(const StringName &p_name, Variant &r_ret) const {
 }
 void DynamicFont::_get_property_list(List<PropertyInfo> *p_list) const {
 
-	for (int i = 0; i < fallbacks.size(); i++) {
+	for (decltype(fallbacks.size()) i = 0; i < fallbacks.size(); i++) {
 		p_list->push_back(PropertyInfo(Variant::OBJECT, "fallback/" + itos(i), PROPERTY_HINT_RESOURCE_TYPE, "DynamicFontData"));
 	}
 
@@ -1095,7 +1095,7 @@ void DynamicFont::update_oversampling() {
 				E->self()->outline_data_at_size->update_oversampling();
 			}
 
-			for (int i = 0; i < E->self()->fallback_data_at_size.size(); i++) {
+			for (decltype(E->self()->fallback_data_at_size.size()) i = 0; i < E->self()->fallback_data_at_size.size(); i++) {
 				if (E->self()->fallback_data_at_size[i].is_valid()) {
 					E->self()->fallback_data_at_size[i]->update_oversampling();
 
@@ -1114,7 +1114,7 @@ void DynamicFont::update_oversampling() {
 	if (dynamic_font_mutex)
 		dynamic_font_mutex->unlock();
 
-	for (int i = 0; i < changed.size(); i++) {
+	for (decltype(changed.size()) i = 0; i < changed.size(); i++) {
 		changed[i]->emit_changed();
 	}
 }

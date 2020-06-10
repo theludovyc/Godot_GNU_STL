@@ -68,7 +68,7 @@ int CameraServer::get_free_id() {
 	while (id_exists) {
 		newid++;
 		id_exists = false;
-		for (int i = 0; i < feeds.size() && !id_exists; i++) {
+		for (decltype(feeds.size()) i = 0; i < feeds.size() && !id_exists; i++) {
 			if (feeds[i]->get_id() == newid) {
 				id_exists = true;
 			};
@@ -79,7 +79,7 @@ int CameraServer::get_free_id() {
 };
 
 int CameraServer::get_feed_index(int p_id) {
-	for (int i = 0; i < feeds.size(); i++) {
+	for (decltype(feeds.size()) i = 0; i < feeds.size(); i++) {
 		if (feeds[i]->get_id() == p_id) {
 			return i;
 		};
@@ -112,7 +112,7 @@ void CameraServer::add_feed(const Ref<CameraFeed> &p_feed) {
 };
 
 void CameraServer::remove_feed(const Ref<CameraFeed> &p_feed) {
-	for (int i = 0; i < feeds.size(); i++) {
+	for (decltype(feeds.size()) i = 0; i < feeds.size(); i++) {
 		if (feeds[i] == p_feed) {
 			int feed_id = p_feed->get_id();
 
@@ -132,7 +132,7 @@ void CameraServer::remove_feed(const Ref<CameraFeed> &p_feed) {
 };
 
 Ref<CameraFeed> CameraServer::get_feed(int p_index) {
-	ERR_FAIL_INDEX_V(p_index, feeds.size(), NULL);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(feeds.size()), NULL);
 
 	return feeds[p_index];
 };
@@ -146,7 +146,7 @@ Array CameraServer::get_feeds() {
 	int cc = get_feed_count();
 	return_feeds.resize(cc);
 
-	for (int i = 0; i < feeds.size(); i++) {
+	for (decltype(feeds.size()) i = 0; i < feeds.size(); i++) {
 		return_feeds[i] = get_feed(i);
 	};
 

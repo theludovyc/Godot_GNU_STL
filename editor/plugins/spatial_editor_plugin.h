@@ -158,6 +158,7 @@ class ViewportRotationControl : public Control {
 	SpatialEditorViewport *viewport = nullptr;
 	std::vector<Color> axis_colors;
 	std::vector<int> axis_menu_options;
+	Vector2i orbiting_mouse_start;
 	bool orbiting = false;
 	int focused_axis = -2;
 

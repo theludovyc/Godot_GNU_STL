@@ -306,12 +306,12 @@ Error EditorSceneImporterGLTF::_parse_nodes(GLTFState &state) {
 	}
 
 	// build the hierarchy
-	for (GLTFNodeIndex node_i = 0; node_i < state.nodes.size(); node_i++) {
+	for (decltype(state.nodes.size()) node_i = 0; node_i < state.nodes.size(); node_i++) {
 
-		for (int j = 0; j < state.nodes[node_i]->children.size(); j++) {
+		for (decltype(state.nodes[node_i]->children.size()) j = 0; j < state.nodes[node_i]->children.size(); j++) {
 			GLTFNodeIndex child_i = state.nodes[node_i]->children[j];
 
-			ERR_FAIL_INDEX_V(child_i, state.nodes.size(), ERR_FILE_CORRUPT);
+			ERR_FAIL_INDEX_V(child_i, static_cast<int>(state.nodes.size()), ERR_FILE_CORRUPT);
 			ERR_CONTINUE(state.nodes[child_i]->parent != -1); //node already has a parent, wtf.
 
 			state.nodes[child_i]->parent = node_i;
@@ -326,7 +326,7 @@ Error EditorSceneImporterGLTF::_parse_nodes(GLTFState &state) {
 void EditorSceneImporterGLTF::_compute_node_heights(GLTFState &state) {
 
 	state.root_nodes.clear();
-	for (GLTFNodeIndex node_i = 0; node_i < state.nodes.size(); ++node_i) {
+	for (decltype(state.nodes.size()) node_i = 0; node_i < state.nodes.size(); ++node_i) {
 		GLTFNode *node = state.nodes[node_i];
 		node->height = 0;
 
@@ -395,7 +395,7 @@ Error EditorSceneImporterGLTF::_parse_buffers(GLTFState &state, const String &p_
 
 				ERR_FAIL_COND_V(!buffer.has("byteLength"), ERR_PARSE_ERROR);
 				int byteLength = buffer["byteLength"];
-				ERR_FAIL_COND_V(byteLength < buffer_data.size(), ERR_PARSE_ERROR);
+				ERR_FAIL_COND_V(byteLength < static_cast<int>(buffer_data.size()), ERR_PARSE_ERROR);
 				state.buffers.push_back(buffer_data);
 			}
 		}
@@ -572,7 +572,7 @@ Error EditorSceneImporterGLTF::_decode_buffer_view(GLTFState &state, double *dst
 		stride += 4 - (stride % 4); //according to spec must be multiple of 4
 	}
 
-	ERR_FAIL_INDEX_V(bv.buffer, state.buffers.size(), ERR_PARSE_ERROR);
+	ERR_FAIL_INDEX_V(bv.buffer, static_cast<int>(state.buffers.size()), ERR_PARSE_ERROR);
 
 	const uint32_t offset = bv.byte_offset + byte_offset;
 	std::vector<uint8_t> buffer = state.buffers[bv.buffer]; //copy on write, so no performance hit
@@ -585,7 +585,7 @@ Error EditorSceneImporterGLTF::_decode_buffer_view(GLTFState &state, double *dst
 	const int buffer_end = (stride * (count - 1)) + element_size;
 	ERR_FAIL_COND_V(buffer_end > bv.byte_length, ERR_PARSE_ERROR);
 
-	ERR_FAIL_COND_V((int)(offset + buffer_end) > buffer.size(), ERR_PARSE_ERROR);
+	ERR_FAIL_COND_V((int)(offset + buffer_end) > static_cast<int>(buffer.size()), ERR_PARSE_ERROR);
 
 	//fill everything as doubles
 
@@ -672,7 +672,7 @@ std::vector<double> EditorSceneImporterGLTF::_decode_accessor(GLTFState &state, 
 	//spec, for reference:
 	//https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#data-alignment
 
-	ERR_FAIL_INDEX_V(p_accessor, state.accessors.size(), std::vector<double>());
+	ERR_FAIL_INDEX_V(p_accessor, static_cast<int>(state.accessors.size()), std::vector<double>());
 
 	const GLTFAccessor &a = state.accessors[p_accessor];
 
@@ -722,7 +722,7 @@ std::vector<double> EditorSceneImporterGLTF::_decode_accessor(GLTFState &state, 
 
 	if (a.buffer_view >= 0) {
 
-		ERR_FAIL_INDEX_V(a.buffer_view, state.buffer_views.size(), std::vector<double>());
+		ERR_FAIL_INDEX_V(a.buffer_view, static_cast<int>(state.buffer_views.size()), std::vector<double>());
 
 		const Error err = _decode_buffer_view(state, dst, a.buffer_view, skip_every, skip_bytes, element_size, a.count, a.type, component_count, a.component_type, component_size, a.normalized, a.byte_offset, p_for_vertex);
 		if (err != OK)
@@ -751,7 +751,7 @@ std::vector<double> EditorSceneImporterGLTF::_decode_accessor(GLTFState &state, 
 		if (err != OK)
 			return std::vector<double>();
 
-		for (int i = 0; i < indices.size(); i++) {
+		for (decltype(indices.size()) i = 0; i < indices.size(); i++) {
 			const int write_offset = int(indices[i]) * component_count;
 
 			for (int j = 0; j < component_count; j++) {
@@ -902,7 +902,7 @@ std::vector<Transform2D> EditorSceneImporterGLTF::_decode_accessor_as_xform2d(GL
 
 	ERR_FAIL_COND_V(attribs.size() % 4 != 0, ret);
 	ret.resize(attribs.size() / 4);
-	for (int i = 0; i < ret.size(); i++) {
+	for (decltype(ret.size()) i = 0; i < ret.size(); i++) {
 		ret[i][0] = Vector2(attribs[i * 4 + 0], attribs[i * 4 + 1]);
 		ret[i][1] = Vector2(attribs[i * 4 + 2], attribs[i * 4 + 3]);
 	}
@@ -919,7 +919,7 @@ std::vector<Basis> EditorSceneImporterGLTF::_decode_accessor_as_basis(GLTFState 
 
 	ERR_FAIL_COND_V(attribs.size() % 9 != 0, ret);
 	ret.resize(attribs.size() / 9);
-	for (int i = 0; i < ret.size(); i++) {
+	for (decltype(ret.size()) i = 0; i < ret.size(); i++) {
 		ret[i].set_axis(0, Vector3(attribs[i * 9 + 0], attribs[i * 9 + 1], attribs[i * 9 + 2]));
 		ret[i].set_axis(1, Vector3(attribs[i * 9 + 3], attribs[i * 9 + 4], attribs[i * 9 + 5]));
 		ret[i].set_axis(2, Vector3(attribs[i * 9 + 6], attribs[i * 9 + 7], attribs[i * 9 + 8]));
@@ -937,7 +937,7 @@ std::vector<Transform> EditorSceneImporterGLTF::_decode_accessor_as_xform(GLTFSt
 
 	ERR_FAIL_COND_V(attribs.size() % 16 != 0, ret);
 	ret.resize(attribs.size() / 16);
-	for (int i = 0; i < ret.size(); i++) {
+	for (decltype(ret.size()) i = 0; i < ret.size(); i++) {
 		ret[i].basis.set_axis(0, Vector3(attribs[i * 16 + 0], attribs[i * 16 + 1], attribs[i * 16 + 2]));
 		ret[i].basis.set_axis(1, Vector3(attribs[i * 16 + 4], attribs[i * 16 + 5], attribs[i * 16 + 6]));
 		ret[i].basis.set_axis(2, Vector3(attribs[i * 16 + 8], attribs[i * 16 + 9], attribs[i * 16 + 10]));
@@ -950,6 +950,9 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 
 	if (!state.json.has("meshes"))
 		return OK;
+
+	bool compress_vert_data = state.import_flags & IMPORT_USE_COMPRESSION;
+	uint32_t mesh_flags = compress_vert_data ? Mesh::ARRAY_COMPRESS_DEFAULT : 0;
 
 	Array meshes = state.json["meshes"];
 	for (GLTFMeshIndex i = 0; i < meshes.size(); i++) {
@@ -1207,11 +1210,11 @@ Error EditorSceneImporterGLTF::_parse_meshes(GLTFState &state) {
 			}
 
 			//just add it
-			mesh.mesh->add_surface_from_arrays(primitive, array, morphs);
+			mesh.mesh->add_surface_from_arrays(primitive, array, morphs, mesh_flags);
 
 			if (p.has("material")) {
 				const int material = p["material"];
-				ERR_FAIL_INDEX_V(material, state.materials.size(), ERR_FILE_CORRUPT);
+				ERR_FAIL_INDEX_V(material, static_cast<int>(state.materials.size()), ERR_FILE_CORRUPT);
 				const Ref<Material> &mat = state.materials[material];
 
 				mesh.mesh->surface_set_material(mesh.mesh->get_surface_count() - 1, mat);
@@ -1275,14 +1278,14 @@ Error EditorSceneImporterGLTF::_parse_images(GLTFState &state, const String &p_b
 		if (d.has("bufferView")) {
 			const GLTFBufferViewIndex bvi = d["bufferView"];
 
-			ERR_FAIL_INDEX_V(bvi, state.buffer_views.size(), ERR_PARAMETER_RANGE_ERROR);
+			ERR_FAIL_INDEX_V(bvi, static_cast<int>(state.buffer_views.size()), ERR_PARAMETER_RANGE_ERROR);
 
 			const GLTFBufferView &bv = state.buffer_views[bvi];
 
 			const GLTFBufferIndex bi = bv.buffer;
-			ERR_FAIL_INDEX_V(bi, state.buffers.size(), ERR_PARAMETER_RANGE_ERROR);
+			ERR_FAIL_INDEX_V(bi, static_cast<int>(state.buffers.size()), ERR_PARAMETER_RANGE_ERROR);
 
-			ERR_FAIL_COND_V(bv.byte_offset + bv.byte_length > state.buffers[bi].size(), ERR_FILE_CORRUPT);
+			ERR_FAIL_COND_V(bv.byte_offset + bv.byte_length > static_cast<int>(state.buffers[bi].size()), ERR_FILE_CORRUPT);
 
 			data_ptr = &state.buffers[bi][bv.byte_offset];
 			data_size = bv.byte_length;
@@ -1352,10 +1355,10 @@ Error EditorSceneImporterGLTF::_parse_textures(GLTFState &state) {
 }
 
 Ref<Texture> EditorSceneImporterGLTF::_get_texture(GLTFState &state, const GLTFTextureIndex p_texture) {
-	ERR_FAIL_INDEX_V(p_texture, state.textures.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_texture, static_cast<int>(state.textures.size()), Ref<Texture>());
 	const GLTFImageIndex image = state.textures[p_texture].src_image;
 
-	ERR_FAIL_INDEX_V(image, state.images.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(image, static_cast<int>(state.images.size()), Ref<Texture>());
 
 	return state.images[image];
 }
@@ -1498,7 +1501,7 @@ EditorSceneImporterGLTF::GLTFNodeIndex EditorSceneImporterGLTF::_find_highest_no
 	int highest = -1;
 	GLTFNodeIndex best_node = -1;
 
-	for (int i = 0; i < subset.size(); ++i) {
+	for (decltype(subset.size()) i = 0; i < subset.size(); ++i) {
 		const GLTFNodeIndex node_i = subset[i];
 		const GLTFNode *node = state.nodes[node_i];
 
@@ -1515,7 +1518,7 @@ bool EditorSceneImporterGLTF::_capture_nodes_in_skin(GLTFState &state, GLTFSkin 
 
 	bool found_joint = false;
 
-	for (int i = 0; i < state.nodes[node_index]->children.size(); ++i) {
+	for (decltype(state.nodes[node_index]->children.size()) i = 0; i < state.nodes[node_index]->children.size(); ++i) {
 		found_joint |= _capture_nodes_in_skin(state, skin, state.nodes[node_index]->children[i]);
 	}
 
@@ -1539,7 +1542,7 @@ void EditorSceneImporterGLTF::_capture_nodes_for_multirooted_skin(GLTFState &sta
 
 	DisjointSet<GLTFNodeIndex> disjoint_set;
 
-	for (int i = 0; i < skin.joints.size(); ++i) {
+	for (decltype(skin.joints.size()) i = 0; i < skin.joints.size(); ++i) {
 		const GLTFNodeIndex node_index = skin.joints[i];
 		const GLTFNodeIndex parent = state.nodes[node_index]->parent;
 		disjoint_set.insert(node_index);
@@ -1559,7 +1562,7 @@ void EditorSceneImporterGLTF::_capture_nodes_for_multirooted_skin(GLTFState &sta
 	int maxHeight = -1;
 
 	// Determine the max height rooted tree
-	for (int i = 0; i < roots.size(); ++i) {
+	for (decltype(roots.size()) i = 0; i < roots.size(); ++i) {
 		const GLTFNodeIndex root = roots[i];
 
 		if (maxHeight == -1 || state.nodes[root]->height < maxHeight) {
@@ -1569,7 +1572,7 @@ void EditorSceneImporterGLTF::_capture_nodes_for_multirooted_skin(GLTFState &sta
 
 	// Go up the tree till all of the multiple roots of the skin are at the same hierarchy level.
 	// This sucks, but 99% of all game engines (not just Godot) would have this same issue.
-	for (int i = 0; i < roots.size(); ++i) {
+	for (decltype(roots.size()) i = 0; i < roots.size(); ++i) {
 
 		GLTFNodeIndex current_node = roots[i];
 		while (state.nodes[current_node]->height > maxHeight) {
@@ -1595,12 +1598,12 @@ void EditorSceneImporterGLTF::_capture_nodes_for_multirooted_skin(GLTFState &sta
 		all_same = true;
 		const GLTFNodeIndex first_parent = state.nodes[roots[0]]->parent;
 
-		for (int i = 1; i < roots.size(); ++i) {
+		for (decltype(roots.size()) i = 1; i < roots.size(); ++i) {
 			all_same &= (first_parent == state.nodes[roots[i]]->parent);
 		}
 
 		if (!all_same) {
-			for (int i = 0; i < roots.size(); ++i) {
+			for (decltype(roots.size()) i = 0; i < roots.size(); ++i) {
 				const GLTFNodeIndex current_node = roots[i];
 				const GLTFNodeIndex parent = state.nodes[current_node]->parent;
 
@@ -1630,7 +1633,7 @@ Error EditorSceneImporterGLTF::_expand_skin(GLTFState &state, GLTFSkin &skin) {
 
 	std_h::appendArray(all_skin_nodes, skin.non_joints);
 
-	for (int i = 0; i < all_skin_nodes.size(); ++i) {
+	for (decltype(all_skin_nodes.size()) i = 0; i < all_skin_nodes.size(); ++i) {
 		const GLTFNodeIndex node_index = all_skin_nodes[i];
 		const GLTFNodeIndex parent = state.nodes[node_index]->parent;
 		disjoint_set.insert(node_index);
@@ -1645,7 +1648,7 @@ Error EditorSceneImporterGLTF::_expand_skin(GLTFState &state, GLTFSkin &skin) {
 
 	std::vector<GLTFNodeIndex> out_roots;
 
-	for (int i = 0; i < out_owners.size(); ++i) {
+	for (decltype(out_owners.size()) i = 0; i < out_owners.size(); ++i) {
 		std::vector<GLTFNodeIndex> set;
 		disjoint_set.get_members(set, out_owners[i]);
 
@@ -1656,7 +1659,7 @@ Error EditorSceneImporterGLTF::_expand_skin(GLTFState &state, GLTFSkin &skin) {
 
 	std::sort(out_roots.begin(), out_roots.end());
 
-	for (int i = 0; i < out_roots.size(); ++i) {
+	for (decltype(out_roots.size()) i = 0; i < out_roots.size(); ++i) {
 		_capture_nodes_in_skin(state, skin, out_roots[i]);
 	}
 
@@ -1683,7 +1686,7 @@ Error EditorSceneImporterGLTF::_verify_skin(GLTFState &state, GLTFSkin &skin) {
 
 	std_h::appendArray(all_skin_nodes, skin.non_joints);
 
-	for (int i = 0; i < all_skin_nodes.size(); ++i) {
+	for (decltype(all_skin_nodes.size()) i = 0; i < all_skin_nodes.size(); ++i) {
 		const GLTFNodeIndex node_index = all_skin_nodes[i];
 		const GLTFNodeIndex parent = state.nodes[node_index]->parent;
 		disjoint_set.insert(node_index);
@@ -1698,7 +1701,7 @@ Error EditorSceneImporterGLTF::_verify_skin(GLTFState &state, GLTFSkin &skin) {
 
 	std::vector<GLTFNodeIndex> out_roots;
 
-	for (int i = 0; i < out_owners.size(); ++i) {
+	for (decltype(out_owners.size()) i = 0; i < out_owners.size(); ++i) {
 		std::vector<GLTFNodeIndex> set;
 		disjoint_set.get_members(set, out_owners[i]);
 
@@ -1713,7 +1716,7 @@ Error EditorSceneImporterGLTF::_verify_skin(GLTFState &state, GLTFSkin &skin) {
 
 	// Make sure the roots are the exact same (they better be)
 	ERR_FAIL_COND_V(out_roots.size() != skin.roots.size(), FAILED);
-	for (int i = 0; i < out_roots.size(); ++i) {
+	for (decltype(out_roots.size()) i = 0; i < out_roots.size(); ++i) {
 		ERR_FAIL_COND_V(out_roots[i] != skin.roots[i], FAILED);
 	}
 
@@ -1724,7 +1727,7 @@ Error EditorSceneImporterGLTF::_verify_skin(GLTFState &state, GLTFSkin &skin) {
 
 	// Make sure all parents of a multi-rooted skin are the SAME
 	const GLTFNodeIndex parent = state.nodes[out_roots[0]]->parent;
-	for (int i = 1; i < out_roots.size(); ++i) {
+	for (decltype(out_roots.size()) i = 1; i < out_roots.size(); ++i) {
 		if (state.nodes[out_roots[i]]->parent != parent) {
 			return FAILED;
 		}
@@ -1753,12 +1756,12 @@ Error EditorSceneImporterGLTF::_parse_skins(GLTFState &state) {
 
 		if (d.has("inverseBindMatrices")) {
 			skin.inverse_binds = _decode_accessor_as_xform(state, d["inverseBindMatrices"], false);
-			ERR_FAIL_COND_V(skin.inverse_binds.size() != joints.size(), ERR_PARSE_ERROR);
+			ERR_FAIL_COND_V(static_cast<int>(skin.inverse_binds.size()) != joints.size(), ERR_PARSE_ERROR);
 		}
 
 		for (int j = 0; j < joints.size(); j++) {
 			const GLTFNodeIndex node = joints[j];
-			ERR_FAIL_INDEX_V(node, state.nodes.size(), ERR_PARSE_ERROR);
+			ERR_FAIL_INDEX_V(node, static_cast<int>(state.nodes.size()), ERR_PARSE_ERROR);
 
 			skin.joints.push_back(node);
 			skin.joints_original.push_back(node);
@@ -1777,7 +1780,7 @@ Error EditorSceneImporterGLTF::_parse_skins(GLTFState &state) {
 		state.skins.push_back(skin);
 	}
 
-	for (GLTFSkinIndex i = 0; i < state.skins.size(); ++i) {
+	for (decltype(state.skins.size()) i = 0; i < state.skins.size(); ++i) {
 		GLTFSkin &skin = state.skins[i];
 
 		// Expand the skin to capture all the extra non-joints that lie in between the actual joints,
@@ -1799,7 +1802,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 
 	DisjointSet<GLTFNodeIndex> skeleton_sets;
 
-	for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+	for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 		const GLTFSkin &skin = state.skins[skin_i];
 
 		std::vector<GLTFNodeIndex> all_skin_nodes;
@@ -1807,7 +1810,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 		std_h::appendArray(all_skin_nodes, skin.joints);
 		std_h::appendArray(all_skin_nodes, skin.non_joints);
 
-		for (int i = 0; i < all_skin_nodes.size(); ++i) {
+		for (decltype(all_skin_nodes.size()) i = 0; i < all_skin_nodes.size(); ++i) {
 			const GLTFNodeIndex node_index = all_skin_nodes[i];
 			const GLTFNodeIndex parent = state.nodes[node_index]->parent;
 			skeleton_sets.insert(node_index);
@@ -1819,7 +1822,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 
 		// We are going to connect the separate skin subtrees in each skin together
 		// so that the final roots are entire sets of valid skin trees
-		for (int i = 1; i < skin.roots.size(); ++i) {
+		for (decltype(skin.roots.size()) i = 1; i < skin.roots.size(); ++i) {
 			skeleton_sets.create_union(skin.roots[0], skin.roots[i]);
 		}
 	}
@@ -1830,18 +1833,18 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 
 		std::vector<GLTFNodeIndex> highest_group_members;
 		std::vector<std::vector<GLTFNodeIndex> > groups;
-		for (int i = 0; i < groups_representatives.size(); ++i) {
+		for (decltype(groups_representatives.size()) i = 0; i < groups_representatives.size(); ++i) {
 			std::vector<GLTFNodeIndex> group;
 			skeleton_sets.get_members(group, groups_representatives[i]);
 			highest_group_members.push_back(_find_highest_node(state, group));
 			groups.push_back(group);
 		}
 
-		for (int i = 0; i < highest_group_members.size(); ++i) {
+		for (decltype(highest_group_members.size()) i = 0; i < highest_group_members.size(); ++i) {
 			const GLTFNodeIndex node_i = highest_group_members[i];
 
 			// Attach any siblings together (this needs to be done n^2/2 times)
-			for (int j = i + 1; j < highest_group_members.size(); ++j) {
+			for (auto j = i + 1; j < highest_group_members.size(); ++j) {
 				const GLTFNodeIndex node_j = highest_group_members[j];
 
 				// Even if they are siblings under the root! :)
@@ -1853,7 +1856,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 			// Attach any parenting going on together (we need to do this n^2 times)
 			const GLTFNodeIndex node_i_parent = state.nodes[node_i]->parent;
 			if (node_i_parent >= 0) {
-				for (int j = 0; j < groups.size() && i != j; ++j) {
+				for (decltype(groups.size()) j = 0; j < groups.size() && i != j; ++j) {
 					const std::vector<GLTFNodeIndex> &group = groups[j];
 
 					if (std_h::isFind(group, node_i_parent)) {
@@ -1870,7 +1873,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 	skeleton_sets.get_representatives(skeleton_owners);
 
 	// Mark all the skins actual skeletons, after we have merged them
-	for (GLTFSkeletonIndex skel_i = 0; skel_i < skeleton_owners.size(); ++skel_i) {
+	for (decltype(skeleton_owners.size()) skel_i = 0; skel_i < skeleton_owners.size(); ++skel_i) {
 
 		const GLTFNodeIndex skeleton_owner = skeleton_owners[skel_i];
 		GLTFSkeleton skeleton;
@@ -1878,11 +1881,11 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 		std::vector<GLTFNodeIndex> skeleton_nodes;
 		skeleton_sets.get_members(skeleton_nodes, skeleton_owner);
 
-		for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+		for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 			GLTFSkin &skin = state.skins[skin_i];
 
 			// If any of the the skeletons nodes exist in a skin, that skin now maps to the skeleton
-			for (int i = 0; i < skeleton_nodes.size(); ++i) {
+			for (decltype(skeleton_nodes.size()) i = 0; i < skeleton_nodes.size(); ++i) {
 				GLTFNodeIndex skel_node_i = skeleton_nodes[i];
 				if (std_h::isFind(skin.joints, skel_node_i) || std_h::isFind(skin.non_joints, skel_node_i)) {
 					skin.skeleton = skel_i;
@@ -1892,7 +1895,7 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 		}
 
 		std::vector<GLTFNodeIndex> non_joints;
-		for (int i = 0; i < skeleton_nodes.size(); ++i) {
+		for (decltype(skeleton_nodes.size()) i = 0; i < skeleton_nodes.size(); ++i) {
 			const GLTFNodeIndex node_i = skeleton_nodes[i];
 
 			if (state.nodes[node_i]->joint) {
@@ -1907,10 +1910,10 @@ Error EditorSceneImporterGLTF::_determine_skeletons(GLTFState &state) {
 		_reparent_non_joint_skeleton_subtrees(state, state.skeletons[skel_i], non_joints);
 	}
 
-	for (GLTFSkeletonIndex skel_i = 0; skel_i < state.skeletons.size(); ++skel_i) {
+	for (decltype(state.skeletons.size()) skel_i = 0; skel_i < state.skeletons.size(); ++skel_i) {
 		GLTFSkeleton &skeleton = state.skeletons[skel_i];
 
-		for (int i = 0; i < skeleton.joints.size(); ++i) {
+		for (decltype(skeleton.joints.size()) i = 0; i < skeleton.joints.size(); ++i) {
 			const GLTFNodeIndex node_i = skeleton.joints[i];
 			GLTFNode *node = state.nodes[node_i];
 
@@ -1937,7 +1940,7 @@ Error EditorSceneImporterGLTF::_reparent_non_joint_skeleton_subtrees(GLTFState &
 	// skinD depicted here explains this issue:
 	// https://github.com/KhronosGroup/glTF-Asset-Generator/blob/master/Output/Positive/Animation_Skin
 
-	for (int i = 0; i < non_joints.size(); ++i) {
+	for (decltype(non_joints.size()) i = 0; i < non_joints.size(); ++i) {
 		const GLTFNodeIndex node_i = non_joints[i];
 
 		subtree_set.insert(node_i);
@@ -1953,13 +1956,13 @@ Error EditorSceneImporterGLTF::_reparent_non_joint_skeleton_subtrees(GLTFState &
 	std::vector<GLTFNodeIndex> non_joint_subtree_roots;
 	subtree_set.get_representatives(non_joint_subtree_roots);
 
-	for (int root_i = 0; root_i < non_joint_subtree_roots.size(); ++root_i) {
+	for (decltype(non_joint_subtree_roots.size()) root_i = 0; root_i < non_joint_subtree_roots.size(); ++root_i) {
 		const GLTFNodeIndex subtree_root = non_joint_subtree_roots[root_i];
 
 		std::vector<GLTFNodeIndex> subtree_nodes;
 		subtree_set.get_members(subtree_nodes, subtree_root);
 
-		for (int subtree_i = 0; subtree_i < subtree_nodes.size(); ++subtree_i) {
+		for (decltype(subtree_nodes.size()) subtree_i = 0; subtree_i < subtree_nodes.size(); ++subtree_i) {
 			ERR_FAIL_COND_V(_reparent_to_fake_joint(state, skeleton, subtree_nodes[subtree_i]), FAILED);
 
 			// We modified the tree, recompute all the heights
@@ -2005,7 +2008,7 @@ Error EditorSceneImporterGLTF::_reparent_to_fake_joint(GLTFState &state, GLTFSke
 	node->xform = Transform();
 
 	// Transfer the node children to the fake joint
-	for (int child_i = 0; child_i < node->children.size(); ++child_i) {
+	for (decltype(node->children.size()) child_i = 0; child_i < node->children.size(); ++child_i) {
 		GLTFNode *child = state.nodes[node->children[child_i]];
 		child->parent = fake_joint_index;
 	}
@@ -2032,7 +2035,7 @@ Error EditorSceneImporterGLTF::_reparent_to_fake_joint(GLTFState &state, GLTFSke
 	skeleton.joints.push_back(fake_joint_index);
 
 	// Replace skin_skeletons with fake joints if we must.
-	for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+	for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 		GLTFSkin &skin = state.skins[skin_i];
 		if (skin.skin_root == node_index) {
 			skin.skin_root = fake_joint_index;
@@ -2046,7 +2049,7 @@ Error EditorSceneImporterGLTF::_determine_skeleton_roots(GLTFState &state, const
 
 	DisjointSet<GLTFNodeIndex> disjoint_set;
 
-	for (GLTFNodeIndex i = 0; i < state.nodes.size(); ++i) {
+	for (decltype(state.nodes.size()) i = 0; i < state.nodes.size(); ++i) {
 		const GLTFNode *node = state.nodes[i];
 
 		if (node->skeleton != skel_i) {
@@ -2067,7 +2070,7 @@ Error EditorSceneImporterGLTF::_determine_skeleton_roots(GLTFState &state, const
 
 	std::vector<GLTFNodeIndex> roots;
 
-	for (int i = 0; i < owners.size(); ++i) {
+	for (decltype(owners.size()) i = 0; i < owners.size(); ++i) {
 		std::vector<GLTFNodeIndex> set;
 		disjoint_set.get_members(set, owners[i]);
 		const GLTFNodeIndex root = _find_highest_node(state, set);
@@ -2087,7 +2090,7 @@ Error EditorSceneImporterGLTF::_determine_skeleton_roots(GLTFState &state, const
 
 	// Check that the subtrees have the same parent root
 	const GLTFNodeIndex parent = state.nodes[roots[0]]->parent;
-	for (int i = 1; i < roots.size(); ++i) {
+	for (decltype(roots.size()) i = 1; i < roots.size(); ++i) {
 		if (state.nodes[roots[i]]->parent != parent) {
 			return FAILED;
 		}
@@ -2097,7 +2100,7 @@ Error EditorSceneImporterGLTF::_determine_skeleton_roots(GLTFState &state, const
 }
 
 Error EditorSceneImporterGLTF::_create_skeletons(GLTFState &state) {
-	for (GLTFSkeletonIndex skel_i = 0; skel_i < state.skeletons.size(); ++skel_i) {
+	for (GLTFSkeletonIndex skel_i = 0; skel_i < static_cast<int>(state.skeletons.size()); ++skel_i) {
 
 		GLTFSkeleton &gltf_skeleton = state.skeletons[skel_i];
 
@@ -2109,7 +2112,7 @@ Error EditorSceneImporterGLTF::_create_skeletons(GLTFState &state) {
 
 		List<GLTFNodeIndex> bones;
 
-		for (int i = 0; i < gltf_skeleton.roots.size(); ++i) {
+		for (decltype(gltf_skeleton.roots.size()) i = 0; i < gltf_skeleton.roots.size(); ++i) {
 			bones.push_back(gltf_skeleton.roots[i]);
 		}
 
@@ -2126,7 +2129,7 @@ Error EditorSceneImporterGLTF::_create_skeletons(GLTFState &state) {
 
 			{ // Add all child nodes to the stack (deterministically)
 				std::vector<GLTFNodeIndex> child_nodes;
-				for (int i = 0; i < node->children.size(); ++i) {
+				for (decltype(node->children.size()) i = 0; i < node->children.size(); ++i) {
 					const GLTFNodeIndex child_i = node->children[i];
 					if (state.nodes[child_i]->skeleton == skel_i) {
 						child_nodes.push_back(child_i);
@@ -2168,12 +2171,12 @@ Error EditorSceneImporterGLTF::_create_skeletons(GLTFState &state) {
 }
 
 Error EditorSceneImporterGLTF::_map_skin_joints_indices_to_skeleton_bone_indices(GLTFState &state) {
-	for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+	for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 		GLTFSkin &skin = state.skins[skin_i];
 
 		const GLTFSkeleton &skeleton = state.skeletons[skin.skeleton];
 
-		for (int joint_index = 0; joint_index < skin.joints_original.size(); ++joint_index) {
+		for (decltype(skin.joints_original.size()) joint_index = 0; joint_index < skin.joints_original.size(); ++joint_index) {
 			const GLTFNodeIndex node_i = skin.joints_original[joint_index];
 			const GLTFNode *node = state.nodes[node_i];
 
@@ -2190,7 +2193,7 @@ Error EditorSceneImporterGLTF::_map_skin_joints_indices_to_skeleton_bone_indices
 }
 
 Error EditorSceneImporterGLTF::_create_skins(GLTFState &state) {
-	for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+	for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 		GLTFSkin &gltf_skin = state.skins[skin_i];
 
 		Ref<Skin> skin;
@@ -2199,7 +2202,7 @@ Error EditorSceneImporterGLTF::_create_skins(GLTFState &state) {
 		// Some skins don't have IBM's! What absolute monsters!
 		const bool has_ibms = !gltf_skin.inverse_binds.empty();
 
-		for (int joint_i = 0; joint_i < gltf_skin.joints_original.size(); ++joint_i) {
+		for (decltype(gltf_skin.joints_original.size()) joint_i = 0; joint_i < gltf_skin.joints_original.size(); ++joint_i) {
 
 			Transform xform;
 			if (has_ibms) {
@@ -2222,7 +2225,7 @@ Error EditorSceneImporterGLTF::_create_skins(GLTFState &state) {
 	_remove_duplicate_skins(state);
 
 	// Create unique names now, after removing duplicates
-	for (GLTFSkinIndex skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
+	for (decltype(state.skins.size()) skin_i = 0; skin_i < state.skins.size(); ++skin_i) {
 		Ref<Skin> skin = state.skins[skin_i].godot_skin;
 		if (skin->get_name().empty()) {
 			// Make a unique name, no gltf node represents this skin
@@ -2256,8 +2259,8 @@ bool EditorSceneImporterGLTF::_skins_are_same(const Ref<Skin> &skin_a, const Ref
 }
 
 void EditorSceneImporterGLTF::_remove_duplicate_skins(GLTFState &state) {
-	for (int i = 0; i < state.skins.size(); ++i) {
-		for (int j = i + 1; j < state.skins.size(); ++j) {
+	for (decltype(state.skins.size()) i = 0; i < state.skins.size(); ++i) {
+		for (auto j = i + 1; j < state.skins.size(); ++j) {
 			const Ref<Skin> &skin_i = state.skins[i].godot_skin;
 			const Ref<Skin> &skin_j = state.skins[j].godot_skin;
 
@@ -2364,7 +2367,7 @@ Error EditorSceneImporterGLTF::_parse_animations(GLTFState &state) {
 			GLTFNodeIndex node = t["node"];
 			String path = t["path"];
 
-			ERR_FAIL_INDEX_V(node, state.nodes.size(), ERR_PARSE_ERROR);
+			ERR_FAIL_INDEX_V(node, static_cast<int>(state.nodes.size()), ERR_PARSE_ERROR);
 
 			GLTFAnimation::Track *track = nullptr;
 
@@ -2418,7 +2421,7 @@ Error EditorSceneImporterGLTF::_parse_animations(GLTFState &state) {
 			} else if (path == "weights") {
 				const PoolVector<float> weights = _decode_accessor_as_floats(state, output, false);
 
-				ERR_FAIL_INDEX_V(state.nodes[node]->mesh, state.meshes.size(), ERR_PARSE_ERROR);
+				ERR_FAIL_INDEX_V(state.nodes[node]->mesh, static_cast<int>(state.meshes.size()), ERR_PARSE_ERROR);
 				const GLTFMesh *mesh = &state.meshes[state.nodes[node]->mesh];
 				ERR_FAIL_COND_V(mesh->blend_weights.size() == 0, ERR_PARSE_ERROR);
 				const int wc = mesh->blend_weights.size();
@@ -2458,7 +2461,7 @@ Error EditorSceneImporterGLTF::_parse_animations(GLTFState &state) {
 
 void EditorSceneImporterGLTF::_assign_scene_names(GLTFState &state) {
 
-	for (int i = 0; i < state.nodes.size(); i++) {
+	for (decltype(state.nodes.size()) i = 0; i < state.nodes.size(); i++) {
 		GLTFNode *n = state.nodes[i];
 
 		// Any joints get unique names generated when the skeleton is made, unique to the skeleton
@@ -2497,7 +2500,7 @@ BoneAttachment *EditorSceneImporterGLTF::_generate_bone_attachment(GLTFState &st
 MeshInstance *EditorSceneImporterGLTF::_generate_mesh_instance(GLTFState &state, Node *scene_parent, const GLTFNodeIndex node_index) {
 	const GLTFNode *gltf_node = state.nodes[node_index];
 
-	ERR_FAIL_INDEX_V(gltf_node->mesh, state.meshes.size(), nullptr);
+	ERR_FAIL_INDEX_V(gltf_node->mesh, static_cast<int>(state.meshes.size()), nullptr);
 
 	MeshInstance *mi = memnew(MeshInstance);
 	print_verbose("glTF: Creating mesh for: " + gltf_node->name);
@@ -2509,7 +2512,7 @@ MeshInstance *EditorSceneImporterGLTF::_generate_mesh_instance(GLTFState &state,
 		mesh.mesh->set_name(gltf_node->name);
 	}
 
-	for (int i = 0; i < mesh.blend_weights.size(); i++) {
+	for (decltype(mesh.blend_weights.size()) i = 0; i < mesh.blend_weights.size(); i++) {
 		mi->set("blend_shapes/" + mesh.mesh->get_blend_shape_name(i), mesh.blend_weights[i]);
 	}
 
@@ -2519,7 +2522,7 @@ MeshInstance *EditorSceneImporterGLTF::_generate_mesh_instance(GLTFState &state,
 Camera *EditorSceneImporterGLTF::_generate_camera(GLTFState &state, Node *scene_parent, const GLTFNodeIndex node_index) {
 	const GLTFNode *gltf_node = state.nodes[node_index];
 
-	ERR_FAIL_INDEX_V(gltf_node->camera, state.cameras.size(), nullptr);
+	ERR_FAIL_INDEX_V(gltf_node->camera, static_cast<int>(state.cameras.size()), nullptr);
 
 	Camera *camera = memnew(Camera);
 	print_verbose("glTF: Creating camera for: " + gltf_node->name);
@@ -2602,7 +2605,7 @@ void EditorSceneImporterGLTF::_generate_scene_node(GLTFState &state, Node *scene
 
 	state.scene_nodes.insert(node_index, current_node);
 
-	for (int i = 0; i < gltf_node->children.size(); ++i) {
+	for (decltype(gltf_node->children.size()) i = 0; i < gltf_node->children.size(); ++i) {
 		_generate_scene_node(state, current_node, scene_root, gltf_node->children[i]);
 	}
 }
@@ -2666,7 +2669,7 @@ T EditorSceneImporterGLTF::_interpolate_track(const std::vector<float> &p_times,
 
 	//could use binary search, worth it?
 	int idx = -1;
-	for (int i = 0; i < p_times.size(); i++) {
+	for (decltype(p_times.size()) i = 0; i < p_times.size(); i++) {
 		if (p_times[i] > p_time)
 			break;
 		idx++;
@@ -2679,7 +2682,7 @@ T EditorSceneImporterGLTF::_interpolate_track(const std::vector<float> &p_times,
 
 			if (idx == -1) {
 				return p_values[0];
-			} else if (idx >= p_times.size() - 1) {
+			} else if (idx >= static_cast<int>(p_times.size()) - 1) {
 				return p_values[p_times.size() - 1];
 			}
 
@@ -2692,7 +2695,7 @@ T EditorSceneImporterGLTF::_interpolate_track(const std::vector<float> &p_times,
 
 			if (idx == -1) {
 				return p_values[0];
-			} else if (idx >= p_times.size() - 1) {
+			} else if (idx >= static_cast<int>(p_times.size()) - 1) {
 				return p_values[p_times.size() - 1];
 			}
 
@@ -2703,7 +2706,7 @@ T EditorSceneImporterGLTF::_interpolate_track(const std::vector<float> &p_times,
 
 			if (idx == -1) {
 				return p_values[1];
-			} else if (idx >= p_times.size() - 1) {
+			} else if (idx >= static_cast<int>(p_times.size()) - 1) {
 				return p_values[1 + p_times.size() - 1];
 			}
 
@@ -2716,7 +2719,7 @@ T EditorSceneImporterGLTF::_interpolate_track(const std::vector<float> &p_times,
 
 			if (idx == -1) {
 				return p_values[1];
-			} else if (idx >= p_times.size() - 1) {
+			} else if (idx >= static_cast<int>(p_times.size()) - 1) {
 				return p_values[(p_times.size() - 1) * 3 + 1];
 			}
 
@@ -2780,18 +2783,18 @@ void EditorSceneImporterGLTF::_import_animation(GLTFState &state, AnimationPlaye
 			node_path = ap->get_parent()->get_path_to(state.scene_nodes.find(node_index)->get());
 		}
 
-		for (int i = 0; i < track.rotation_track.times.size(); i++) {
+		for (decltype(track.rotation_track.times.size()) i = 0; i < track.rotation_track.times.size(); i++) {
 			length = MAX(length, track.rotation_track.times[i]);
 		}
-		for (int i = 0; i < track.translation_track.times.size(); i++) {
+		for (decltype(track.translation_track.times.size()) i = 0; i < track.translation_track.times.size(); i++) {
 			length = MAX(length, track.translation_track.times[i]);
 		}
-		for (int i = 0; i < track.scale_track.times.size(); i++) {
+		for (decltype(track.scale_track.times.size()) i = 0; i < track.scale_track.times.size(); i++) {
 			length = MAX(length, track.scale_track.times[i]);
 		}
 
-		for (int i = 0; i < track.weight_tracks.size(); i++) {
-			for (int j = 0; j < track.weight_tracks[i].times.size(); j++) {
+		for (decltype(track.weight_tracks.size()) i = 0; i < track.weight_tracks.size(); i++) {
+			for (decltype(track.weight_tracks[i].times.size()) j = 0; j < track.weight_tracks[i].times.size(); j++) {
 				length = MAX(length, track.weight_tracks[i].times[j]);
 			}
 		}
@@ -2870,8 +2873,8 @@ void EditorSceneImporterGLTF::_import_animation(GLTFState &state, AnimationPlaye
 			}
 		}
 
-		for (int i = 0; i < track.weight_tracks.size(); i++) {
-			ERR_CONTINUE(node->mesh < 0 || node->mesh >= state.meshes.size());
+		for (decltype(track.weight_tracks.size()) i = 0; i < track.weight_tracks.size(); i++) {
+			ERR_CONTINUE(node->mesh < 0 || node->mesh >= static_cast<int>(state.meshes.size()));
 			const GLTFMesh &mesh = state.meshes[node->mesh];
 			const String prop = "blend_shapes/" + mesh.mesh->get_blend_shape_name(i);
 
@@ -2886,7 +2889,7 @@ void EditorSceneImporterGLTF::_import_animation(GLTFState &state, AnimationPlaye
 			GLTFAnimation::Interpolation gltf_interp = track.weight_tracks[i].interpolation;
 			if (gltf_interp == GLTFAnimation::INTERP_LINEAR || gltf_interp == GLTFAnimation::INTERP_STEP) {
 				animation->track_set_interpolation_type(track_idx, gltf_interp == GLTFAnimation::INTERP_STEP ? Animation::INTERPOLATION_NEAREST : Animation::INTERPOLATION_LINEAR);
-				for (int j = 0; j < track.weight_tracks[i].times.size(); j++) {
+				for (decltype(track.weight_tracks[i].times.size()) j = 0; j < track.weight_tracks[i].times.size(); j++) {
 					const float t = track.weight_tracks[i].times[j];
 					const float w = track.weight_tracks[i].values[j];
 					animation->track_insert_key(track_idx, t, w);
@@ -2917,7 +2920,7 @@ void EditorSceneImporterGLTF::_import_animation(GLTFState &state, AnimationPlaye
 }
 
 void EditorSceneImporterGLTF::_process_mesh_instances(GLTFState &state, Spatial *scene_root) {
-	for (GLTFNodeIndex node_i = 0; node_i < state.nodes.size(); ++node_i) {
+	for (decltype(state.nodes.size()) node_i = 0; node_i < state.nodes.size(); ++node_i) {
 		const GLTFNode *node = state.nodes[node_i];
 
 		if (node->skin >= 0 && node->mesh >= 0) {
@@ -2950,7 +2953,7 @@ Spatial *EditorSceneImporterGLTF::_generate_scene(GLTFState &state, const int p_
 	// scene_name is already unique
 	root->set_name(state.scene_name);
 
-	for (int i = 0; i < state.root_nodes.size(); ++i) {
+	for (decltype(state.root_nodes.size()) i = 0; i < state.root_nodes.size(); ++i) {
 		_generate_scene_node(state, root, root, state.root_nodes[i]);
 	}
 
@@ -2962,7 +2965,7 @@ Spatial *EditorSceneImporterGLTF::_generate_scene(GLTFState &state, const int p_
 		root->add_child(ap);
 		ap->set_owner(root);
 
-		for (int i = 0; i < state.animations.size(); i++) {
+		for (decltype(state.animations.size()) i = 0; i < state.animations.size(); i++) {
 			_import_animation(state, ap, i, p_bake_fps);
 		}
 	}
@@ -2995,6 +2998,7 @@ Node *EditorSceneImporterGLTF::import_scene(const String &p_path, uint32_t p_fla
 
 	String version = asset["version"];
 
+	state.import_flags = p_flags;
 	state.major_version = version.get_slice(".", 0).to_int();
 	state.minor_version = version.get_slice(".", 1).to_int();
 	state.use_named_skin_binds = p_flags & IMPORT_USE_NAMED_SKIN_BINDS;

@@ -53,7 +53,7 @@ Array EditorInterface::_make_mesh_previews(const Array &p_meshes, int p_preview_
 
 	std::vector<Ref<Texture> > textures = make_mesh_previews(meshes, NULL, p_preview_size);
 	Array ret;
-	for (int i = 0; i < textures.size(); i++) {
+	for (decltype(textures.size()) i = 0; i < textures.size(); i++) {
 		ret.push_back(textures[i]);
 	}
 
@@ -89,7 +89,7 @@ std::vector<Ref<Texture> > EditorInterface::make_mesh_previews(const std::vector
 
 	std::vector<Ref<Texture> > textures;
 
-	for (int i = 0; i < p_meshes.size(); i++) {
+	for (decltype(p_meshes.size()) i = 0; i < p_meshes.size(); i++) {
 
 		Ref<Mesh> mesh = p_meshes[i];
 		if (!mesh.is_valid()) {
@@ -281,6 +281,10 @@ void EditorInterface::set_distraction_free_mode(bool p_enter) {
 
 EditorInterface *EditorInterface::singleton = NULL;
 
+bool EditorInterface::is_distraction_free_mode_enabled() const {
+	return EditorNode::get_singleton()->is_distraction_free_mode_enabled();
+}
+
 void EditorInterface::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("inspect_object", "object", "for_property"), &EditorInterface::inspect_object, DEFVAL(String()));
@@ -312,6 +316,9 @@ void EditorInterface::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_main_screen_editor", "name"), &EditorInterface::set_main_screen_editor);
 	ClassDB::bind_method(D_METHOD("set_distraction_free_mode", "enter"), &EditorInterface::set_distraction_free_mode);
+	ClassDB::bind_method(D_METHOD("is_distraction_free_mode_enabled"), &EditorInterface::is_distraction_free_mode_enabled);
+
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "distraction_free_mode"), "set_distraction_free_mode", "is_distraction_free_mode_enabled");
 }
 
 EditorInterface::EditorInterface() {

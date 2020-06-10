@@ -149,13 +149,13 @@ static void _display_error_with_code(const String &p_error, const std::vector<co
 	int line = 1;
 	String total_code;
 
-	for (int i = 0; i < p_code.size(); i++) {
+	for (decltype(p_code.size()) i = 0; i < p_code.size(); i++) {
 		total_code += String(p_code[i]);
 	}
 
 	std::vector<String> lines = String(total_code).split("\n");
 
-	for (int j = 0; j < lines.size(); j++) {
+	for (decltype(lines.size()) j = 0; j < lines.size(); j++) {
 
 		print_line(itos(line) + ": " + lines[j]);
 		line++;
@@ -214,7 +214,7 @@ ShaderGLES3::Version *ShaderGLES3::get_current_version() {
 	strings.push_back("#define ANDROID_ENABLED\n");
 #endif
 
-	for (int i = 0; i < custom_defines.size(); i++) {
+	for (decltype(custom_defines.size()) i = 0; i < custom_defines.size(); i++) {
 
 		strings.push_back(custom_defines[i].get_data());
 		strings.push_back("\n");
@@ -255,7 +255,7 @@ ShaderGLES3::Version *ShaderGLES3::get_current_version() {
 	/* VERTEX SHADER */
 
 	if (cc) {
-		for (int i = 0; i < cc->custom_defines.size(); i++) {
+		for (decltype(cc->custom_defines.size()) i = 0; i < cc->custom_defines.size(); i++) {
 
 			strings.push_back(cc->custom_defines[i].get_data());
 			DEBUG_PRINT("CD #" + itos(i) + ": " + String(cc->custom_defines[i]));
@@ -544,8 +544,9 @@ ShaderGLES3::Version *ShaderGLES3::get_current_version() {
 
 	if (cc) {
 
-		v.texture_uniform_locations.resize(cc->texture_uniforms.size());
-		for (int i = 0; i < cc->texture_uniforms.size(); i++) {
+		int len = cc->texture_uniforms.size();
+		v.texture_uniform_locations.resize(len);
+		for (int i = 0; i < len; i++) {
 
 			v.texture_uniform_locations[i] = glGetUniformLocation(v.id, String(cc->texture_uniforms[i]).ascii().get_data());
 			glUniform1i(v.texture_uniform_locations[i], i + base_material_tex_index);

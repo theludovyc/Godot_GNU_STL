@@ -55,7 +55,7 @@ void ResourcePreloaderEditor::_notification(int p_what) {
 
 void ResourcePreloaderEditor::_files_load_request(const std::vector<String> &p_paths) {
 
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 
 		String path = p_paths[i];
 

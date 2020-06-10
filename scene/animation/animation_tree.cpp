@@ -146,7 +146,7 @@ void AnimationNode::make_invalid(const String &p_reason) {
 }
 
 float AnimationNode::blend_input(int p_input, float p_time, bool p_seek, float p_blend, FilterAction p_filter, bool p_optimize) {
-	ERR_FAIL_INDEX_V(p_input, inputs.size(), 0);
+	ERR_FAIL_INDEX_V(p_input, static_cast<int>(inputs.size()), 0);
 	ERR_FAIL_COND_V(!state, 0);
 
 	AnimationNodeBlendTree *blend_tree = Object::cast_to<AnimationNodeBlendTree>(parent);
@@ -168,7 +168,7 @@ float AnimationNode::blend_input(int p_input, float p_time, bool p_seek, float p
 
 	std::vector<AnimationTree::Activity> *activity_ptr = state->tree->input_activity_map.getptr(base_path);
 
-	if (activity_ptr && p_input < activity_ptr->size()) {
+	if (activity_ptr && p_input < static_cast<int>(activity_ptr->size())) {
 		(*activity_ptr)[p_input].last_pass = state->last_pass;
 		(*activity_ptr)[p_input].activity = activity;
 	}
@@ -187,7 +187,7 @@ float AnimationNode::_blend_node(const StringName &p_subpath, const std::vector<
 
 	int blend_count = blends.size();
 
-	if (p_node->blends.size() != blend_count) {
+	if (static_cast<int>(p_node->blends.size()) != blend_count) {
 		p_node->blends.resize(blend_count);
 	}
 
@@ -301,7 +301,7 @@ int AnimationNode::get_input_count() const {
 	return inputs.size();
 }
 String AnimationNode::get_input_name(int p_input) {
-	ERR_FAIL_INDEX_V(p_input, inputs.size(), String());
+	ERR_FAIL_INDEX_V(p_input, static_cast<int>(inputs.size()), String());
 	return inputs[p_input].name;
 }
 
@@ -325,14 +325,14 @@ void AnimationNode::add_input(const String &p_name) {
 }
 
 void AnimationNode::set_input_name(int p_input, const String &p_name) {
-	ERR_FAIL_INDEX(p_input, inputs.size());
+	ERR_FAIL_INDEX(p_input, static_cast<int>(inputs.size()));
 	ERR_FAIL_COND(p_name.find(".") != -1 || p_name.find("/") != -1);
 	inputs[p_input].name = p_name;
 	emit_changed();
 }
 
 void AnimationNode::remove_input(int p_index) {
-	ERR_FAIL_INDEX(p_index, inputs.size());
+	ERR_FAIL_INDEX(p_index, static_cast<int>(inputs.size()));
 	inputs.erase(inputs.begin() + p_index);
 	emit_changed();
 }
@@ -1524,7 +1524,7 @@ float AnimationTree::get_connection_activity(const StringName &p_path, int p_con
 	}
 	const std::vector<Activity> *activity = input_activity_map_get[p_path];
 
-	if (!activity || p_connection < 0 || p_connection >= activity->size()) {
+	if (!activity || p_connection < 0 || p_connection >= static_cast<int>(activity->size())) {
 		return 0;
 	}
 

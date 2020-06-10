@@ -87,7 +87,7 @@ void EditorPluginSettings::update_plugins() {
 
 	std::sort(plugins.begin(), plugins.end());
 
-	for (int i = 0; i < plugins.size(); i++) {
+	for (decltype(plugins.size()) i = 0; i < plugins.size(); i++) {
 
 		Ref<ConfigFile> cf;
 		cf.instance();

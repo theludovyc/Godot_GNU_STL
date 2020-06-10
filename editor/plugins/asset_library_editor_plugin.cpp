@@ -156,7 +156,7 @@ void EditorAssetLibraryItemDescription::set_image(int p_type, int p_index, const
 		} break;
 		case EditorAssetLibrary::IMAGE_QUEUE_THUMBNAIL: {
 
-			for (int i = 0; i < preview_images.size(); i++) {
+			for (decltype(preview_images.size()) i = 0; i < preview_images.size(); i++) {
 				if (preview_images[i].id == p_index) {
 					if (preview_images[i].is_video) {
 						Ref<Image> overlay = get_icon("PlayOverlay", "EditorIcons")->get_data();
@@ -186,7 +186,7 @@ void EditorAssetLibraryItemDescription::set_image(int p_type, int p_index, const
 		} break;
 		case EditorAssetLibrary::IMAGE_QUEUE_SCREENSHOT: {
 
-			for (int i = 0; i < preview_images.size(); i++) {
+			for (decltype(preview_images.size()) i = 0; i < preview_images.size(); i++) {
 				if (preview_images[i].id == p_index) {
 					preview_images[i].image = p_image;
 					if (preview_images[i].button->is_pressed()) {
@@ -219,7 +219,7 @@ void EditorAssetLibraryItemDescription::_link_click(const String &p_url) {
 }
 
 void EditorAssetLibraryItemDescription::_preview_click(int p_id) {
-	for (int i = 0; i < preview_images.size(); i++) {
+	for (decltype(preview_images.size()) i = 0; i < preview_images.size(); i++) {
 		if (preview_images[i].id == p_id) {
 			preview_images[i].button->set_pressed(true);
 			if (!preview_images[i].is_video) {

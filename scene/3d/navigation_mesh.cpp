@@ -298,7 +298,7 @@ int NavigationMesh::get_polygon_count() const {
 }
 std::vector<int> NavigationMesh::get_polygon(int p_idx) {
 
-	ERR_FAIL_INDEX_V(p_idx, polygons.size(), std::vector<int>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(polygons.size()), std::vector<int>());
 	return polygons[p_idx].indices;
 }
 void NavigationMesh::clear_polygons() {
@@ -317,7 +317,7 @@ Ref<Mesh> NavigationMesh::get_debug_mesh() {
 	for (int i = 0; i < get_polygon_count(); i++) {
 		std::vector<int> p = get_polygon(i);
 
-		for (int j = 2; j < p.size(); j++) {
+		for (decltype(p.size()) j = 2; j < p.size(); j++) {
 			Face3 f;
 			f.vertex[0] = vr[p[0]];
 			f.vertex[1] = vr[p[j - 1]];

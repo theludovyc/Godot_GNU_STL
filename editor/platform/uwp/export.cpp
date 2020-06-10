@@ -214,14 +214,14 @@ void AppxPackager::make_block_map(const String &p_path) {
 	tmp_file->store_string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
 	tmp_file->store_string("<BlockMap xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
 
-	for (int i = 0; i < file_metadata.size(); i++) {
+	for (decltype(file_metadata.size()) i = 0; i < file_metadata.size(); i++) {
 
 		FileMeta file = file_metadata[i];
 
 		tmp_file->store_string(
 				"<File Name=\"" + file.name.replace("/", "\\") + "\" Size=\"" + itos(file.uncompressed_size) + "\" LfhSize=\"" + itos(file.lfh_size) + "\">");
 
-		for (int j = 0; j < file.hashes.size(); j++) {
+		for (decltype(file.hashes.size()) j = 0; j < file.hashes.size(); j++) {
 
 			tmp_file->store_string("<Block Hash=\"" + file.hashes[j].base64_hash + "\" ");
 			if (file.compressed)
@@ -261,7 +261,7 @@ void AppxPackager::make_content_types(const String &p_path) {
 
 	Map<String, String> types;
 
-	for (int i = 0; i < file_metadata.size(); i++) {
+	for (decltype(file_metadata.size()) i = 0; i < file_metadata.size(); i++) {
 
 		String ext = file_metadata[i].name.get_extension();
 
@@ -625,7 +625,7 @@ void AppxPackager::finish() {
 	DirAccess::remove_file_or_error(tmp_content_types_file_path);
 
 	// Pre-process central directory before signing
-	for (int i = 0; i < file_metadata.size(); i++) {
+	for (decltype(file_metadata.size()) i = 0; i < file_metadata.size(); i++) {
 		store_central_dir_header(file_metadata[i]);
 	}
 
@@ -1334,7 +1334,7 @@ public:
 		}
 
 		std::vector<String> cl = ((String)p_preset->get("command_line/extra_args")).strip_edges().split(" ");
-		for (int i = 0; i < cl.size(); i++) {
+		for (int i = 0; i < static_cast<int>(cl.size()); i++) {
 			if (cl[i].strip_edges().length() == 0) {
 				cl.erase(cl.begin() + i);
 				i--;
@@ -1355,7 +1355,7 @@ public:
 		clf.resize(4);
 		encode_uint32(cl.size(), clf.data());
 
-		for (int i = 0; i < cl.size(); i++) {
+		for (decltype(cl.size()) i = 0; i < cl.size(); i++) {
 
 			CharString txt = cl[i].utf8();
 			int base = clf.size();

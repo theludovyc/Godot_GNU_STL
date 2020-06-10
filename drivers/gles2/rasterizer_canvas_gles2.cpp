@@ -60,7 +60,7 @@ RasterizerCanvasGLES2::BatchData::BatchData() {
 	settings_colored_vertex_format_threshold = 0.0f;
 	settings_batch_buffer_num_verts = 0;
 	scissor_threshold_area = 0.0f;
-	prevent_color_baking = false;
+	joined_item_batch_flags = 0;
 	diagnose_frame = false;
 	next_diagnose_tick = 10000;
 	diagnose_frame_number = 9999999999; // some high number
@@ -1316,7 +1316,7 @@ void RasterizerCanvasGLES2::render_batches(Item::Command *const *p_commands, Ite
 							RasterizerStorageGLES2::Mesh *mesh_data = storage->mesh_owner.getornull(mesh->mesh);
 							if (mesh_data) {
 
-								for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+								for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 									RasterizerStorageGLES2::Surface *s = mesh_data->surfaces[j];
 									// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 
@@ -1406,7 +1406,7 @@ void RasterizerCanvasGLES2::render_batches(Item::Command *const *p_commands, Ite
 
 							const float *base_buffer = multi_mesh->data.data();
 
-							for (int j = 0; j < mesh_data->surfaces.size(); j++) {
+							for (decltype(mesh_data->surfaces.size()) j = 0; j < mesh_data->surfaces.size(); j++) {
 								RasterizerStorageGLES2::Surface *s = mesh_data->surfaces[j];
 								// materials are ignored in 2D meshes, could be added but many things (ie, lighting mode, reading from screen, etc) would break as they are not meant be set up at this point of drawing
 
@@ -1526,7 +1526,7 @@ void RasterizerCanvasGLES2::render_batches(Item::Command *const *p_commands, Ite
 										offset += to_draw * 2;
 									}
 								} else {
-									_draw_generic(GL_LINES, pline->lines.size(), pline->lines.data(), NULL, pline->line_colors.data(), pline->line_colors.size() == 1);
+									_draw_generic(GL_LINE_STRIP, pline->lines.size(), pline->lines.data(), NULL, pline->line_colors.data(), pline->line_colors.size() == 1);
 								}
 
 #ifdef GLES_OVER_GL
@@ -1629,6 +1629,12 @@ void RasterizerCanvasGLES2::render_joined_item_commands(const BItemJoined &p_bij
 	fill_state.use_hardware_transform = p_bij.use_hardware_transform();
 	fill_state.extra_matrix_sent = false;
 
+	// in the special case of custom shaders that read from VERTEX (i.e. vertex position)
+	// we want to disable software transform of extra matrix
+	if (bdata.joined_item_batch_flags & RasterizerStorageGLES2::Shader::CanvasItem::PREVENT_VERTEX_BAKING) {
+		fill_state.extra_matrix_sent = true;
+	}
+
 	for (unsigned int i = 0; i < p_bij.num_item_refs; i++) {
 		const BItemRef &ref = bdata.item_refs[p_bij.first_item_ref + i];
 		item = ref.item;
@@ -1688,7 +1694,7 @@ void RasterizerCanvasGLES2::flush_render_batches(Item *p_first_item, Item *p_cur
 	// only check whether to convert if there are quads (prevent divide by zero)
 	// and we haven't decided to prevent color baking (due to e.g. MODULATE
 	// being used in a shader)
-	if (bdata.total_quads && !bdata.prevent_color_baking) {
+	if (bdata.total_quads && !(bdata.joined_item_batch_flags & RasterizerStorageGLES2::Shader::CanvasItem::PREVENT_COLOR_BAKING)) {
 		// minus 1 to prevent single primitives (ratio 1.0) always being converted to colored..
 		// in that case it is slightly cheaper to just have the color as part of the batch
 		float ratio = (float)(bdata.total_color_changes - 1) / (float)bdata.total_quads;
@@ -1902,6 +1908,7 @@ void RasterizerCanvasGLES2::join_sorted_items() {
 			_render_item_state.joined_item->num_item_refs = 1;
 			_render_item_state.joined_item->bounding_rect = ci->global_rect_cache;
 			_render_item_state.joined_item->z_index = z;
+			_render_item_state.joined_item->flags = bdata.joined_item_batch_flags;
 
 			// add the reference
 			BItemRef *r = bdata.item_refs.request_with_grow();
@@ -2178,7 +2185,8 @@ bool RasterizerCanvasGLES2::try_join_item(Item *p_ci, RenderItemState &r_ris, bo
 	}
 
 	// if there are any state changes we change join to false
-	// we also set r_batch_break to true if we don't want this item joined
+	// we also set r_batch_break to true if we don't want this item joined to the next
+	// (e.g. an item that must not be joined at all)
 	r_batch_break = false;
 	bool join = true;
 
@@ -2265,16 +2273,6 @@ bool RasterizerCanvasGLES2::try_join_item(Item *p_ci, RenderItemState &r_ris, bo
 	bool unshaded = r_ris.shader_cache && (r_ris.shader_cache->canvas_item.light_mode == RasterizerStorageGLES2::Shader::CanvasItem::LIGHT_MODE_UNSHADED || (blend_mode != RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_MIX && blend_mode != RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_PMALPHA));
 	bool reclip = false;
 
-	// does the shader contain BUILTINs which should break the batching?
-	if (r_ris.shader_cache && !unshaded) {
-		if (r_ris.shader_cache->canvas_item.prevent_color_baking) {
-			// we will do this same test on the shader during the rendering pass in order to set a bool not to bake vertex colors
-			// instead of saving this info as it is cheap to calculate
-			join = false;
-			r_batch_break = true;
-		}
-	}
-
 	// we are precalculating the final_modulate ahead of time because we need this for baking of final modulate into vertex colors
 	// (only in software transform mode)
 	// This maybe inefficient storing it...
@@ -2283,6 +2281,33 @@ bool RasterizerCanvasGLES2::try_join_item(Item *p_ci, RenderItemState &r_ris, bo
 	if (r_ris.last_blend_mode != blend_mode) {
 		join = false;
 		r_ris.last_blend_mode = blend_mode;
+	}
+
+	// does the shader contain BUILTINs which should break the batching?
+	bdata.joined_item_batch_flags = 0;
+	if (r_ris.shader_cache) {
+
+		unsigned int and_flags = r_ris.shader_cache->canvas_item.batch_flags & (RasterizerStorageGLES2::Shader::CanvasItem::PREVENT_COLOR_BAKING | RasterizerStorageGLES2::Shader::CanvasItem::PREVENT_VERTEX_BAKING);
+		if (and_flags) {
+
+			bool break_batching = true;
+
+			if (and_flags == RasterizerStorageGLES2::Shader::CanvasItem::PREVENT_COLOR_BAKING) {
+				// in some circumstances, if the modulate is identity, we still allow baking because reading modulate / color
+				// will still be okay to do in the shader with no ill effects
+				if (r_ris.final_modulate == Color(1, 1, 1, 1)) {
+					break_batching = false;
+				}
+			}
+
+			if (break_batching) {
+				join = false;
+				r_batch_break = true;
+
+				// save the flags so that they don't need to be recalculated in the 2nd pass
+				bdata.joined_item_batch_flags |= r_ris.shader_cache->canvas_item.batch_flags;
+			}
+		}
 	}
 
 	if ((blend_mode == RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_MIX || blend_mode == RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_PMALPHA) && r_ris.item_group_light && !unshaded) {
@@ -2308,7 +2333,7 @@ bool RasterizerCanvasGLES2::try_join_item(Item *p_ci, RenderItemState &r_ris, bo
 			int light_count = -1;
 			while (light) {
 				light_count++;
-				uint64_t light_bit = 1 << light_count;
+				uint64_t light_bit = 1ULL << light_count;
 
 				// note that as a cost of batching, the light culling will be less effective
 				if (p_ci->light_mask & light->item_mask && r_ris.item_group_z >= light->z_min && r_ris.item_group_z <= light->z_max) {
@@ -2997,14 +3022,6 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 	bool unshaded = r_ris.shader_cache && (r_ris.shader_cache->canvas_item.light_mode == RasterizerStorageGLES2::Shader::CanvasItem::LIGHT_MODE_UNSHADED || (blend_mode != RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_MIX && blend_mode != RasterizerStorageGLES2::Shader::CanvasItem::BLEND_MODE_PMALPHA));
 	bool reclip = false;
 
-	// does the shader contain BUILTINs which break the batching and should prevent color baking?
-	bdata.prevent_color_baking = false;
-	if (r_ris.shader_cache && !unshaded) {
-		if (r_ris.shader_cache->canvas_item.prevent_color_baking) {
-			bdata.prevent_color_baking = true;
-		}
-	}
-
 	if (r_ris.last_blend_mode != blend_mode) {
 
 		switch (blend_mode) {
@@ -3322,30 +3339,35 @@ void RasterizerCanvasGLES2::_calculate_scissor_threshold_area() {
 void RasterizerCanvasGLES2::initialize() {
 	RasterizerCanvasBaseGLES2::initialize();
 
-	bdata.settings_use_batching = GLOBAL_GET("rendering/gles2/batching/use_batching");
-	bdata.settings_max_join_item_commands = GLOBAL_GET("rendering/gles2/batching/max_join_item_commands");
-	bdata.settings_colored_vertex_format_threshold = GLOBAL_GET("rendering/gles2/batching/colored_vertex_format_threshold");
-	bdata.settings_item_reordering_lookahead = GLOBAL_GET("rendering/gles2/batching/item_reordering_lookahead");
-	bdata.settings_light_max_join_items = GLOBAL_GET("rendering/gles2/batching/light_max_join_items");
-	bdata.settings_use_single_rect_fallback = GLOBAL_GET("rendering/gles2/batching/single_rect_fallback");
+	bdata.settings_use_batching = GLOBAL_GET("rendering/batching/options/use_batching");
+	bdata.settings_max_join_item_commands = GLOBAL_GET("rendering/batching/parameters/max_join_item_commands");
+	bdata.settings_colored_vertex_format_threshold = GLOBAL_GET("rendering/batching/parameters/colored_vertex_format_threshold");
+	bdata.settings_item_reordering_lookahead = GLOBAL_GET("rendering/batching/parameters/item_reordering_lookahead");
+	bdata.settings_light_max_join_items = GLOBAL_GET("rendering/batching/lights/max_join_items");
+	bdata.settings_use_single_rect_fallback = GLOBAL_GET("rendering/batching/options/single_rect_fallback");
 
 	// we can use the threshold to determine whether to turn scissoring off or on
-	bdata.settings_scissor_threshold = GLOBAL_GET("rendering/gles2/batching/light_scissor_area_threshold");
+	bdata.settings_scissor_threshold = GLOBAL_GET("rendering/batching/lights/scissor_area_threshold");
 	if (bdata.settings_scissor_threshold > 0.999f) {
 		bdata.settings_scissor_lights = false;
 	} else {
 		bdata.settings_scissor_lights = true;
+
+		// apply power of 4 relationship for the area, as most of the important changes
+		// will be happening at low values of scissor threshold
+		bdata.settings_scissor_threshold *= bdata.settings_scissor_threshold;
+		bdata.settings_scissor_threshold *= bdata.settings_scissor_threshold;
 	}
 
 	// The sweet spot on my desktop for cache is actually smaller than the max, and this
 	// is the default. This saves memory too so we will use it for now, needs testing to see whether this varies according
 	// to device / platform.
-	bdata.settings_batch_buffer_num_verts = GLOBAL_GET("rendering/gles2/batching/batch_buffer_size");
+	bdata.settings_batch_buffer_num_verts = GLOBAL_GET("rendering/batching/parameters/batch_buffer_size");
 
 	// override the use_batching setting in the editor
 	// (note that if the editor can't start, you can't change the use_batching project setting!)
 	if (Engine::get_singleton()->is_editor_hint()) {
-		bool use_in_editor = GLOBAL_GET("rendering/gles2/debug/use_batching_in_editor");
+		bool use_in_editor = GLOBAL_GET("rendering/batching/options/use_batching_in_editor");
 		bdata.settings_use_batching = use_in_editor;
 
 		// fix some settings in the editor, as the performance not worth the risk
@@ -3366,7 +3388,7 @@ void RasterizerCanvasGLES2::initialize() {
 	// This should not be used except during development.
 	// make a note of the original choice in case we are flashing on and off the batching
 	bdata.settings_use_batching_original_choice = bdata.settings_use_batching;
-	bdata.settings_flash_batching = GLOBAL_GET("rendering/gles2/debug/flash_batching");
+	bdata.settings_flash_batching = GLOBAL_GET("rendering/batching/debug/flash_batching");
 	if (!bdata.settings_use_batching) {
 		// no flash when batching turned off
 		bdata.settings_flash_batching = false;
@@ -3375,7 +3397,7 @@ void RasterizerCanvasGLES2::initialize() {
 	// frame diagnosis. print out the batches every nth frame
 	bdata.settings_diagnose_frame = false;
 	if (!Engine::get_singleton()->is_editor_hint() && bdata.settings_use_batching) {
-		bdata.settings_diagnose_frame = GLOBAL_GET("rendering/gles2/debug/diagnose_frame");
+		bdata.settings_diagnose_frame = GLOBAL_GET("rendering/batching/debug/diagnose_frame");
 	}
 
 	// the maximum num quads in a batch is limited by GLES2. We can have only 16 bit indices,

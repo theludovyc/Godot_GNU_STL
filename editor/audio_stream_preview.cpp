@@ -117,11 +117,11 @@ void AudioStreamPreviewGenerator::_preview_thread(void *p_preview) {
 	preview->playback->start();
 
 	while (frames_todo) {
-
-		int ofs_write = uint64_t(frames_total - frames_todo) * uint64_t(preview->preview->preview.size() / 2) / uint64_t(frames_total);
+		int len = preview->preview->preview.size() / 2;
+		int ofs_write = uint64_t(frames_total - frames_todo) * uint64_t(len) / uint64_t(frames_total);
 		int to_read = MIN(frames_todo, mixbuff_chunk_frames);
-		int to_write = uint64_t(to_read) * uint64_t(preview->preview->preview.size() / 2) / uint64_t(frames_total);
-		to_write = MIN(to_write, (preview->preview->preview.size() / 2) - ofs_write);
+		int to_write = uint64_t(to_read) * uint64_t(len) / uint64_t(frames_total);
+		to_write = MIN(to_write, len - ofs_write);
 
 		preview->playback->mix(mix_chunk.data(), 1.0, to_read);
 

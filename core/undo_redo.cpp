@@ -34,10 +34,11 @@
 
 void UndoRedo::_discard_redo() {
 
-	if (current_action == actions.size() - 1)
+	int actions_count = actions.size();
+	if (current_action == actions_count - 1)
 		return;
 
-	for (int i = current_action + 1; i < actions.size(); i++) {
+	for (int i = current_action + 1; i < actions_count; i++) {
 
 		for (List<Operation>::Element *E = actions[i].do_ops.front(); E; E = E->next()) {
 
@@ -110,7 +111,7 @@ void UndoRedo::add_do_method(Object *p_object, const String &p_method, VARIANT_A
 	VARIANT_ARGPTRS
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 	Operation do_op;
 	do_op.object = p_object->get_instance_id();
 	if (Object::cast_to<Resource>(p_object))
@@ -130,7 +131,7 @@ void UndoRedo::add_undo_method(Object *p_object, const String &p_method, VARIANT
 	VARIANT_ARGPTRS
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 
 	// No undo if the merge mode is MERGE_ENDS
 	if (merge_mode == MERGE_ENDS)
@@ -153,7 +154,7 @@ void UndoRedo::add_do_property(Object *p_object, const String &p_property, const
 
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 	Operation do_op;
 	do_op.object = p_object->get_instance_id();
 	if (Object::cast_to<Resource>(p_object))
@@ -168,7 +169,7 @@ void UndoRedo::add_undo_property(Object *p_object, const String &p_property, con
 
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 
 	// No undo if the merge mode is MERGE_ENDS
 	if (merge_mode == MERGE_ENDS)
@@ -188,7 +189,7 @@ void UndoRedo::add_do_reference(Object *p_object) {
 
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 	Operation do_op;
 	do_op.object = p_object->get_instance_id();
 	if (Object::cast_to<Resource>(p_object))
@@ -201,7 +202,7 @@ void UndoRedo::add_undo_reference(Object *p_object) {
 
 	ERR_FAIL_COND(p_object == NULL);
 	ERR_FAIL_COND(action_level <= 0);
-	ERR_FAIL_COND((current_action + 1) >= actions.size());
+	ERR_FAIL_COND((current_action + 1) >= static_cast<int>(actions.size()));
 
 	// No undo if the merge mode is MERGE_ENDS
 	if (merge_mode == MERGE_ENDS)
@@ -329,7 +330,7 @@ bool UndoRedo::redo() {
 
 	ERR_FAIL_COND_V(action_level > 0, false);
 
-	if ((current_action + 1) >= actions.size())
+	if ((current_action + 1) >= static_cast<int>(actions.size()))
 		return false; //nothing to redo
 
 	current_action++;
@@ -383,7 +384,7 @@ bool UndoRedo::has_undo() {
 
 bool UndoRedo::has_redo() {
 
-	return (current_action + 1) < actions.size();
+	return (current_action + 1) < static_cast<int>(actions.size());
 }
 
 uint64_t UndoRedo::get_version() const {

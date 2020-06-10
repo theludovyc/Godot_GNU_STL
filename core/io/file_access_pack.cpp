@@ -36,7 +36,7 @@
 
 Error PackedData::add_pack(const String &p_path, bool p_replace_files) {
 
-	for (int i = 0; i < sources.size(); i++) {
+	for (decltype(sources.size()) i = 0; i < sources.size(); i++) {
 
 		if (sources[i]->try_open_pack(p_path, p_replace_files)) {
 
@@ -74,7 +74,7 @@ void PackedData::add_path(const String &pkg_path, const String &path, uint64_t o
 
 			std::vector<String> ds = p.get_base_dir().split("/");
 
-			for (int j = 0; j < ds.size(); j++) {
+			for (decltype(ds.size()) j = 0; j < ds.size(); j++) {
 
 				if (!cd->subdirs.has(ds[j])) {
 
@@ -124,7 +124,7 @@ void PackedData::_free_packed_dirs(PackedDir *p_dir) {
 
 PackedData::~PackedData() {
 
-	for (int i = 0; i < sources.size(); i++) {
+	for (decltype(sources.size()) i = 0; i < sources.size(); i++) {
 		memdelete(sources[i]);
 	}
 	_free_packed_dirs(root);
@@ -430,7 +430,7 @@ Error DirAccessPack::change_dir(String p_dir) {
 	else
 		pd = current;
 
-	for (int i = 0; i < paths.size(); i++) {
+	for (decltype(paths.size()) i = 0; i < paths.size(); i++) {
 
 		String p = paths[i];
 		if (p == ".") {

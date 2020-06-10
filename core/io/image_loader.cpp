@@ -62,7 +62,7 @@ Error ImageLoader::load_image(String p_file, Ref<Image> p_image, FileAccess *p_c
 
 	String extension = p_file.get_extension();
 
-	for (int i = 0; i < loader.size(); i++) {
+	for (decltype(loader.size()) i = 0; i < loader.size(); i++) {
 
 		if (!loader[i]->recognize(extension))
 			continue;
@@ -88,7 +88,7 @@ Error ImageLoader::load_image(String p_file, Ref<Image> p_image, FileAccess *p_c
 
 void ImageLoader::get_recognized_extensions(List<String> *p_extensions) {
 
-	for (int i = 0; i < loader.size(); i++) {
+	for (decltype(loader.size()) i = 0; i < loader.size(); i++) {
 
 		loader[i]->get_recognized_extensions(p_extensions);
 	}
@@ -96,7 +96,7 @@ void ImageLoader::get_recognized_extensions(List<String> *p_extensions) {
 
 ImageFormatLoader *ImageLoader::recognize(const String &p_extension) {
 
-	for (int i = 0; i < loader.size(); i++) {
+	for (decltype(loader.size()) i = 0; i < loader.size(); i++) {
 
 		if (loader[i]->recognize(p_extension))
 			return loader[i];
@@ -156,7 +156,7 @@ RES ResourceFormatLoaderImage::load(const String &p_path, const String &p_origin
 
 	int idx = -1;
 
-	for (int i = 0; i < ImageLoader::loader.size(); i++) {
+	for (decltype(ImageLoader::loader.size()) i = 0; i < ImageLoader::loader.size(); i++) {
 		if (ImageLoader::loader[i]->recognize(extension)) {
 			idx = i;
 			break;

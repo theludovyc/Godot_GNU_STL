@@ -355,7 +355,7 @@ void ScriptEditorDebugger::_file_selected(const String &p_file) {
 			while (E) {
 
 				std::vector<float> &perf_data = E->get();
-				for (int i = 0; i < perf_data.size(); i++) {
+				for (decltype(perf_data.size()) i = 0; i < perf_data.size(); i++) {
 
 					line[i] = String::num_real(perf_data[i]);
 				}
@@ -365,7 +365,7 @@ void ScriptEditorDebugger::_file_selected(const String &p_file) {
 			file->store_string("\n");
 
 			std::vector<std::vector<String> > profiler_data = profiler->get_data_as_csv();
-			for (int i = 0; i < profiler_data.size(); i++) {
+			for (decltype(profiler_data.size()) i = 0; i < profiler_data.size(); i++) {
 				file->store_csv_line(profiler_data[i]);
 			}
 
@@ -845,7 +845,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		p.resize(arr.size());
 		for (int i = 0; i < arr.size(); i++) {
 			p[i] = arr[i];
-			if (i < perf_items.size()) {
+			if (i < static_cast<int>(perf_items.size())) {
 
 				const float value = p[i];
 				String label = rtos(value);
@@ -1158,7 +1158,7 @@ void ScriptEditorDebugger::_performance_select() {
 void ScriptEditorDebugger::_performance_draw() {
 
 	std::vector<int> which;
-	for (int i = 0; i < perf_items.size(); i++) {
+	for (decltype(perf_items.size()) i = 0; i < perf_items.size(); i++) {
 
 		if (perf_items[i]->is_checked(0))
 			which.push_back(i);
@@ -1182,7 +1182,7 @@ void ScriptEditorDebugger::_performance_draw() {
 	int margin = 3;
 	int point_sep = 5;
 	Size2i s = Size2i(perf_draw->get_size()) / Size2i(cols, rows);
-	for (int i = 0; i < which.size(); i++) {
+	for (decltype(which.size()) i = 0; i < which.size(); i++) {
 
 		Point2i p(i % cols, i / cols);
 		Rect2i r(p * s, s);
@@ -1326,12 +1326,15 @@ void ScriptEditorDebugger::_notification(int p_what) {
 				} else {
 					errors_tab->set_name(TTR("Errors") + " (" + itos(error_count + warning_count) + ")");
 					debugger_button->set_text(TTR("Debugger") + " (" + itos(error_count + warning_count) + ")");
-					if (error_count == 0) {
-						debugger_button->set_icon(get_icon("Warning", "EditorIcons"));
-						tabs->set_tab_icon(errors_tab->get_index(), get_icon("Warning", "EditorIcons"));
-					} else {
+					if (error_count >= 1 && warning_count >= 1) {
+						debugger_button->set_icon(get_icon("ErrorWarning", "EditorIcons"));
+						tabs->set_tab_icon(errors_tab->get_index(), get_icon("ErrorWarning", "EditorIcons"));
+					} else if (error_count >= 1) {
 						debugger_button->set_icon(get_icon("Error", "EditorIcons"));
 						tabs->set_tab_icon(errors_tab->get_index(), get_icon("Error", "EditorIcons"));
+					} else {
+						debugger_button->set_icon(get_icon("Warning", "EditorIcons"));
+						tabs->set_tab_icon(errors_tab->get_index(), get_icon("Warning", "EditorIcons"));
 					}
 				}
 				last_error_count = error_count;

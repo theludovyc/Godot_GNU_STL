@@ -190,7 +190,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 		case SL::TYPE_BVEC4: {
 
 			String text = "bvec" + itos(p_type - SL::TYPE_BOOL + 1) + "(";
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -206,7 +206,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 		case SL::TYPE_IVEC4: {
 
 			String text = "ivec" + itos(p_type - SL::TYPE_INT + 1) + "(";
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -222,7 +222,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 		case SL::TYPE_UVEC4: {
 
 			String text = "uvec" + itos(p_type - SL::TYPE_UINT + 1) + "(";
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -237,7 +237,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 		case SL::TYPE_VEC4: {
 
 			String text = "vec" + itos(p_type - SL::TYPE_FLOAT + 1) + "(";
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -252,7 +252,7 @@ static String get_constant_text(SL::DataType p_type, const std::vector<SL::Const
 		case SL::TYPE_MAT4: {
 
 			String text = "mat" + itos(p_type - SL::TYPE_MAT2 + 2) + "(";
-			for (int i = 0; i < p_values.size(); i++) {
+			for (decltype(p_values.size()) i = 0; i < p_values.size(); i++) {
 				if (i > 0)
 					text += ",";
 
@@ -270,7 +270,7 @@ void ShaderCompilerGLES3::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 
 	int fidx = -1;
 
-	for (int i = 0; i < p_node->functions.size(); i++) {
+	for (decltype(p_node->functions.size()) i = 0; i < p_node->functions.size(); i++) {
 		if (p_node->functions[i].name == p_for_func) {
 			fidx = i;
 			break;
@@ -289,7 +289,7 @@ void ShaderCompilerGLES3::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 
 		SL::FunctionNode *fnode = NULL;
 
-		for (int i = 0; i < p_node->functions.size(); i++) {
+		for (decltype(p_node->functions.size()) i = 0; i < p_node->functions.size(); i++) {
 			if (p_node->functions[i].name == E->get()) {
 				fnode = p_node->functions[i].function;
 				break;
@@ -302,7 +302,7 @@ void ShaderCompilerGLES3::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 
 		String header;
 		header = _typestr(fnode->return_type) + " " + _mkid(fnode->name) + "(";
-		for (int i = 0; i < fnode->arguments.size(); i++) {
+		for (decltype(fnode->arguments.size()) i = 0; i < fnode->arguments.size(); i++) {
 
 			if (i > 0)
 				header += ", ";
@@ -317,7 +317,7 @@ void ShaderCompilerGLES3::_dump_function_deps(SL::ShaderNode *p_node, const Stri
 	}
 }
 
-String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, GeneratedCode &r_gen_code, IdentifierActions &p_actions, const DefaultIdentifierActions &p_default_actions, bool p_assigning) {
+String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, GeneratedCode &r_gen_code, IdentifierActions &p_actions, const DefaultIdentifierActions &p_default_actions, bool p_assigning, bool p_use_scope) {
 
 	String code;
 
@@ -327,7 +327,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			SL::ShaderNode *pnode = (SL::ShaderNode *)p_node;
 
-			for (int i = 0; i < pnode->render_modes.size(); i++) {
+			for (decltype(pnode->render_modes.size()) i = 0; i < pnode->render_modes.size(); i++) {
 
 				if (p_default_actions.render_mode_defines.has(pnode->render_modes[i]) && !used_rmode_defines.has(pnode->render_modes[i])) {
 
@@ -405,7 +405,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			// add up
 			int offset = 0;
-			for (int i = 0; i < uniform_sizes.size(); i++) {
+			for (decltype(uniform_sizes.size()) i = 0; i < uniform_sizes.size(); i++) {
 
 				int align = offset % uniform_alignments[i];
 
@@ -440,7 +440,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 				r_gen_code.fragment_global += interp_mode + "in " + vcode;
 			}
 
-			for (int i = 0; i < pnode->vconstants.size(); i++) {
+			for (decltype(pnode->vconstants.size()) i = 0; i < pnode->vconstants.size(); i++) {
 				String gcode;
 				gcode += "const ";
 				gcode += _prestr(pnode->vconstants[i].precision);
@@ -456,7 +456,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			Map<StringName, String> function_code;
 
 			//code for functions
-			for (int i = 0; i < pnode->functions.size(); i++) {
+			for (decltype(pnode->functions.size()) i = 0; i < pnode->functions.size(); i++) {
 				SL::FunctionNode *fnode = pnode->functions[i].function;
 				current_func_name = fnode->name;
 				function_code[fnode->name] = _dump_node_code(fnode->body, p_level + 1, r_gen_code, p_actions, p_default_actions, p_assigning);
@@ -467,7 +467,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			Set<StringName> added_vtx;
 			Set<StringName> added_fragment; //share for light
 
-			for (int i = 0; i < pnode->functions.size(); i++) {
+			for (decltype(pnode->functions.size()) i = 0; i < pnode->functions.size(); i++) {
 
 				SL::FunctionNode *fnode = pnode->functions[i].function;
 
@@ -529,7 +529,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			}
 			declaration += _prestr(vdnode->precision);
 			declaration += _typestr(vdnode->datatype);
-			for (int i = 0; i < vdnode->declarations.size(); i++) {
+			for (decltype(vdnode->declarations.size()) i = 0; i < vdnode->declarations.size(); i++) {
 				if (i > 0) {
 					declaration += ",";
 				} else {
@@ -590,7 +590,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 			}
 			declaration += _prestr(adnode->precision);
 			declaration += _typestr(adnode->datatype);
-			for (int i = 0; i < adnode->declarations.size(); i++) {
+			for (decltype(adnode->declarations.size()) i = 0; i < adnode->declarations.size(); i++) {
 				if (i > 0) {
 					declaration += ",";
 				} else {
@@ -648,7 +648,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 			if (anode->call_expression != NULL) {
 				code += ".";
-				code += _dump_node_code(anode->call_expression, p_level, r_gen_code, p_actions, p_default_actions, p_assigning);
+				code += _dump_node_code(anode->call_expression, p_level, r_gen_code, p_actions, p_default_actions, p_assigning, false);
 			}
 
 			if (anode->index_expression != NULL) {
@@ -723,7 +723,7 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 					code += "(";
 
-					for (int i = 1; i < onode->arguments.size(); i++) {
+					for (decltype(onode->arguments.size()) i = 1; i < onode->arguments.size(); i++) {
 						if (i > 1)
 							code += ", ";
 						code += _dump_node_code(onode->arguments[i], p_level, r_gen_code, p_actions, p_default_actions, p_assigning);
@@ -751,8 +751,13 @@ String ShaderCompilerGLES3::_dump_node_code(SL::Node *p_node, int p_level, Gener
 				} break;
 
 				default: {
-
-					code = "(" + _dump_node_code(onode->arguments[0], p_level, r_gen_code, p_actions, p_default_actions, p_assigning) + _opstr(onode->op) + _dump_node_code(onode->arguments[1], p_level, r_gen_code, p_actions, p_default_actions, p_assigning) + ")";
+					if (p_use_scope) {
+						code += "(";
+					}
+					code += _dump_node_code(onode->arguments[0], p_level, r_gen_code, p_actions, p_default_actions, p_assigning) + _opstr(onode->op) + _dump_node_code(onode->arguments[1], p_level, r_gen_code, p_actions, p_default_actions, p_assigning);
+					if (p_use_scope) {
+						code += ")";
+					}
 					break;
 				}
 			}
@@ -836,7 +841,7 @@ Error ShaderCompilerGLES3::compile(VS::ShaderMode p_mode, const String &p_code, 
 	if (err != OK) {
 
 		std::vector<String> shader = p_code.split("\n");
-		for (int i = 0; i < shader.size(); i++) {
+		for (decltype(shader.size()) i = 0; i < shader.size(); i++) {
 			print_line(itos(i + 1) + " " + shader[i]);
 		}
 

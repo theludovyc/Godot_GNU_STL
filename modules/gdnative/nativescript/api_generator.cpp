@@ -270,7 +270,7 @@ List<ClassAPI> generate_c_api_classes() {
 
 				int default_start = signal.argument_names.size() - default_arguments.size();
 
-				for (int j = 0; j < default_arguments.size(); j++) {
+				for (decltype(default_arguments.size()) j = 0; j < default_arguments.size(); j++) {
 					signal.default_arguments[default_start + j] = default_arguments[j];
 				}
 

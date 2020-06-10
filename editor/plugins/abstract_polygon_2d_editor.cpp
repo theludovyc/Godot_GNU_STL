@@ -385,7 +385,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 						//apply
 
 						std::vector<Vector2> vertices = _get_polygon(edited_point.polygon);
-						ERR_FAIL_INDEX_V(edited_point.vertex, vertices.size(), false);
+						ERR_FAIL_INDEX_V(edited_point.vertex, static_cast<int>(vertices.size()), false);
 						vertices[edited_point.vertex] = edited_point.pos - _get_offset(edited_point.polygon);
 
 						undo_redo->create_action(TTR("Edit Polygon"));
@@ -496,7 +496,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 			if (!wip_active) {
 
 				std::vector<Vector2> vertices = _get_polygon(edited_point.polygon);
-				ERR_FAIL_INDEX_V(edited_point.vertex, vertices.size(), false);
+				ERR_FAIL_INDEX_V(edited_point.vertex, static_cast<int>(vertices.size()), false);
 				vertices[edited_point.vertex] = cpoint - _get_offset(edited_point.polygon);
 				_set_polygon(edited_point.polygon, vertices);
 			}
@@ -537,7 +537,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 
 			if (wip_active && selected_point.polygon == -1) {
 
-				if (wip.size() > selected_point.vertex) {
+				if (static_cast<int>(wip.size()) > selected_point.vertex) {
 
 					wip.erase(wip.begin() + selected_point.vertex);
 					_wip_changed();

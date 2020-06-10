@@ -63,7 +63,7 @@ bool VisualScriptFunction::_set(const StringName &p_name, const Variant &p_value
 	}
 	if (String(p_name).begins_with("argument_")) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, arguments.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(arguments.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 
@@ -114,7 +114,7 @@ bool VisualScriptFunction::_get(const StringName &p_name, Variant &r_ret) const 
 	}
 	if (String(p_name).begins_with("argument_")) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, arguments.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(arguments.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 			r_ret = arguments[idx].type;
@@ -156,7 +156,7 @@ void VisualScriptFunction::_get_property_list(List<PropertyInfo> *p_list) const 
 		argt += "," + Variant::get_type_name(Variant::Type(i));
 	}
 
-	for (int i = 0; i < arguments.size(); i++) {
+	for (decltype(arguments.size()) i = 0; i < arguments.size(); i++) {
 		p_list->push_back(PropertyInfo(Variant::INT, "argument_" + itos(i + 1) + "/type", PROPERTY_HINT_ENUM, argt));
 		p_list->push_back(PropertyInfo(Variant::STRING, "argument_" + itos(i + 1) + "/name"));
 	}
@@ -200,7 +200,7 @@ PropertyInfo VisualScriptFunction::get_input_value_port_info(int p_idx) const {
 }
 PropertyInfo VisualScriptFunction::get_output_value_port_info(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, arguments.size(), PropertyInfo());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(arguments.size()), PropertyInfo());
 	PropertyInfo out;
 	out.type = arguments[p_idx].type;
 	out.name = arguments[p_idx].name;
@@ -235,31 +235,31 @@ void VisualScriptFunction::add_argument(Variant::Type p_type, const String &p_na
 }
 void VisualScriptFunction::set_argument_type(int p_argidx, Variant::Type p_type) {
 
-	ERR_FAIL_INDEX(p_argidx, arguments.size());
+	ERR_FAIL_INDEX(p_argidx, static_cast<int>(arguments.size()));
 
 	arguments[p_argidx].type = p_type;
 	ports_changed_notify();
 }
 Variant::Type VisualScriptFunction::get_argument_type(int p_argidx) const {
 
-	ERR_FAIL_INDEX_V(p_argidx, arguments.size(), Variant::NIL);
+	ERR_FAIL_INDEX_V(p_argidx, static_cast<int>(arguments.size()), Variant::NIL);
 	return arguments[p_argidx].type;
 }
 void VisualScriptFunction::set_argument_name(int p_argidx, const String &p_name) {
 
-	ERR_FAIL_INDEX(p_argidx, arguments.size());
+	ERR_FAIL_INDEX(p_argidx, static_cast<int>(arguments.size()));
 
 	arguments[p_argidx].name = p_name;
 	ports_changed_notify();
 }
 String VisualScriptFunction::get_argument_name(int p_argidx) const {
 
-	ERR_FAIL_INDEX_V(p_argidx, arguments.size(), String());
+	ERR_FAIL_INDEX_V(p_argidx, static_cast<int>(arguments.size()), String());
 	return arguments[p_argidx].name;
 }
 void VisualScriptFunction::remove_argument(int p_argidx) {
 
-	ERR_FAIL_INDEX(p_argidx, arguments.size());
+	ERR_FAIL_INDEX(p_argidx, static_cast<int>(arguments.size()));
 
 	arguments.erase(arguments.begin() + p_argidx);
 	ports_changed_notify();
@@ -380,7 +380,7 @@ int VisualScriptLists::get_output_value_port_count() const {
 }
 
 PropertyInfo VisualScriptLists::get_input_value_port_info(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, inputports.size(), PropertyInfo());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(inputports.size()), PropertyInfo());
 
 	PropertyInfo pi;
 	pi.name = inputports[p_idx].name;
@@ -388,7 +388,7 @@ PropertyInfo VisualScriptLists::get_input_value_port_info(int p_idx) const {
 	return pi;
 }
 PropertyInfo VisualScriptLists::get_output_value_port_info(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, outputports.size(), PropertyInfo());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(outputports.size()), PropertyInfo());
 
 	PropertyInfo pi;
 	pi.name = outputports[p_idx].name;
@@ -438,7 +438,7 @@ bool VisualScriptLists::_set(const StringName &p_name, const Variant &p_value) {
 	}
 	if (String(p_name).begins_with("input_") && is_input_port_editable()) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, inputports.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(inputports.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 
@@ -476,7 +476,7 @@ bool VisualScriptLists::_set(const StringName &p_name, const Variant &p_value) {
 	}
 	if (String(p_name).begins_with("output_") && is_output_port_editable()) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, outputports.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(outputports.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 
@@ -511,7 +511,7 @@ bool VisualScriptLists::_get(const StringName &p_name, Variant &r_ret) const {
 	}
 	if (String(p_name).begins_with("input_") && is_input_port_editable()) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, inputports.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(inputports.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 			r_ret = inputports[idx].type;
@@ -529,7 +529,7 @@ bool VisualScriptLists::_get(const StringName &p_name, Variant &r_ret) const {
 	}
 	if (String(p_name).begins_with("output_") && is_output_port_editable()) {
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int() - 1;
-		ERR_FAIL_INDEX_V(idx, outputports.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(outputports.size()), false);
 		String what = String(p_name).get_slice("/", 1);
 		if (what == "type") {
 			r_ret = outputports[idx].type;
@@ -557,7 +557,7 @@ void VisualScriptLists::_get_property_list(List<PropertyInfo> *p_list) const {
 			argt += "," + Variant::get_type_name(Variant::Type(i));
 		}
 
-		for (int i = 0; i < inputports.size(); i++) {
+		for (decltype(inputports.size()) i = 0; i < inputports.size(); i++) {
 			p_list->push_back(PropertyInfo(Variant::INT, "input_" + itos(i + 1) + "/type", PROPERTY_HINT_ENUM, argt));
 			p_list->push_back(PropertyInfo(Variant::STRING, "input_" + itos(i + 1) + "/name"));
 		}
@@ -570,7 +570,7 @@ void VisualScriptLists::_get_property_list(List<PropertyInfo> *p_list) const {
 			argt += "," + Variant::get_type_name(Variant::Type(i));
 		}
 
-		for (int i = 0; i < outputports.size(); i++) {
+		for (decltype(outputports.size()) i = 0; i < outputports.size(); i++) {
 			p_list->push_back(PropertyInfo(Variant::INT, "output_" + itos(i + 1) + "/type", PROPERTY_HINT_ENUM, argt));
 			p_list->push_back(PropertyInfo(Variant::STRING, "output_" + itos(i + 1) + "/name"));
 		}
@@ -600,7 +600,7 @@ void VisualScriptLists::set_input_data_port_type(int p_idx, Variant::Type p_type
 	if (!is_input_port_type_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_idx, inputports.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(inputports.size()));
 
 	inputports[p_idx].type = p_type;
 	ports_changed_notify();
@@ -611,7 +611,7 @@ void VisualScriptLists::set_input_data_port_name(int p_idx, const String &p_name
 	if (!is_input_port_name_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_idx, inputports.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(inputports.size()));
 
 	inputports[p_idx].name = p_name;
 	ports_changed_notify();
@@ -622,7 +622,7 @@ void VisualScriptLists::remove_input_data_port(int p_argidx) {
 	if (!is_input_port_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_argidx, inputports.size());
+	ERR_FAIL_INDEX(p_argidx, static_cast<int>(inputports.size()));
 
 	inputports.erase(inputports.begin() + p_argidx);
 
@@ -652,7 +652,7 @@ void VisualScriptLists::set_output_data_port_type(int p_idx, Variant::Type p_typ
 	if (!is_output_port_type_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_idx, outputports.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(outputports.size()));
 
 	outputports[p_idx].type = p_type;
 	ports_changed_notify();
@@ -663,7 +663,7 @@ void VisualScriptLists::set_output_data_port_name(int p_idx, const String &p_nam
 	if (!is_output_port_name_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_idx, outputports.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(outputports.size()));
 
 	outputports[p_idx].name = p_name;
 	ports_changed_notify();
@@ -674,7 +674,7 @@ void VisualScriptLists::remove_output_data_port(int p_argidx) {
 	if (!is_output_port_editable())
 		return;
 
-	ERR_FAIL_INDEX(p_argidx, outputports.size());
+	ERR_FAIL_INDEX(p_argidx, static_cast<int>(outputports.size()));
 
 	outputports.erase(outputports.begin() + p_argidx);
 
@@ -736,7 +736,7 @@ int VisualScriptComposeArray::get_output_value_port_count() const {
 }
 
 PropertyInfo VisualScriptComposeArray::get_input_value_port_info(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, inputports.size(), PropertyInfo());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(inputports.size()), PropertyInfo());
 
 	PropertyInfo pi;
 	pi.name = inputports[p_idx].name;
@@ -3923,7 +3923,7 @@ void VisualScriptInputAction::_validate_property(PropertyInfo &property) const {
 
 		std::sort(al.begin(), al.end());
 
-		for (int i = 0; i < al.size(); i++) {
+		for (decltype(al.size()) i = 0; i < al.size(); i++) {
 			if (actions != String())
 				actions += ",";
 			actions += al[i];
@@ -4042,7 +4042,7 @@ void VisualScriptDeconstruct::_set_elem_cache(const Array &p_elements) {
 
 	ERR_FAIL_COND(p_elements.size() % 2 == 1);
 	elements.resize(p_elements.size() / 2);
-	for (int i = 0; i < elements.size(); i++) {
+	for (decltype(elements.size()) i = 0; i < elements.size(); i++) {
 		elements[i].name = p_elements[i * 2 + 0];
 		elements[i].type = Variant::Type(int(p_elements[i * 2 + 1]));
 	}
@@ -4051,7 +4051,7 @@ void VisualScriptDeconstruct::_set_elem_cache(const Array &p_elements) {
 Array VisualScriptDeconstruct::_get_elem_cache() const {
 
 	Array ret;
-	for (int i = 0; i < elements.size(); i++) {
+	for (decltype(elements.size()) i = 0; i < elements.size(); i++) {
 		ret.push_back(elements[i].name);
 		ret.push_back(elements[i].type);
 	}
@@ -4069,7 +4069,7 @@ public:
 
 		Variant in = *p_inputs[0];
 
-		for (int i = 0; i < outputs.size(); i++) {
+		for (decltype(outputs.size()) i = 0; i < outputs.size(); i++) {
 			bool valid;
 			*p_outputs[i] = in.get(outputs[i], &valid);
 			if (!valid) {
@@ -4088,7 +4088,7 @@ VisualScriptNodeInstance *VisualScriptDeconstruct::instance(VisualScriptInstance
 	VisualScriptNodeInstanceDeconstruct *instance = memnew(VisualScriptNodeInstanceDeconstruct);
 	instance->instance = p_instance;
 	instance->outputs.resize(elements.size());
-	for (int i = 0; i < elements.size(); i++) {
+	for (decltype(elements.size()) i = 0; i < elements.size(); i++) {
 		instance->outputs[i] = elements[i].name;
 	}
 

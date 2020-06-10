@@ -72,7 +72,7 @@ void ItemList::add_icon_item(const Ref<Texture> &p_item, bool p_selectable) {
 
 void ItemList::set_item_text(int p_idx, const String &p_text) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].text = p_text;
 	update();
@@ -81,23 +81,23 @@ void ItemList::set_item_text(int p_idx, const String &p_text) {
 
 String ItemList::get_item_text(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), String());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), String());
 	return items[p_idx].text;
 }
 
 void ItemList::set_item_tooltip_enabled(int p_idx, const bool p_enabled) {
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 	items[p_idx].tooltip_enabled = p_enabled;
 }
 
 bool ItemList::is_item_tooltip_enabled(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, items.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), false);
 	return items[p_idx].tooltip_enabled;
 }
 
 void ItemList::set_item_tooltip(int p_idx, const String &p_tooltip) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].tooltip = p_tooltip;
 	update();
@@ -106,13 +106,13 @@ void ItemList::set_item_tooltip(int p_idx, const String &p_tooltip) {
 
 String ItemList::get_item_tooltip(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), String());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), String());
 	return items[p_idx].tooltip;
 }
 
 void ItemList::set_item_icon(int p_idx, const Ref<Texture> &p_icon) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].icon = p_icon;
 	update();
@@ -121,14 +121,14 @@ void ItemList::set_item_icon(int p_idx, const Ref<Texture> &p_icon) {
 
 Ref<Texture> ItemList::get_item_icon(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Ref<Texture>());
 
 	return items[p_idx].icon;
 }
 
 void ItemList::set_item_icon_transposed(int p_idx, const bool p_transposed) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].icon_transposed = p_transposed;
 	update();
@@ -137,14 +137,14 @@ void ItemList::set_item_icon_transposed(int p_idx, const bool p_transposed) {
 
 bool ItemList::is_item_icon_transposed(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), false);
 
 	return items[p_idx].icon_transposed;
 }
 
 void ItemList::set_item_icon_region(int p_idx, const Rect2 &p_region) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].icon_region = p_region;
 	update();
@@ -153,14 +153,14 @@ void ItemList::set_item_icon_region(int p_idx, const Rect2 &p_region) {
 
 Rect2 ItemList::get_item_icon_region(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Rect2());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Rect2());
 
 	return items[p_idx].icon_region;
 }
 
 void ItemList::set_item_icon_modulate(int p_idx, const Color &p_modulate) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].icon_modulate = p_modulate;
 	update();
@@ -168,42 +168,42 @@ void ItemList::set_item_icon_modulate(int p_idx, const Color &p_modulate) {
 
 Color ItemList::get_item_icon_modulate(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Color());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Color());
 
 	return items[p_idx].icon_modulate;
 }
 
 void ItemList::set_item_custom_bg_color(int p_idx, const Color &p_custom_bg_color) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].custom_bg = p_custom_bg_color;
 }
 
 Color ItemList::get_item_custom_bg_color(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Color());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Color());
 
 	return items[p_idx].custom_bg;
 }
 
 void ItemList::set_item_custom_fg_color(int p_idx, const Color &p_custom_fg_color) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].custom_fg = p_custom_fg_color;
 }
 
 Color ItemList::get_item_custom_fg_color(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Color());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Color());
 
 	return items[p_idx].custom_fg;
 }
 
 void ItemList::set_item_tag_icon(int p_idx, const Ref<Texture> &p_tag_icon) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].tag_icon = p_tag_icon;
 	update();
@@ -211,27 +211,27 @@ void ItemList::set_item_tag_icon(int p_idx, const Ref<Texture> &p_tag_icon) {
 }
 Ref<Texture> ItemList::get_item_tag_icon(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Ref<Texture>());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Ref<Texture>());
 
 	return items[p_idx].tag_icon;
 }
 
 void ItemList::set_item_selectable(int p_idx, bool p_selectable) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].selectable = p_selectable;
 }
 
 bool ItemList::is_item_selectable(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), false);
 	return items[p_idx].selectable;
 }
 
 void ItemList::set_item_disabled(int p_idx, bool p_disabled) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].disabled = p_disabled;
 	update();
@@ -239,13 +239,13 @@ void ItemList::set_item_disabled(int p_idx, bool p_disabled) {
 
 bool ItemList::is_item_disabled(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), false);
 	return items[p_idx].disabled;
 }
 
 void ItemList::set_item_metadata(int p_idx, const Variant &p_metadata) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items[p_idx].metadata = p_metadata;
 	update();
@@ -254,12 +254,12 @@ void ItemList::set_item_metadata(int p_idx, const Variant &p_metadata) {
 
 Variant ItemList::get_item_metadata(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), Variant());
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), Variant());
 	return items[p_idx].metadata;
 }
 void ItemList::select(int p_idx, bool p_single) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	if (p_single || select_mode == SELECT_SINGLE) {
 
@@ -267,7 +267,7 @@ void ItemList::select(int p_idx, bool p_single) {
 			return;
 		}
 
-		for (int i = 0; i < items.size(); i++) {
+		for (int i = 0; i < static_cast<int>(items.size()); i++) {
 			items[i].selected = p_idx == i;
 		}
 
@@ -283,7 +283,7 @@ void ItemList::select(int p_idx, bool p_single) {
 }
 void ItemList::unselect(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	if (select_mode != SELECT_MULTI) {
 		items[p_idx].selected = false;
@@ -299,7 +299,7 @@ void ItemList::unselect_all() {
 	if (items.size() < 1)
 		return;
 
-	for (int i = 0; i < items.size(); i++) {
+	for (decltype(items.size()) i = 0; i < items.size(); i++) {
 
 		items[i].selected = false;
 	}
@@ -309,13 +309,13 @@ void ItemList::unselect_all() {
 
 bool ItemList::is_selected(int p_idx) const {
 
-	ERR_FAIL_INDEX_V(p_idx, items.size(), false);
+	ERR_FAIL_INDEX_V(p_idx, static_cast<int>(items.size()), false);
 
 	return items[p_idx].selected;
 }
 
 void ItemList::set_current(int p_current) {
-	ERR_FAIL_INDEX(p_current, items.size());
+	ERR_FAIL_INDEX(p_current, static_cast<int>(items.size()));
 
 	if (select_mode == SELECT_SINGLE)
 		select(p_current, true);
@@ -332,8 +332,8 @@ int ItemList::get_current() const {
 
 void ItemList::move_item(int p_from_idx, int p_to_idx) {
 
-	ERR_FAIL_INDEX(p_from_idx, items.size());
-	ERR_FAIL_INDEX(p_to_idx, items.size());
+	ERR_FAIL_INDEX(p_from_idx, static_cast<int>(items.size()));
+	ERR_FAIL_INDEX(p_to_idx, static_cast<int>(items.size()));
 
 	if (is_anything_selected() && get_selected_items()[0] == p_from_idx) {
 		current = p_to_idx;
@@ -353,7 +353,7 @@ int ItemList::get_item_count() const {
 }
 void ItemList::remove_item(int p_idx) {
 
-	ERR_FAIL_INDEX(p_idx, items.size());
+	ERR_FAIL_INDEX(p_idx, static_cast<int>(items.size()));
 
 	items.erase(items.begin() + p_idx);
 	update();
@@ -501,7 +501,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 
 		int closest = -1;
 
-		for (int i = 0; i < items.size(); i++) {
+		for (int i = 0; i < static_cast<int>(items.size()); i++) {
 
 			Rect2 rc = items[i].rect_cache;
 			if (i % current_columns == current_columns - 1) {
@@ -522,7 +522,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 				unselect(i);
 				emit_signal("multi_selected", i, false);
 
-			} else if (select_mode == SELECT_MULTI && mb->get_shift() && current >= 0 && current < items.size() && current != i) {
+			} else if (select_mode == SELECT_MULTI && mb->get_shift() && current >= 0 && current < static_cast<int>(items.size()) && current != i) {
 
 				int from = current;
 				int to = i;
@@ -637,7 +637,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 
 				if (diff < uint64_t(ProjectSettings::get_singleton()->get("gui/timers/incremental_search_max_interval_msec")) * 2) {
 
-					for (int i = current + 1; i < items.size(); i++) {
+					for (int i = current + 1; i < static_cast<int>(items.size()); i++) {
 
 						if (items[i].text.begins_with(search_string)) {
 
@@ -654,7 +654,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 				}
 			}
 
-			if (current < items.size() - current_columns) {
+			if (current < static_cast<int>(items.size()) - current_columns) {
 				set_current(current + current_columns);
 				ensure_current_is_visible();
 				if (select_mode == SELECT_SINGLE) {
@@ -682,7 +682,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 			search_string = ""; //any mousepress cancels
 
 			for (int i = 4; i > 0; i--) {
-				if (current + current_columns * i < items.size()) {
+				if (current + current_columns * i < static_cast<int>(items.size())) {
 					set_current(current + current_columns * i);
 					ensure_current_is_visible();
 					if (select_mode == SELECT_SINGLE) {
@@ -709,7 +709,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 
 			search_string = ""; //any mousepress cancels
 
-			if (current % current_columns != (current_columns - 1) && current + 1 < items.size()) {
+			if (current % current_columns != (current_columns - 1) && current + 1 < static_cast<int>(items.size())) {
 				set_current(current + 1);
 				ensure_current_is_visible();
 				if (select_mode == SELECT_SINGLE) {
@@ -721,7 +721,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 			search_string = "";
 		} else if (p_event->is_action("ui_select") && select_mode == SELECT_MULTI) {
 
-			if (current >= 0 && current < items.size()) {
+			if (current >= 0 && current < static_cast<int>(items.size())) {
 				if (items[current].selectable && !items[current].disabled && !items[current].selected) {
 					select(current, false);
 					emit_signal("multi_selected", current, true);
@@ -733,7 +733,7 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 		} else if (p_event->is_action("ui_accept")) {
 			search_string = ""; //any mousepress cance
 
-			if (current >= 0 && current < items.size()) {
+			if (current >= 0 && current < static_cast<int>(items.size())) {
 				emit_signal("item_activated", current);
 			}
 		} else {
@@ -754,8 +754,8 @@ void ItemList::_gui_input(const Ref<InputEvent> &p_event) {
 				if (String::chr(k->get_unicode()) != search_string)
 					search_string += String::chr(k->get_unicode());
 
-				for (int i = current + 1; i <= items.size(); i++) {
-					if (i == items.size()) {
+				for (int i = current + 1; i <= static_cast<int>(items.size()); i++) {
+					if (i == static_cast<int>(items.size())) {
 						if (current == 0 || current == -1)
 							break;
 						else
@@ -869,7 +869,7 @@ void ItemList::_notification(int p_what) {
 			float max_column_width = 0;
 
 			//1- compute item minimum sizes
-			for (int i = 0; i < items.size(); i++) {
+			for (decltype(items.size()) i = 0; i < items.size(); i++) {
 
 				Size2 minsize;
 				if (items[i].icon.is_valid()) {
@@ -933,7 +933,7 @@ void ItemList::_notification(int p_what) {
 				int col = 0;
 				int max_h = 0;
 				separators.clear();
-				for (int i = 0; i < items.size(); i++) {
+				for (int i = 0; i < static_cast<int>(items.size()); i++) {
 
 					if (current_columns > 1 && items[i].rect_cache.size.width + ofs.x > fit_size) {
 						//went past
@@ -950,7 +950,7 @@ void ItemList::_notification(int p_what) {
 					col++;
 					if (col == current_columns) {
 
-						if (i < items.size() - 1)
+						if (i < static_cast<int>(items.size()) - 1)
 							separators.push_back(ofs.y + max_h + vseparation / 2);
 
 						for (int j = i; j >= 0 && col > 0; j--, col--) {
@@ -993,7 +993,7 @@ void ItemList::_notification(int p_what) {
 		}
 
 		//ensure_selected_visible needs to be checked before we draw the list.
-		if (ensure_selected_visible && current >= 0 && current < items.size()) {
+		if (ensure_selected_visible && current >= 0 && current < static_cast<int>(items.size())) {
 
 			Rect2 r = items[current].rect_cache;
 			int from = scroll_bar->get_value();
@@ -1034,7 +1034,7 @@ void ItemList::_notification(int p_what) {
 			first_item_visible = lo;
 		}
 
-		for (int i = first_item_visible; i < items.size(); i++) {
+		for (int i = first_item_visible; i < static_cast<int>(items.size()); i++) {
 
 			Rect2 rcache = items[i].rect_cache;
 
@@ -1234,7 +1234,7 @@ void ItemList::_notification(int p_what) {
 			first_visible_separator = lo;
 		}
 
-		for (int i = first_visible_separator; i < separators.size(); i++) {
+		for (int i = first_visible_separator; i < static_cast<int>(separators.size()); i++) {
 			if (separators[i] > clip.position.y + clip.size.y)
 				break; // done
 
@@ -1258,7 +1258,7 @@ int ItemList::get_item_at_position(const Point2 &p_pos, bool p_exact) const {
 	int closest = -1;
 	int closest_dist = 0x7FFFFFFF;
 
-	for (int i = 0; i < items.size(); i++) {
+	for (int i = 0; i < static_cast<int>(items.size()); i++) {
 
 		Rect2 rc = items[i].rect_cache;
 		if (i % current_columns == current_columns - 1) {
@@ -1321,7 +1321,7 @@ void ItemList::sort_items_by_text() {
 	shape_changed = true;
 
 	if (select_mode == SELECT_SINGLE) {
-		for (int i = 0; i < items.size(); i++) {
+		for (decltype(items.size()) i = 0; i < items.size(); i++) {
 			if (items[i].selected) {
 				select(i);
 				return;
@@ -1332,7 +1332,7 @@ void ItemList::sort_items_by_text() {
 
 int ItemList::find_metadata(const Variant &p_metadata) const {
 
-	for (int i = 0; i < items.size(); i++) {
+	for (decltype(items.size()) i = 0; i < items.size(); i++) {
 		if (items[i].metadata == p_metadata) {
 			return i;
 		}
@@ -1371,7 +1371,7 @@ real_t ItemList::get_icon_scale() const {
 
 std::vector<int> ItemList::get_selected_items() {
 	std::vector<int> selected;
-	for (int i = 0; i < items.size(); i++) {
+	for (decltype(items.size()) i = 0; i < items.size(); i++) {
 		if (items[i].selected) {
 			selected.push_back(i);
 			if (this->select_mode == SELECT_SINGLE) {
@@ -1383,7 +1383,7 @@ std::vector<int> ItemList::get_selected_items() {
 }
 
 bool ItemList::is_anything_selected() {
-	for (int i = 0; i < items.size(); i++) {
+	for (decltype(items.size()) i = 0; i < items.size(); i++) {
 		if (items[i].selected)
 			return true;
 	}

@@ -1125,6 +1125,9 @@
     <Filter Include="Header Files\helper">
       <UniqueIdentifier>{763d2ec5-d7c7-483a-a3db-412015b6f6c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\platform\android\plugin">
+      <UniqueIdentifier>{e5de8a1d-4909-415d-8ca0-cdb475162284}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\bind\core_bind.h">
@@ -4663,6 +4666,102 @@
     </ClInclude>
     <ClInclude Include="drivers\coreaudio\audio_driver_coreaudio.h">
       <Filter>Header Files\drivers\coreaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="core\authors.gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\cowdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\donors.gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\error_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hashfuncs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hash_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\int_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\license.gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\method_ptrcall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\oa_hash_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\object_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\object_rc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ordered_hash_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\pair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ring_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\self_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\simple_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sort_array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\string_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\typedefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\type_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ucaps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\version_generated.gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\version_hash.gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\android\plugin\godot_plugin_config.h">
+      <Filter>Source Files\platform\android\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\android\plugin\godot_plugin_jni.h">
+      <Filter>Source Files\platform\android\plugin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -9549,6 +9648,12 @@
     </ClCompile>
     <ClCompile Include="drivers\coreaudio\audio_driver_coreaudio.cpp">
       <Filter>Header Files\drivers\coreaudio</Filter>
+    </ClCompile>
+    <ClCompile Include="core\script_encryption_key.gen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\plugin\godot_plugin_jni.cpp">
+      <Filter>Source Files\platform\android\plugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

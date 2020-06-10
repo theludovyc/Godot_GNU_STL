@@ -91,7 +91,7 @@ void EditorAtlasPacker::chart_pack(std::vector<Chart> &charts, int &r_width, int
 
 	int max_w = 0;
 
-	for (int i = 0; i < charts.size(); i++) {
+	for (decltype(charts.size()) i = 0; i < charts.size(); i++) {
 
 		const Chart &chart = charts[i];
 
@@ -119,7 +119,7 @@ void EditorAtlasPacker::chart_pack(std::vector<Chart> &charts, int &r_width, int
 
 		//plot triangles, using divisor
 
-		for (int j = 0; j < chart.faces.size(); j++) {
+		for (decltype(chart.faces.size()) j = 0; j < chart.faces.size(); j++) {
 
 			Vector2i v[3];
 			for (int k = 0; k < 3; k++) {
@@ -200,7 +200,7 @@ void EditorAtlasPacker::chart_pack(std::vector<Chart> &charts, int &r_width, int
 		}
 
 		String row;
-		for (int j = 0; j < top_heights.size(); j++) {
+		for (decltype(top_heights.size()) j = 0; j < top_heights.size(); j++) {
 			row += "(" + itos(top_heights[j]) + "-" + itos(bottom_heights[j]) + "),";
 		}
 
@@ -232,7 +232,7 @@ void EditorAtlasPacker::chart_pack(std::vector<Chart> &charts, int &r_width, int
 
 		int *atlas_ptr = heights.data();
 
-		for (int i = 0; i < bitmaps.size(); i++) {
+		for (decltype(bitmaps.size()) i = 0; i < bitmaps.size(); i++) {
 
 			int best_height = 0x7FFFFFFF;
 			int best_height_offset = -1;

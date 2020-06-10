@@ -486,7 +486,7 @@ struct TextDocumentSyncOptions {
 	 * If present save notifications are sent to the server. If omitted the notification should not be
 	 * sent.
 	 */
-	SaveOptions save;
+	bool save = false;
 
 	Dictionary to_json() {
 		Dictionary dict;
@@ -494,7 +494,7 @@ struct TextDocumentSyncOptions {
 		dict["willSave"] = willSave;
 		dict["openClose"] = openClose;
 		dict["change"] = change;
-		dict["save"] = save.to_json();
+		dict["save"] = save;
 		return dict;
 	}
 };
@@ -690,7 +690,7 @@ struct Diagnostic {
 		if (!relatedInformation.empty()) {
 			Array arr;
 			arr.resize(relatedInformation.size());
-			for (int i = 0; i < relatedInformation.size(); i++) {
+			for (decltype(relatedInformation.size()) i = 0; i < relatedInformation.size(); i++) {
 				arr[i] = relatedInformation[i].to_json();
 			}
 			dict["relatedInformation"] = arr;
@@ -1163,7 +1163,7 @@ struct DocumentSymbol {
 		}
 		Array arr;
 		arr.resize(children.size());
-		for (int i = 0; i < children.size(); i++) {
+		for (decltype(children.size()) i = 0; i < children.size(); i++) {
 			arr[i] = children[i].to_json(with_doc);
 		}
 		dict["children"] = arr;
@@ -1185,7 +1185,7 @@ struct DocumentSymbol {
 		si.detail = detail;
 		si.documentation = documentation;
 		r_list.push_back(si);
-		for (int i = 0; i < children.size(); i++) {
+		for (decltype(children.size()) i = 0; i < children.size(); i++) {
 			children[i].symbol_tree_as_list(p_uri, r_list, si.name, p_join_name);
 		}
 	}
@@ -1460,7 +1460,7 @@ struct SignatureInformation {
 		dict["label"] = label;
 		dict["documentation"] = documentation.to_json();
 		Array args;
-		for (int i = 0; i < parameters.size(); i++) {
+		for (decltype(parameters.size()) i = 0; i < parameters.size(); i++) {
 			args.push_back(parameters[i].to_json());
 		}
 		dict["parameters"] = args;
@@ -1504,7 +1504,7 @@ struct SignatureHelp {
 	Dictionary to_json() const {
 		Dictionary dict;
 		Array sigs;
-		for (int i = 0; i < signatures.size(); i++) {
+		for (decltype(signatures.size()) i = 0; i < signatures.size(); i++) {
 			sigs.push_back(signatures[i].to_json());
 		}
 		dict["signatures"] = sigs;
@@ -1642,7 +1642,7 @@ struct ServerCapabilities {
 
 	_FORCE_INLINE_ Dictionary to_json() {
 		Dictionary dict;
-		dict["textDocumentSync"] = (int)textDocumentSync.change;
+		dict["textDocumentSync"] = textDocumentSync.to_json();
 		dict["completionProvider"] = completionProvider.to_json();
 		signatureHelpProvider.triggerCharacters.push_back(",");
 		signatureHelpProvider.triggerCharacters.push_back("(");
@@ -1726,7 +1726,8 @@ static String marked_documentation(const String &p_bbcode) {
 	int code_block_indent = -1;
 
 	markdown = "";
-	for (int i = 0; i < lines.size(); i++) {
+	int len_lines = lines.size();
+	for (int i = 0; i < len_lines; i++) {
 		String line = lines[i];
 		int block_start = line.find("[codeblock]");
 		if (block_start != -1) {
@@ -1761,9 +1762,9 @@ static String marked_documentation(const String &p_bbcode) {
 			line = line.replace("]", "`");
 		}
 
-		if (!in_code_block && i < lines.size() - 1) {
+		if (!in_code_block && i < len_lines - 1) {
 			line += "\n\n";
-		} else if (i < lines.size() - 1) {
+		} else if (i < len_lines - 1) {
 			line += "\n";
 		}
 		markdown += line;

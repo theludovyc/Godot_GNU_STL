@@ -178,7 +178,7 @@ void SceneTree::_flush_ugc() {
 		Map<UGCall, std::vector<Variant> >::Element *E = unique_group_calls.front();
 
 		Variant v[VARIANT_ARG_MAX];
-		for (int i = 0; i < E->get().size(); i++)
+		for (decltype(E->get().size()) i = 0; i < E->get().size(); i++)
 			v[i] = E->get()[i];
 
 		call_group_flags(GROUP_CALL_REALTIME, E->key().group, E->key().call, v[0], v[1], v[2], v[3], v[4]);

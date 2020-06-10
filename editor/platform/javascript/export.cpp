@@ -245,7 +245,7 @@ void EditorExportPlatformJavaScript::_fix_html(std::vector<uint8_t> &p_html, con
 	String str_export;
 	std::vector<String> lines = str_template.split("\n");
 
-	for (int i = 0; i < lines.size(); i++) {
+	for (decltype(lines.size()) i = 0; i < lines.size(); i++) {
 
 		String current_line = lines[i];
 		current_line = current_line.replace("$GODOT_BASENAME", p_name);

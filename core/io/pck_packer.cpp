@@ -118,7 +118,7 @@ Error PCKPacker::flush(bool p_verbose) {
 
 	file->store_32(files.size());
 
-	for (int i = 0; i < files.size(); i++) {
+	for (decltype(files.size()) i = 0; i < files.size(); i++) {
 
 		file->store_pascal_string(files[i].path);
 		files[i].offset_offset = file->get_position();
@@ -141,7 +141,7 @@ Error PCKPacker::flush(bool p_verbose) {
 	uint8_t *buf = memnew_arr(uint8_t, buf_max);
 
 	int count = 0;
-	for (int i = 0; i < files.size(); i++) {
+	for (decltype(files.size()) i = 0; i < files.size(); i++) {
 
 		FileAccess *src = FileAccess::open(files[i].src_path, FileAccess::READ);
 		uint64_t to_write = files[i].size;
@@ -165,7 +165,7 @@ Error PCKPacker::flush(bool p_verbose) {
 		count += 1;
 		if (p_verbose && files.size() > 0) {
 			if (count % 100 == 0) {
-				printf("%i/%i (%.2f)\r", count, files.size(), float(count) / files.size() * 100);
+				printf("%i/%i (%.2f)\r", count, static_cast<int>(files.size()), float(count) / files.size() * 100);
 				fflush(stdout);
 			};
 		};

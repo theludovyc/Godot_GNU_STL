@@ -53,9 +53,9 @@ bool VisualScriptExpression::_set(const StringName &p_name, const Variant &p_val
 
 	if (String(p_name) == "input_count") {
 
-		int from = inputs.size();
+		auto from = inputs.size();
 		inputs.resize(int(p_value));
-		for (int i = from; i < inputs.size(); i++) {
+		for (decltype(from) i = from; i < inputs.size(); i++) {
 			inputs[i].name = String::chr('a' + i);
 			if (from == 0) {
 				inputs[i].type = output_type;
@@ -72,7 +72,7 @@ bool VisualScriptExpression::_set(const StringName &p_name, const Variant &p_val
 	if (String(p_name).begins_with("input_")) {
 
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int();
-		ERR_FAIL_INDEX_V(idx, inputs.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(inputs.size()), false);
 
 		String what = String(p_name).get_slice("/", 1);
 
@@ -119,7 +119,7 @@ bool VisualScriptExpression::_get(const StringName &p_name, Variant &r_ret) cons
 	if (String(p_name).begins_with("input_")) {
 
 		int idx = String(p_name).get_slicec('_', 1).get_slicec('/', 0).to_int();
-		ERR_FAIL_INDEX_V(idx, inputs.size(), false);
+		ERR_FAIL_INDEX_V(idx, static_cast<int>(inputs.size()), false);
 
 		String what = String(p_name).get_slice("/", 1);
 
@@ -150,7 +150,7 @@ void VisualScriptExpression::_get_property_list(List<PropertyInfo> *p_list) cons
 	p_list->push_back(PropertyInfo(Variant::INT, "input_count", PROPERTY_HINT_RANGE, "0,64,1"));
 	p_list->push_back(PropertyInfo(Variant::BOOL, "sequenced"));
 
-	for (int i = 0; i < inputs.size(); i++) {
+	for (decltype(inputs.size()) i = 0; i < inputs.size(); i++) {
 
 		p_list->push_back(PropertyInfo(Variant::INT, "input_" + itos(i) + "/type", PROPERTY_HINT_ENUM, argt));
 		p_list->push_back(PropertyInfo(Variant::STRING, "input_" + itos(i) + "/name"));
@@ -759,7 +759,7 @@ VisualScriptExpression::ENode *VisualScriptExpression::_parse_expression() {
 
 				String what = tk.value;
 				int index = -1;
-				for (int i = 0; i < inputs.size(); i++) {
+				for (decltype(inputs.size()) i = 0; i < inputs.size(); i++) {
 					if (what == inputs[i].name) {
 						index = i;
 						break;
@@ -866,7 +866,7 @@ VisualScriptExpression::ENode *VisualScriptExpression::_parse_expression() {
 				}
 
 				int expected_args = VisualScriptBuiltinFunc::get_func_argument_count(bifunc->func);
-				if (bifunc->arguments.size() != expected_args) {
+				if (static_cast<int>(bifunc->arguments.size()) != expected_args) {
 					_set_error("Builtin func '" + VisualScriptBuiltinFunc::get_func_name(bifunc->func) + "' expects " + itos(expected_args) + " arguments.");
 				}
 
@@ -1058,7 +1058,7 @@ VisualScriptExpression::ENode *VisualScriptExpression::_parse_expression() {
 		int min_priority = 0xFFFFF;
 		bool is_unary = false;
 
-		for (int i = 0; i < expression.size(); i++) {
+		for (decltype(expression.size()) i = 0; i < expression.size(); i++) {
 
 			if (!expression[i].is_op) {
 
@@ -1140,7 +1140,7 @@ VisualScriptExpression::ENode *VisualScriptExpression::_parse_expression() {
 			while (expression[expr_pos].is_op) {
 
 				expr_pos++;
-				if (expr_pos == expression.size()) {
+				if (expr_pos == static_cast<int>(expression.size())) {
 					//can happen..
 					_set_error("Unexpected end of expression...");
 					return NULL;
@@ -1161,7 +1161,7 @@ VisualScriptExpression::ENode *VisualScriptExpression::_parse_expression() {
 
 		} else {
 
-			if (next_op < 1 || next_op >= (expression.size() - 1)) {
+			if (next_op < 1 || next_op >= static_cast<int>(expression.size() - 1)) {
 				_set_error("Parser bug...");
 				ERR_FAIL_V(NULL);
 			}
@@ -1323,7 +1323,7 @@ public:
 
 				Array arr;
 				arr.resize(array->array.size());
-				for (int i = 0; i < array->array.size(); i++) {
+				for (decltype(array->array.size()) i = 0; i < array->array.size(); i++) {
 
 					Variant value;
 					bool ret = _execute(p_inputs, array->array[i], value, r_error_str, ce);
@@ -1339,7 +1339,7 @@ public:
 				const VisualScriptExpression::DictionaryNode *dictionary = static_cast<const VisualScriptExpression::DictionaryNode *>(p_node);
 
 				Dictionary d;
-				for (int i = 0; i < dictionary->dict.size(); i += 2) {
+				for (decltype(dictionary->dict.size()) i = 0; i < dictionary->dict.size(); i += 2) {
 
 					Variant key;
 					bool ret = _execute(p_inputs, dictionary->dict[i + 0], key, r_error_str, ce);
@@ -1365,7 +1365,7 @@ public:
 				arr.resize(constructor->arguments.size());
 				argp.resize(constructor->arguments.size());
 
-				for (int i = 0; i < constructor->arguments.size(); i++) {
+				for (decltype(constructor->arguments.size()) i = 0; i < constructor->arguments.size(); i++) {
 
 					Variant value;
 					bool ret = _execute(p_inputs, constructor->arguments[i], value, r_error_str, ce);
@@ -1392,7 +1392,7 @@ public:
 				arr.resize(bifunc->arguments.size());
 				argp.resize(bifunc->arguments.size());
 
-				for (int i = 0; i < bifunc->arguments.size(); i++) {
+				for (decltype(bifunc->arguments.size()) i = 0; i < bifunc->arguments.size(); i++) {
 
 					Variant value;
 					bool ret = _execute(p_inputs, bifunc->arguments[i], value, r_error_str, ce);
@@ -1424,7 +1424,7 @@ public:
 				arr.resize(call->arguments.size());
 				argp.resize(call->arguments.size());
 
-				for (int i = 0; i < call->arguments.size(); i++) {
+				for (decltype(call->arguments.size()) i = 0; i < call->arguments.size(); i++) {
 
 					Variant value;
 					bool ret2 = _execute(p_inputs, call->arguments[i], value, r_error_str, ce);

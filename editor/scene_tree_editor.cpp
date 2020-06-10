@@ -417,7 +417,7 @@ bool SceneTreeEditor::_add_nodes(Node *p_node, TreeItem *p_parent) {
 
 	if (valid_types.size()) {
 		bool valid = false;
-		for (int i = 0; i < valid_types.size(); i++) {
+		for (decltype(valid_types.size()) i = 0; i < valid_types.size(); i++) {
 			if (p_node->is_class(valid_types[i])) {
 				valid = true;
 				break;
@@ -951,10 +951,10 @@ Variant SceneTreeEditor::get_drag_data_fw(const Point2 &p_point, Control *p_from
 
 	VBoxContainer *vb = memnew(VBoxContainer);
 	Array objs;
-	int list_max = 10;
+	decltype(selected.size()) list_max = 10;
 	float opacity_step = 1.0f / list_max;
 	float opacity_item = 1.0f;
-	for (int i = 0; i < selected.size(); i++) {
+	for (decltype(selected.size()) i = 0; i < selected.size(); i++) {
 
 		if (i < list_max) {
 			HBoxContainer *hb = memnew(HBoxContainer);
@@ -1018,7 +1018,7 @@ bool SceneTreeEditor::can_drop_data_fw(const Point2 &p_point, const Variant &p_d
 			return true;
 		}
 
-		for (int i = 0; i < files.size(); i++) {
+		for (decltype(files.size()) i = 0; i < files.size(); i++) {
 			String file = files[i];
 			String ftype = EditorFileSystem::get_singleton()->get_file_type(file);
 			if (ftype != "PackedScene")

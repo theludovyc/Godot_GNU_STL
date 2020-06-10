@@ -170,7 +170,7 @@ void ImportDock::set_edit_multiple_paths(const std::vector<String> &p_paths) {
 	// Use the value that is repeated the most.
 	Map<String, Dictionary> value_frequency;
 
-	for (int i = 0; i < p_paths.size(); i++) {
+	for (decltype(p_paths.size()) i = 0; i < p_paths.size(); i++) {
 
 		Ref<ConfigFile> config;
 		config.instance();
@@ -407,7 +407,7 @@ void ImportDock::_reimport_attempt() {
 
 	bool need_restart = false;
 	bool used_in_resources = false;
-	for (int i = 0; i < params->paths.size(); i++) {
+	for (decltype(params->paths.size()) i = 0; i < params->paths.size(); i++) {
 		Ref<ConfigFile> config;
 		config.instance();
 		Error err = config->load(params->paths[i] + ".import");
@@ -441,7 +441,7 @@ void ImportDock::_reimport_and_restart() {
 
 void ImportDock::_reimport() {
 
-	for (int i = 0; i < params->paths.size(); i++) {
+	for (decltype(params->paths.size()) i = 0; i < params->paths.size(); i++) {
 
 		Ref<ConfigFile> config;
 		config.instance();
@@ -460,7 +460,9 @@ void ImportDock::_reimport() {
 		} else {
 			//override entirely
 			config->set_value("remap", "importer", importer_name);
-			config->erase_section("params");
+			if (config->has_section("params")) {
+				config->erase_section("params");
+			}
 
 			for (List<PropertyInfo>::Element *E = params->properties.front(); E; E = E->next()) {
 				config->set_value("params", E->get().name, params->values[E->get().name]);

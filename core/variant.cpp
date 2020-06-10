@@ -1500,7 +1500,7 @@ String Variant::stringify(List<const void *> &stack) const {
 
 			std::sort(pairs.begin(), pairs.end());
 
-			for (int i = 0; i < pairs.size(); i++) {
+			for (decltype(pairs.size()) i = 0; i < pairs.size(); i++) {
 				if (i > 0)
 					str += ", ";
 				str += pairs[i].key + ":" + pairs[i].value;
@@ -1944,7 +1944,7 @@ Variant::operator std::vector<RID>() const {
 	Array va = operator Array();
 	std::vector<RID> rids;
 	rids.resize(va.size());
-	for (int i = 0; i < rids.size(); i++)
+	for (decltype(rids.size()) i = 0; i < rids.size(); i++)
 		rids[i] = va[i];
 	return rids;
 }
@@ -2377,7 +2377,7 @@ Variant::Variant(const std::vector<Plane> &p_array) {
 
 	plane_array->resize(p_array.size());
 
-	for (int i = 0; i < p_array.size(); i++) {
+	for (decltype(p_array.size()) i = 0; i < p_array.size(); i++) {
 
 		plane_array->operator[](i) = Variant(p_array[i]);
 	}
@@ -2391,7 +2391,7 @@ Variant::Variant(const std::vector<RID> &p_array) {
 
 	rid_array->resize(p_array.size());
 
-	for (int i = 0; i < p_array.size(); i++) {
+	for (decltype(p_array.size()) i = 0; i < p_array.size(); i++) {
 
 		rid_array->set(i, Variant(p_array[i]));
 	}

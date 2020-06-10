@@ -348,14 +348,16 @@ public:
 	_FORCE_INLINE_ void set_texture_uniform(int p_idx, const Variant &p_value) {
 
 		ERR_FAIL_COND(!version);
-		ERR_FAIL_INDEX(p_idx, version->texture_uniform_locations.size());
+		int size = version->texture_uniform_locations.size();
+		ERR_FAIL_INDEX(p_idx, size);
 		_set_uniform_variant(version->texture_uniform_locations[p_idx], p_value);
 	}
 
 	_FORCE_INLINE_ GLint get_texture_uniform_location(int p_idx) {
 
 		ERR_FAIL_COND_V(!version, -1);
-		ERR_FAIL_INDEX_V(p_idx, version->texture_uniform_locations.size(), -1);
+		int size = version->texture_uniform_locations.size();
+		ERR_FAIL_INDEX_V(p_idx, size, -1);
 		return version->texture_uniform_locations[p_idx];
 	}
 
@@ -369,7 +371,7 @@ public:
 	}
 
 	void get_custom_defines(std::vector<String> *p_defines) {
-		for (int i = 0; i < custom_defines.size(); i++) {
+		for (decltype(custom_defines.size()) i = 0; i < custom_defines.size(); i++) {
 			p_defines->push_back(custom_defines[i].get_data());
 		}
 	}

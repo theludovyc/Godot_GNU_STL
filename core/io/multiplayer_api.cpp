@@ -501,7 +501,7 @@ void MultiplayerAPI::_send_rpc(Node *p_from, int p_to, bool p_unreliable, bool p
 	int ofs = 0;
 
 #define MAKE_ROOM(m_amount) \
-	if (packet_cache.size() < m_amount) packet_cache.resize(m_amount);
+	if (static_cast<int>(packet_cache.size()) < m_amount) packet_cache.resize(m_amount);
 
 	// Encode type.
 	MAKE_ROOM(1);
@@ -863,13 +863,13 @@ void MultiplayerAPI::profiling_start() {
 
 	bandwidth_incoming_pointer = 0;
 	bandwidth_incoming_data.resize(16384); // ~128kB
-	for (int i = 0; i < bandwidth_incoming_data.size(); ++i) {
+	for (decltype(bandwidth_incoming_data.size()) i = 0; i < bandwidth_incoming_data.size(); ++i) {
 		bandwidth_incoming_data[i].packet_size = -1;
 	}
 
 	bandwidth_outgoing_pointer = 0;
 	bandwidth_outgoing_data.resize(16384); // ~128kB
-	for (int i = 0; i < bandwidth_outgoing_data.size(); ++i) {
+	for (decltype(bandwidth_outgoing_data.size()) i = 0; i < bandwidth_outgoing_data.size(); ++i) {
 		bandwidth_outgoing_data[i].packet_size = -1;
 	}
 #endif

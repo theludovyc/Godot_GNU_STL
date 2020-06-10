@@ -70,7 +70,7 @@ void EQ::recalculate_band_coefficients() {
 
 #define BAND_LOG(m_f) (log((m_f)) / log(2.))
 
-	for (int i = 0; i < band.size(); i++) {
+	for (decltype(band.size()) i = 0; i < band.size(); i++) {
 
 		double octave_size;
 
@@ -125,6 +125,7 @@ void EQ::set_preset_band_mode(Preset p_preset) {
 	for (int i = 0; i < m_bands; i++) { \
 		Band b;                         \
 		b.freq = bands[i];              \
+		b.c1 = b.c2 = b.c3 = 0;         \
 		band.push_back(b);              \
 	}
 
@@ -174,13 +175,13 @@ int EQ::get_band_count() const {
 }
 float EQ::get_band_frequency(int p_band) {
 
-	ERR_FAIL_INDEX_V(p_band, band.size(), 0);
+	ERR_FAIL_INDEX_V(p_band, static_cast<int>(band.size()), 0);
 	return band[p_band].freq;
 }
 void EQ::set_bands(const std::vector<float> &p_bands) {
 
 	band.resize(p_bands.size());
-	for (int i = 0; i < p_bands.size(); i++) {
+	for (decltype(p_bands.size()) i = 0; i < p_bands.size(); i++) {
 
 		band[i].freq = p_bands[i];
 	}
@@ -198,7 +199,7 @@ EQ::BandProcess EQ::get_band_processor(int p_band) const {
 
 	EQ::BandProcess band_proc;
 
-	ERR_FAIL_INDEX_V(p_band, band.size(), band_proc);
+	ERR_FAIL_INDEX_V(p_band, static_cast<int>(band.size()), band_proc);
 
 	band_proc.c1 = band[p_band].c1;
 	band_proc.c2 = band[p_band].c2;

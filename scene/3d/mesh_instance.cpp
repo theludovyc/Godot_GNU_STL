@@ -54,7 +54,7 @@ bool MeshInstance::_set(const StringName &p_name, const Variant &p_value) {
 
 	if (p_name.operator String().begins_with("material/")) {
 		int idx = p_name.operator String().get_slicec('/', 1).to_int();
-		if (idx >= materials.size() || idx < 0)
+		if (idx >= static_cast<int>(materials.size()) || idx < 0)
 			return false;
 
 		set_surface_material(idx, p_value);
@@ -77,7 +77,7 @@ bool MeshInstance::_get(const StringName &p_name, Variant &r_ret) const {
 
 	if (p_name.operator String().begins_with("material/")) {
 		int idx = p_name.operator String().get_slicec('/', 1).to_int();
-		if (idx >= materials.size() || idx < 0)
+		if (idx >= static_cast<int>(materials.size()) || idx < 0)
 			return false;
 		r_ret = materials[idx];
 		return true;
@@ -289,7 +289,7 @@ int MeshInstance::get_surface_material_count() const {
 
 void MeshInstance::set_surface_material(int p_surface, const Ref<Material> &p_material) {
 
-	ERR_FAIL_INDEX(p_surface, materials.size());
+	ERR_FAIL_INDEX(p_surface, static_cast<int>(materials.size()));
 
 	materials[p_surface] = p_material;
 
@@ -301,7 +301,7 @@ void MeshInstance::set_surface_material(int p_surface, const Ref<Material> &p_ma
 
 Ref<Material> MeshInstance::get_surface_material(int p_surface) const {
 
-	ERR_FAIL_INDEX_V(p_surface, materials.size(), Ref<Material>());
+	ERR_FAIL_INDEX_V(p_surface, static_cast<int>(materials.size()), Ref<Material>());
 
 	return materials[p_surface];
 }
@@ -330,7 +330,7 @@ void MeshInstance::create_debug_tangents() {
 		if (tangents.size() == 0)
 			continue;
 
-		for (int j = 0; j < verts.size(); j++) {
+		for (decltype(verts.size()) j = 0; j < verts.size(); j++) {
 			Vector3 v = verts[j];
 			Vector3 n = norms[j];
 			Vector3 t = Vector3(tangents[j * 4 + 0], tangents[j * 4 + 1], tangents[j * 4 + 2]);

@@ -151,7 +151,7 @@ Transform ARVRServer::get_hmd_transform() {
 void ARVRServer::add_interface(const Ref<ARVRInterface> &p_interface) {
 	ERR_FAIL_COND(p_interface.is_null());
 
-	for (int i = 0; i < interfaces.size(); i++) {
+	for (decltype(interfaces.size()) i = 0; i < interfaces.size(); i++) {
 
 		if (interfaces[i] == p_interface) {
 			ERR_PRINT("Interface was already added");
@@ -167,7 +167,7 @@ void ARVRServer::remove_interface(const Ref<ARVRInterface> &p_interface) {
 	ERR_FAIL_COND(p_interface.is_null());
 
 	int idx = -1;
-	for (int i = 0; i < interfaces.size(); i++) {
+	for (decltype(interfaces.size()) i = 0; i < interfaces.size(); i++) {
 
 		if (interfaces[i] == p_interface) {
 
@@ -189,14 +189,14 @@ int ARVRServer::get_interface_count() const {
 };
 
 Ref<ARVRInterface> ARVRServer::get_interface(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, interfaces.size(), NULL);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(interfaces.size()), NULL);
 
 	return interfaces[p_index];
 };
 
 Ref<ARVRInterface> ARVRServer::find_interface(const String &p_name) const {
 	int idx = -1;
-	for (int i = 0; i < interfaces.size(); i++) {
+	for (decltype(interfaces.size()) i = 0; i < interfaces.size(); i++) {
 
 		if (interfaces[i]->get_name() == p_name) {
 
@@ -213,7 +213,7 @@ Ref<ARVRInterface> ARVRServer::find_interface(const String &p_name) const {
 Array ARVRServer::get_interfaces() const {
 	Array ret;
 
-	for (int i = 0; i < interfaces.size(); i++) {
+	for (decltype(interfaces.size()) i = 0; i < interfaces.size(); i++) {
 		Dictionary iface_info;
 
 		iface_info["id"] = i;
@@ -239,7 +239,7 @@ Array ARVRServer::get_interfaces() const {
 */
 
 bool ARVRServer::is_tracker_id_in_use_for_type(TrackerType p_tracker_type, int p_tracker_id) const {
-	for (int i = 0; i < trackers.size(); i++) {
+	for (decltype(trackers.size()) i = 0; i < trackers.size(); i++) {
 		if (trackers[i]->get_type() == p_tracker_type && trackers[i]->get_tracker_id() == p_tracker_id) {
 			return true;
 		};
@@ -276,7 +276,7 @@ void ARVRServer::remove_tracker(ARVRPositionalTracker *p_tracker) {
 	ERR_FAIL_NULL(p_tracker);
 
 	int idx = -1;
-	for (int i = 0; i < trackers.size(); i++) {
+	for (decltype(trackers.size()) i = 0; i < trackers.size(); i++) {
 
 		if (trackers[i] == p_tracker) {
 
@@ -296,7 +296,7 @@ int ARVRServer::get_tracker_count() const {
 };
 
 ARVRPositionalTracker *ARVRServer::get_tracker(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, trackers.size(), NULL);
+	ERR_FAIL_INDEX_V(p_index, static_cast<int>(trackers.size()), NULL);
 
 	return trackers[p_index];
 };
@@ -304,7 +304,7 @@ ARVRPositionalTracker *ARVRServer::get_tracker(int p_index) const {
 ARVRPositionalTracker *ARVRServer::find_by_type_and_id(TrackerType p_tracker_type, int p_tracker_id) const {
 	ERR_FAIL_COND_V(p_tracker_id == 0, NULL);
 
-	for (int i = 0; i < trackers.size(); i++) {
+	for (decltype(trackers.size()) i = 0; i < trackers.size(); i++) {
 		if (trackers[i]->get_type() == p_tracker_type && trackers[i]->get_tracker_id() == p_tracker_id) {
 			return trackers[i];
 		};
@@ -349,7 +349,7 @@ void ARVRServer::_process() {
 	last_process_usec = OS::get_singleton()->get_ticks_usec();
 
 	/* process all active interfaces */
-	for (int i = 0; i < interfaces.size(); i++) {
+	for (decltype(interfaces.size()) i = 0; i < interfaces.size(); i++) {
 		if (!interfaces[i].is_valid()) {
 			// ignore, not a valid reference
 		} else if (interfaces[i]->is_initialized()) {

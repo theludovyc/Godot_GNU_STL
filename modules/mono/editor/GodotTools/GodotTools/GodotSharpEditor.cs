@@ -37,6 +37,8 @@ namespace GodotTools
 
         public BottomPanel BottomPanel { get; private set; }
 
+        public PlaySettings? CurrentPlaySettings { get; set; }
+
         public static string ProjectAssemblyName
         {
             get
@@ -240,12 +242,12 @@ namespace GodotTools
         [UsedImplicitly]
         public Error OpenInExternalEditor(Script script, int line, int col)
         {
-            var editor = (ExternalEditorId)editorSettings.GetSetting("mono/editor/external_editor");
+            var editorId = (ExternalEditorId)editorSettings.GetSetting("mono/editor/external_editor");
 
-            switch (editor)
+            switch (editorId)
             {
                 case ExternalEditorId.None:
-                    // Tells the caller to fallback to the global external editor settings or the built-in editor
+                    // Not an error. Tells the caller to fallback to the global external editor settings or the built-in editor.
                     return Error.Unavailable;
                 case ExternalEditorId.VisualStudio:
                     throw new NotSupportedException();
@@ -261,10 +263,14 @@ namespace GodotTools
                 {
                     string scriptPath = ProjectSettings.GlobalizePath(script.ResourcePath);
 
-                    if (line >= 0)
-                        GodotIdeManager.SendOpenFile(scriptPath, line + 1, col);
-                    else
-                        GodotIdeManager.SendOpenFile(scriptPath);
+                    GodotIdeManager.LaunchIdeAsync().ContinueWith(launchTask =>
+                    {
+                        var editorPick = launchTask.Result;
+                        if (line >= 0)
+                            editorPick?.SendOpenFile(scriptPath, line + 1, col);
+                        else
+                            editorPick?.SendOpenFile(scriptPath);
+                    });
 
                     break;
                 }
@@ -312,7 +318,7 @@ namespace GodotTools
                     if (line >= 0)
                     {
                         args.Add("-g");
-                        args.Add($"{scriptPath}:{line + 1}:{col}");
+                        args.Add($"{scriptPath}:{line}:{col}");
                     }
                     else
                     {
@@ -430,7 +436,7 @@ namespace GodotTools
                 aboutLabel.Text =
                     "C# support in Godot Engine is in late alpha stage and, while already usable, " +
                     "it is not meant for use in production.\n\n" +
-                    "Projects can be exported to Linux, macOS, Windows and Android, but not yet to iOS, HTML5 or UWP. " +
+                    "Projects can be exported to Linux, macOS, Windows, Android, iOS and HTML5, but not yet to UWP. " +
                     "Bugs and usability issues will be addressed gradually over future releases, " +
                     "potentially including compatibility breaking changes as new features are implemented for a better overall C# experience.\n\n" +
                     "If you experience issues with this Mono build, please report them on Godot's issue tracker with details about your system, MSBuild version, IDE, etc.:\n\n" +
@@ -464,6 +470,9 @@ namespace GodotTools
 
                     // Make sure the existing project has Api assembly references configured correctly
                     ProjectUtils.FixApiHintPath(msbuildProject);
+
+                    // Make sure the existing project references the Microsoft.NETFramework.ReferenceAssemblies nuget package
+                    ProjectUtils.EnsureHasNugetNetFrameworkRefAssemblies(msbuildProject);
 
                     if (msbuildProject.HasUnsavedChanges)
                     {

@@ -63,7 +63,7 @@ int GradientEdit::_get_point_from_pos(int x) {
 	int result = -1;
 	int total_w = get_size().width - get_size().height - SPACING;
 	float min_distance = 1e20;
-	for (int i = 0; i < points.size(); i++) {
+	for (decltype(points.size()) i = 0; i < points.size(); i++) {
 		//Check if we clicked at point
 		float distance = ABS(x - points[i].offset * total_w);
 		float min = (POINT_WIDTH / 2 * 1.7); //make it easier to grab
@@ -147,7 +147,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 
 			std::sort(points.begin(), points.end());
 
-			for (int i = 0; i < points.size(); ++i) {
+			for (decltype(points.size()) i = 0; i < points.size(); ++i) {
 				if (points[i].offset == newPoint.offset) {
 					grabbed = i;
 					break;
@@ -188,7 +188,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 		Gradient::Point next;
 
 		int pos = -1;
-		for (int i = 0; i < points.size(); i++) {
+		for (decltype(points.size()) i = 0; i < points.size(); i++) {
 			if (points[i].offset < newPoint.offset)
 				pos = i;
 		}
@@ -205,7 +205,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 		} else {
 
-			if (pos == points.size() - 1) {
+			if (pos == static_cast<int>(points.size()) - 1) {
 				next.color = Color(1, 1, 1);
 				next.offset = 1.0;
 			} else {
@@ -220,7 +220,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 
 		std::sort(points.begin(), points.end());
 
-		for (int i = 0; i < points.size(); i++) {
+		for (decltype(points.size()) i = 0; i < points.size(); i++) {
 			if (points[i].offset == newPoint.offset) {
 				grabbed = i;
 				break;
@@ -259,7 +259,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			float smallest_ofs = snap_threshold;
 			bool found = false;
 			int nearest_point = 0;
-			for (int i = 0; i < points.size(); ++i) {
+			for (int i = 0; i < static_cast<int>(points.size()); ++i) {
 				if (i != grabbed) {
 					float temp_ofs = ABS(points[i].offset - newofs);
 					if (temp_ofs < smallest_ofs) {
@@ -281,7 +281,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 		}
 
 		bool valid = true;
-		for (int i = 0; i < points.size(); i++) {
+		for (int i = 0; i < static_cast<int>(points.size()); i++) {
 
 			if (points[i].offset == newofs && i != grabbed) {
 				valid = false;
@@ -296,7 +296,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 
 		std::sort(points.begin(), points.end());
 
-		for (int i = 0; i < points.size(); i++) {
+		for (decltype(points.size()) i = 0; i < points.size(); i++) {
 			if (points[i].offset == newofs) {
 				grabbed = i;
 				break;
@@ -337,11 +337,11 @@ void GradientEdit::_notification(int p_what) {
 		else
 			prev.color = points[0].color; //Extend color of first point to the beginning.
 
-		for (int i = -1; i < points.size(); i++) {
+		for (int i = -1; i < static_cast<int>(points.size()); i++) {
 
 			Gradient::Point next;
 			//If there is no next point
-			if (i + 1 == points.size()) {
+			if (i + 1 == static_cast<int>(points.size())) {
 				if (points.size() == 0)
 					next.color = Color(0, 0, 0); //Draw black rectangle if we have no points
 				else
@@ -371,7 +371,7 @@ void GradientEdit::_notification(int p_what) {
 		}
 
 		//Draw point markers
-		for (int i = 0; i < points.size(); i++) {
+		for (int i = 0; i < static_cast<int>(points.size()); i++) {
 
 			Color col = points[i].color.contrasted();
 			col.a = 0.9;
@@ -462,7 +462,7 @@ void GradientEdit::set_ramp(const std::vector<float> &p_offsets, const std::vect
 
 	ERR_FAIL_COND(p_offsets.size() != p_colors.size());
 	points.clear();
-	for (int i = 0; i < p_offsets.size(); i++) {
+	for (decltype(p_offsets.size()) i = 0; i < p_offsets.size(); i++) {
 		Gradient::Point p;
 		p.offset = p_offsets[i];
 		p.color = p_colors[i];
@@ -476,14 +476,14 @@ void GradientEdit::set_ramp(const std::vector<float> &p_offsets, const std::vect
 
 std::vector<float> GradientEdit::get_offsets() const {
 	std::vector<float> ret;
-	for (int i = 0; i < points.size(); i++)
+	for (decltype(points.size()) i = 0; i < points.size(); i++)
 		ret.push_back(points[i].offset);
 	return ret;
 }
 
 std::vector<Color> GradientEdit::get_colors() const {
 	std::vector<Color> ret;
-	for (int i = 0; i < points.size(); i++)
+	for (decltype(points.size()) i = 0; i < points.size(); i++)
 		ret.push_back(points[i].color);
 	return ret;
 }
