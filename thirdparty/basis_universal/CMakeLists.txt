@@ -1,4 +1,4 @@
-project(basis_universal)
+project(thirdparty_basis_universal)
 
 file(GLOB_RECURSE src *.c *.cpp)
 

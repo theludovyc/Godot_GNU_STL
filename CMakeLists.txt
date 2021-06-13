@@ -12,6 +12,14 @@ if(tools)
     add_compile_definitions(TOOLS_ENABLED)
 endif()
 
+include_directories(${PROJECT_NAME} PUBLIC .)
+
+if(WIN32)
+    include_directories(platform/windows)
+endif()
+
 add_subdirectory(thirdparty)
+
+add_subdirectory(modules)
 
 #add_library(${PROJECT_NAME} ${thirdparty_librairies})
