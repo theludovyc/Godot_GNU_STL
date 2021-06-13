@@ -7,6 +7,11 @@ project(godot_stl)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+option(tools "Build the tools (a.k.a. the Godot editor)" ON)
+if(tools)
+    add_compile_definitions(TOOLS_ENABLED)
+endif()
+
 add_subdirectory(thirdparty)
 
 #add_library(${PROJECT_NAME} ${thirdparty_librairies})

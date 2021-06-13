@@ -1,4 +1,4 @@
-project(embree)
+project(etcpak)
 
 file(GLOB_RECURSE SRC ./*.cpp)
 
