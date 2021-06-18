@@ -35,8 +35,8 @@
 
 #include "thirdparty/misc/fastlz.h"
 
-#include <zlib.h>
-#include <zstd.h>
+#include "thirdparty/zlib/zlib.h"
+#include "thirdparty/zstd/zstd.h"
 
 int Compression::compress(uint8_t *p_dst, const uint8_t *p_src, int p_src_size, Mode p_mode) {
 	switch (p_mode) {

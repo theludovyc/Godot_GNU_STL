@@ -22,16 +22,16 @@ if (WIN32)
     include_directories(platform/windows)
 endif ()
 
-#add_subdirectory(thirdparty)
-
-#add_subdirectory(modules)
-
 add_custom_command(
         OUTPUT core/version_hash.gen.h
         COMMAND ${Python_EXECUTABLE} pygen_script/generate_version.py
         WORKING_DIRECTORY .
         DEPENDS pygen_script/generate_version.py
 )
+
+add_subdirectory(thirdparty)
+
+#add_subdirectory(modules)
 
 add_subdirectory(core)
 
