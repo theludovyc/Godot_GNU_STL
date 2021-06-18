@@ -1,4 +1,4 @@
-project(bullet)
+project(thirdparty_bullet)
 
 file(GLOB_RECURSE SRC ./*.c)
 

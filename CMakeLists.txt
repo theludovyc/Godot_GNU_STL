@@ -22,8 +22,11 @@ if(WIN32)
     include_directories(platform/windows)
 endif()
 
-add_subdirectory(thirdparty)
+#add_subdirectory(thirdparty)
 
-add_subdirectory(modules)
+#add_subdirectory(modules)
+
+enable_testing()
+add_subdirectory(tests)
 
 #add_library(${PROJECT_NAME} ${thirdparty_librairies})
