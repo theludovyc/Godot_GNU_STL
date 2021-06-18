@@ -1,6 +1,6 @@
 project(core)
 
-file(GLOB src error/*.cpp os/*.cpp templates/*.cpp)
+file(GLOB_RECURSE src ./*.cpp)
 
 add_library(${PROJECT_NAME} ${src})
 

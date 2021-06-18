@@ -2,7 +2,6 @@ import os
 import version
 
 def generate_version(module_version_string=""):
-
     build_name = "custom_build"
     if os.getenv("BUILD_NAME") != None:
         build_name = os.getenv("BUILD_NAME")
