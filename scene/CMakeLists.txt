@@ -1,4 +1,4 @@
-project(core)
+project(scene)
 
 file(GLOB_RECURSE src ./*.cpp)
 

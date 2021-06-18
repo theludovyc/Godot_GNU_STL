@@ -29,11 +29,13 @@ add_custom_command(
         DEPENDS pygen_script/generate_version.py
 )
 
+add_subdirectory(core)
+
+add_subdirectory(scene)
+
 add_subdirectory(thirdparty)
 
 #add_subdirectory(modules)
-
-add_subdirectory(core)
 
 enable_testing()
 add_subdirectory(tests)
