@@ -1,4 +1,4 @@
-import methods
+from pygen_script import methods
 import os
 
 # To match other platforms

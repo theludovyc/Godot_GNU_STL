@@ -16,7 +16,7 @@ def run_closure_compiler(target, source, env, for_signature):
 
 
 def get_build_version():
-    import version
+    from pygen_script import version
 
     name = "custom_build"
     if os.getenv("BUILD_NAME") != None:

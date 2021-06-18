@@ -1,6 +1,6 @@
 import os
 import sys
-from methods import detect_darwin_sdk_path
+from pygen_script.methods import detect_darwin_sdk_path
 
 
 def is_active():

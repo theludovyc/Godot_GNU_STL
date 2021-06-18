@@ -2,7 +2,7 @@
 
 Import("env")
 
-from platform_methods import run_in_subprocess
+from pygen_script.platform_methods import run_in_subprocess
 import platform_osx_builders
 
 files = [

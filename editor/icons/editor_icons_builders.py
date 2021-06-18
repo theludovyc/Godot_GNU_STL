@@ -6,7 +6,7 @@ All such functions are invoked in a subprocess on Windows to prevent build flaki
 
 import os
 from io import StringIO
-from platform_methods import subprocess_main
+from pygen_script.platform_methods import subprocess_main
 
 
 def make_editor_icons_action(target, source, env):

@@ -4,7 +4,7 @@ All such functions are invoked in a subprocess on Windows to prevent build flaki
 
 """
 import os
-from platform_methods import subprocess_main
+from pygen_script.platform_methods import subprocess_main
 
 
 def make_debug_mingw(target, source, env):

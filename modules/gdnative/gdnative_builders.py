@@ -4,7 +4,7 @@ All such functions are invoked in a subprocess on Windows to prevent build flaki
 
 """
 import json
-from platform_methods import subprocess_main
+from pygen_script.platform_methods import subprocess_main
 
 
 def _spaced(e):

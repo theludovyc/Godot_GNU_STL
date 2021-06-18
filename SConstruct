@@ -11,7 +11,7 @@ import sys
 from collections import OrderedDict
 
 # Local
-import methods
+from pygen_script import methods
 import glsl_builders
 
 # Scan possible build platforms

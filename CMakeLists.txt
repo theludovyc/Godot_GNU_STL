@@ -8,23 +8,32 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 option(tools "Build the tools (a.k.a. the Godot editor)" ON)
-if(tools)
+if (tools)
     add_compile_definitions(TOOLS_ENABLED)
-endif()
+endif ()
 
 include_directories(${PROJECT_NAME} PUBLIC .)
 
-if(UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE)
     include_directories(platform/linuxbsd)
-endif()
+endif ()
 
-if(WIN32)
+if (WIN32)
     include_directories(platform/windows)
-endif()
+endif ()
 
 #add_subdirectory(thirdparty)
 
 #add_subdirectory(modules)
+
+add_custom_command(
+        OUTPUT core/version_hash.gen.h
+        COMMAND ${Python_EXECUTABLE} pygen_script/generate_version.py
+        WORKING_DIRECTORY .
+        DEPENDS pygen_script/generate_version.py
+)
+
+add_subdirectory(core)
 
 enable_testing()
 add_subdirectory(tests)

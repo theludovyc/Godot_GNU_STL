@@ -5,7 +5,7 @@ All such functions are invoked in a subprocess on Windows to prevent build flaki
 """
 import os
 import os.path
-from platform_methods import subprocess_main
+from pygen_script.platform_methods import subprocess_main
 
 
 def make_doc_header(target, source, env):
