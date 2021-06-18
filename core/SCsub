@@ -2,7 +2,7 @@
 
 Import("env")
 
-import core_builders
+from pygen_script import core_builders
 
 env.core_sources = []
 
