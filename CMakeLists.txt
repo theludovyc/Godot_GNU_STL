@@ -14,6 +14,10 @@ endif()
 
 include_directories(${PROJECT_NAME} PUBLIC .)
 
+if(UNIX AND NOT APPLE)
+    include_directories(platform/linuxbsd)
+endif()
+
 if(WIN32)
     include_directories(platform/windows)
 endif()
