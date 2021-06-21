@@ -29,11 +29,15 @@ add_custom_command(
         DEPENDS pygen_script/generate_version.py
 )
 
-add_subdirectory(core)
+set(SRC)
 
-add_subdirectory(scene)
+include(core/core.cmake)
 
-add_subdirectory(thirdparty)
+#add_subdirectory(scene)
+
+include(thirdparty/thirdparty.cmake)
+
+add_library(${PROJECT_NAME} ${SRC})
 
 #add_subdirectory(modules)
 

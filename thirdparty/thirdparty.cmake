@@ -1,12 +1,11 @@
-project(thirdparty)
+include(thirdparty/basis_universal/basis_universal.cmake)
 
-add_subdirectory(zstd)
-
-add_subdirectory(basis_universal)
+file(GLOB_RECURSE src_zstd thirdparty/zstd/*.c)
+list(APPEND SRC ${src_zstd})
 
 #add_subdirectory(bullet)
 
-add_subdirectory(cvtt)
+#add_subdirectory(cvtt)
 
 #add_subdirectory(embree)
 
@@ -16,6 +15,6 @@ add_subdirectory(cvtt)
 
 #add_subdirectory(freetype)
 
-add_subdirectory(glslang)
+#add_subdirectory(glslang)
 
 #set(thirdparty_libraries zstd basis_universal bullet cvtt embree)

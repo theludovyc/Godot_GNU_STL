@@ -1,6 +1,6 @@
-project(thirdparty_basis_universal)
+file(GLOB_RECURSE src_basis_universal thirdparty/basis_universal/*.c thirdparty/basis_universal/*.cpp)
 
-file(GLOB_RECURSE src *.c *.cpp)
+list(APPEND SRC ${src_basis_universal})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BASISU_DEVEL_MESSAGES 1)
@@ -10,7 +10,3 @@ endif()
 if(tool)
     add_compile_definitions(BASISU_NO_IMG_LOADERS)
 endif()
-
-add_library(${PROJECT_NAME} ${src})
-
-target_link_libraries(${PROJECT_NAME} src zstd)
