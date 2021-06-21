@@ -2,8 +2,7 @@
 
 Import("env")
 
-import input_builders
-
+from pygen_script import input_builders
 
 # Order matters here. Higher index controller database files write on top of lower index database files.
 controller_databases = [
