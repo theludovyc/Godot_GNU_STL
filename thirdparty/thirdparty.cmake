@@ -13,10 +13,7 @@ macro(buildThridparyFileCpp dirName)
     buildThirdpartyFile(${dirName} *.cpp)
 endmacro()
 
-add_compile_definitions(BT_USE_OLD_DAMPING_METHOD)
-buildThirdpartyFileC(bullet)
-
-
+include(thirdparty/bullet/bullet.cmake)
 
 list(APPEND SRC thirdparty/cvtt/ConvectionKernels.cpp)
 
