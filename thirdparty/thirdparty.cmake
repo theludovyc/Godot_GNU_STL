@@ -16,7 +16,7 @@ endmacro()
 add_compile_definitions(BT_USE_OLD_DAMPING_METHOD)
 buildThirdpartyFileC(bullet)
 
-buildThirdpartyFileC(zstd)
+
 
 list(APPEND SRC thirdparty/cvtt/ConvectionKernels.cpp)
 
@@ -25,9 +25,15 @@ list(APPEND SRC thirdparty/cvtt/ConvectionKernels.cpp)
 add_compile_definitions(GODOT_ENET)
 buildThirdpartyFileC(enet)
 
-#add_subdirectory(etcpak)
+buildThridparyFileCpp(etcpak)
 
-#add_subdirectory(freetype)
+include(thirdparty/freetype/freetype.cmake)
+
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+    add_compile_definitions(ZLIB_DEBUG)
+endif()
+
+buildThirdpartyFileC(zstd)
 
 #add_subdirectory(glslang)
 

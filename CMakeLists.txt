@@ -18,8 +18,6 @@ if (tools)
     add_compile_definitions(TOOLS_ENABLED)
 endif ()
 
-include_directories(${PROJECT_NAME} PUBLIC .)
-
 if (UNIX AND NOT APPLE)
     include_directories(platform/linuxbsd)
 endif ()
@@ -30,6 +28,8 @@ endif ()
 
 set(SRC)
 
+set(INCLUDE_DIR)
+
 set(MBEDTLS_CONFIG_FILE thirdparty/mbedtls/include/godot_core_mbedtls_config.h)
 
 include(core/core.cmake)
@@ -39,6 +39,8 @@ include(core/core.cmake)
 include(thirdparty/thirdparty.cmake)
 
 add_library(${PROJECT_NAME} ${SRC})
+
+target_include_directories(${PROJECT_NAME} PUBLIC . ${INCLUDE_DIR})
 
 #add_subdirectory(modules)
 
