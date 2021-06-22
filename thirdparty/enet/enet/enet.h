@@ -21,13 +21,13 @@ extern "C"
 #include "enet/unix.h"
 #endif
 #endif
-#include "enet/godot.h"
+#include "godot.h"
 // -- Godot end --
 
-#include "enet/types.h"
-#include "enet/protocol.h"
-#include "enet/list.h"
-#include "enet/callbacks.h"
+#include "types.h"
+#include "protocol.h"
+#include "list.h"
+#include "callbacks.h"
 
 #define ENET_VERSION_MAJOR 1
 #define ENET_VERSION_MINOR 3
@@ -615,7 +615,7 @@ ENET_API size_t enet_range_coder_decompress (void *, const enet_uint8 *, size_t,
 extern size_t enet_protocol_command_size (enet_uint8);
 
 // -- Godot start --
-#include "enet/godot_ext.h"
+#include "godot_ext.h"
 // -- Godot end --
 
 #ifdef __cplusplus

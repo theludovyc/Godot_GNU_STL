@@ -22,7 +22,8 @@ list(APPEND SRC thirdparty/cvtt/ConvectionKernels.cpp)
 
 #buildThridparyFileCpp(embree)
 
-#add_subdirectory(enet)
+add_compile_definitions(GODOT_ENET)
+buildThirdpartyFileC(enet)
 
 #add_subdirectory(etcpak)
 
