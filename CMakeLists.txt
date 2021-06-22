@@ -9,6 +9,10 @@ find_package(Python3)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(DEBUG)
+endif()
+
 option(tools "Build the tools (a.k.a. the Godot editor)" ON)
 if (tools)
     add_compile_definitions(TOOLS_ENABLED)
@@ -23,13 +27,6 @@ endif ()
 if (WIN32)
     include_directories(platform/windows)
 endif ()
-
-add_custom_command(
-        OUTPUT core/version_hash.gen.h
-        COMMAND ${Python_EXECUTABLE} pygen_script/generate_version.py
-        WORKING_DIRECTORY .
-        DEPENDS pygen_script/generate_version.py
-)
 
 set(SRC)
 
