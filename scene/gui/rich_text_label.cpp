@@ -36,10 +36,7 @@
 #include "scene/scene_string_names.h"
 #include "servers/display_server.h"
 
-#include "modules/modules_enabled.gen.h"
-#ifdef MODULE_REGEX_ENABLED
 #include "modules/regex/regex.h"
-#endif
 
 #ifdef TOOLS_ENABLED
 #include "editor/editor_scale.h"
@@ -4056,7 +4053,6 @@ Dictionary RichTextLabel::parse_expressions_for_values(Vector<String> p_expressi
 
 		Vector<String> values = parts[1].split(",", false);
 
-#ifdef MODULE_REGEX_ENABLED
 		RegEx color = RegEx();
 		color.compile("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
 		RegEx nodepath = RegEx();
@@ -4090,7 +4086,6 @@ Dictionary RichTextLabel::parse_expressions_for_values(Vector<String> p_expressi
 				a.append(values[j]);
 			}
 		}
-#endif
 
 		if (values.size() > 1) {
 			d[key] = a;
