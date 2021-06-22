@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import modules_builders
+from pygen_script import modules_builders
 import os
 
 Import("env")

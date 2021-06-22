@@ -34,7 +34,7 @@ set(MBEDTLS_CONFIG_FILE thirdparty/mbedtls/include/godot_core_mbedtls_config.h)
 
 include(core/core.cmake)
 
-#add_subdirectory(scene)
+include(scene/scene.cmake)
 
 include(thirdparty/thirdparty.cmake)
 

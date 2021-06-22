@@ -3,7 +3,7 @@
 Import("env")
 
 from pygen_script.platform_methods import run_in_subprocess
-import default_theme_builders
+from pygen_script import default_theme_builders
 
 env.add_source_files(env.scene_sources, "*.cpp")
 
