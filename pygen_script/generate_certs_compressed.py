@@ -1,4 +1,4 @@
-def generate_certs(system_certs_path, builtin_certs):
+def generate_certs_compressed(system_certs_path, builtin_certs):
     src = "thirdparty/certs/ca-certificates.crt"
     dst = "core/io/certs_compressed.gen.h"
     f = open(src, "rb")
@@ -31,4 +31,4 @@ def generate_certs(system_certs_path, builtin_certs):
     f.close()
 
 if __name__ == "__main__":
-    generate_certs("", "ON")
+    generate_certs_compressed("", "ON")
