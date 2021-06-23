@@ -11,6 +11,8 @@ endmacro()
 
 generateCoreFile(authors)
 
+generateCoreFile(certs_compressed)
+
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/input/default_controller_mappings.gen.cpp
         COMMAND ${Python3_EXECUTABLE} pygen_script/generate_default_controller_mappings.py
@@ -34,6 +36,8 @@ add_custom_command(
 )
 
 list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/version_generated.gen.h ${CMAKE_CURRENT_SOURCE_DIR}/core/version_hash.gen.h)
+
+include(thirdparty/mbedtls/mbedtls.cmake)
 
 set(src_core_thirdparty_misc
         thirdparty/misc/fastlz.c

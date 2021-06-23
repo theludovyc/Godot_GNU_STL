@@ -30,8 +30,6 @@ set(SRC)
 
 set(INCLUDE_DIR)
 
-set(MBEDTLS_CONFIG_FILE thirdparty/mbedtls/include/godot_core_mbedtls_config.h)
-
 include(core/core.cmake)
 
 include(scene/scene.cmake)
