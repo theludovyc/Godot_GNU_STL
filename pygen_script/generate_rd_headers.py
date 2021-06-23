@@ -1,10 +1,4 @@
-"""Functions used to generate source files during build time
-
-All such functions are invoked in a subprocess on Windows to prevent build flakiness.
-
-"""
-from pygen_script.platform_methods import subprocess_main
-
+import sys
 
 class RDHeaderStruct:
     def __init__(self):
@@ -21,7 +15,6 @@ class RDHeaderStruct:
         self.vertex_offset = 0
         self.fragment_offset = 0
         self.compute_offset = 0
-
 
 def include_file_in_rd_header(filename, header_data, depth):
     fs = open(filename, "r")
@@ -88,7 +81,6 @@ def include_file_in_rd_header(filename, header_data, depth):
 
     return header_data
 
-
 def build_rd_header(filename):
     header_data = RDHeaderStruct()
     include_file_in_rd_header(filename, header_data, 0)
@@ -151,65 +143,8 @@ def build_rd_header(filename):
 
 
 def build_rd_headers(sources):
-    for x in sources:
-        build_rd_header(str(x))
-
-
-class RAWHeaderStruct:
-    def __init__(self):
-        self.code = ""
-
-
-def include_file_in_raw_header(filename, header_data, depth):
-    fs = open(filename, "r")
-    line = fs.readline()
-
-    while line:
-
-        while line.find("#include ") != -1:
-            includeline = line.replace("#include ", "").strip()[1:-1]
-
-            import os.path
-
-            included_file = os.path.relpath(os.path.dirname(filename) + "/" + includeline)
-            include_file_in_raw_header(included_file, header_data, depth + 1)
-
-            line = fs.readline()
-
-        header_data.code += line
-        line = fs.readline()
-
-    fs.close()
-
-
-def build_raw_header(filename):
-    header_data = RAWHeaderStruct()
-    include_file_in_raw_header(filename, header_data, 0)
-
-    out_file = filename + ".gen.h"
-    fd = open(out_file, "w")
-
-    fd.write("/* WARNING, THIS FILE WAS GENERATED, DO NOT EDIT */\n")
-
-    out_file_base = out_file.replace(".glsl.gen.h", "_shader_glsl")
-    out_file_base = out_file_base[out_file_base.rfind("/") + 1 :]
-    out_file_base = out_file_base[out_file_base.rfind("\\") + 1 :]
-    out_file_ifdef = out_file_base.replace(".", "_").upper()
-    fd.write("#ifndef " + out_file_ifdef + "_RAW_H\n")
-    fd.write("#define " + out_file_ifdef + "_RAW_H\n")
-    fd.write("\n")
-    fd.write("static const char " + out_file_base + "[] = {\n")
-    for c in header_data.code:
-        fd.write(str(ord(c)) + ",")
-    fd.write("\t\t0};\n\n")
-    fd.write("#endif\n")
-    fd.close()
-
-
-def build_raw_headers(target, source, env):
-    for x in source:
-        build_raw_header(str(x))
-
+    for i in range(1, len(sources)):
+        build_rd_header(str(sources[i]))
 
 if __name__ == "__main__":
-    subprocess_main(globals())
+    build_rd_headers(sys.argv)

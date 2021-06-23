@@ -36,6 +36,8 @@ include(core/core.cmake)
 
 include(scene/scene.cmake)
 
+include(servers/servers.cmake)
+
 #include(thirdparty/thirdparty.cmake)
 
 add_library(${PROJECT_NAME} ${SRC})
