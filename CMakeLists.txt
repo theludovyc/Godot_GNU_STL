@@ -51,7 +51,9 @@ include(core/core.cmake)
 
 include(modules/modules.cmake)
 
-include(editor/editor.cmake)
+if(tools)
+    include(editor/editor.cmake)
+endif()
 
 include(scene/scene.cmake)
 
