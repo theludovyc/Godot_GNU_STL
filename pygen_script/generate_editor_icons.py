@@ -1,18 +1,10 @@
-"""Functions used to generate source files during build time
-
-All such functions are invoked in a subprocess on Windows to prevent build flakiness.
-
-"""
-
 import os
 from io import StringIO
-from pygen_script.platform_methods import subprocess_main
+import glob
 
-
-def make_editor_icons_action(target, source, env):
-
-    dst = target[0]
-    svg_icons = source
+def generate_editor_icons():
+    svg_icons = glob.glob("editor/icons/*.svg")
+    #todo add modules icons
 
     icons_string = StringIO()
 
@@ -84,7 +76,7 @@ def make_editor_icons_action(target, source, env):
 
     s.write("#endif\n")
 
-    with open(dst, "w") as f:
+    with open("editor/editor_icons.gen.h", "w") as f:
         f.write(s.getvalue())
 
     s.close()
@@ -92,4 +84,4 @@ def make_editor_icons_action(target, source, env):
 
 
 if __name__ == "__main__":
-    subprocess_main(globals())
+    generate_editor_icons()
