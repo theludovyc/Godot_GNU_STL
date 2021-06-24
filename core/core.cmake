@@ -1,32 +1,14 @@
-macro(generateCoreFile fileName)
-    add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/${fileName}.gen.h
-            COMMAND ${Python3_EXECUTABLE} pygen_script/generate_${fileName}.py
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            DEPENDS pygen_script/generate_${fileName}.py
-    )
+generateFile(core/authors)
 
-    list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/${fileName}.gen.h)
-endmacro()
+generateFile(core/certs_compressed)
 
-generateCoreFile(authors)
+generateFile(core/input/default_controller_mappings)
 
-generateCoreFile(certs_compressed)
+generateFile(core/donors)
 
-add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/input/default_controller_mappings.gen.cpp
-        COMMAND ${Python3_EXECUTABLE} pygen_script/generate_default_controller_mappings.py
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS pygen_script/generate_default_controller_mappings.py
-)
+generateFile(core/license)
 
-list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/input/default_controller_mappings.gen.cpp)
-
-generateCoreFile(donors)
-
-generateCoreFile(license)
-
-generateCoreFile(script_encryption_key)
+generateFile(core/script_encryption_key)
 
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/version_generated.gen.h ${CMAKE_CURRENT_SOURCE_DIR}/core/version_hash.gen.h

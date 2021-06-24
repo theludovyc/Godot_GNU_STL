@@ -7,7 +7,7 @@ env.editor_sources = []
 import os
 import os.path
 import glob
-import editor_builders
+from pygen_script import editor_builders
 
 
 def _make_doc_data_class_path(to_path):
