@@ -49,6 +49,7 @@ set(INCLUDE_DIR)
 
 include(core/core.cmake)
 
+set(MODULES_DOC_CLASSES)
 include(modules/modules.cmake)
 
 if(tools)

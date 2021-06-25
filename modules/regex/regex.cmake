@@ -34,6 +34,10 @@ add_compile_definitions(PCRE2_STATIC
         SUPPORT_JIT
         PCRE2_CODE_UNIT_WIDTH=32)
 
+file(GLOB doc_regex modules/regex/doc_classes/*.xml)
+
+list(APPEND MODULES_DOC_CLASSES ${doc_regex})
+
 file(GLOB src_regex modules/regex/*.cpp)
 
 list(APPEND INCLUDE_DIR thirdparty/pcre2/src)
