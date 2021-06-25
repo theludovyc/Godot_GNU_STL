@@ -6,3 +6,9 @@ add_custom_command(
 )
 
 list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/modules_enabled.gen.h)
+
+file(GLOB modules_cmakes modules/*/*.cmake)
+
+foreach(modules_cmake ${modules_cmakes})
+    include(${modules_cmake})
+endforeach()
