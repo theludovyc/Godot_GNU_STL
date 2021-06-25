@@ -5,7 +5,8 @@ add_custom_command(
         DEPENDS pygen_script/generate_default_font.py thirdparty/fonts/OpenSans_SemiBold.ttf
 )
 
-list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/scene/resources/default_theme/default_font.gen.h)
+list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/scene/resources/default_theme/default_font.gen.h
+        thirdparty/misc/mikktspace.c)
 
 file(GLOB_RECURSE src_scene scene/*.cpp)
 list(APPEND SRC ${src_scene})

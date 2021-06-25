@@ -9,7 +9,7 @@
 # to make a "light" build with only the necessary mbedtls files.
 
 # Custom config file
-set(MBEDTLS_CONFIG_FILE thirdparty/mbedtls/include/godot_core_mbedtls_config.h)
+add_compile_definitions(MBEDTLS_CONFIG_FILE="thirdparty/mbedtls/include/godot_core_mbedtls_config.h")
 
 set(src_thirdparty_mbedtls
         thirdparty/mbedtls/library/aes.c
