@@ -59,6 +59,8 @@ include(scene/scene.cmake)
 
 include(servers/servers.cmake)
 
+include(main/main.cmake)
+
 add_library(${PROJECT_NAME} ${SRC})
 
 target_include_directories(${PROJECT_NAME} PUBLIC . ${INCLUDE_DIR})
