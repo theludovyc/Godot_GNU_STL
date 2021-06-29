@@ -43,3 +43,5 @@ file(GLOB src_regex modules/regex/*.cpp)
 list(APPEND INCLUDE_DIR thirdparty/pcre2/src)
 
 list(APPEND SRC ${src_thirdparty_pcre2} ${src_regex})
+
+list(APPEND MODULES_NAMES regex)
