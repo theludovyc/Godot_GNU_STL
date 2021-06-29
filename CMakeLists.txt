@@ -74,6 +74,8 @@ include(main/main.cmake)
 
 add_library(${PROJECT_NAME} ${SRC})
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC NO_THREADS)
+
 target_include_directories(${PROJECT_NAME} PUBLIC . ${INCLUDE_DIR})
 
 enable_testing()
