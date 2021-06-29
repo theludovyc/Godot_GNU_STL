@@ -2,13 +2,13 @@ generateHeader(core/authors)
 
 generateHeader(core/io/certs_compressed)
 
-generateHeader(core/input/default_controller_mappings)
+generateSource(core/input/default_controller_mappings)
 
 generateHeader(core/donors)
 
 generateHeader(core/license)
 
-generateHeader(core/script_encryption_key)
+generateSource(core/script_encryption_key)
 
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/version_generated.gen.h ${CMAKE_CURRENT_SOURCE_DIR}/core/version_hash.gen.h
