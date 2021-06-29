@@ -1,6 +1,6 @@
 generateHeader(core/authors)
 
-generateHeader(core/certs_compressed)
+generateHeader(core/io/certs_compressed)
 
 generateHeader(core/input/default_controller_mappings)
 
