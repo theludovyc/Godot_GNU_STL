@@ -9,4 +9,4 @@ list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/scene/resources/default_theme/defaul
         thirdparty/misc/mikktspace.c)
 
 file(GLOB_RECURSE src_scene scene/*.cpp)
-list(APPEND SRC ${src_scene})
+list(APPEND SRC ${src_scene} "thirdparty/misc/easing_equations.cpp")
