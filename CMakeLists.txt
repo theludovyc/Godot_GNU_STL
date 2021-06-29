@@ -68,6 +68,8 @@ include(scene/scene.cmake)
 
 include(servers/servers.cmake)
 
+include(drivers/drivers.cmake)
+
 include(main/main.cmake)
 
 add_library(${PROJECT_NAME} ${SRC})
