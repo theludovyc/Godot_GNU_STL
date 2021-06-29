@@ -5,17 +5,29 @@ project(godot_stl)
 
 find_package(Python3)
 
+set(SRC)
+
+set(INCLUDE_DIR)
+
 macro(generateFile filePath)
-get_filename_component(fileName ${filePath} NAME)
+get_filename_component(fileName ${filePath} NAME_WE)
 
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${filePath}.gen.h
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${filePath}
         COMMAND ${Python3_EXECUTABLE} pygen_script/generate_${fileName}.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS pygen_script/generate_${fileName}.py
 )
 
-list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/${filePath}.gen.h)
+list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/${filePath})
+endmacro()
+
+macro(generateHeader filePath)
+    generateFile(${filePath}.gen.h)
+endmacro()
+
+macro(generateSource filePath)
+    generateFile(${filePath}.gen.cpp)
 endmacro()
 
 # specify the C++ standard
@@ -42,10 +54,6 @@ endif ()
 if (WIN32)
     include_directories(platform/windows)
 endif ()
-
-set(SRC)
-
-set(INCLUDE_DIR)
 
 include(core/core.cmake)
 

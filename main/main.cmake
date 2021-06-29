@@ -1,8 +1,8 @@
-generateFile(main/splash)
+generateHeader(main/splash)
 
-generateFile(main/splash_editor)
+generateHeader(main/splash_editor)
 
-generateFile(main/app_icon)
+generateHeader(main/app_icon)
 
 file(GLOB src_main main/*.cpp)
 

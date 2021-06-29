@@ -1,12 +1,14 @@
-generateFile(editor/builtin_fonts)
+generateHeader(editor/builtin_fonts)
 
-generateFile(editor/doc_data_compressed)
+generateHeader(editor/doc_data_compressed)
 
-generateFile(editor/editor_icons)
+generateHeader(editor/editor_icons)
 
-generateFile(editor/doc_translations)
+generateHeader(editor/doc_translations)
 
-generateFile(editor/editor_translations)
+generateHeader(editor/editor_translations)
+
+generateSource(editor/register_exporters)
 
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/editor/doc_data_class_path.gen.h
