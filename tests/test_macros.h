@@ -31,6 +31,7 @@
 #ifndef TEST_MACROS_H
 #define TEST_MACROS_H
 
+#include "core/string/print_string.h"
 #include "core/templates/map.h"
 #include "core/variant/variant.h"
 

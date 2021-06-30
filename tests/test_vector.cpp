@@ -29,7 +29,8 @@
 /*************************************************************************/
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "thirdparty/doctest/doctest.h"
+
+#include "tests/test_macros.h"
 
 #include "core/templates/vector.h"
 
@@ -178,7 +179,7 @@ TEST_CASE("[Vector] Duplicate") {
 	CHECK(vector[4] == 4);
 }
 
-TEST_CASE("[Vector] Get, set") {
+TEST_CASE("[Vector] Get set") {
 	Vector<int> vector;
 	vector.push_back(0);
 	vector.push_back(1);
@@ -192,8 +193,10 @@ TEST_CASE("[Vector] Get, set") {
 	CHECK(vector.get(2) == 256);
 	CHECK(vector.get(3) == 3);
 
+	ERR_PRINT_OFF
 	// Invalid (but should not crash): setting out of bounds.
 	vector.set(6, 500);
+	ERR_PRINT_ON
 
 	CHECK(vector.get(4) == 4);
 }
