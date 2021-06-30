@@ -8,7 +8,7 @@ list(FILTER shaders EXCLUDE REGEX [a-zA-Z]+_inc\\.glsl)
 
 set(shaders_gen)
 
-foreach(shader in shaders)
+foreach(shader ${shaders})
     list(APPEND shaders_gen ${shader}.gen.h)
 endforeach()
 
