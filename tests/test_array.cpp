@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  test_array.h                                                         */
+/*  test_array.cpp                                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -27,22 +27,14 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
-
-#ifndef TEST_ARRAY_H
-#define TEST_ARRAY_H
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "core/object/class_db.h"
 #include "core/object/script_language.h"
-#include "core/templates/hashfuncs.h"
-#include "core/templates/vector.h"
 #include "core/variant/array.h"
-#include "core/variant/container_type_validate.h"
-#include "core/variant/variant.h"
 #include "tests/test_macros.h"
 
-namespace TestArray {
-
-TEST_CASE("[Array] size(), clear(), and is_empty()") {
+TEST_CASE("[Array] size(), clear() and is_empty()") {
 	Array arr;
 	CHECK(arr.size() == 0);
 	CHECK(arr.is_empty());
@@ -181,6 +173,3 @@ TEST_CASE("[Array] max() and min()") {
 	CHECK(max == 5);
 	CHECK(min == 2);
 }
-} // namespace TestArray
-
-#endif // TEST_ARRAY_H
