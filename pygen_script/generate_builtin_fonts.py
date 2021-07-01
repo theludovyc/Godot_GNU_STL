@@ -1,21 +1,14 @@
-"""Functions used to generate source files during build time
-
-All such functions are invoked in a subprocess on Windows to prevent build flakiness.
-
-"""
 import os
-import os.path
-from platform_methods import subprocess_main
+import glob
 
+def generate_builtin_fonts():
+    source = glob.glob("thirdparty/fonts/*.ttf")
 
-def make_fonts_header(target, source, env):
-    dst = target[0]
-
-    g = open(dst, "w", encoding="utf-8")
+    g = open("editor/builtin_fonts.gen.h", "w", encoding="utf-8")
 
     g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
-    g.write("#ifndef _DEFAULT_FONTS_H\n")
-    g.write("#define _DEFAULT_FONTS_H\n")
+    g.write("#ifndef _EDITOR_FONTS_H\n")
+    g.write("#define _EDITOR_FONTS_H\n")
 
     # Saving uncompressed, since FreeType will reference from memory pointer.
     for i in range(len(source)):
@@ -35,6 +28,5 @@ def make_fonts_header(target, source, env):
 
     g.close()
 
-
 if __name__ == "__main__":
-    subprocess_main(globals())
+    generate_builtin_fonts()

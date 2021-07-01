@@ -3,7 +3,7 @@
 All such functions are invoked in a subprocess on Windows to prevent build flakiness.
 """
 
-from platform_methods import subprocess_main
+from pygen_script.platform_methods import subprocess_main
 
 
 def generate_modules_enabled(target, source, env):

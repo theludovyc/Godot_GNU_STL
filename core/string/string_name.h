@@ -76,13 +76,14 @@ class StringName {
 	friend void unregister_core_types();
 	friend class Main;
 	static Mutex mutex;
-	static void setup();
-	static void cleanup();
 	static bool configured;
 
 	StringName(_Data *p_data) { _data = p_data; }
 
 public:
+	static void setup();
+	static void cleanup();
+
 	operator const void *() const { return (_data && (_data->cname || !_data->name.is_empty())) ? (void *)1 : nullptr; }
 
 	bool operator==(const String &p_name) const;

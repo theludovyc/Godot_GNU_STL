@@ -59,7 +59,7 @@
 #include "main/splash_editor.gen.h"
 #include "modules/modules_enabled.gen.h"
 #include "modules/register_module_types.h"
-#include "platform/register_platform_apis.h"
+
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
 #include "scene/register_scene_types.h"
@@ -75,6 +75,10 @@
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/text_server.h"
 #include "servers/xr_server.h"
+
+#ifdef PLATFORM_HAVE_APIS
+	#include "platform/register_platform_apis.h"
+#endif
 
 #ifdef TESTS_ENABLED
 #include "tests/test_main.h"
@@ -1787,7 +1791,10 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 
 	MAIN_PRINT("Main: Load Modules, Physics, Drivers, Scripts");
 
+#ifdef PLATFORM_HAVE_APIS
 	register_platform_apis();
+#endif
+
 	register_module_types();
 
 	GLOBAL_DEF("display/mouse_cursor/custom_image", String());
@@ -2674,7 +2681,11 @@ void Main::cleanup(bool p_force) {
 
 	unregister_driver_types();
 	unregister_module_types();
+
+#ifdef PLATFORM_HAVE_APIS
 	unregister_platform_apis();
+#endif
+
 	unregister_scene_types();
 	unregister_server_types();
 

@@ -1,4 +1,4 @@
-import methods
+from pygen_script import methods
 import os
 import sys
 

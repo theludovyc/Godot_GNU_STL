@@ -30,11 +30,11 @@
 
 #include "crypto_core.h"
 
-#include <mbedtls/aes.h>
-#include <mbedtls/base64.h>
-#include <mbedtls/md5.h>
-#include <mbedtls/sha1.h>
-#include <mbedtls/sha256.h>
+#include "thirdparty/mbedtls/include/mbedtls/aes.h"
+#include "thirdparty/mbedtls/include/mbedtls/base64.h"
+#include "thirdparty/mbedtls/include/mbedtls/md5.h"
+#include "thirdparty/mbedtls/include/mbedtls/sha1.h"
+#include "thirdparty/mbedtls/include/mbedtls/sha256.h"
 
 // MD5
 CryptoCore::MD5Context::MD5Context() {

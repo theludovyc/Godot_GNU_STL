@@ -34,10 +34,10 @@
 #include "scene/resources/texture.h"
 
 #ifdef TOOLS_ENABLED
-#include <encoder/basisu_comp.h>
+#include "thirdparty/basis_universal/encoder/basisu_comp.h"
 #endif
 
-#include <transcoder/basisu_transcoder.h>
+#include "thirdparty/basis_universal/transcoder/basisu_transcoder.h"
 
 #if 0
 class TextureBasisU : public Texture {

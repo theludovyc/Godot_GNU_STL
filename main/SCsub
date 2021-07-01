@@ -2,7 +2,7 @@
 
 Import("env")
 
-import main_builders
+from pygen_script import main_builders
 
 env.main_sources = []
 

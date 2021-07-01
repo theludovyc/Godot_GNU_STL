@@ -3,7 +3,7 @@
 Import("env")
 
 import os
-from platform_methods import run_in_subprocess
+from pygen_script.platform_methods import run_in_subprocess
 import platform_windows_builders
 
 common_win = [

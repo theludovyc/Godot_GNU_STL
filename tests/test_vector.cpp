@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  test_vector.h                                                        */
+/*  test_vector.cpp                                                      */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,14 +28,11 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef TEST_VECTOR_H
-#define TEST_VECTOR_H
-
-#include "core/templates/vector.h"
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "tests/test_macros.h"
 
-namespace TestVector {
+#include "core/templates/vector.h"
 
 TEST_CASE("[Vector] Push back and append") {
 	Vector<int> vector;
@@ -196,10 +193,10 @@ TEST_CASE("[Vector] Get, set") {
 	CHECK(vector.get(2) == 256);
 	CHECK(vector.get(3) == 3);
 
-	ERR_PRINT_OFF;
+	/*ERR_PRINT_OFF
 	// Invalid (but should not crash): setting out of bounds.
 	vector.set(6, 500);
-	ERR_PRINT_ON;
+	ERR_PRINT_ON*/
 
 	CHECK(vector.get(4) == 4);
 }
@@ -449,7 +446,7 @@ TEST_CASE("[Vector] Sort") {
 	CHECK(vector[3] == 8);
 }
 
-TEST_CASE("[Vector] Sort custom") {
+/*TEST_CASE("[Vector] Sort custom") {
 	Vector<String> vector;
 	vector.push_back("world");
 	vector.push_back("World");
@@ -470,7 +467,7 @@ TEST_CASE("[Vector] Sort custom") {
 	CHECK(vector[5] == "Hello");
 	CHECK(vector[6] == "world");
 	CHECK(vector[7] == "World");
-}
+}*/
 
 TEST_CASE("[Vector] Operators") {
 	Vector<int> vector;
@@ -490,7 +487,3 @@ TEST_CASE("[Vector] Operators") {
 	vector_other.push_back(10);
 	CHECK(vector != vector_other);
 }
-
-} // namespace TestVector
-
-#endif // TEST_VECTOR_H

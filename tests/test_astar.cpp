@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  test_astar.h                                                         */
+/*  test_astar.cpp                                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -27,20 +27,16 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-#ifndef TEST_ASTAR_H
-#define TEST_ASTAR_H
+#include <cstdio>
+#include <math.h>
 
 #include "core/math/a_star.h"
 #include "core/math/math_funcs.h"
 #include "core/os/os.h"
 
-#include <math.h>
-#include <stdio.h>
-
 #include "tests/test_macros.h"
-
-namespace TestAStar {
 
 class ABCX : public AStar {
 public:
@@ -72,6 +68,8 @@ public:
 };
 
 TEST_CASE("[AStar] ABC path") {
+	StringName::setup();
+
 	ABCX abcx;
 	Vector<int> path = abcx.get_id_path(ABCX::A, ABCX::C);
 	REQUIRE(path.size() == 3);
@@ -307,7 +305,9 @@ TEST_CASE("[Stress][AStar] Find paths") {
 				}
 			}
 		}
-		print_verbose(vformat("Test #%4d: %3d edges, ", test + 1, count));
+
+		std::printf("Test #%4d: %3d edges, ", test + 1, count);
+
 		count = 0;
 		for (int u = 0; u < N; u++) {
 			for (int v = 0; v < N; v++) {
@@ -316,7 +316,8 @@ TEST_CASE("[Stress][AStar] Find paths") {
 				}
 			}
 		}
-		print_verbose(vformat("%3d/%d pairs of reachable points\n", count - N, N * (N - 1)));
+
+		std::printf("%3d/%d pairs of reachable points\n", count - N, N * (N - 1));
 
 		// Check A*'s output.
 		bool match = true;
@@ -327,30 +328,30 @@ TEST_CASE("[Stress][AStar] Find paths") {
 					if (!Math::is_inf(d[u][v])) {
 						// Reachable.
 						if (route.size() == 0) {
-							print_verbose(vformat("From %d to %d: A* did not find a path\n", u, v));
+							std::printf("From %d to %d: A* did not find a path\n", u, v);
 							match = false;
 							goto exit;
 						}
 						float astar_dist = 0;
 						for (int i = 1; i < route.size(); i++) {
 							if (!adj[route[i - 1]][route[i]]) {
-								print_verbose(vformat("From %d to %d: edge (%d, %d) does not exist\n",
-										u, v, route[i - 1], route[i]));
+								std::printf("From %d to %d: edge (%d, %d) does not exist\n",
+										u, v, route[i - 1], route[i]);
 								match = false;
 								goto exit;
 							}
 							astar_dist += p[route[i - 1]].distance_to(p[route[i]]);
 						}
 						if (!Math::is_equal_approx(astar_dist, d[u][v])) {
-							print_verbose(vformat("From %d to %d: Floyd-Warshall gives %.6f, A* gives %.6f\n",
-									u, v, d[u][v], astar_dist));
+							std::printf("From %d to %d: Floyd-Warshall gives %.6f, A* gives %.6f\n",
+									u, v, d[u][v], astar_dist);
 							match = false;
 							goto exit;
 						}
 					} else {
 						// Unreachable.
 						if (route.size() > 0) {
-							print_verbose(vformat("From %d to %d: A* somehow found a nonexistent path\n", u, v));
+							std::printf("From %d to %d: A* somehow found a nonexistent path\n", u, v);
 							match = false;
 							goto exit;
 						}
@@ -362,6 +363,3 @@ TEST_CASE("[Stress][AStar] Find paths") {
 		CHECK_MESSAGE(match, "Found all paths.");
 	}
 }
-} // namespace TestAStar
-
-#endif // TEST_ASTAR_H

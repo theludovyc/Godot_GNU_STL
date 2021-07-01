@@ -35,10 +35,10 @@
 #include "texture_basisu.h"
 
 #ifdef TOOLS_ENABLED
-#include <encoder/basisu_comp.h>
+#include "thirdparty/basis_universal/encoder/basisu_comp.h"
 #endif
 
-#include <transcoder/basisu_transcoder.h>
+#include "thirdparty/basis_universal/transcoder/basisu_transcoder.h"
 
 enum BasisDecompressFormat {
 	BASIS_DECOMPRESS_RG,

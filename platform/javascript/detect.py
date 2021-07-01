@@ -9,7 +9,7 @@ from emscripten_helpers import (
     add_js_externs,
     create_template_zip,
 )
-from methods import get_compiler_version
+from pygen_script.methods import get_compiler_version
 from SCons.Util import WhereIs
 
 

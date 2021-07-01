@@ -3,12 +3,16 @@
 All such functions are invoked in a subprocess on Windows to prevent build flakiness.
 """
 
-from platform_methods import subprocess_main
 from collections import OrderedDict
 
+def generate_default_controller_mappings():
+    dst = "core/input/default_controller_mappings.gen.cpp"
 
-def make_default_controller_mappings(target, source, env):
-    dst = target[0]
+    controller_databases = [
+        "core/input/gamecontrollerdb.txt",
+        "core/input/godotcontrollerdb.txt",
+    ]
+
     g = open(dst, "w")
 
     g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
@@ -17,7 +21,7 @@ def make_default_controller_mappings(target, source, env):
 
     # ensure mappings have a consistent order
     platform_mappings = OrderedDict()
-    for src_path in source:
+    for src_path in controller_databases:
         with open(src_path, "r") as f:
             # read mapping file and skip header
             mapping_file_lines = f.readlines()[2:]
@@ -67,4 +71,4 @@ def make_default_controller_mappings(target, source, env):
 
 
 if __name__ == "__main__":
-    subprocess_main(globals())
+    generate_default_controller_mappings()

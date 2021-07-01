@@ -293,7 +293,7 @@ def convert_custom_modules_path(path):
     err_msg = "Build option 'custom_modules' must %s"
     if not os.path.isdir(path):
         raise ValueError(err_msg % "point to an existing directory.")
-    if path == os.path.realpath("modules"):
+    if path == os.path.realpath("../modules"):
         raise ValueError(err_msg % "be a directory other than built-in `modules` directory.")
     return path
 

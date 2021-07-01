@@ -34,7 +34,7 @@
 
 #include "test_aabb.h"
 #include "test_array.h"
-#include "test_astar.h"
+#include "test_astar.cpp"
 #include "test_basis.h"
 #include "test_class_db.h"
 #include "test_color.h"
@@ -78,7 +78,7 @@
 #include "test_translation.h"
 #include "test_validate_testing.h"
 #include "test_variant.h"
-#include "test_vector.h"
+#include "test_vector.cpp"
 #include "test_xml_parser.h"
 
 #include "modules/modules_tests.gen.h"

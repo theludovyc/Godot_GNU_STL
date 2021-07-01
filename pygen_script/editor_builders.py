@@ -5,11 +5,10 @@ All such functions are invoked in a subprocess on Windows to prevent build flaki
 """
 import os
 import os.path
-from platform_methods import subprocess_main
+import glob
 
 
 def make_doc_header(target, source, env):
-
     dst = target[0]
     g = open(dst, "w", encoding="utf-8")
     buf = ""
@@ -72,11 +71,10 @@ def make_fonts_header(target, source, env):
     g.close()
 
 
-def make_translations_header(target, source, env, category):
+def make_translations_header(target, sourcePath, category):
+    source = glob.glob(sourcePath+"/*.po")
 
-    dst = target[0]
-
-    g = open(dst, "w", encoding="utf-8")
+    g = open(target, "w", encoding="utf-8")
 
     g.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
     g.write("#ifndef _{}_TRANSLATIONS_H\n".format(category.upper()))
@@ -128,7 +126,3 @@ def make_editor_translations_header(target, source, env):
 
 def make_doc_translations_header(target, source, env):
     make_translations_header(target, source, env, "doc")
-
-
-if __name__ == "__main__":
-    subprocess_main(globals())
