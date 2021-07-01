@@ -55,7 +55,7 @@ class MethodBind {
 	uint32_t hint_flags = METHOD_FLAGS_DEFAULT;
 	StringName name;
 	StringName instance_class;
-	Vector<Variant> default_arguments;
+	std::vector<Variant> default_arguments;
 	int default_argument_count = 0;
 	int argument_count = 0;
 
@@ -65,7 +65,7 @@ class MethodBind {
 protected:
 #ifdef DEBUG_METHODS_ENABLED
 	Variant::Type *argument_types = nullptr;
-	Vector<StringName> arg_names;
+	std::vector<StringName> arg_names;
 #endif
 	void _set_const(bool p_const);
 	void _set_returns(bool p_returns);
@@ -78,7 +78,7 @@ protected:
 	void set_argument_count(int p_count) { argument_count = p_count; }
 
 public:
-	_FORCE_INLINE_ const Vector<Variant> &get_default_arguments() const { return default_arguments; }
+	_FORCE_INLINE_ const std::vector<Variant> &get_default_arguments() const { return default_arguments; }
 	_FORCE_INLINE_ int get_default_argument_count() const { return default_argument_count; }
 
 	_FORCE_INLINE_ Variant has_default_argument(int p_arg) const {
@@ -110,8 +110,8 @@ public:
 	PropertyInfo get_argument_info(int p_argument) const;
 	PropertyInfo get_return_info() const;
 
-	void set_argument_names(const Vector<StringName> &p_names); // Set by ClassDB, can't be inferred otherwise.
-	Vector<StringName> get_argument_names() const;
+	void set_argument_names(const std::vector<StringName> &p_names); // Set by ClassDB, can't be inferred otherwise.
+	std::vector<StringName> get_argument_names() const;
 
 	virtual GodotTypeInfo::Metadata get_argument_meta(int p_arg) const = 0;
 #endif
@@ -133,7 +133,7 @@ public:
 	_FORCE_INLINE_ bool has_return() const { return _returns; }
 	virtual bool is_vararg() const { return false; }
 
-	void set_default_arguments(const Vector<Variant> &p_defargs);
+	void set_default_arguments(const std::vector<Variant> &p_defargs);
 
 	uint32_t get_hash() const;
 
@@ -188,11 +188,11 @@ public:
 		Variant::Type *at = memnew_arr(Variant::Type, p_info.arguments.size() + 1);
 		at[0] = p_info.return_val.type;
 		if (p_info.arguments.size()) {
-			Vector<StringName> names;
+			std::vector<StringName> names;
 			names.resize(p_info.arguments.size());
 			for (int i = 0; i < p_info.arguments.size(); i++) {
 				at[i + 1] = p_info.arguments[i].type;
-				names.write[i] = p_info.arguments[i].name;
+				names[i] = p_info.arguments[i].name;
 			}
 
 			set_argument_names(names);

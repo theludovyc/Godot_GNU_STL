@@ -30,6 +30,8 @@
 
 #include "core/crypto/aes_context.h"
 
+//TODO std::vector.data()
+
 Error AESContext::start(Mode p_mode, PackedByteArray p_key, PackedByteArray p_iv) {
 	ERR_FAIL_COND_V_MSG(mode != MODE_MAX, ERR_ALREADY_IN_USE, "AESContext already started. Call 'finish' before starting a new one.");
 	ERR_FAIL_COND_V_MSG(p_mode < 0 || p_mode >= MODE_MAX, ERR_INVALID_PARAMETER, "Invalid mode requested.");
@@ -40,13 +42,13 @@ Error AESContext::start(Mode p_mode, PackedByteArray p_key, PackedByteArray p_iv
 	if (p_mode == MODE_CBC_ENCRYPT || p_mode == MODE_CBC_DECRYPT) {
 		ERR_FAIL_COND_V_MSG(p_iv.size() != 16, ERR_INVALID_PARAMETER, "The initialization vector (IV) must be exactly 16 bytes.");
 		iv.resize(0);
-		iv.append_array(p_iv);
+		iv.insert(iv.end(), p_iv.begin(), p_iv.end());
 	}
 	// Encryption/decryption key.
 	if (p_mode == MODE_CBC_ENCRYPT || p_mode == MODE_ECB_ENCRYPT) {
-		ctx.set_encode_key(p_key.ptr(), key_bits);
+		ctx.set_encode_key(p_key.data(), key_bits);
 	} else {
-		ctx.set_decode_key(p_key.ptr(), key_bits);
+		ctx.set_decode_key(p_key.data(), key_bits);
 	}
 	mode = p_mode;
 	return OK;
@@ -58,8 +60,8 @@ PackedByteArray AESContext::update(PackedByteArray p_src) {
 	ERR_FAIL_COND_V_MSG(len % 16, PackedByteArray(), "The number of bytes to be encrypted must be multiple of 16. Add padding if needed");
 	PackedByteArray out;
 	out.resize(len);
-	const uint8_t *src_ptr = p_src.ptr();
-	uint8_t *out_ptr = out.ptrw();
+	const uint8_t *src_ptr = p_src.data();
+	uint8_t *out_ptr = out.data();
 	switch (mode) {
 		case MODE_ECB_ENCRYPT: {
 			for (int i = 0; i < len; i += 16) {
@@ -74,11 +76,11 @@ PackedByteArray AESContext::update(PackedByteArray p_src) {
 			}
 		} break;
 		case MODE_CBC_ENCRYPT: {
-			Error err = ctx.encrypt_cbc(len, iv.ptrw(), p_src.ptr(), out.ptrw());
+			Error err = ctx.encrypt_cbc(len, iv.data(), p_src.data(), out.data());
 			ERR_FAIL_COND_V(err != OK, PackedByteArray());
 		} break;
 		case MODE_CBC_DECRYPT: {
-			Error err = ctx.decrypt_cbc(len, iv.ptrw(), p_src.ptr(), out.ptrw());
+			Error err = ctx.decrypt_cbc(len, iv.data(), p_src.data(), out.data());
 			ERR_FAIL_COND_V(err != OK, PackedByteArray());
 		} break;
 		default:
@@ -90,7 +92,7 @@ PackedByteArray AESContext::update(PackedByteArray p_src) {
 PackedByteArray AESContext::get_iv_state() {
 	ERR_FAIL_COND_V_MSG(mode != MODE_CBC_ENCRYPT && mode != MODE_CBC_DECRYPT, PackedByteArray(), "Calling 'get_iv_state' only makes sense when the context is started in CBC mode.");
 	PackedByteArray out;
-	out.append_array(iv);
+	out.insert(out.end(), iv.begin(), iv.end());
 	return out;
 }
 

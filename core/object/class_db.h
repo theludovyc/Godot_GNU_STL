@@ -49,7 +49,7 @@
 
 struct MethodDefinition {
 	StringName name;
-	Vector<StringName> args;
+	std::vector<StringName> args;
 	MethodDefinition() {}
 	MethodDefinition(const char *p_name) :
 			name(p_name) {}
@@ -311,7 +311,7 @@ public:
 	}
 
 	template <class M>
-	static MethodBind *bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info = MethodInfo(), const Vector<Variant> &p_default_args = Vector<Variant>(), bool p_return_nil_is_variant = true) {
+	static MethodBind *bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info = MethodInfo(), const std::vector<Variant> &p_default_args = std::vector<Variant>(), bool p_return_nil_is_variant = true) {
 		GLOBAL_LOCK_FUNCTION;
 
 		MethodBind *bind = create_vararg_method_bind(p_method, p_info, p_return_nil_is_variant);
