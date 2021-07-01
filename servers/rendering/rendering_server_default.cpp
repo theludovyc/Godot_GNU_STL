@@ -137,7 +137,7 @@ void RenderingServerDefault::_draw(bool p_swap_buffers, double frame_step) {
 	RS::get_singleton()->emit_signal("frame_post_draw");
 
 	if (RSG::storage->get_captured_timestamps_count()) {
-		Vector<FrameProfileArea> new_profile;
+		std::vector<FrameProfileArea> new_profile;
 		if (RSG::storage->capturing_timestamps) {
 			new_profile.resize(RSG::storage->get_captured_timestamps_count());
 		}
@@ -280,7 +280,7 @@ uint64_t RenderingServerDefault::get_frame_profile_frame() {
 	return frame_profile_frame;
 }
 
-Vector<RenderingServer::FrameProfileArea> RenderingServerDefault::get_frame_profile() {
+std::vector<RenderingServer::FrameProfileArea> RenderingServerDefault::get_frame_profile() {
 	return frame_profile;
 }
 

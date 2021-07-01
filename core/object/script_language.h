@@ -132,7 +132,7 @@ public:
 	virtual Error reload(bool p_keep_state = false) = 0;
 
 #ifdef TOOLS_ENABLED
-	virtual const Vector<DocData::ClassDoc> &get_documentation() const = 0;
+	virtual const std::vector<DocData::ClassDoc> &get_documentation() const = 0;
 #endif // TOOLS_ENABLED
 
 	virtual bool has_method(const StringName &p_method) const = 0;
@@ -159,7 +159,7 @@ public:
 
 	virtual bool is_placeholder_fallback_enabled() const { return false; }
 
-	virtual const Vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const = 0;
+	virtual const std::vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const = 0;
 
 	Script() {}
 };
@@ -200,7 +200,7 @@ public:
 	virtual void property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid);
 	virtual Variant property_get_fallback(const StringName &p_name, bool *r_valid);
 
-	virtual const Vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const = 0;
+	virtual const std::vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const = 0;
 
 	virtual ScriptLanguage *get_language() = 0;
 	virtual ~ScriptInstance();
@@ -344,7 +344,7 @@ public:
 	virtual void debug_get_globals(List<String> *p_globals, List<Variant> *p_values, int p_max_subitems = -1, int p_max_depth = -1) = 0;
 	virtual String debug_parse_stack_level_expression(int p_level, const String &p_expression, int p_max_subitems = -1, int p_max_depth = -1) = 0;
 
-	virtual Vector<StackInfo> debug_get_current_stack_info() { return Vector<StackInfo>(); }
+	virtual std::vector<StackInfo> debug_get_current_stack_info() { return std::vector<StackInfo>(); }
 
 	virtual void reload_all_scripts() = 0;
 	virtual void reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) = 0;
@@ -418,7 +418,7 @@ public:
 	virtual void property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid = nullptr);
 	virtual Variant property_get_fallback(const StringName &p_name, bool *r_valid = nullptr);
 
-	virtual const Vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const { return Vector<MultiplayerAPI::RPCConfig>(); }
+	virtual const std::vector<MultiplayerAPI::RPCConfig> get_rpc_methods() const { return std::vector<MultiplayerAPI::RPCConfig>(); }
 
 	PlaceHolderScriptInstance(ScriptLanguage *p_language, Ref<Script> p_script, Object *p_owner);
 	~PlaceHolderScriptInstance();

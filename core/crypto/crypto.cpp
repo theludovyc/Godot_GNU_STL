@@ -111,8 +111,8 @@ PackedByteArray Crypto::hmac_digest(HashingContext::HashType p_hash_type, Packed
 // Compares two HMACS for equality without leaking timing information in order to prevent timing attacks.
 // @see: https://paragonie.com/blog/2015/11/preventing-timing-attacks-on-string-comparison-with-double-hmac-strategy
 bool Crypto::constant_time_compare(PackedByteArray p_trusted, PackedByteArray p_received) {
-	const uint8_t *t = p_trusted.ptr();
-	const uint8_t *r = p_received.ptr();
+	const uint8_t *t = p_trusted.data();
+	const uint8_t *r = p_received.data();
 	int tlen = p_trusted.size();
 	int rlen = p_received.size();
 	// If the lengths are different then nothing else matters.

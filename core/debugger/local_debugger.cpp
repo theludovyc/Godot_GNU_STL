@@ -43,7 +43,7 @@ struct LocalDebugger::ScriptsProfiler {
 
 	float frame_time = 0;
 	uint64_t idle_accum = 0;
-	Vector<ScriptLanguage::ProfilingInfo> pinfo;
+	std::vector<ScriptLanguage::ProfilingInfo> pinfo;
 
 	void toggle(bool p_enable, const Array &p_opts) {
 		if (p_enable) {
@@ -78,14 +78,14 @@ struct LocalDebugger::ScriptsProfiler {
 		int ofs = 0;
 		for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 			if (p_accumulated) {
-				ofs += ScriptServer::get_language(i)->profiling_get_accumulated_data(&pinfo.write[ofs], pinfo.size() - ofs);
+				ofs += ScriptServer::get_language(i)->profiling_get_accumulated_data(&pinfo[ofs], pinfo.size() - ofs);
 			} else {
-				ofs += ScriptServer::get_language(i)->profiling_get_frame_data(&pinfo.write[ofs], pinfo.size() - ofs);
+				ofs += ScriptServer::get_language(i)->profiling_get_frame_data(&pinfo[ofs], pinfo.size() - ofs);
 			}
 		}
 
 		SortArray<ScriptLanguage::ProfilingInfo, ProfileInfoSort> sort;
-		sort.sort(pinfo.ptrw(), ofs);
+		sort.sort(pinfo.data(), ofs);
 
 		// compute total script frame time
 		uint64_t script_time_us = 0;
@@ -318,7 +318,7 @@ void LocalDebugger::debug(bool p_can_continue, bool p_is_error_breakpoint) {
 
 void LocalDebugger::print_variables(const List<String> &names, const List<Variant> &values, const String &variable_prefix) {
 	String value;
-	Vector<String> value_lines;
+	std::vector<String> value_lines;
 	const List<Variant>::Element *V = values.front();
 	for (const List<String>::Element *E = names.front(); E; E = E->next()) {
 		value = String(V->get());

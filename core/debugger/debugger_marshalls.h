@@ -63,7 +63,7 @@ struct DebuggerMarshalls {
 	};
 
 	struct NetworkProfilerFrame {
-		Vector<MultiplayerNodeInfo> infos;
+		std::vector<MultiplayerNodeInfo> infos;
 
 		Array serialize();
 		bool deserialize(const Array &p_arr);
@@ -106,7 +106,7 @@ struct DebuggerMarshalls {
 		float physics_frame_time = 0;
 		float script_time = 0;
 		List<ServerInfo> servers;
-		Vector<ScriptFunctionInfo> script_functions;
+		std::vector<ScriptFunctionInfo> script_functions;
 
 		Array serialize();
 		bool deserialize(const Array &p_arr);
@@ -140,7 +140,7 @@ struct DebuggerMarshalls {
 		String error;
 		String error_descr;
 		bool warning = false;
-		Vector<ScriptLanguage::StackInfo> callstack;
+		std::vector<ScriptLanguage::StackInfo> callstack;
 
 		Array serialize();
 		bool deserialize(const Array &p_arr);
@@ -149,7 +149,7 @@ struct DebuggerMarshalls {
 	// Visual Profiler
 	struct VisualProfilerFrame {
 		uint64_t frame_number = 0;
-		Vector<RS::FrameProfileArea> areas;
+		std::vector<RS::FrameProfileArea> areas;
 
 		Array serialize();
 		bool deserialize(const Array &p_arr);

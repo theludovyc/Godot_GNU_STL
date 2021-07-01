@@ -102,12 +102,12 @@ bool DebuggerMarshalls::NetworkProfilerFrame::deserialize(const Array &p_arr) {
 	infos.resize(size);
 	int idx = 1;
 	for (uint32_t i = 0; i < size / 6; ++i) {
-		infos.write[i].node = uint64_t(p_arr[idx]);
-		infos.write[i].node_path = p_arr[idx + 1];
-		infos.write[i].incoming_rpc = p_arr[idx + 2];
-		infos.write[i].incoming_rset = p_arr[idx + 3];
-		infos.write[i].outgoing_rpc = p_arr[idx + 4];
-		infos.write[i].outgoing_rset = p_arr[idx + 5];
+		infos[i].node = uint64_t(p_arr[idx]);
+		infos[i].node_path = p_arr[idx + 1];
+		infos[i].incoming_rpc = p_arr[idx + 2];
+		infos[i].incoming_rset = p_arr[idx + 3];
+		infos[i].outgoing_rpc = p_arr[idx + 4];
+		infos[i].outgoing_rset = p_arr[idx + 5];
 	}
 	CHECK_END(p_arr, idx, "NetworkProfilerFrame");
 	return true;
@@ -262,7 +262,7 @@ Array DebuggerMarshalls::OutputError::serialize() {
 	arr.push_back(error_descr);
 	arr.push_back(warning);
 	unsigned int size = callstack.size();
-	const ScriptLanguage::StackInfo *r = callstack.ptr();
+	const ScriptLanguage::StackInfo *r = callstack.data();
 	arr.push_back(size * 3);
 	for (int i = 0; i < callstack.size(); i++) {
 		arr.push_back(r[i].file);
@@ -288,7 +288,7 @@ bool DebuggerMarshalls::OutputError::deserialize(const Array &p_arr) {
 	CHECK_SIZE(p_arr, stack_size, "OutputError");
 	int idx = 11;
 	callstack.resize(stack_size / 3);
-	ScriptLanguage::StackInfo *w = callstack.ptrw();
+	ScriptLanguage::StackInfo *w = callstack.data();
 	for (unsigned int i = 0; i < stack_size / 3; i++) {
 		w[i].file = p_arr[idx];
 		w[i].func = p_arr[idx + 1];
@@ -318,7 +318,7 @@ bool DebuggerMarshalls::VisualProfilerFrame::deserialize(const Array &p_arr) {
 	CHECK_SIZE(p_arr, size, "VisualProfilerFrame");
 	int idx = 2;
 	areas.resize(size / 3);
-	RS::FrameProfileArea *w = areas.ptrw();
+	RS::FrameProfileArea *w = areas.data();
 	for (int i = 0; i < size / 3; i++) {
 		w[i].name = p_arr[idx];
 		w[i].cpu_msec = p_arr[idx + 1];

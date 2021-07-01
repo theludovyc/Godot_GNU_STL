@@ -32,6 +32,8 @@
 
 #include "core/crypto/crypto_core.h"
 
+//TODO std::vector.data()
+
 Error HashingContext::start(HashType p_type) {
 	ERR_FAIL_COND_V(ctx != nullptr, ERR_ALREADY_IN_USE);
 	_create_ctx(p_type);
@@ -51,7 +53,7 @@ Error HashingContext::update(PackedByteArray p_chunk) {
 	ERR_FAIL_COND_V(ctx == nullptr, ERR_UNCONFIGURED);
 	size_t len = p_chunk.size();
 	ERR_FAIL_COND_V(len == 0, FAILED);
-	const uint8_t *r = p_chunk.ptr();
+	const uint8_t *r = p_chunk.data();
 	switch (type) {
 		case HASH_MD5:
 			return ((CryptoCore::MD5Context *)ctx)->update(&r[0], len);
@@ -70,15 +72,15 @@ PackedByteArray HashingContext::finish() {
 	switch (type) {
 		case HASH_MD5:
 			out.resize(16);
-			err = ((CryptoCore::MD5Context *)ctx)->finish(out.ptrw());
+			err = ((CryptoCore::MD5Context *)ctx)->finish(out.data());
 			break;
 		case HASH_SHA1:
 			out.resize(20);
-			err = ((CryptoCore::SHA1Context *)ctx)->finish(out.ptrw());
+			err = ((CryptoCore::SHA1Context *)ctx)->finish(out.data());
 			break;
 		case HASH_SHA256:
 			out.resize(32);
-			err = ((CryptoCore::SHA256Context *)ctx)->finish(out.ptrw());
+			err = ((CryptoCore::SHA256Context *)ctx)->finish(out.data());
 			break;
 	}
 	_delete_ctx();

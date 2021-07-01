@@ -48,7 +48,7 @@ class ScriptDebugger {
 	Map<int, Set<StringName>> breakpoints;
 
 	ScriptLanguage *break_lang = nullptr;
-	Vector<StackInfo> error_stack_info;
+	std::vector<StackInfo> error_stack_info;
 
 public:
 	void set_lines_left(int p_left);
@@ -72,8 +72,8 @@ public:
 	void debug(ScriptLanguage *p_lang, bool p_can_continue = true, bool p_is_error_breakpoint = false);
 	ScriptLanguage *get_break_language() const;
 
-	void send_error(const String &p_func, const String &p_file, int p_line, const String &p_err, const String &p_descr, ErrorHandlerType p_type, const Vector<StackInfo> &p_stack_info);
-	Vector<StackInfo> get_error_stack_info() const;
+	void send_error(const String &p_func, const String &p_file, int p_line, const String &p_err, const String &p_descr, ErrorHandlerType p_type, const std::vector<StackInfo> &p_stack_info);
+	std::vector<StackInfo> get_error_stack_info() const;
 	ScriptDebugger() {}
 };
 

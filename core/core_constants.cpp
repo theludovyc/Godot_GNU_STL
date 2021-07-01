@@ -60,7 +60,7 @@ struct _CoreConstant {
 #endif
 };
 
-static Vector<_CoreConstant> _global_constants;
+static std::vector<_CoreConstant> _global_constants;
 
 #ifdef DEBUG_METHODS_ENABLED
 

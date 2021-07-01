@@ -65,9 +65,9 @@ public:
 	};
 
 	int bandwidth_in_ptr = 0;
-	Vector<BandwidthFrame> bandwidth_in;
+	std::vector<BandwidthFrame> bandwidth_in;
 	int bandwidth_out_ptr = 0;
-	Vector<BandwidthFrame> bandwidth_out;
+	std::vector<BandwidthFrame> bandwidth_out;
 	uint64_t last_bandwidth_time = 0;
 
 	Map<ObjectID, NodeInfo> multiplayer_node_data;
@@ -75,7 +75,7 @@ public:
 
 	NetworkProfiler() {}
 
-	int bandwidth_usage(const Vector<BandwidthFrame> &p_buffer, int p_pointer) {
+	int bandwidth_usage(const std::vector<BandwidthFrame> &p_buffer, int p_pointer) {
 		ERR_FAIL_COND_V(p_buffer.size() == 0, 0);
 		int total_bandwidth = 0;
 
@@ -119,12 +119,12 @@ public:
 			bandwidth_in_ptr = 0;
 			bandwidth_in.resize(16384); // ~128kB
 			for (int i = 0; i < bandwidth_in.size(); ++i) {
-				bandwidth_in.write[i].packet_size = -1;
+				bandwidth_in[i].packet_size = -1;
 			}
 			bandwidth_out_ptr = 0;
 			bandwidth_out.resize(16384); // ~128kB
 			for (int i = 0; i < bandwidth_out.size(); ++i) {
-				bandwidth_out.write[i].packet_size = -1;
+				bandwidth_out[i].packet_size = -1;
 			}
 		}
 	}
@@ -153,12 +153,12 @@ public:
 			int time = p_data[2];
 			int size = p_data[3];
 			if (inout == "in") {
-				bandwidth_in.write[bandwidth_in_ptr].timestamp = time;
-				bandwidth_in.write[bandwidth_in_ptr].packet_size = size;
+				bandwidth_in[bandwidth_in_ptr].timestamp = time;
+				bandwidth_in[bandwidth_in_ptr].packet_size = size;
 				bandwidth_in_ptr = (bandwidth_in_ptr + 1) % bandwidth_in.size();
 			} else if (inout == "out") {
-				bandwidth_out.write[bandwidth_out_ptr].timestamp = time;
-				bandwidth_out.write[bandwidth_out_ptr].packet_size = size;
+				bandwidth_out[bandwidth_out_ptr].timestamp = time;
+				bandwidth_out[bandwidth_out_ptr].packet_size = size;
 				bandwidth_out_ptr = (bandwidth_out_ptr + 1) % bandwidth_out.size();
 			}
 		}
@@ -196,8 +196,8 @@ struct RemoteDebugger::ScriptsProfiler {
 			return A->total_time < B->total_time;
 		}
 	};
-	Vector<ScriptLanguage::ProfilingInfo> info;
-	Vector<ScriptLanguage::ProfilingInfo *> ptrs;
+	std::vector<ScriptLanguage::ProfilingInfo> info;
+	std::vector<ScriptLanguage::ProfilingInfo *> ptrs;
 	Map<StringName, int> sig_map;
 	int max_frame_functions = 16;
 
@@ -217,22 +217,22 @@ struct RemoteDebugger::ScriptsProfiler {
 		}
 	}
 
-	void write_frame_data(Vector<FunctionInfo> &r_funcs, uint64_t &r_total, bool p_accumulated) {
+	void write_frame_data(std::vector<FunctionInfo> &r_funcs, uint64_t &r_total, bool p_accumulated) {
 		int ofs = 0;
 		for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 			if (p_accumulated) {
-				ofs += ScriptServer::get_language(i)->profiling_get_accumulated_data(&info.write[ofs], info.size() - ofs);
+				ofs += ScriptServer::get_language(i)->profiling_get_accumulated_data(&info[ofs], info.size() - ofs);
 			} else {
-				ofs += ScriptServer::get_language(i)->profiling_get_frame_data(&info.write[ofs], info.size() - ofs);
+				ofs += ScriptServer::get_language(i)->profiling_get_frame_data(&info[ofs], info.size() - ofs);
 			}
 		}
 
 		for (int i = 0; i < ofs; i++) {
-			ptrs.write[i] = &info.write[i];
+			ptrs[i] = &info[i];
 		}
 
 		SortArray<ScriptLanguage::ProfilingInfo *, ProfileInfoSort> sa;
-		sa.sort(ptrs.ptrw(), ofs);
+		sa.sort(ptrs.data(), ofs);
 
 		int to_send = MIN(ofs, max_frame_functions);
 
@@ -253,7 +253,7 @@ struct RemoteDebugger::ScriptsProfiler {
 		// Send frame, script time, functions information then
 		r_funcs.resize(to_send);
 
-		FunctionInfo *w = r_funcs.ptrw();
+		FunctionInfo *w = r_funcs.data();
 		for (int i = 0; i < to_send; i++) {
 			if (sig_map.has(ptrs[i]->signature)) {
 				w[i].sig_id = sig_map[ptrs[i]->signature];
@@ -359,14 +359,14 @@ struct RemoteDebugger::VisualProfiler {
 	void add(const Array &p_data) {}
 
 	void tick(float p_frame_time, float p_idle_time, float p_physics_time, float p_physics_frame_time) {
-		Vector<RS::FrameProfileArea> profile_areas = RS::get_singleton()->get_frame_profile();
+		std::vector<RS::FrameProfileArea> profile_areas = RS::get_singleton()->get_frame_profile();
 		DebuggerMarshalls::VisualProfilerFrame frame;
 		if (!profile_areas.size()) {
 			return;
 		}
 
 		frame.frame_number = RS::get_singleton()->get_frame_profile_frame();
-		frame.areas.append_array(profile_areas);
+		frame.areas.insert(frame.areas.begin(), profile_areas.begin(), profile_areas.end());
 		EngineDebugger::get_singleton()->send_message("visual:profile_frame", frame.serialize());
 	}
 };
@@ -465,7 +465,7 @@ void RemoteDebugger::_err_handler(void *p_this, const char *p_func, const char *
 		return;
 	}
 
-	Vector<ScriptLanguage::StackInfo> si;
+	std::vector<ScriptLanguage::StackInfo> si;
 
 	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 		si = ScriptServer::get_language(i)->debug_get_current_stack_info();
@@ -548,13 +548,13 @@ void RemoteDebugger::flush_output() {
 
 	if (output_strings.size()) {
 		// Join output strings so we generate less messages.
-		Vector<String> joined_log_strings;
-		Vector<String> strings;
-		Vector<int> types;
+		std::vector<String> joined_log_strings;
+		std::vector<String> strings;
+		std::vector<int> types;
 		for (int i = 0; i < output_strings.size(); i++) {
 			const OutputString &output_string = output_strings[i];
 			if (output_string.type == MESSAGE_TYPE_ERROR) {
-				if (!joined_log_strings.is_empty()) {
+				if (!joined_log_strings.empty()) {
 					strings.push_back(String("\n").join(joined_log_strings));
 					types.push_back(MESSAGE_TYPE_LOG);
 					joined_log_strings.clear();
@@ -566,7 +566,7 @@ void RemoteDebugger::flush_output() {
 			}
 		}
 
-		if (!joined_log_strings.is_empty()) {
+		if (!joined_log_strings.empty()) {
 			strings.push_back(String("\n").join(joined_log_strings));
 			types.push_back(MESSAGE_TYPE_LOG);
 		}
@@ -618,7 +618,7 @@ void RemoteDebugger::send_error(const String &p_func, const String &p_file, int 
 	oe.min = (time / 60000) % 60;
 	oe.sec = (time / 1000) % 60;
 	oe.msec = time % 1000;
-	oe.callstack.append_array(script_debugger->get_error_stack_info());
+	oe.callstack.insert(oe.callstack.end(), script_debugger->get_error_stack_info().begin(), script_debugger->get_error_stack_info().end());
 
 	if (flushing && Thread::get_caller_id() == flush_thread) { // Can't handle recursive errors during flush.
 		return;

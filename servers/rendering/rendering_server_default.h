@@ -73,7 +73,7 @@ class RenderingServerDefault : public RenderingServer {
 	static void _changes_changed() {}
 
 	uint64_t frame_profile_frame;
-	Vector<FrameProfileArea> frame_profile;
+	std::vector<FrameProfileArea> frame_profile;
 
 	float frame_setup_time = 0;
 
@@ -188,15 +188,15 @@ public:
 
 	//these go pass-through, as they can be called from any thread
 	FUNCRIDTEX1(texture_2d, const Ref<Image> &)
-	FUNCRIDTEX2(texture_2d_layered, const Vector<Ref<Image>> &, TextureLayeredType)
-	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const Vector<Ref<Image>> &)
+	FUNCRIDTEX2(texture_2d_layered, const std::vector<Ref<Image>> &, TextureLayeredType)
+	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const std::vector<Ref<Image>> &)
 	FUNCRIDTEX1(texture_proxy, RID)
 
 	//goes pass-through
 	FUNC3(texture_2d_update_immediate, RID, const Ref<Image> &, int)
 	//these go through command queue if they are in another thread
 	FUNC3(texture_2d_update, RID, const Ref<Image> &, int)
-	FUNC2(texture_3d_update, RID, const Vector<Ref<Image>> &)
+	FUNC2(texture_3d_update, RID, const std::vector<Ref<Image>> &)
 	FUNC2(texture_proxy_update, RID, RID)
 
 	//these also go pass-through
@@ -206,7 +206,7 @@ public:
 
 	FUNC1RC(Ref<Image>, texture_2d_get, RID)
 	FUNC2RC(Ref<Image>, texture_2d_layer_get, RID, int)
-	FUNC1RC(Vector<Ref<Image>>, texture_3d_get, RID)
+	FUNC1RC(std::vector<Ref<Image>>, texture_3d_get, RID)
 
 	FUNC2(texture_replace, RID, RID)
 
@@ -255,7 +255,7 @@ public:
 
 	/* MESH API */
 
-	virtual RID mesh_create_from_surfaces(const Vector<SurfaceData> &p_surfaces, int p_blend_shape_count = 0) override {
+	virtual RID mesh_create_from_surfaces(const std::vector<SurfaceData> &p_surfaces, int p_blend_shape_count = 0) override {
 		RID mesh = RSG::storage->mesh_allocate();
 
 		if (Thread::get_caller_id() == server_thread || RSG::storage->can_create_resources_async()) {
@@ -290,9 +290,9 @@ public:
 	FUNC2(mesh_set_blend_shape_mode, RID, BlendShapeMode)
 	FUNC1RC(BlendShapeMode, mesh_get_blend_shape_mode, RID)
 
-	FUNC4(mesh_surface_update_vertex_region, RID, int, int, const Vector<uint8_t> &)
-	FUNC4(mesh_surface_update_attribute_region, RID, int, int, const Vector<uint8_t> &)
-	FUNC4(mesh_surface_update_skin_region, RID, int, int, const Vector<uint8_t> &)
+	FUNC4(mesh_surface_update_vertex_region, RID, int, int, const std::vector<uint8_t> &)
+	FUNC4(mesh_surface_update_attribute_region, RID, int, int, const std::vector<uint8_t> &)
+	FUNC4(mesh_surface_update_skin_region, RID, int, int, const std::vector<uint8_t> &)
 
 	FUNC3(mesh_surface_set_material, RID, int, RID)
 	FUNC2RC(RID, mesh_surface_get_material, RID, int)
@@ -329,8 +329,8 @@ public:
 	FUNC2RC(Color, multimesh_instance_get_color, RID, int)
 	FUNC2RC(Color, multimesh_instance_get_custom_data, RID, int)
 
-	FUNC2(multimesh_set_buffer, RID, const Vector<float> &)
-	FUNC1RC(Vector<float>, multimesh_get_buffer, RID)
+	FUNC2(multimesh_set_buffer, RID, const std::vector<float> &)
+	FUNC1RC(std::vector<float>, multimesh_get_buffer, RID)
 
 	FUNC2(multimesh_set_visible_instances, RID, int)
 	FUNC1RC(int, multimesh_get_visible_instances, RID)
@@ -407,14 +407,14 @@ public:
 
 	FUNCRIDSPLIT(voxel_gi)
 
-	FUNC8(voxel_gi_allocate_data, RID, const Transform3D &, const AABB &, const Vector3i &, const Vector<uint8_t> &, const Vector<uint8_t> &, const Vector<uint8_t> &, const Vector<int> &)
+	FUNC8(voxel_gi_allocate_data, RID, const Transform3D &, const AABB &, const Vector3i &, const std::vector<uint8_t> &, const std::vector<uint8_t> &, const std::vector<uint8_t> &, const std::vector<int> &)
 
 	FUNC1RC(AABB, voxel_gi_get_bounds, RID)
 	FUNC1RC(Vector3i, voxel_gi_get_octree_size, RID)
-	FUNC1RC(Vector<uint8_t>, voxel_gi_get_octree_cells, RID)
-	FUNC1RC(Vector<uint8_t>, voxel_gi_get_data_cells, RID)
-	FUNC1RC(Vector<uint8_t>, voxel_gi_get_distance_field, RID)
-	FUNC1RC(Vector<int>, voxel_gi_get_level_counts, RID)
+	FUNC1RC(std::vector<uint8_t>, voxel_gi_get_octree_cells, RID)
+	FUNC1RC(std::vector<uint8_t>, voxel_gi_get_data_cells, RID)
+	FUNC1RC(std::vector<uint8_t>, voxel_gi_get_distance_field, RID)
+	FUNC1RC(std::vector<int>, voxel_gi_get_level_counts, RID)
 	FUNC1RC(Transform3D, voxel_gi_get_to_cell_xform, RID)
 
 	FUNC2(voxel_gi_set_dynamic_range, RID, float)
@@ -483,7 +483,7 @@ public:
 	FUNC2(particles_set_fractional_delta, RID, bool)
 	FUNC1R(bool, particles_is_inactive, RID)
 	FUNC3(particles_set_trails, RID, bool, float)
-	FUNC2(particles_set_trail_bind_poses, RID, const Vector<Transform3D> &)
+	FUNC2(particles_set_trail_bind_poses, RID, const std::vector<Transform3D> &)
 
 	FUNC1(particles_request_process, RID)
 	FUNC1(particles_restart, RID)
@@ -649,7 +649,7 @@ public:
 	FUNC10(environment_set_ssao, RID, bool, float, float, float, float, float, float, float, float)
 	FUNC6(environment_set_ssao_quality, EnvironmentSSAOQuality, bool, float, int, float, float)
 
-	FUNC11(environment_set_glow, RID, bool, Vector<float>, float, float, float, float, EnvironmentGlowBlendMode, float, float, float)
+	FUNC11(environment_set_glow, RID, bool, std::vector<float>, float, float, float, float, EnvironmentGlowBlendMode, float, float, float)
 	FUNC1(environment_glow_set_use_bicubic_upscale, bool)
 	FUNC1(environment_glow_set_use_high_quality, bool)
 
@@ -723,9 +723,9 @@ public:
 	FUNC2(instance_set_visibility_parent, RID, RID)
 
 	// don't use these in a game!
-	FUNC2RC(Vector<ObjectID>, instances_cull_aabb, const AABB &, RID)
-	FUNC3RC(Vector<ObjectID>, instances_cull_ray, const Vector3 &, const Vector3 &, RID)
-	FUNC2RC(Vector<ObjectID>, instances_cull_convex, const Vector<Plane> &, RID)
+	FUNC2RC(std::vector<ObjectID>, instances_cull_aabb, const AABB &, RID)
+	FUNC3RC(std::vector<ObjectID>, instances_cull_ray, const Vector3 &, const Vector3 &, RID)
+	FUNC2RC(std::vector<ObjectID>, instances_cull_convex, const std::vector<Plane> &, RID)
 
 	FUNC3(instance_geometry_set_flag, RID, InstanceFlags, bool)
 	FUNC2(instance_geometry_set_cast_shadows_setting, RID, ShadowCastingSetting)
@@ -740,7 +740,7 @@ public:
 	FUNC2RC(Variant, instance_geometry_get_shader_parameter_default_value, RID, const StringName &)
 	FUNC2C(instance_geometry_get_shader_parameter_list, RID, List<PropertyInfo> *)
 
-	FUNC3R(TypedArray<Image>, bake_render_uv2, RID, const Vector<RID> &, const Size2i &)
+	FUNC3R(TypedArray<Image>, bake_render_uv2, RID, const std::vector<RID> &, const Size2i &)
 
 	FUNC1(gi_set_use_half_resolution, bool)
 
@@ -786,16 +786,16 @@ public:
 	FUNC2(canvas_item_set_draw_behind_parent, RID, bool)
 
 	FUNC5(canvas_item_add_line, RID, const Point2 &, const Point2 &, const Color &, float)
-	FUNC5(canvas_item_add_polyline, RID, const Vector<Point2> &, const Vector<Color> &, float, bool)
-	FUNC4(canvas_item_add_multiline, RID, const Vector<Point2> &, const Vector<Color> &, float)
+	FUNC5(canvas_item_add_polyline, RID, const std::vector<Point2> &, const std::vector<Color> &, float, bool)
+	FUNC4(canvas_item_add_multiline, RID, const std::vector<Point2> &, const std::vector<Color> &, float)
 	FUNC3(canvas_item_add_rect, RID, const Rect2 &, const Color &)
 	FUNC4(canvas_item_add_circle, RID, const Point2 &, float, const Color &)
 	FUNC6(canvas_item_add_texture_rect, RID, const Rect2 &, RID, bool, const Color &, bool)
 	FUNC7(canvas_item_add_texture_rect_region, RID, const Rect2 &, RID, const Rect2 &, const Color &, bool, bool)
 	FUNC10(canvas_item_add_nine_patch, RID, const Rect2 &, const Rect2 &, RID, const Vector2 &, const Vector2 &, NinePatchAxisMode, NinePatchAxisMode, bool, const Color &)
-	FUNC6(canvas_item_add_primitive, RID, const Vector<Point2> &, const Vector<Color> &, const Vector<Point2> &, RID, float)
-	FUNC5(canvas_item_add_polygon, RID, const Vector<Point2> &, const Vector<Color> &, const Vector<Point2> &, RID)
-	FUNC9(canvas_item_add_triangle_array, RID, const Vector<int> &, const Vector<Point2> &, const Vector<Color> &, const Vector<Point2> &, const Vector<int> &, const Vector<float> &, RID, int)
+	FUNC6(canvas_item_add_primitive, RID, const std::vector<Point2> &, const std::vector<Color> &, const std::vector<Point2> &, RID, float)
+	FUNC5(canvas_item_add_polygon, RID, const std::vector<Point2> &, const std::vector<Color> &, const std::vector<Point2> &, RID)
+	FUNC9(canvas_item_add_triangle_array, RID, const std::vector<int> &, const std::vector<Point2> &, const std::vector<Color> &, const std::vector<Point2> &, const std::vector<int> &, const std::vector<float> &, RID, int)
 	FUNC5(canvas_item_add_mesh, RID, const RID &, const Transform2D &, const Color &, RID)
 	FUNC3(canvas_item_add_multimesh, RID, RID, RID)
 	FUNC3(canvas_item_add_particles, RID, RID, RID)
@@ -855,7 +855,7 @@ public:
 	FUNC2(canvas_light_occluder_set_light_mask, RID, int)
 
 	FUNCRIDSPLIT(canvas_occluder_polygon)
-	FUNC3(canvas_occluder_polygon_set_shape, RID, const Vector<Vector2> &, bool)
+	FUNC3(canvas_occluder_polygon_set_shape, RID, const std::vector<Vector2> &, bool)
 
 	FUNC2(canvas_occluder_polygon_set_cull_mode, RID, CanvasOccluderPolygonCullMode)
 
@@ -871,7 +871,7 @@ public:
 
 	FUNC3(global_variable_add, const StringName &, GlobalVariableType, const Variant &)
 	FUNC1(global_variable_remove, const StringName &)
-	FUNC0RC(Vector<StringName>, global_variable_get_list)
+	FUNC0RC(std::vector<StringName>, global_variable_get_list)
 	FUNC2(global_variable_set, const StringName &, const Variant &)
 	FUNC2(global_variable_set_override, const StringName &, const Variant &)
 	FUNC1RC(GlobalVariableType, global_variable_get_type, const StringName &)
@@ -918,7 +918,7 @@ public:
 	virtual String get_video_adapter_vendor() const override;
 
 	virtual void set_frame_profiling_enabled(bool p_enable) override;
-	virtual Vector<FrameProfileArea> get_frame_profile() override;
+	virtual std::vector<FrameProfileArea> get_frame_profile() override;
 	virtual uint64_t get_frame_profile_frame() override;
 
 	virtual RID get_test_cube() override;
