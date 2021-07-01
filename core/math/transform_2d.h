@@ -118,8 +118,8 @@ struct Transform2D {
 	_FORCE_INLINE_ Vector2 xform_inv(const Vector2 &p_vec) const;
 	_FORCE_INLINE_ Rect2 xform(const Rect2 &p_rect) const;
 	_FORCE_INLINE_ Rect2 xform_inv(const Rect2 &p_rect) const;
-	_FORCE_INLINE_ Vector<Vector2> xform(const Vector<Vector2> &p_array) const;
-	_FORCE_INLINE_ Vector<Vector2> xform_inv(const Vector<Vector2> &p_array) const;
+	_FORCE_INLINE_ std::vector<Vector2> xform(const std::vector<Vector2> &p_array) const;
+	_FORCE_INLINE_ std::vector<Vector2> xform_inv(const std::vector<Vector2> &p_array) const;
 
 	operator String() const;
 
@@ -216,12 +216,12 @@ Rect2 Transform2D::xform_inv(const Rect2 &p_rect) const {
 	return new_rect;
 }
 
-Vector<Vector2> Transform2D::xform(const Vector<Vector2> &p_array) const {
-	Vector<Vector2> array;
+std::vector<Vector2> Transform2D::xform(const std::vector<Vector2> &p_array) const {
+	std::vector<Vector2> array;
 	array.resize(p_array.size());
 
-	const Vector2 *r = p_array.ptr();
-	Vector2 *w = array.ptrw();
+	const Vector2 *r = p_array.data();
+	Vector2 *w = array.data();
 
 	for (int i = 0; i < p_array.size(); ++i) {
 		w[i] = xform(r[i]);
@@ -229,12 +229,12 @@ Vector<Vector2> Transform2D::xform(const Vector<Vector2> &p_array) const {
 	return array;
 }
 
-Vector<Vector2> Transform2D::xform_inv(const Vector<Vector2> &p_array) const {
-	Vector<Vector2> array;
+std::vector<Vector2> Transform2D::xform_inv(const std::vector<Vector2> &p_array) const {
+	std::vector<Vector2> array;
 	array.resize(p_array.size());
 
-	const Vector2 *r = p_array.ptr();
-	Vector2 *w = array.ptrw();
+	const Vector2 *r = p_array.data();
+	Vector2 *w = array.data();
 
 	for (int i = 0; i < p_array.size(); ++i) {
 		w[i] = xform_inv(r[i]);

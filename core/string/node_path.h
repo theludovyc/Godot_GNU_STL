@@ -37,8 +37,8 @@
 class NodePath {
 	struct Data {
 		SafeRefCount refcount;
-		Vector<StringName> path;
-		Vector<StringName> subpath;
+		std::vector<StringName> path;
+		std::vector<StringName> subpath;
 		StringName concatenated_subpath;
 		bool absolute;
 		bool has_slashes;
@@ -57,8 +57,8 @@ public:
 	StringName get_name(int p_idx) const;
 	int get_subname_count() const;
 	StringName get_subname(int p_idx) const;
-	Vector<StringName> get_names() const;
-	Vector<StringName> get_subnames() const;
+	std::vector<StringName> get_names() const;
+	std::vector<StringName> get_subnames() const;
 	StringName get_concatenated_subnames() const;
 
 	NodePath rel_path_to(const NodePath &p_np) const;
@@ -86,8 +86,8 @@ public:
 	void simplify();
 	NodePath simplified() const;
 
-	NodePath(const Vector<StringName> &p_path, bool p_absolute);
-	NodePath(const Vector<StringName> &p_path, const Vector<StringName> &p_subpath, bool p_absolute);
+	NodePath(const std::vector<StringName> &p_path, bool p_absolute);
+	NodePath(const std::vector<StringName> &p_path, const std::vector<StringName> &p_subpath, bool p_absolute);
 	NodePath(const NodePath &p_path);
 	NodePath(const String &p_path);
 	NodePath() {}

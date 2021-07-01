@@ -202,7 +202,7 @@ struct MethodInfo {
 	uint32_t flags; // NOLINT - prevent clang-tidy to assign method_bind.h constant here, it should stay in .cpp.
 	int id = 0;
 	List<PropertyInfo> arguments;
-	Vector<Variant> default_arguments;
+	std::vector<Variant> default_arguments;
 
 	inline bool operator==(const MethodInfo &p_method) const { return id == p_method.id; }
 	inline bool operator<(const MethodInfo &p_method) const { return id == p_method.id ? (name < p_method.name) : (id < p_method.id); }
@@ -470,7 +470,7 @@ public:
 		Callable callable;
 
 		uint32_t flags = 0;
-		Vector<Variant> binds;
+		std::vector<Variant> binds;
 		bool operator<(const Connection &p_conn) const;
 
 		operator Variant() const;
@@ -595,7 +595,7 @@ protected:
 		return &_class_name;
 	}
 
-	Vector<String> _get_meta_list_bind() const;
+	std::vector<String> _get_meta_list_bind() const;
 	Array _get_property_list_bind() const;
 	Array _get_method_list_bind() const;
 
@@ -698,8 +698,8 @@ public:
 
 	void set(const StringName &p_name, const Variant &p_value, bool *r_valid = nullptr);
 	Variant get(const StringName &p_name, bool *r_valid = nullptr) const;
-	void set_indexed(const Vector<StringName> &p_names, const Variant &p_value, bool *r_valid = nullptr);
-	Variant get_indexed(const Vector<StringName> &p_names, bool *r_valid = nullptr) const;
+	void set_indexed(const std::vector<StringName> &p_names, const Variant &p_value, bool *r_valid = nullptr);
+	Variant get_indexed(const std::vector<StringName> &p_names, bool *r_valid = nullptr) const;
 
 	void get_property_list(List<PropertyInfo> *p_list, bool p_reversed = false) const;
 
@@ -750,7 +750,7 @@ public:
 	int get_persistent_signal_connection_count() const;
 	void get_signals_connected_to_this(List<Connection> *p_connections) const;
 
-	Error connect(const StringName &p_signal, const Callable &p_callable, const Vector<Variant> &p_binds = Vector<Variant>(), uint32_t p_flags = 0);
+	Error connect(const StringName &p_signal, const Callable &p_callable, const std::vector<Variant> &p_binds = std::vector<Variant>(), uint32_t p_flags = 0);
 	void disconnect(const StringName &p_signal, const Callable &p_callable);
 	bool is_connected(const StringName &p_signal, const Callable &p_callable) const;
 
@@ -761,7 +761,7 @@ public:
 	bool is_blocking_signals() const;
 
 	Variant::Type get_static_property_type(const StringName &p_property, bool *r_valid = nullptr) const;
-	Variant::Type get_static_property_type_indexed(const Vector<StringName> &p_path, bool *r_valid = nullptr) const;
+	Variant::Type get_static_property_type_indexed(const std::vector<StringName> &p_path, bool *r_valid = nullptr) const;
 
 	virtual void get_translatable_strings(List<String> *p_strings) const;
 

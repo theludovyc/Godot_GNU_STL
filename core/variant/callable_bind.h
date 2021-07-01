@@ -36,7 +36,7 @@
 
 class CallableCustomBind : public CallableCustom {
 	Callable callable;
-	Vector<Variant> binds;
+	std::vector<Variant> binds;
 
 	static bool _equal_func(const CallableCustom *p_a, const CallableCustom *p_b);
 	static bool _less_func(const CallableCustom *p_a, const CallableCustom *p_b);
@@ -51,7 +51,7 @@ public:
 	virtual void call(const Variant **p_arguments, int p_argcount, Variant &r_return_value, Callable::CallError &r_call_error) const;
 	virtual const Callable *get_base_comparator() const;
 
-	CallableCustomBind(const Callable &p_callable, const Vector<Variant> &p_binds);
+	CallableCustomBind(const Callable &p_callable, const std::vector<Variant> &p_binds);
 	virtual ~CallableCustomBind();
 };
 

@@ -78,10 +78,10 @@ void Callable::rpc(int p_id, const Variant **p_arguments, int p_argcount, CallEr
 }
 
 Callable Callable::bind(const Variant **p_arguments, int p_argcount) const {
-	Vector<Variant> args;
+	std::vector<Variant> args;
 	args.resize(p_argcount);
 	for (int i = 0; i < p_argcount; i++) {
-		args.write[i] = *p_arguments[i];
+		args[i] = *p_arguments[i];
 	}
 	return Callable(memnew(CallableCustomBind(*this, args)));
 }
@@ -373,7 +373,7 @@ Error Signal::emit(const Variant **p_arguments, int p_argcount) const {
 	return obj->emit_signal(name, p_arguments, p_argcount);
 }
 
-Error Signal::connect(const Callable &p_callable, const Vector<Variant> &p_binds, uint32_t p_flags) {
+Error Signal::connect(const Callable &p_callable, const std::vector<Variant> &p_binds, uint32_t p_flags) {
 	Object *object = get_object();
 	ERR_FAIL_COND_V(!object, ERR_UNCONFIGURED);
 

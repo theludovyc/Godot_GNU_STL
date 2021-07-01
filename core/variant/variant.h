@@ -57,15 +57,15 @@ class Control; // helper
 struct PropertyInfo;
 struct MethodInfo;
 
-typedef Vector<uint8_t> PackedByteArray;
-typedef Vector<int32_t> PackedInt32Array;
-typedef Vector<int64_t> PackedInt64Array;
-typedef Vector<float> PackedFloat32Array;
-typedef Vector<double> PackedFloat64Array;
-typedef Vector<String> PackedStringArray;
-typedef Vector<Vector2> PackedVector2Array;
-typedef Vector<Vector3> PackedVector3Array;
-typedef Vector<Color> PackedColorArray;
+typedef std::vector<uint8_t> PackedByteArray;
+typedef std::vector<int32_t> PackedInt32Array;
+typedef std::vector<int64_t> PackedInt64Array;
+typedef std::vector<float> PackedFloat32Array;
+typedef std::vector<double> PackedFloat64Array;
+typedef std::vector<String> PackedStringArray;
+typedef std::vector<Vector2> PackedVector2Array;
+typedef std::vector<Vector3> PackedVector3Array;
+typedef std::vector<Color> PackedColorArray;
 
 class Variant {
 public:
@@ -165,22 +165,22 @@ private:
 
 	template <class T>
 	struct PackedArrayRef : public PackedArrayRefBase {
-		Vector<T> array;
+		std::vector<T> array;
 		static _FORCE_INLINE_ PackedArrayRef<T> *create() {
 			return memnew(PackedArrayRef<T>);
 		}
-		static _FORCE_INLINE_ PackedArrayRef<T> *create(const Vector<T> &p_from) {
+		static _FORCE_INLINE_ PackedArrayRef<T> *create(const std::vector<T> &p_from) {
 			return memnew(PackedArrayRef<T>(p_from));
 		}
 
-		static _FORCE_INLINE_ const Vector<T> &get_array(PackedArrayRefBase *p_base) {
+		static _FORCE_INLINE_ const std::vector<T> &get_array(PackedArrayRefBase *p_base) {
 			return static_cast<PackedArrayRef<T> *>(p_base)->array;
 		}
-		static _FORCE_INLINE_ Vector<T> *get_array_ptr(const PackedArrayRefBase *p_base) {
+		static _FORCE_INLINE_ std::vector<T> *get_array_ptr(const PackedArrayRefBase *p_base) {
 			return &const_cast<PackedArrayRef<T> *>(static_cast<const PackedArrayRef<T> *>(p_base))->array;
 		}
 
-		_FORCE_INLINE_ PackedArrayRef(const Vector<T> &p_from) {
+		_FORCE_INLINE_ PackedArrayRef(const std::vector<T> &p_from) {
 			array = p_from;
 			refcount.init();
 		}
@@ -339,21 +339,21 @@ public:
 	operator Dictionary() const;
 	operator Array() const;
 
-	operator Vector<uint8_t>() const;
-	operator Vector<int32_t>() const;
-	operator Vector<int64_t>() const;
-	operator Vector<float>() const;
-	operator Vector<double>() const;
-	operator Vector<String>() const;
-	operator Vector<Vector3>() const;
-	operator Vector<Color>() const;
-	operator Vector<Plane>() const;
-	operator Vector<Face3>() const;
+	operator std::vector<uint8_t>() const;
+	operator std::vector<int32_t>() const;
+	operator std::vector<int64_t>() const;
+	operator std::vector<float>() const;
+	operator std::vector<double>() const;
+	operator std::vector<String>() const;
+	operator std::vector<Vector3>() const;
+	operator std::vector<Color>() const;
+	operator std::vector<Plane>() const;
+	operator std::vector<Face3>() const;
 
-	operator Vector<Variant>() const;
-	operator Vector<StringName>() const;
-	operator Vector<::RID>() const;
-	operator Vector<Vector2>() const;
+	operator std::vector<Variant>() const;
+	operator std::vector<StringName>() const;
+	operator std::vector<::RID>() const;
+	operator std::vector<Vector2>() const;
 
 	// some core type enums to convert to
 	operator Side() const;
@@ -405,21 +405,21 @@ public:
 	Variant(const Dictionary &p_dictionary);
 
 	Variant(const Array &p_array);
-	Variant(const Vector<Plane> &p_array); // helper
-	Variant(const Vector<uint8_t> &p_byte_array);
-	Variant(const Vector<int32_t> &p_int32_array);
-	Variant(const Vector<int64_t> &p_int64_array);
-	Variant(const Vector<float> &p_float32_array);
-	Variant(const Vector<double> &p_float64_array);
-	Variant(const Vector<String> &p_string_array);
-	Variant(const Vector<Vector3> &p_vector3_array);
-	Variant(const Vector<Color> &p_color_array);
-	Variant(const Vector<Face3> &p_face_array);
+	Variant(const std::vector<Plane> &p_array); // helper
+	Variant(const std::vector<uint8_t> &p_byte_array);
+	Variant(const std::vector<int32_t> &p_int32_array);
+	Variant(const std::vector<int64_t> &p_int64_array);
+	Variant(const std::vector<float> &p_float32_array);
+	Variant(const std::vector<double> &p_float64_array);
+	Variant(const std::vector<String> &p_string_array);
+	Variant(const std::vector<Vector3> &p_vector3_array);
+	Variant(const std::vector<Color> &p_color_array);
+	Variant(const std::vector<Face3> &p_face_array);
 
-	Variant(const Vector<Variant> &p_array);
-	Variant(const Vector<StringName> &p_array);
-	Variant(const Vector<::RID> &p_array); // helper
-	Variant(const Vector<Vector2> &p_array); // helper
+	Variant(const std::vector<Variant> &p_array);
+	Variant(const std::vector<StringName> &p_array);
+	Variant(const std::vector<::RID> &p_array); // helper
+	Variant(const std::vector<Vector2> &p_array); // helper
 
 	Variant(const IPAddress &p_address);
 
@@ -491,7 +491,7 @@ public:
 	static int get_builtin_method_argument_count(Variant::Type p_type, const StringName &p_method);
 	static Variant::Type get_builtin_method_argument_type(Variant::Type p_type, const StringName &p_method, int p_argument);
 	static String get_builtin_method_argument_name(Variant::Type p_type, const StringName &p_method, int p_argument);
-	static Vector<Variant> get_builtin_method_default_arguments(Variant::Type p_type, const StringName &p_method);
+	static std::vector<Variant> get_builtin_method_default_arguments(Variant::Type p_type, const StringName &p_method);
 	static bool has_builtin_method_return_value(Variant::Type p_type, const StringName &p_method);
 	static Variant::Type get_builtin_method_return_type(Variant::Type p_type, const StringName &p_method);
 	static bool is_builtin_method_const(Variant::Type p_type, const StringName &p_method);
@@ -676,12 +676,12 @@ public:
 //typedef Dictionary Dictionary; no
 //typedef Array Array;
 
-Vector<Variant> varray();
-Vector<Variant> varray(const Variant &p_arg1);
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2);
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3);
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4);
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4, const Variant &p_arg5);
+std::vector<Variant> varray();
+std::vector<Variant> varray(const Variant &p_arg1);
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2);
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3);
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4);
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4, const Variant &p_arg5);
 
 struct VariantHasher {
 	static _FORCE_INLINE_ uint32_t hash(const Variant &p_variant) { return p_variant.hash(); }
