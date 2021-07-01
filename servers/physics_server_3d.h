@@ -128,8 +128,8 @@ public:
 	void set_collision_mask(uint32_t p_collision_mask);
 	uint32_t get_collision_mask() const;
 
-	void set_exclude(const Vector<RID> &p_exclude);
-	Vector<RID> get_exclude() const;
+	void set_exclude(const std::vector<RID> &p_exclude);
+	std::vector<RID> get_exclude() const;
 
 	void set_collide_with_bodies(bool p_enable);
 	bool is_collide_with_bodies_enabled() const;
@@ -144,7 +144,7 @@ class PhysicsDirectSpaceState3D : public Object {
 	GDCLASS(PhysicsDirectSpaceState3D, Object);
 
 private:
-	Dictionary _intersect_ray(const Vector3 &p_from, const Vector3 &p_to, const Vector<RID> &p_exclude = Vector<RID>(), uint32_t p_collision_mask = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
+	Dictionary _intersect_ray(const Vector3 &p_from, const Vector3 &p_to, const std::vector<RID> &p_exclude = std::vector<RID>(), uint32_t p_collision_mask = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
 	Array _intersect_shape(const Ref<PhysicsShapeQueryParameters3D> &p_shape_query, int p_max_results = 32);
 	Array _cast_motion(const Ref<PhysicsShapeQueryParameters3D> &p_shape_query, const Vector3 &p_motion);
 	Array _collide_shape(const Ref<PhysicsShapeQueryParameters3D> &p_shape_query, int p_max_results = 32);
@@ -199,7 +199,7 @@ public:
 class PhysicsShapeQueryResult3D : public RefCounted {
 	GDCLASS(PhysicsShapeQueryResult3D, RefCounted);
 
-	Vector<PhysicsDirectSpaceState3D::ShapeResult> result;
+	std::vector<PhysicsDirectSpaceState3D::ShapeResult> result;
 
 	friend class PhysicsDirectSpaceState3D;
 
@@ -299,7 +299,7 @@ public:
 	virtual PhysicsDirectSpaceState3D *space_get_direct_state(RID p_space) = 0;
 
 	virtual void space_set_debug_contacts(RID p_space, int p_max_contacts) = 0;
-	virtual Vector<Vector3> space_get_contacts(RID p_space) const = 0;
+	virtual std::vector<Vector3> space_get_contacts(RID p_space) const = 0;
 	virtual int space_get_contact_count(RID p_space) const = 0;
 
 	//missing space parameters
@@ -794,7 +794,7 @@ class PhysicsServer3DManager {
 		}
 	};
 
-	static Vector<ClassInfo> physics_servers;
+	static std::vector<ClassInfo> physics_servers;
 	static int default_server_id;
 	static int default_server_priority;
 

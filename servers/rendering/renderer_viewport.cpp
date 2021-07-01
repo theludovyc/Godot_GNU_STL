@@ -30,6 +30,8 @@
 
 #include "renderer_viewport.h"
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "renderer_canvas_cull.h"
 #include "renderer_scene_cull.h"
@@ -476,7 +478,7 @@ void RendererViewport::draw_viewports() {
 	}
 
 	//sort viewports
-	active_viewports.sort_custom<ViewportSort>();
+	std::sort(active_viewports.begin(), active_viewports.end());
 
 	Map<DisplayServer::WindowID, Vector<BlitToScreen>> blit_to_screen_list;
 	//draw viewports
@@ -694,12 +696,15 @@ void RendererViewport::viewport_set_active(RID p_viewport, bool p_active) {
 	Viewport *viewport = viewport_owner.getornull(p_viewport);
 	ERR_FAIL_COND(!viewport);
 
-	if (p_active) {
-		ERR_FAIL_COND(active_viewports.find(viewport) != -1); //already active
+	auto it = std::find(active_viewports.begin(), active_viewports.end(), viewport);
+
+	if(it != active_viewports.end()){
+		if(!p_active){
+			active_viewports.erase(it);
+		}
+	}else if(p_active){
 		viewport->occlusion_buffer_dirty = true;
 		active_viewports.push_back(viewport);
-	} else {
-		active_viewports.erase(viewport);
 	}
 }
 
@@ -1084,7 +1089,8 @@ bool RendererViewport::free(RID p_rid) {
 		}
 
 		viewport_set_scenario(p_rid, RID());
-		active_viewports.erase(viewport);
+
+		std::remove(active_viewports.begin(), active_viewports.end(), viewport);
 
 		if (viewport->use_occlusion_culling) {
 			RendererSceneOcclusionCull::get_singleton()->remove_buffer(p_rid);

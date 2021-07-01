@@ -167,6 +167,17 @@ public:
 		}
 
 		uint32_t get_view_count();
+
+		bool operator < (const Viewport& p_right) const
+		{
+			bool left_to_screen = viewport_to_screen_rect.size != Size2();
+			bool right_to_screen = p_right.viewport_to_screen_rect.size != Size2();
+
+			if (left_to_screen == right_to_screen) {
+				return p_right.parent == self;
+			}
+			return (right_to_screen ? 0 : 1) < (left_to_screen ? 0 : 1);
+		}
 	};
 
 	HashMap<String, RID> timestamp_vp_map;
@@ -175,19 +186,7 @@ public:
 
 	mutable RID_Owner<Viewport, true> viewport_owner;
 
-	struct ViewportSort {
-		_FORCE_INLINE_ bool operator()(const Viewport *p_left, const Viewport *p_right) const {
-			bool left_to_screen = p_left->viewport_to_screen_rect.size != Size2();
-			bool right_to_screen = p_right->viewport_to_screen_rect.size != Size2();
-
-			if (left_to_screen == right_to_screen) {
-				return p_right->parent == p_left->self;
-			}
-			return (right_to_screen ? 0 : 1) < (left_to_screen ? 0 : 1);
-		}
-	};
-
-	Vector<Viewport *> active_viewports;
+	std::vector<Viewport *> active_viewports;
 
 private:
 	void _draw_3d(Viewport *p_viewport);
