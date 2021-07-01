@@ -34,9 +34,9 @@
 #include "core/string/print_string.h"
 #include "core/variant/variant.h"
 
-#include <stdio.h>
+//TODO std::vector.data()
 
-Error FileAccessEncrypted::open_and_parse(FileAccess *p_base, const Vector<uint8_t> &p_key, Mode p_mode, bool p_with_magic) {
+Error FileAccessEncrypted::open_and_parse(FileAccess *p_base, const std::vector<uint8_t> &p_key, Mode p_mode, bool p_with_magic) {
 	ERR_FAIL_COND_V_MSG(file != nullptr, ERR_ALREADY_IN_USE, "Can't open file while another file from path '" + file->get_path_absolute() + "' is open.");
 	ERR_FAIL_COND_V(p_key.size() != 32, ERR_INVALID_PARAMETER);
 
@@ -76,20 +76,20 @@ Error FileAccessEncrypted::open_and_parse(FileAccess *p_base, const Vector<uint8
 		}
 		data.resize(ds);
 
-		uint64_t blen = p_base->get_buffer(data.ptrw(), ds);
+		uint64_t blen = p_base->get_buffer(data.data(), ds);
 		ERR_FAIL_COND_V(blen != ds, ERR_FILE_CORRUPT);
 
 		{
 			CryptoCore::AESContext ctx;
 
-			ctx.set_encode_key(key.ptrw(), 256); // Due to the nature of CFB, same key schedule is used for both encryption and decryption!
-			ctx.decrypt_cfb(ds, iv, data.ptrw(), data.ptrw());
+			ctx.set_encode_key(key.data(), 256); // Due to the nature of CFB, same key schedule is used for both encryption and decryption!
+			ctx.decrypt_cfb(ds, iv, data.data(), data.data());
 		}
 
 		data.resize(length);
 
 		unsigned char hash[16];
-		ERR_FAIL_COND_V(CryptoCore::md5(data.ptr(), data.size(), hash) != OK, ERR_BUG);
+		ERR_FAIL_COND_V(CryptoCore::md5(data.data(), data.size(), hash) != OK, ERR_BUG);
 
 		ERR_FAIL_COND_V_MSG(String::md5(hash) != String::md5(md5d), ERR_FILE_CORRUPT, "The MD5 sum of the decrypted file does not match the expected value. It could be that the file is corrupt, or that the provided decryption key is invalid.");
 
@@ -102,10 +102,10 @@ Error FileAccessEncrypted::open_and_parse(FileAccess *p_base, const Vector<uint8
 Error FileAccessEncrypted::open_and_parse_password(FileAccess *p_base, const String &p_key, Mode p_mode) {
 	String cs = p_key.md5_text();
 	ERR_FAIL_COND_V(cs.length() != 32, ERR_INVALID_PARAMETER);
-	Vector<uint8_t> key;
+	std::vector<uint8_t> key;
 	key.resize(32);
 	for (int i = 0; i < 32; i++) {
-		key.write[i] = cs[i];
+		key[i] = cs[i];
 	}
 
 	return open_and_parse(p_base, key, p_mode);
@@ -140,23 +140,23 @@ void FileAccessEncrypted::release() {
 
 void FileAccessEncrypted::_release() {
 	if (writing) {
-		Vector<uint8_t> compressed;
+		std::vector<uint8_t> compressed;
 		uint64_t len = data.size();
 		if (len % 16) {
 			len += 16 - (len % 16);
 		}
 
 		unsigned char hash[16];
-		ERR_FAIL_COND(CryptoCore::md5(data.ptr(), data.size(), hash) != OK); // Bug?
+		ERR_FAIL_COND(CryptoCore::md5(data.data(), data.size(), hash) != OK); // Bug?
 
 		compressed.resize(len);
-		memset(compressed.ptrw(), 0, len);
+		memset(compressed.data(), 0, len);
 		for (int i = 0; i < data.size(); i++) {
-			compressed.write[i] = data[i];
+			compressed[i] = data[i];
 		}
 
 		CryptoCore::AESContext ctx;
-		ctx.set_encode_key(key.ptrw(), 256);
+		ctx.set_encode_key(key.data(), 256);
 
 		if (use_magic) {
 			file->store_32(ENCRYPTED_HEADER_MAGIC);
@@ -171,9 +171,9 @@ void FileAccessEncrypted::_release() {
 			file->store_8(iv[i]);
 		}
 
-		ctx.encrypt_cfb(len, iv, compressed.ptrw(), compressed.ptrw());
+		ctx.encrypt_cfb(len, iv, compressed.data(), compressed.data());
 
-		file->store_buffer(compressed.ptr(), compressed.size());
+		file->store_buffer(compressed.data(), compressed.size());
 		data.clear();
 	}
 }
@@ -266,7 +266,7 @@ void FileAccessEncrypted::store_buffer(const uint8_t *p_src, uint64_t p_length) 
 	} else if (pos == get_length()) {
 		data.resize(pos + p_length);
 		for (uint64_t i = 0; i < p_length; i++) {
-			data.write[pos + i] = p_src[i];
+			data[pos + i] = p_src[i];
 		}
 		pos += p_length;
 	}
@@ -282,7 +282,7 @@ void FileAccessEncrypted::store_8(uint8_t p_dest) {
 	ERR_FAIL_COND_MSG(!writing, "File has not been opened in write mode.");
 
 	if (pos < get_length()) {
-		data.write[pos] = p_dest;
+		data[pos] = p_dest;
 		pos++;
 	} else if (pos == get_length()) {
 		data.push_back(p_dest);

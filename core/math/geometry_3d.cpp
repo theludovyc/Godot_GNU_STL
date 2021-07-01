@@ -46,7 +46,7 @@ void Geometry3D::MeshData::optimize_vertices() {
 				vtx_remap[idx] = ni;
 			}
 
-			faces.write[i].indices.write[j] = vtx_remap[idx];
+			faces[i].indices[j] = vtx_remap[idx];
 		}
 	}
 
@@ -63,16 +63,16 @@ void Geometry3D::MeshData::optimize_vertices() {
 			vtx_remap[b] = ni;
 		}
 
-		edges.write[i].a = vtx_remap[a];
-		edges.write[i].b = vtx_remap[b];
+		edges[i].a = vtx_remap[a];
+		edges[i].b = vtx_remap[b];
 	}
 
-	Vector<Vector3> new_vertices;
+	std::vector<Vector3> new_vertices;
 	new_vertices.resize(vtx_remap.size());
 
 	for (int i = 0; i < vertices.size(); i++) {
 		if (vtx_remap.has(i)) {
-			new_vertices.write[vtx_remap[i]] = vertices[i];
+			new_vertices[vtx_remap[i]] = vertices[i];
 		}
 	}
 	vertices = new_vertices;
@@ -182,18 +182,20 @@ static bool _group_face(_FaceClassify *p_faces, int len, int p_index, int p_grou
 	return true;
 }
 
-Vector<Vector<Face3>> Geometry3D::separate_objects(Vector<Face3> p_array) {
-	Vector<Vector<Face3>> objects;
+std::vector<std::vector<Face3>> Geometry3D::separate_objects(std::vector<Face3> p_array) {
+	std::vector<std::vector<Face3>> objects;
 
 	int len = p_array.size();
 
-	const Face3 *arrayptr = p_array.ptr();
+	//TODO
+	const Face3 *arrayptr = p_array.data();
 
-	Vector<_FaceClassify> fc;
+	std::vector<_FaceClassify> fc;
 
 	fc.resize(len);
 
-	_FaceClassify *_fcptr = fc.ptrw();
+	//TODO
+	_FaceClassify *_fcptr = fc.data();
 
 	for (int i = 0; i < len; i++) {
 		_fcptr[i].face = arrayptr[i];
@@ -201,7 +203,7 @@ Vector<Vector<Face3>> Geometry3D::separate_objects(Vector<Face3> p_array) {
 
 	bool error = _connect_faces(_fcptr, len, -1);
 
-	ERR_FAIL_COND_V_MSG(error, Vector<Vector<Face3>>(), "Invalid geometry.");
+	ERR_FAIL_COND_V_MSG(error, std::vector<std::vector<Face3>>(), "Invalid geometry.");
 
 	// Group connected faces in separate objects.
 
@@ -223,7 +225,8 @@ Vector<Vector<Face3>> Geometry3D::separate_objects(Vector<Face3> p_array) {
 
 	if (group >= 0) {
 		objects.resize(group);
-		Vector<Face3> *group_faces = objects.ptrw();
+		//TODO
+		std::vector<Face3> *group_faces = objects.data();
 
 		for (int i = 0; i < len; i++) {
 			if (!_fcptr[i].valid) {
@@ -425,7 +428,7 @@ static inline void _mark_outside(uint8_t ***p_cell_status, int x, int y, int z, 
 	}
 }
 
-static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, int len_x, int len_y, int len_z, Vector<Face3> &p_faces) {
+static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, int len_x, int len_y, int len_z, std::vector<Face3> &p_faces) {
 	ERR_FAIL_INDEX(x, len_x);
 	ERR_FAIL_INDEX(y, len_y);
 	ERR_FAIL_INDEX(z, len_z);
@@ -490,12 +493,13 @@ static inline void _build_faces(uint8_t ***p_cell_status, int x, int y, int z, i
 	}
 }
 
-Vector<Face3> Geometry3D::wrap_geometry(Vector<Face3> p_array, real_t *p_error) {
+std::vector<Face3> Geometry3D::wrap_geometry(std::vector<Face3> p_array, real_t *p_error) {
 #define _MIN_SIZE 1.0
 #define _MAX_LENGTH 20
 
 	int face_count = p_array.size();
-	const Face3 *faces = p_array.ptr();
+	//TODO
+	const Face3 *faces = p_array.data();
 
 	AABB global_aabb;
 
@@ -585,7 +589,7 @@ Vector<Face3> Geometry3D::wrap_geometry(Vector<Face3> p_array, real_t *p_error) 
 
 	// Build faces for the inside-outside cell divisors.
 
-	Vector<Face3> wrapped_faces;
+	std::vector<Face3> wrapped_faces;
 
 	for (int i = 0; i < div_x; i++) {
 		for (int j = 0; j < div_y; j++) {
@@ -598,7 +602,8 @@ Vector<Face3> Geometry3D::wrap_geometry(Vector<Face3> p_array, real_t *p_error) 
 	// Transform face vertices to global coords.
 
 	int wrapped_faces_count = wrapped_faces.size();
-	Face3 *wrapped_faces_ptr = wrapped_faces.ptrw();
+	//TODO
+	Face3 *wrapped_faces_ptr = wrapped_faces.data();
 
 	for (int i = 0; i < wrapped_faces_count; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -626,7 +631,7 @@ Vector<Face3> Geometry3D::wrap_geometry(Vector<Face3> p_array, real_t *p_error) 
 	return wrapped_faces;
 }
 
-Geometry3D::MeshData Geometry3D::build_convex_mesh(const Vector<Plane> &p_planes) {
+Geometry3D::MeshData Geometry3D::build_convex_mesh(const std::vector<Plane> &p_planes) {
 	MeshData mesh;
 
 #define SUBPLANE_SIZE 1024.0
@@ -644,7 +649,7 @@ Geometry3D::MeshData Geometry3D::build_convex_mesh(const Vector<Plane> &p_planes
 		Vector3 right = p.normal.cross(ref).normalized();
 		Vector3 up = p.normal.cross(right).normalized();
 
-		Vector<Vector3> vertices;
+		std::vector<Vector3> vertices;
 
 		Vector3 center = p.center();
 		// make a quad clockwise
@@ -658,7 +663,7 @@ Geometry3D::MeshData Geometry3D::build_convex_mesh(const Vector<Plane> &p_planes
 				continue;
 			}
 
-			Vector<Vector3> new_vertices;
+			std::vector<Vector3> new_vertices;
 			Plane clip = p_planes[j];
 
 			if (clip.normal.dot(p.normal) > 0.95) {
@@ -761,8 +766,8 @@ Geometry3D::MeshData Geometry3D::build_convex_mesh(const Vector<Plane> &p_planes
 	return mesh;
 }
 
-Vector<Plane> Geometry3D::build_box_planes(const Vector3 &p_extents) {
-	Vector<Plane> planes;
+std::vector<Plane> Geometry3D::build_box_planes(const Vector3 &p_extents) {
+	std::vector<Plane> planes;
 
 	planes.push_back(Plane(Vector3(1, 0, 0), p_extents.x));
 	planes.push_back(Plane(Vector3(-1, 0, 0), p_extents.x));
@@ -774,10 +779,10 @@ Vector<Plane> Geometry3D::build_box_planes(const Vector3 &p_extents) {
 	return planes;
 }
 
-Vector<Plane> Geometry3D::build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis) {
-	ERR_FAIL_INDEX_V(p_axis, 3, Vector<Plane>());
+std::vector<Plane> Geometry3D::build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis) {
+	ERR_FAIL_INDEX_V(p_axis, 3, std::vector<Plane>());
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	const double sides_step = Math_TAU / p_sides;
 	for (int i = 0; i < p_sides; i++) {
@@ -797,10 +802,10 @@ Vector<Plane> Geometry3D::build_cylinder_planes(real_t p_radius, real_t p_height
 	return planes;
 }
 
-Vector<Plane> Geometry3D::build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis) {
-	ERR_FAIL_INDEX_V(p_axis, 3, Vector<Plane>());
+std::vector<Plane> Geometry3D::build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis) {
+	ERR_FAIL_INDEX_V(p_axis, 3, std::vector<Plane>());
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	Vector3 axis;
 	axis[p_axis] = 1.0;
@@ -830,10 +835,10 @@ Vector<Plane> Geometry3D::build_sphere_planes(real_t p_radius, int p_lats, int p
 	return planes;
 }
 
-Vector<Plane> Geometry3D::build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
-	ERR_FAIL_INDEX_V(p_axis, 3, Vector<Plane>());
+std::vector<Plane> Geometry3D::build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
+	ERR_FAIL_INDEX_V(p_axis, 3, std::vector<Plane>());
 
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 
 	Vector3 axis;
 	axis[p_axis] = 1.0;
@@ -862,8 +867,8 @@ Vector<Plane> Geometry3D::build_capsule_planes(real_t p_radius, real_t p_height,
 	return planes;
 }
 
-Vector<Vector3> Geometry3D::compute_convex_mesh_points(const Plane *p_planes, int p_plane_count) {
-	Vector<Vector3> points;
+std::vector<Vector3> Geometry3D::compute_convex_mesh_points(const Plane *p_planes, int p_plane_count) {
+	std::vector<Vector3> points;
 
 	// Iterate through every unique combination of any three planes.
 	for (int i = p_plane_count - 1; i >= 0; i--) {
@@ -939,10 +944,10 @@ static void edt(float *f, int stride, int n) {
 
 #undef square
 
-Vector<uint32_t> Geometry3D::generate_edf(const Vector<bool> &p_voxels, const Vector3i &p_size, bool p_negative) {
+std::vector<uint32_t> Geometry3D::generate_edf(const std::vector<bool> &p_voxels, const Vector3i &p_size, bool p_negative) {
 	uint32_t float_count = p_size.x * p_size.y * p_size.z;
 
-	ERR_FAIL_COND_V((uint32_t)p_voxels.size() != float_count, Vector<uint32_t>());
+	ERR_FAIL_COND_V((uint32_t)p_voxels.size() != float_count, std::vector<uint32_t>());
 
 	float *work_memory = memnew_arr(float, float_count);
 	for (uint32_t i = 0; i < float_count; i++) {
@@ -954,9 +959,8 @@ Vector<uint32_t> Geometry3D::generate_edf(const Vector<bool> &p_voxels, const Ve
 
 	//plot solid cells
 	{
-		const bool *voxr = p_voxels.ptr();
 		for (uint32_t i = 0; i < float_count; i++) {
-			bool plot = voxr[i];
+			bool plot = p_voxels[i];
 			if (p_negative) {
 				plot = !plot;
 			}
@@ -991,10 +995,11 @@ Vector<uint32_t> Geometry3D::generate_edf(const Vector<bool> &p_voxels, const Ve
 		}
 	}
 
-	Vector<uint32_t> ret;
+	std::vector<uint32_t> ret;
 	ret.resize(float_count);
 	{
-		uint32_t *w = ret.ptrw();
+		//TODO
+		uint32_t *w = ret.data();
 		for (uint32_t i = 0; i < float_count; i++) {
 			w[i] = uint32_t(Math::sqrt(work_memory[i]));
 		}
@@ -1005,15 +1010,16 @@ Vector<uint32_t> Geometry3D::generate_edf(const Vector<bool> &p_voxels, const Ve
 	return ret;
 }
 
-Vector<int8_t> Geometry3D::generate_sdf8(const Vector<uint32_t> &p_positive, const Vector<uint32_t> &p_negative) {
-	ERR_FAIL_COND_V(p_positive.size() != p_negative.size(), Vector<int8_t>());
-	Vector<int8_t> sdf8;
+std::vector<int8_t> Geometry3D::generate_sdf8(const std::vector<uint32_t> &p_positive, const std::vector<uint32_t> &p_negative) {
+	ERR_FAIL_COND_V(p_positive.size() != p_negative.size(), std::vector<int8_t>());
+	std::vector<int8_t> sdf8;
 	int s = p_positive.size();
 	sdf8.resize(s);
 
-	const uint32_t *rpos = p_positive.ptr();
-	const uint32_t *rneg = p_negative.ptr();
-	int8_t *wsdf = sdf8.ptrw();
+	//TODO
+	const uint32_t *rpos = p_positive.data();
+	const uint32_t *rneg = p_negative.data();
+	int8_t *wsdf = sdf8.data();
 	for (int i = 0; i < s; i++) {
 		int32_t diff = int32_t(rpos[i]) - int32_t(rneg[i]);
 		wsdf[i] = CLAMP(diff, -128, 127);

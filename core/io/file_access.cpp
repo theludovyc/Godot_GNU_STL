@@ -36,6 +36,8 @@
 #include "core/io/marshalls.h"
 #include "core/os/os.h"
 
+//TODO std::vector.data()
+
 FileAccess::CreateFunc FileAccess::create_func[ACCESS_MAX] = { nullptr, nullptr };
 
 FileAccess::FileCloseFailNotify FileAccess::close_fail_notify = nullptr;
@@ -251,7 +253,7 @@ String FileAccess::get_token() const {
 }
 
 class CharBuffer {
-	Vector<char> vector;
+	std::vector<char> vector;
 	char stack_buffer[256];
 
 	char *buffer = nullptr;
@@ -259,18 +261,20 @@ class CharBuffer {
 	int written = 0;
 
 	bool grow() {
-		if (vector.resize(next_power_of_2(1 + written)) != OK) {
+		try{
+			vector.resize(next_power_of_2(1 + written));
+		} catch (std::exception& e) {
 			return false;
 		}
 
 		if (buffer == stack_buffer) { // first chunk?
 
 			for (int i = 0; i < written; i++) {
-				vector.write[i] = stack_buffer[i];
+				vector[i] = stack_buffer[i];
 			}
 		}
 
-		buffer = vector.ptrw();
+		buffer = vector.data();
 		capacity = vector.size();
 		ERR_FAIL_COND_V(written >= capacity, false);
 
@@ -315,8 +319,8 @@ String FileAccess::get_line() const {
 	return String::utf8(line.get_data());
 }
 
-Vector<String> FileAccess::get_csv_line(const String &p_delim) const {
-	ERR_FAIL_COND_V(p_delim.length() != 1, Vector<String>());
+std::vector<String> FileAccess::get_csv_line(const String &p_delim) const {
+	ERR_FAIL_COND_V(p_delim.length() != 1, std::vector<String>());
 
 	String l;
 	int qc = 0;
@@ -337,7 +341,7 @@ Vector<String> FileAccess::get_csv_line(const String &p_delim) const {
 
 	l = l.substr(0, l.length() - 1);
 
-	Vector<String> strings;
+	std::vector<String> strings;
 
 	bool in_quote = false;
 	String current;
@@ -379,11 +383,11 @@ uint64_t FileAccess::get_buffer(uint8_t *p_dst, uint64_t p_length) const {
 }
 
 String FileAccess::get_as_utf8_string() const {
-	Vector<uint8_t> sourcef;
+	std::vector<uint8_t> sourcef;
 	uint64_t len = get_length();
 	sourcef.resize(len + 1);
 
-	uint8_t *w = sourcef.ptrw();
+	uint8_t *w = sourcef.data();
 	uint64_t r = get_buffer(w, len);
 	ERR_FAIL_COND_V(r != len, String());
 	w[len] = 0;
@@ -529,7 +533,7 @@ void FileAccess::store_line(const String &p_line) {
 	store_8('\n');
 }
 
-void FileAccess::store_csv_line(const Vector<String> &p_values, const String &p_delim) {
+void FileAccess::store_csv_line(const std::vector<String> &p_values, const String &p_delim) {
 	ERR_FAIL_COND(p_delim.length() != 1);
 
 	String line = "";
@@ -557,24 +561,24 @@ void FileAccess::store_buffer(const uint8_t *p_src, uint64_t p_length) {
 	}
 }
 
-Vector<uint8_t> FileAccess::get_file_as_array(const String &p_path, Error *r_error) {
+std::vector<uint8_t> FileAccess::get_file_as_array(const String &p_path, Error *r_error) {
 	FileAccess *f = FileAccess::open(p_path, READ, r_error);
 	if (!f) {
 		if (r_error) { // if error requested, do not throw error
-			return Vector<uint8_t>();
+			return std::vector<uint8_t>();
 		}
-		ERR_FAIL_V_MSG(Vector<uint8_t>(), "Can't open file from path '" + String(p_path) + "'.");
+		ERR_FAIL_V_MSG(std::vector<uint8_t>(), "Can't open file from path '" + String(p_path) + "'.");
 	}
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(f->get_length());
-	f->get_buffer(data.ptrw(), data.size());
+	f->get_buffer(data.data(), data.size());
 	memdelete(f);
 	return data;
 }
 
 String FileAccess::get_file_as_string(const String &p_path, Error *r_error) {
 	Error err;
-	Vector<uint8_t> array = get_file_as_array(p_path, &err);
+	std::vector<uint8_t> array = get_file_as_array(p_path, &err);
 	if (r_error) {
 		*r_error = err;
 	}
@@ -586,7 +590,7 @@ String FileAccess::get_file_as_string(const String &p_path, Error *r_error) {
 	}
 
 	String ret;
-	ret.parse_utf8((const char *)array.ptr(), array.size());
+	ret.parse_utf8((const char *)array.data(), array.size());
 	return ret;
 }
 
@@ -619,7 +623,7 @@ String FileAccess::get_md5(const String &p_file) {
 	return String::md5(hash);
 }
 
-String FileAccess::get_multiple_md5(const Vector<String> &p_file) {
+String FileAccess::get_multiple_md5(const std::vector<String> &p_file) {
 	CryptoCore::MD5Context ctx;
 	ctx.start();
 

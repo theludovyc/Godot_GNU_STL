@@ -293,7 +293,7 @@ public:
 
 	virtual bool request_permission(const String &p_name) { return true; }
 	virtual bool request_permissions() { return true; }
-	virtual Vector<String> get_granted_permissions() const { return Vector<String>(); }
+	virtual std::vector<String> get_granted_permissions() const { return std::vector<String>(); }
 
 	virtual void process_and_drop_events() {}
 	OS();

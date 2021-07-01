@@ -549,7 +549,7 @@ public:
 		return false;
 	}
 
-	static inline Vector<Vector3> clip_polygon(const Vector<Vector3> &polygon, const Plane &p_plane) {
+	static inline std::vector<Vector3> clip_polygon(const std::vector<Vector3> &polygon, const Plane &p_plane) {
 		enum LocationCache {
 			LOC_INSIDE = 1,
 			LOC_BOUNDARY = 0,
@@ -582,11 +582,11 @@ public:
 		if (outside_count == 0) {
 			return polygon; // No changes.
 		} else if (inside_count == 0) {
-			return Vector<Vector3>(); // Empty.
+			return std::vector<Vector3>(); // Empty.
 		}
 
 		long previous = polygon.size() - 1;
-		Vector<Vector3> clipped;
+		std::vector<Vector3> clipped;
 
 		for (int index = 0; index < polygon.size(); index++) {
 			int loc = location_cache[index];
@@ -621,37 +621,37 @@ public:
 		return clipped;
 	}
 
-	static Vector<Vector<Face3>> separate_objects(Vector<Face3> p_array);
+	static std::vector<std::vector<Face3>> separate_objects(std::vector<Face3> p_array);
 
 	// Create a "wrap" that encloses the given geometry.
-	static Vector<Face3> wrap_geometry(Vector<Face3> p_array, real_t *p_error = nullptr);
+	static std::vector<Face3> wrap_geometry(std::vector<Face3> p_array, real_t *p_error = nullptr);
 
 	struct MeshData {
 		struct Face {
 			Plane plane;
-			Vector<int> indices;
+			std::vector<int> indices;
 		};
 
-		Vector<Face> faces;
+		std::vector<Face> faces;
 
 		struct Edge {
 			int a, b;
 		};
 
-		Vector<Edge> edges;
+		std::vector<Edge> edges;
 
-		Vector<Vector3> vertices;
+		std::vector<Vector3> vertices;
 
 		void optimize_vertices();
 	};
 
-	static MeshData build_convex_mesh(const Vector<Plane> &p_planes);
-	static Vector<Plane> build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis = Vector3::AXIS_Z);
-	static Vector<Plane> build_box_planes(const Vector3 &p_extents);
-	static Vector<Plane> build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
-	static Vector<Plane> build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	static MeshData build_convex_mesh(const std::vector<Plane> &p_planes);
+	static std::vector<Plane> build_sphere_planes(real_t p_radius, int p_lats, int p_lons, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	static std::vector<Plane> build_box_planes(const Vector3 &p_extents);
+	static std::vector<Plane> build_cylinder_planes(real_t p_radius, real_t p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	static std::vector<Plane> build_capsule_planes(real_t p_radius, real_t p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
 
-	static Vector<Vector3> compute_convex_mesh_points(const Plane *p_planes, int p_plane_count);
+	static std::vector<Vector3> compute_convex_mesh_points(const Plane *p_planes, int p_plane_count);
 
 #define FINDMINMAX(x0, x1, x2, min, max) \
 	min = max = x0;                      \
@@ -863,8 +863,8 @@ public:
 		return planeBoxOverlap(normal, d, boxhalfsize); /* if true, box and triangle overlaps */
 	}
 
-	static Vector<uint32_t> generate_edf(const Vector<bool> &p_voxels, const Vector3i &p_size, bool p_negative);
-	static Vector<int8_t> generate_sdf8(const Vector<uint32_t> &p_positive, const Vector<uint32_t> &p_negative);
+	static std::vector<uint32_t> generate_edf(const std::vector<bool> &p_voxels, const Vector3i &p_size, bool p_negative);
+	static std::vector<int8_t> generate_sdf8(const std::vector<uint32_t> &p_positive, const std::vector<uint32_t> &p_negative);
 
 	static Vector3 triangle_get_barycentric_coords(const Vector3 &p_a, const Vector3 &p_b, const Vector3 &p_c, const Vector3 &p_pos) {
 		Vector3 v0 = p_b - p_a;

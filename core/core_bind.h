@@ -70,7 +70,7 @@ public:
 	RES load_threaded_get(const String &p_path);
 
 	RES load(const String &p_path, const String &p_type_hint = "", CacheMode p_cache_mode = CACHE_MODE_REUSE);
-	Vector<String> get_recognized_extensions_for_type(const String &p_type);
+	std::vector<String> get_recognized_extensions_for_type(const String &p_type);
 	void set_abort_on_missing_resources(bool p_abort);
 	PackedStringArray get_dependencies(const String &p_path);
 	bool has_cached(const String &p_path);
@@ -103,7 +103,7 @@ public:
 	static _ResourceSaver *get_singleton() { return singleton; }
 
 	Error save(const String &p_path, const RES &p_resource, SaverFlags p_flags);
-	Vector<String> get_recognized_extensions(const RES &p_resource);
+	std::vector<String> get_recognized_extensions(const RES &p_resource);
 
 	_ResourceSaver() { singleton = this; }
 };
@@ -163,8 +163,8 @@ public:
 	int get_low_processor_usage_mode_sleep_usec() const;
 
 	String get_executable_path() const;
-	int execute(const String &p_path, const Vector<String> &p_arguments, Array r_output = Array(), bool p_read_stderr = false);
-	int create_process(const String &p_path, const Vector<String> &p_arguments);
+	int execute(const String &p_path, const std::vector<String> &p_arguments, Array r_output = Array(), bool p_read_stderr = false);
+	int create_process(const String &p_path, const std::vector<String> &p_arguments);
 	Error kill(int p_pid);
 	Error shell_open(String p_uri);
 
@@ -175,7 +175,7 @@ public:
 	bool set_environment(const String &p_var, const String &p_value) const;
 
 	String get_name() const;
-	Vector<String> get_cmdline_args();
+	std::vector<String> get_cmdline_args();
 
 	String get_locale() const;
 
@@ -187,7 +187,7 @@ public:
 	void print_resources_in_use(bool p_short = false);
 	void print_all_resources(const String &p_to_file);
 	void print_all_textures_by_size();
-	void print_resources_by_type(const Vector<String> &p_types);
+	void print_resources_by_type(const std::vector<String> &p_types);
 
 	bool is_debug_build() const;
 
@@ -241,7 +241,7 @@ public:
 
 	bool request_permission(const String &p_name);
 	bool request_permissions();
-	Vector<String> get_granted_permissions() const;
+	std::vector<String> get_granted_permissions() const;
 
 	static _OS *get_singleton() { return singleton; }
 
@@ -265,7 +265,7 @@ public:
 	static _Geometry2D *get_singleton();
 	Variant segment_intersects_segment(const Vector2 &p_from_a, const Vector2 &p_to_a, const Vector2 &p_from_b, const Vector2 &p_to_b);
 	Variant line_intersects_line(const Vector2 &p_from_a, const Vector2 &p_dir_a, const Vector2 &p_from_b, const Vector2 &p_dir_b);
-	Vector<Vector2> get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2);
+	std::vector<Vector2> get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2);
 	Vector2 get_closest_point_to_segment(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
 	Vector2 get_closest_point_to_segment_uncapped(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
 	bool point_is_inside_triangle(const Vector2 &s, const Vector2 &a, const Vector2 &b, const Vector2 &c) const;
@@ -273,11 +273,11 @@ public:
 	bool is_point_in_circle(const Vector2 &p_point, const Vector2 &p_circle_pos, real_t p_circle_radius);
 	real_t segment_intersects_circle(const Vector2 &p_from, const Vector2 &p_to, const Vector2 &p_circle_pos, real_t p_circle_radius);
 
-	bool is_polygon_clockwise(const Vector<Vector2> &p_polygon);
-	bool is_point_in_polygon(const Point2 &p_point, const Vector<Vector2> &p_polygon);
-	Vector<int> triangulate_polygon(const Vector<Vector2> &p_polygon);
-	Vector<int> triangulate_delaunay(const Vector<Vector2> &p_points);
-	Vector<Point2> convex_hull(const Vector<Point2> &p_points);
+	bool is_polygon_clockwise(const std::vector<Vector2> &p_polygon);
+	bool is_point_in_polygon(const Point2 &p_point, const std::vector<Vector2> &p_polygon);
+	std::vector<int> triangulate_polygon(const std::vector<Vector2> &p_polygon);
+	std::vector<int> triangulate_delaunay(const std::vector<Vector2> &p_points);
+	std::vector<Point2> convex_hull(const std::vector<Point2> &p_points);
 
 	enum PolyBooleanOperation {
 		OPERATION_UNION,
@@ -286,14 +286,14 @@ public:
 		OPERATION_XOR
 	};
 	// 2D polygon boolean operations.
-	Array merge_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Union (add).
-	Array clip_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Difference (subtract).
-	Array intersect_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Common area (multiply).
-	Array exclude_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // All but common area (xor).
+	Array merge_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b); // Union (add).
+	Array clip_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b); // Difference (subtract).
+	Array intersect_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b); // Common area (multiply).
+	Array exclude_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b); // All but common area (xor).
 
 	// 2D polyline vs polygon operations.
-	Array clip_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon); // Cut.
-	Array intersect_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon); // Chop.
+	Array clip_polyline_with_polygon(const std::vector<Vector2> &p_polyline, const std::vector<Vector2> &p_polygon); // Cut.
+	Array intersect_polyline_with_polygon(const std::vector<Vector2> &p_polyline, const std::vector<Vector2> &p_polygon); // Chop.
 
 	// 2D offset polygons/polylines.
 	enum PolyJoinType {
@@ -308,10 +308,10 @@ public:
 		END_SQUARE,
 		END_ROUND
 	};
-	Array offset_polygon(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE);
-	Array offset_polyline(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE, PolyEndType p_end_type = END_SQUARE);
+	Array offset_polygon(const std::vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE);
+	Array offset_polyline(const std::vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE, PolyEndType p_end_type = END_SQUARE);
 
-	Dictionary make_atlas(const Vector<Size2> &p_rects);
+	Dictionary make_atlas(const std::vector<Size2> &p_rects);
 
 	_Geometry2D() { singleton = this; }
 };
@@ -330,20 +330,20 @@ protected:
 
 public:
 	static _Geometry3D *get_singleton();
-	Vector<Plane> build_box_planes(const Vector3 &p_extents);
-	Vector<Plane> build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
-	Vector<Plane> build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
-	Vector<Vector3> get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2);
+	std::vector<Plane> build_box_planes(const Vector3 &p_extents);
+	std::vector<Plane> build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	std::vector<Plane> build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis = Vector3::AXIS_Z);
+	std::vector<Vector3> get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2);
 	Vector3 get_closest_point_to_segment(const Vector3 &p_point, const Vector3 &p_a, const Vector3 &p_b);
 	Vector3 get_closest_point_to_segment_uncapped(const Vector3 &p_point, const Vector3 &p_a, const Vector3 &p_b);
 	Variant ray_intersects_triangle(const Vector3 &p_from, const Vector3 &p_dir, const Vector3 &p_v0, const Vector3 &p_v1, const Vector3 &p_v2);
 	Variant segment_intersects_triangle(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_v0, const Vector3 &p_v1, const Vector3 &p_v2);
 
-	Vector<Vector3> segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius);
-	Vector<Vector3> segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius);
-	Vector<Vector3> segment_intersects_convex(const Vector3 &p_from, const Vector3 &p_to, const Vector<Plane> &p_planes);
+	std::vector<Vector3> segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius);
+	std::vector<Vector3> segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius);
+	std::vector<Vector3> segment_intersects_convex(const Vector3 &p_from, const Vector3 &p_to, const std::vector<Plane> &p_planes);
 
-	Vector<Vector3> clip_polygon(const Vector<Vector3> &p_points, const Plane &p_plane);
+	std::vector<Vector3> clip_polygon(const std::vector<Vector3> &p_points, const Plane &p_plane);
 
 	_Geometry3D() { singleton = this; }
 };
@@ -372,7 +372,7 @@ public:
 		COMPRESSION_GZIP = Compression::MODE_GZIP
 	};
 
-	Error open_encrypted(const String &p_path, ModeFlags p_mode_flags, const Vector<uint8_t> &p_key);
+	Error open_encrypted(const String &p_path, ModeFlags p_mode_flags, const std::vector<uint8_t> &p_key);
 	Error open_encrypted_pass(const String &p_path, ModeFlags p_mode_flags, const String &p_pass);
 	Error open_compressed(const String &p_path, ModeFlags p_mode_flags, CompressionMode p_compress_mode = COMPRESSION_FASTLZ);
 
@@ -402,9 +402,9 @@ public:
 
 	Variant get_var(bool p_allow_objects = false) const;
 
-	Vector<uint8_t> get_buffer(int64_t p_length) const; // Get an array of bytes.
+	std::vector<uint8_t> get_buffer(int64_t p_length) const; // Get an array of bytes.
 	String get_line() const;
-	Vector<String> get_csv_line(const String &p_delim = ",") const;
+	std::vector<String> get_csv_line(const String &p_delim = ",") const;
 	String get_as_text() const;
 	String get_md5(const String &p_path) const;
 	String get_sha256(const String &p_path) const;
@@ -430,12 +430,12 @@ public:
 
 	void store_string(const String &p_string);
 	void store_line(const String &p_string);
-	void store_csv_line(const Vector<String> &p_values, const String &p_delim = ",");
+	void store_csv_line(const std::vector<String> &p_values, const String &p_delim = ",");
 
 	virtual void store_pascal_string(const String &p_string);
 	virtual String get_pascal_string();
 
-	void store_buffer(const Vector<uint8_t> &p_buffer); // Store an array of bytes.
+	void store_buffer(const std::vector<uint8_t> &p_buffer); // Store an array of bytes.
 
 	void store_var(const Variant &p_var, bool p_full_objects = false);
 
@@ -510,8 +510,8 @@ public:
 	String variant_to_base64(const Variant &p_var, bool p_full_objects = false);
 	Variant base64_to_variant(const String &p_str, bool p_allow_objects = false);
 
-	String raw_to_base64(const Vector<uint8_t> &p_arr);
-	Vector<uint8_t> base64_to_raw(const String &p_str);
+	String raw_to_base64(const std::vector<uint8_t> &p_arr);
+	std::vector<uint8_t> base64_to_raw(const String &p_str);
 
 	String utf8_to_base64(const String &p_str);
 	String base64_to_utf8(const String &p_str);

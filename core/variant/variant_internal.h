@@ -245,39 +245,39 @@ public:
 		v->type = Variant::ARRAY;
 	}
 	_FORCE_INLINE_ static void init_byte_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<uint8_t>::create(Vector<uint8_t>());
+		v->_data.packed_array = Variant::PackedArrayRef<uint8_t>::create(std::vector<uint8_t>());
 		v->type = Variant::PACKED_BYTE_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_int32_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<int32_t>::create(Vector<int32_t>());
+		v->_data.packed_array = Variant::PackedArrayRef<int32_t>::create(std::vector<int32_t>());
 		v->type = Variant::PACKED_INT32_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_int64_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<int64_t>::create(Vector<int64_t>());
+		v->_data.packed_array = Variant::PackedArrayRef<int64_t>::create(std::vector<int64_t>());
 		v->type = Variant::PACKED_INT64_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_float32_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<float>::create(Vector<float>());
+		v->_data.packed_array = Variant::PackedArrayRef<float>::create(std::vector<float>());
 		v->type = Variant::PACKED_FLOAT32_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_float64_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<double>::create(Vector<double>());
+		v->_data.packed_array = Variant::PackedArrayRef<double>::create(std::vector<double>());
 		v->type = Variant::PACKED_FLOAT64_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_string_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<String>::create(Vector<String>());
+		v->_data.packed_array = Variant::PackedArrayRef<String>::create(std::vector<String>());
 		v->type = Variant::PACKED_STRING_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_vector2_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<Vector2>::create(Vector<Vector2>());
+		v->_data.packed_array = Variant::PackedArrayRef<Vector2>::create(std::vector<Vector2>());
 		v->type = Variant::PACKED_VECTOR2_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_vector3_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<Vector3>::create(Vector<Vector3>());
+		v->_data.packed_array = Variant::PackedArrayRef<Vector3>::create(std::vector<Vector3>());
 		v->type = Variant::PACKED_VECTOR3_ARRAY;
 	}
 	_FORCE_INLINE_ static void init_color_array(Variant *v) {
-		v->_data.packed_array = Variant::PackedArrayRef<Color>::create(Vector<Color>());
+		v->_data.packed_array = Variant::PackedArrayRef<Color>::create(std::vector<Color>());
 		v->type = Variant::PACKED_COLOR_ARRAY;
 	}
 
@@ -964,18 +964,18 @@ struct VariantInternalAccessor<Variant> {
 };
 
 template <>
-struct VariantInternalAccessor<Vector<Variant>> {
-	static _FORCE_INLINE_ Vector<Variant> get(const Variant *v) {
-		Vector<Variant> ret;
+struct VariantInternalAccessor<std::vector<Variant>> {
+	static _FORCE_INLINE_ std::vector<Variant> get(const Variant *v) {
+		std::vector<Variant> ret;
 		int s = VariantInternal::get_array(v)->size();
 		ret.resize(s);
 		for (int i = 0; i < s; i++) {
-			ret.write[i] = VariantInternal::get_array(v)->get(i);
+			ret[i] = VariantInternal::get_array(v)->get(i);
 		}
 
 		return ret;
 	}
-	static _FORCE_INLINE_ void set(Variant *v, const Vector<Variant> &p_value) {
+	static _FORCE_INLINE_ void set(Variant *v, const std::vector<Variant> &p_value) {
 		int s = p_value.size();
 		VariantInternal::get_array(v)->resize(s);
 		for (int i = 0; i < s; i++) {

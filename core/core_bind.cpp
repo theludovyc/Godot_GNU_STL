@@ -41,6 +41,8 @@
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
 
+//TODO std::vector.data()
+
 ////// _ResourceLoader //////
 
 _ResourceLoader *_ResourceLoader::singleton = nullptr;
@@ -71,10 +73,10 @@ RES _ResourceLoader::load(const String &p_path, const String &p_type_hint, Cache
 	return ret;
 }
 
-Vector<String> _ResourceLoader::get_recognized_extensions_for_type(const String &p_type) {
+std::vector<String> _ResourceLoader::get_recognized_extensions_for_type(const String &p_type) {
 	List<String> exts;
 	ResourceLoader::get_recognized_extensions_for_type(p_type, &exts);
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<String>::Element *E = exts.front(); E; E = E->next()) {
 		ret.push_back(E->get());
 	}
@@ -136,11 +138,11 @@ Error _ResourceSaver::save(const String &p_path, const RES &p_resource, SaverFla
 	return ResourceSaver::save(p_path, p_resource, p_flags);
 }
 
-Vector<String> _ResourceSaver::get_recognized_extensions(const RES &p_resource) {
-	ERR_FAIL_COND_V_MSG(p_resource.is_null(), Vector<String>(), "It's not a reference to a valid Resource object.");
+std::vector<String> _ResourceSaver::get_recognized_extensions(const RES &p_resource) {
+	ERR_FAIL_COND_V_MSG(p_resource.is_null(), std::vector<String>(), "It's not a reference to a valid Resource object.");
 	List<String> exts;
 	ResourceSaver::get_recognized_extensions(p_resource, &exts);
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<String>::Element *E = exts.front(); E; E = E->next()) {
 		ret.push_back(E->get());
 	}
@@ -209,7 +211,7 @@ Error _OS::shell_open(String p_uri) {
 	return OS::get_singleton()->shell_open(p_uri);
 }
 
-int _OS::execute(const String &p_path, const Vector<String> &p_arguments, Array r_output, bool p_read_stderr) {
+int _OS::execute(const String &p_path, const std::vector<String> &p_arguments, Array r_output, bool p_read_stderr) {
 	List<String> args;
 	for (int i = 0; i < p_arguments.size(); i++) {
 		args.push_back(p_arguments[i]);
@@ -224,7 +226,7 @@ int _OS::execute(const String &p_path, const Vector<String> &p_arguments, Array 
 	return exitcode;
 }
 
-int _OS::create_process(const String &p_path, const Vector<String> &p_arguments) {
+int _OS::create_process(const String &p_path, const std::vector<String> &p_arguments) {
 	List<String> args;
 	for (int i = 0; i < p_arguments.size(); i++) {
 		args.push_back(p_arguments[i]);
@@ -261,9 +263,9 @@ String _OS::get_name() const {
 	return OS::get_singleton()->get_name();
 }
 
-Vector<String> _OS::get_cmdline_args() {
+std::vector<String> _OS::get_cmdline_args() {
 	List<String> cmdline = OS::get_singleton()->get_cmdline_args();
-	Vector<String> cmdlinev;
+	std::vector<String> cmdlinev;
 	for (List<String>::Element *E = cmdline.front(); E; E = E->next()) {
 		cmdlinev.push_back(E->get());
 	}
@@ -377,7 +379,7 @@ void _OS::print_all_textures_by_size() {
 	}
 }
 
-void _OS::print_resources_by_type(const Vector<String> &p_types) {
+void _OS::print_resources_by_type(const std::vector<String> &p_types) {
 	Map<String, int> type_count;
 
 	List<Ref<Resource>> resources;
@@ -472,7 +474,7 @@ bool _OS::request_permissions() {
 	return OS::get_singleton()->request_permissions();
 }
 
-Vector<String> _OS::get_granted_permissions() const {
+std::vector<String> _OS::get_granted_permissions() const {
 	return OS::get_singleton()->get_granted_permissions();
 }
 
@@ -632,13 +634,13 @@ Variant _Geometry2D::line_intersects_line(const Vector2 &p_from_a, const Vector2
 	}
 }
 
-Vector<Vector2> _Geometry2D::get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2) {
+std::vector<Vector2> _Geometry2D::get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2) {
 	Vector2 r1, r2;
 	Geometry2D::get_closest_points_between_segments(p1, q1, p2, q2, r1, r2);
-	Vector<Vector2> r;
+	std::vector<Vector2> r;
 	r.resize(2);
-	r.set(0, r1);
-	r.set(1, r2);
+	r[0] = r1;
+	r[1] = r2;
 	return r;
 }
 
@@ -656,28 +658,28 @@ bool _Geometry2D::point_is_inside_triangle(const Vector2 &s, const Vector2 &a, c
 	return Geometry2D::is_point_in_triangle(s, a, b, c);
 }
 
-bool _Geometry2D::is_polygon_clockwise(const Vector<Vector2> &p_polygon) {
+bool _Geometry2D::is_polygon_clockwise(const std::vector<Vector2> &p_polygon) {
 	return Geometry2D::is_polygon_clockwise(p_polygon);
 }
 
-bool _Geometry2D::is_point_in_polygon(const Point2 &p_point, const Vector<Vector2> &p_polygon) {
+bool _Geometry2D::is_point_in_polygon(const Point2 &p_point, const std::vector<Vector2> &p_polygon) {
 	return Geometry2D::is_point_in_polygon(p_point, p_polygon);
 }
 
-Vector<int> _Geometry2D::triangulate_polygon(const Vector<Vector2> &p_polygon) {
+std::vector<int> _Geometry2D::triangulate_polygon(const std::vector<Vector2> &p_polygon) {
 	return Geometry2D::triangulate_polygon(p_polygon);
 }
 
-Vector<int> _Geometry2D::triangulate_delaunay(const Vector<Vector2> &p_points) {
+std::vector<int> _Geometry2D::triangulate_delaunay(const std::vector<Vector2> &p_points) {
 	return Geometry2D::triangulate_delaunay(p_points);
 }
 
-Vector<Point2> _Geometry2D::convex_hull(const Vector<Point2> &p_points) {
+std::vector<Point2> _Geometry2D::convex_hull(const std::vector<Point2> &p_points) {
 	return Geometry2D::convex_hull(p_points);
 }
 
-Array _Geometry2D::merge_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
-	Vector<Vector<Point2>> polys = Geometry2D::merge_polygons(p_polygon_a, p_polygon_b);
+Array _Geometry2D::merge_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::merge_polygons(p_polygon_a, p_polygon_b);
 
 	Array ret;
 
@@ -687,8 +689,8 @@ Array _Geometry2D::merge_polygons(const Vector<Vector2> &p_polygon_a, const Vect
 	return ret;
 }
 
-Array _Geometry2D::clip_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
-	Vector<Vector<Point2>> polys = Geometry2D::clip_polygons(p_polygon_a, p_polygon_b);
+Array _Geometry2D::clip_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::clip_polygons(p_polygon_a, p_polygon_b);
 
 	Array ret;
 
@@ -698,8 +700,8 @@ Array _Geometry2D::clip_polygons(const Vector<Vector2> &p_polygon_a, const Vecto
 	return ret;
 }
 
-Array _Geometry2D::intersect_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
-	Vector<Vector<Point2>> polys = Geometry2D::intersect_polygons(p_polygon_a, p_polygon_b);
+Array _Geometry2D::intersect_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::intersect_polygons(p_polygon_a, p_polygon_b);
 
 	Array ret;
 
@@ -709,8 +711,8 @@ Array _Geometry2D::intersect_polygons(const Vector<Vector2> &p_polygon_a, const 
 	return ret;
 }
 
-Array _Geometry2D::exclude_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
-	Vector<Vector<Point2>> polys = Geometry2D::exclude_polygons(p_polygon_a, p_polygon_b);
+Array _Geometry2D::exclude_polygons(const std::vector<Vector2> &p_polygon_a, const std::vector<Vector2> &p_polygon_b) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::exclude_polygons(p_polygon_a, p_polygon_b);
 
 	Array ret;
 
@@ -720,8 +722,8 @@ Array _Geometry2D::exclude_polygons(const Vector<Vector2> &p_polygon_a, const Ve
 	return ret;
 }
 
-Array _Geometry2D::clip_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon) {
-	Vector<Vector<Point2>> polys = Geometry2D::clip_polyline_with_polygon(p_polyline, p_polygon);
+Array _Geometry2D::clip_polyline_with_polygon(const std::vector<Vector2> &p_polyline, const std::vector<Vector2> &p_polygon) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::clip_polyline_with_polygon(p_polyline, p_polygon);
 
 	Array ret;
 
@@ -731,8 +733,8 @@ Array _Geometry2D::clip_polyline_with_polygon(const Vector<Vector2> &p_polyline,
 	return ret;
 }
 
-Array _Geometry2D::intersect_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon) {
-	Vector<Vector<Point2>> polys = Geometry2D::intersect_polyline_with_polygon(p_polyline, p_polygon);
+Array _Geometry2D::intersect_polyline_with_polygon(const std::vector<Vector2> &p_polyline, const std::vector<Vector2> &p_polygon) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::intersect_polyline_with_polygon(p_polyline, p_polygon);
 
 	Array ret;
 
@@ -742,8 +744,8 @@ Array _Geometry2D::intersect_polyline_with_polygon(const Vector<Vector2> &p_poly
 	return ret;
 }
 
-Array _Geometry2D::offset_polygon(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type) {
-	Vector<Vector<Point2>> polys = Geometry2D::offset_polygon(p_polygon, p_delta, Geometry2D::PolyJoinType(p_join_type));
+Array _Geometry2D::offset_polygon(const std::vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::offset_polygon(p_polygon, p_delta, Geometry2D::PolyJoinType(p_join_type));
 
 	Array ret;
 
@@ -753,8 +755,8 @@ Array _Geometry2D::offset_polygon(const Vector<Vector2> &p_polygon, real_t p_del
 	return ret;
 }
 
-Array _Geometry2D::offset_polyline(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type, PolyEndType p_end_type) {
-	Vector<Vector<Point2>> polys = Geometry2D::offset_polyline(p_polygon, p_delta, Geometry2D::PolyJoinType(p_join_type), Geometry2D::PolyEndType(p_end_type));
+Array _Geometry2D::offset_polyline(const std::vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type, PolyEndType p_end_type) {
+	std::vector<std::vector<Point2>> polys = Geometry2D::offset_polyline(p_polygon, p_delta, Geometry2D::PolyJoinType(p_join_type), Geometry2D::PolyEndType(p_end_type));
 
 	Array ret;
 
@@ -764,21 +766,21 @@ Array _Geometry2D::offset_polyline(const Vector<Vector2> &p_polygon, real_t p_de
 	return ret;
 }
 
-Dictionary _Geometry2D::make_atlas(const Vector<Size2> &p_rects) {
+Dictionary _Geometry2D::make_atlas(const std::vector<Size2> &p_rects) {
 	Dictionary ret;
 
-	Vector<Size2i> rects;
+	std::vector<Size2i> rects;
 	for (int i = 0; i < p_rects.size(); i++) {
 		rects.push_back(p_rects[i]);
 	}
 
-	Vector<Point2i> result;
+	std::vector<Point2i> result;
 	Size2i size;
 
 	Geometry2D::make_atlas(rects, result, size);
 
 	Size2 r_size = size;
-	Vector<Point2> r_result;
+	std::vector<Point2> r_result;
 	for (int i = 0; i < result.size(); i++) {
 		r_result.push_back(result[i]);
 	}
@@ -845,25 +847,25 @@ _Geometry3D *_Geometry3D::get_singleton() {
 	return singleton;
 }
 
-Vector<Plane> _Geometry3D::build_box_planes(const Vector3 &p_extents) {
+std::vector<Plane> _Geometry3D::build_box_planes(const Vector3 &p_extents) {
 	return Geometry3D::build_box_planes(p_extents);
 }
 
-Vector<Plane> _Geometry3D::build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis) {
+std::vector<Plane> _Geometry3D::build_cylinder_planes(float p_radius, float p_height, int p_sides, Vector3::Axis p_axis) {
 	return Geometry3D::build_cylinder_planes(p_radius, p_height, p_sides, p_axis);
 }
 
-Vector<Plane> _Geometry3D::build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
+std::vector<Plane> _Geometry3D::build_capsule_planes(float p_radius, float p_height, int p_sides, int p_lats, Vector3::Axis p_axis) {
 	return Geometry3D::build_capsule_planes(p_radius, p_height, p_sides, p_lats, p_axis);
 }
 
-Vector<Vector3> _Geometry3D::get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2) {
+std::vector<Vector3> _Geometry3D::get_closest_points_between_segments(const Vector3 &p1, const Vector3 &p2, const Vector3 &q1, const Vector3 &q2) {
 	Vector3 r1, r2;
 	Geometry3D::get_closest_points_between_segments(p1, p2, q1, q2, r1, r2);
-	Vector<Vector3> r;
+	std::vector<Vector3> r;
 	r.resize(2);
-	r.set(0, r1);
-	r.set(1, r2);
+	r[0] = r1;
+	r[1] = r2;
 	return r;
 }
 
@@ -895,46 +897,46 @@ Variant _Geometry3D::segment_intersects_triangle(const Vector3 &p_from, const Ve
 	}
 }
 
-Vector<Vector3> _Geometry3D::segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius) {
-	Vector<Vector3> r;
+std::vector<Vector3> _Geometry3D::segment_intersects_sphere(const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_sphere_pos, real_t p_sphere_radius) {
+	std::vector<Vector3> r;
 	Vector3 res, norm;
 	if (!Geometry3D::segment_intersects_sphere(p_from, p_to, p_sphere_pos, p_sphere_radius, &res, &norm)) {
 		return r;
 	}
 
 	r.resize(2);
-	r.set(0, res);
-	r.set(1, norm);
+	r[0] = res;
+	r[1] = norm;
 	return r;
 }
 
-Vector<Vector3> _Geometry3D::segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius) {
-	Vector<Vector3> r;
+std::vector<Vector3> _Geometry3D::segment_intersects_cylinder(const Vector3 &p_from, const Vector3 &p_to, float p_height, float p_radius) {
+	std::vector<Vector3> r;
 	Vector3 res, norm;
 	if (!Geometry3D::segment_intersects_cylinder(p_from, p_to, p_height, p_radius, &res, &norm)) {
 		return r;
 	}
 
 	r.resize(2);
-	r.set(0, res);
-	r.set(1, norm);
+	r[0] = res;
+	r[1] = norm;
 	return r;
 }
 
-Vector<Vector3> _Geometry3D::segment_intersects_convex(const Vector3 &p_from, const Vector3 &p_to, const Vector<Plane> &p_planes) {
-	Vector<Vector3> r;
+std::vector<Vector3> _Geometry3D::segment_intersects_convex(const Vector3 &p_from, const Vector3 &p_to, const std::vector<Plane> &p_planes) {
+	std::vector<Vector3> r;
 	Vector3 res, norm;
-	if (!Geometry3D::segment_intersects_convex(p_from, p_to, p_planes.ptr(), p_planes.size(), &res, &norm)) {
+	if (!Geometry3D::segment_intersects_convex(p_from, p_to, p_planes.data(), p_planes.size(), &res, &norm)) {
 		return r;
 	}
 
 	r.resize(2);
-	r.set(0, res);
-	r.set(1, norm);
+	r[0] = res;
+	r[1] = norm;
 	return r;
 }
 
-Vector<Vector3> _Geometry3D::clip_polygon(const Vector<Vector3> &p_points, const Plane &p_plane) {
+std::vector<Vector3> _Geometry3D::clip_polygon(const std::vector<Vector3> &p_points, const Plane &p_plane) {
 	return Geometry3D::clip_polygon(p_points, p_plane);
 }
 
@@ -960,7 +962,7 @@ void _Geometry3D::_bind_methods() {
 
 ////// _File //////
 
-Error _File::open_encrypted(const String &p_path, ModeFlags p_mode_flags, const Vector<uint8_t> &p_key) {
+Error _File::open_encrypted(const String &p_path, ModeFlags p_mode_flags, const std::vector<uint8_t> &p_key) {
 	Error err = open(p_path, p_mode_flags);
 	if (err) {
 		return err;
@@ -1108,8 +1110,8 @@ real_t _File::get_real() const {
 	return f->get_real();
 }
 
-Vector<uint8_t> _File::get_buffer(int64_t p_length) const {
-	Vector<uint8_t> data;
+std::vector<uint8_t> _File::get_buffer(int64_t p_length) const {
+	std::vector<uint8_t> data;
 	ERR_FAIL_COND_V_MSG(!f, data, "File must be opened before use.");
 
 	ERR_FAIL_COND_V_MSG(p_length < 0, data, "Length of buffer cannot be smaller than 0.");
@@ -1117,10 +1119,13 @@ Vector<uint8_t> _File::get_buffer(int64_t p_length) const {
 		return data;
 	}
 
-	Error err = data.resize(p_length);
-	ERR_FAIL_COND_V_MSG(err != OK, data, "Can't resize data to " + itos(p_length) + " elements.");
+	try{
+		data.resize(p_length);
+	} catch (std::bad_alloc &ba) {
+		ERR_FAIL_COND_V_MSG(!OK, data, "Can't resize data to " + itos(p_length) + " elements.");
+	}
 
-	uint8_t *w = data.ptrw();
+	uint8_t *w = data.data();
 	int64_t len = f->get_buffer(&w[0], p_length);
 
 	if (len < p_length) {
@@ -1162,8 +1167,8 @@ String _File::get_line() const {
 	return f->get_line();
 }
 
-Vector<String> _File::get_csv_line(const String &p_delim) const {
-	ERR_FAIL_COND_V_MSG(!f, Vector<String>(), "File must be opened before use.");
+std::vector<String> _File::get_csv_line(const String &p_delim) const {
+	ERR_FAIL_COND_V_MSG(!f, std::vector<String>(), "File must be opened before use.");
 	return f->get_csv_line(p_delim);
 }
 
@@ -1255,12 +1260,12 @@ void _File::store_line(const String &p_string) {
 	f->store_line(p_string);
 }
 
-void _File::store_csv_line(const Vector<String> &p_values, const String &p_delim) {
+void _File::store_csv_line(const std::vector<String> &p_values, const String &p_delim) {
 	ERR_FAIL_COND_MSG(!f, "File must be opened before use.");
 	f->store_csv_line(p_values, p_delim);
 }
 
-void _File::store_buffer(const Vector<uint8_t> &p_buffer) {
+void _File::store_buffer(const std::vector<uint8_t> &p_buffer) {
 	ERR_FAIL_COND_MSG(!f, "File must be opened before use.");
 
 	uint64_t len = p_buffer.size();
@@ -1268,7 +1273,7 @@ void _File::store_buffer(const Vector<uint8_t> &p_buffer) {
 		return;
 	}
 
-	const uint8_t *r = p_buffer.ptr();
+	const uint8_t *r = p_buffer.data();
 
 	f->store_buffer(&r[0], len);
 }
@@ -1283,10 +1288,10 @@ void _File::store_var(const Variant &p_var, bool p_full_objects) {
 	Error err = encode_variant(p_var, nullptr, len, p_full_objects);
 	ERR_FAIL_COND_MSG(err != OK, "Error when trying to encode Variant.");
 
-	Vector<uint8_t> buff;
+	std::vector<uint8_t> buff;
 	buff.resize(len);
 
-	uint8_t *w = buff.ptrw();
+	uint8_t *w = buff.data();
 	err = encode_variant(p_var, &w[0], len, p_full_objects);
 	ERR_FAIL_COND_MSG(err != OK, "Error when trying to encode Variant.");
 
@@ -1297,10 +1302,10 @@ void _File::store_var(const Variant &p_var, bool p_full_objects) {
 Variant _File::get_var(bool p_allow_objects) const {
 	ERR_FAIL_COND_V_MSG(!f, Variant(), "File must be opened before use.");
 	uint32_t len = get_32();
-	Vector<uint8_t> buff = get_buffer(len);
+	std::vector<uint8_t> buff = get_buffer(len);
 	ERR_FAIL_COND_V((uint32_t)buff.size() != len, Variant());
 
-	const uint8_t *r = buff.ptr();
+	const uint8_t *r = buff.data();
 
 	Variant v;
 	Error err = decode_variant(v, &r[0], len, nullptr, p_allow_objects);
@@ -1592,9 +1597,9 @@ String _Marshalls::variant_to_base64(const Variant &p_var, bool p_full_objects) 
 	Error err = encode_variant(p_var, nullptr, len, p_full_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, "", "Error when trying to encode Variant.");
 
-	Vector<uint8_t> buff;
+	std::vector<uint8_t> buff;
 	buff.resize(len);
-	uint8_t *w = buff.ptrw();
+	uint8_t *w = buff.data();
 
 	err = encode_variant(p_var, &w[0], len, p_full_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, "", "Error when trying to encode Variant.");
@@ -1609,9 +1614,9 @@ Variant _Marshalls::base64_to_variant(const String &p_str, bool p_allow_objects)
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	buf.resize(strlen / 4 * 3 + 1);
-	uint8_t *w = buf.ptrw();
+	uint8_t *w = buf.data();
 
 	size_t len = 0;
 	ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &len, (unsigned char *)cstr.get_data(), strlen) != OK, Variant());
@@ -1623,23 +1628,23 @@ Variant _Marshalls::base64_to_variant(const String &p_str, bool p_allow_objects)
 	return v;
 }
 
-String _Marshalls::raw_to_base64(const Vector<uint8_t> &p_arr) {
-	String ret = CryptoCore::b64_encode_str(p_arr.ptr(), p_arr.size());
+String _Marshalls::raw_to_base64(const std::vector<uint8_t> &p_arr) {
+	String ret = CryptoCore::b64_encode_str(p_arr.data(), p_arr.size());
 	ERR_FAIL_COND_V(ret == "", ret);
 	return ret;
 }
 
-Vector<uint8_t> _Marshalls::base64_to_raw(const String &p_str) {
+std::vector<uint8_t> _Marshalls::base64_to_raw(const String &p_str) {
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
 	size_t arr_len = 0;
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	{
 		buf.resize(strlen / 4 * 3 + 1);
-		uint8_t *w = buf.ptrw();
+		uint8_t *w = buf.data();
 
-		ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &arr_len, (unsigned char *)cstr.get_data(), strlen) != OK, Vector<uint8_t>());
+		ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &arr_len, (unsigned char *)cstr.get_data(), strlen) != OK, std::vector<uint8_t>());
 	}
 	buf.resize(arr_len);
 
@@ -1657,9 +1662,9 @@ String _Marshalls::base64_to_utf8(const String &p_str) {
 	int strlen = p_str.length();
 	CharString cstr = p_str.ascii();
 
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	buf.resize(strlen / 4 * 3 + 1 + 1);
-	uint8_t *w = buf.ptrw();
+	uint8_t *w = buf.data();
 
 	size_t len = 0;
 	ERR_FAIL_COND_V(CryptoCore::b64_decode(&w[0], buf.size(), &len, (unsigned char *)cstr.get_data(), strlen) != OK, String());
@@ -1818,7 +1823,7 @@ PackedStringArray _ClassDB::get_class_list() const {
 	ret.resize(classes.size());
 	int idx = 0;
 	for (List<StringName>::Element *E = classes.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
@@ -1832,7 +1837,7 @@ PackedStringArray _ClassDB::get_inheriters_from_class(const StringName &p_class)
 	ret.resize(classes.size());
 	int idx = 0;
 	for (List<StringName>::Element *E = classes.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;
@@ -1951,7 +1956,7 @@ PackedStringArray _ClassDB::get_integer_constant_list(const StringName &p_class,
 	ret.resize(constants.size());
 	int idx = 0;
 	for (List<String>::Element *E = constants.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;

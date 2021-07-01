@@ -44,12 +44,12 @@ public:
 	};
 
 private:
-	Vector<uint8_t> key;
+	std::vector<uint8_t> key;
 	bool writing = false;
 	FileAccess *file = nullptr;
 	uint64_t base = 0;
 	uint64_t length = 0;
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	mutable uint64_t pos = 0;
 	mutable bool eofed = false;
 	bool use_magic = true;
@@ -57,7 +57,7 @@ private:
 	void _release();
 
 public:
-	Error open_and_parse(FileAccess *p_base, const Vector<uint8_t> &p_key, Mode p_mode, bool p_with_magic = true);
+	Error open_and_parse(FileAccess *p_base, const std::vector<uint8_t> &p_key, Mode p_mode, bool p_with_magic = true);
 	Error open_and_parse_password(FileAccess *p_base, const String &p_key, Mode p_mode);
 
 	virtual Error _open(const String &p_path, int p_mode_flags); ///< open a file

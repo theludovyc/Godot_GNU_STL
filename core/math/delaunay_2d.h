@@ -56,7 +56,7 @@ public:
 		}
 	};
 
-	static bool circum_circle_contains(const Vector<Vector2> &p_vertices, const Triangle &p_triangle, int p_vertex) {
+	static bool circum_circle_contains(const std::vector<Vector2> &p_vertices, const Triangle &p_triangle, int p_vertex) {
 		Vector2 p1 = p_vertices[p_triangle.points[0]];
 		Vector2 p2 = p_vertices[p_triangle.points[1]];
 		Vector2 p3 = p_vertices[p_triangle.points[2]];
@@ -75,7 +75,7 @@ public:
 		return d <= r;
 	}
 
-	static bool edge_compare(const Vector<Vector2> &p_vertices, const Edge &p_a, const Edge &p_b) {
+	static bool edge_compare(const std::vector<Vector2> &p_vertices, const Edge &p_a, const Edge &p_b) {
 		if (p_vertices[p_a.edge[0]].is_equal_approx(p_vertices[p_b.edge[0]]) && p_vertices[p_a.edge[1]].is_equal_approx(p_vertices[p_b.edge[1]])) {
 			return true;
 		}
@@ -87,9 +87,9 @@ public:
 		return false;
 	}
 
-	static Vector<Triangle> triangulate(const Vector<Vector2> &p_points) {
-		Vector<Vector2> points = p_points;
-		Vector<Triangle> triangles;
+	static std::vector<Triangle> triangulate(const std::vector<Vector2> &p_points) {
+		std::vector<Vector2> points = p_points;
+		std::vector<Triangle> triangles;
 
 		Rect2 rect;
 		for (int i = 0; i < p_points.size(); i++) {
@@ -110,11 +110,11 @@ public:
 		triangles.push_back(Triangle(p_points.size() + 0, p_points.size() + 1, p_points.size() + 2));
 
 		for (int i = 0; i < p_points.size(); i++) {
-			Vector<Edge> polygon;
+			std::vector<Edge> polygon;
 
 			for (int j = 0; j < triangles.size(); j++) {
 				if (circum_circle_contains(points, triangles[j], i)) {
-					triangles.write[j].bad = true;
+					triangles[j].bad = true;
 					polygon.push_back(Edge(triangles[j].points[0], triangles[j].points[1]));
 					polygon.push_back(Edge(triangles[j].points[1], triangles[j].points[2]));
 					polygon.push_back(Edge(triangles[j].points[2], triangles[j].points[0]));
@@ -123,7 +123,7 @@ public:
 
 			for (int j = 0; j < triangles.size(); j++) {
 				if (triangles[j].bad) {
-					triangles.remove(j);
+					triangles.erase(triangles.begin() + j);
 					j--;
 				}
 			}
@@ -131,8 +131,8 @@ public:
 			for (int j = 0; j < polygon.size(); j++) {
 				for (int k = j + 1; k < polygon.size(); k++) {
 					if (edge_compare(points, polygon[j], polygon[k])) {
-						polygon.write[j].bad = true;
-						polygon.write[k].bad = true;
+						polygon[j].bad = true;
+						polygon[k].bad = true;
 					}
 				}
 			}
@@ -154,7 +154,8 @@ public:
 				}
 			}
 			if (invalid) {
-				triangles.remove(i);
+				//TODO
+				triangles.erase(triangles.begin() + i);
 				i--;
 			}
 		}

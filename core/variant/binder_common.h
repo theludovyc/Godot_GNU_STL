@@ -333,7 +333,7 @@ void call_with_variant_args(T *p_instance, void (T::*p_method)(P...), const Vari
 }
 
 template <class T, class... P>
-void call_with_variant_args_dv(T *p_instance, void (T::*p_method)(P...), const Variant **p_args, int p_argcount, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_args_dv(T *p_instance, void (T::*p_method)(P...), const Variant **p_args, int p_argcount, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -384,7 +384,7 @@ void call_with_variant_argsc(T *p_instance, void (T::*p_method)(P...) const, con
 }
 
 template <class T, class... P>
-void call_with_variant_argsc_dv(T *p_instance, void (T::*p_method)(P...) const, const Variant **p_args, int p_argcount, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_argsc_dv(T *p_instance, void (T::*p_method)(P...) const, const Variant **p_args, int p_argcount, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -417,7 +417,7 @@ void call_with_variant_argsc_dv(T *p_instance, void (T::*p_method)(P...) const, 
 }
 
 template <class T, class R, class... P>
-void call_with_variant_args_ret_dv(T *p_instance, R (T::*p_method)(P...), const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_args_ret_dv(T *p_instance, R (T::*p_method)(P...), const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -450,7 +450,7 @@ void call_with_variant_args_ret_dv(T *p_instance, R (T::*p_method)(P...), const 
 }
 
 template <class T, class R, class... P>
-void call_with_variant_args_retc_dv(T *p_instance, R (T::*p_method)(P...) const, const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_args_retc_dv(T *p_instance, R (T::*p_method)(P...) const, const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -767,7 +767,7 @@ void call_with_variant_args_retc_static_helper(T *p_instance, R (*p_method)(T *,
 }
 
 template <class T, class R, class... P>
-void call_with_variant_args_retc_static_helper_dv(T *p_instance, R (*p_method)(T *, P...), const Variant **p_args, int p_argcount, Variant &r_ret, const Vector<Variant> &default_values, Callable::CallError &r_error) {
+void call_with_variant_args_retc_static_helper_dv(T *p_instance, R (*p_method)(T *, P...), const Variant **p_args, int p_argcount, Variant &r_ret, const std::vector<Variant> &default_values, Callable::CallError &r_error) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -813,7 +813,7 @@ void call_with_variant_args_static_helper(T *p_instance, void (*p_method)(T *, P
 }
 
 template <class T, class... P>
-void call_with_variant_args_static_helper_dv(T *p_instance, void (*p_method)(T *, P...), const Variant **p_args, int p_argcount, const Vector<Variant> &default_values, Callable::CallError &r_error) {
+void call_with_variant_args_static_helper_dv(T *p_instance, void (*p_method)(T *, P...), const Variant **p_args, int p_argcount, const std::vector<Variant> &default_values, Callable::CallError &r_error) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -846,7 +846,7 @@ void call_with_variant_args_static_helper_dv(T *p_instance, void (*p_method)(T *
 }
 
 template <class R, class... P>
-void call_with_variant_args_static_ret_dv(R (*p_method)(P...), const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_args_static_ret_dv(R (*p_method)(P...), const Variant **p_args, int p_argcount, Variant &r_ret, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
@@ -879,7 +879,7 @@ void call_with_variant_args_static_ret_dv(R (*p_method)(P...), const Variant **p
 }
 
 template <class... P>
-void call_with_variant_args_static_dv(void (*p_method)(P...), const Variant **p_args, int p_argcount, Callable::CallError &r_error, const Vector<Variant> &default_values) {
+void call_with_variant_args_static_dv(void (*p_method)(P...), const Variant **p_args, int p_argcount, Callable::CallError &r_error, const std::vector<Variant> &default_values) {
 #ifdef DEBUG_ENABLED
 	if ((size_t)p_argcount > sizeof...(P)) {
 		r_error.error = Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
