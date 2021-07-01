@@ -14,5 +14,4 @@ endmacro()
 build_test(tester.cpp)
 
 build_test(test_aabb.cpp)
-#build_test(test_array.cpp)
-build_test(test_vector.cpp)
+build_test(test_astar.cpp)

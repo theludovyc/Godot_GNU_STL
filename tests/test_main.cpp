@@ -34,7 +34,7 @@
 
 #include "test_aabb.h"
 #include "test_array.h"
-#include "test_astar.h"
+#include "test_astar.cpp"
 #include "test_basis.h"
 #include "test_class_db.h"
 #include "test_color.h"

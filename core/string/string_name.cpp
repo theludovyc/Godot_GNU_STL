@@ -49,11 +49,13 @@ bool StringName::configured = false;
 Mutex StringName::mutex;
 
 void StringName::setup() {
-	ERR_FAIL_COND(configured);
-	for (int i = 0; i < STRING_TABLE_LEN; i++) {
-		_table[i] = nullptr;
+	if(!configured){
+		for (int i = 0; i < STRING_TABLE_LEN; i++) {
+			_table[i] = nullptr;
+		}
+
+		configured = true;
 	}
-	configured = true;
 }
 
 void StringName::cleanup() {
