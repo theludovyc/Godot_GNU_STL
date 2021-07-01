@@ -30,6 +30,8 @@
 
 #include "project_settings.h"
 
+#include <algorithm>
+
 #include "core/core_bind.h"
 #include "core/core_string_names.h"
 #include "core/input/input_map.h"
@@ -38,11 +40,8 @@
 #include "core/io/file_access_network.h"
 #include "core/io/file_access_pack.h"
 #include "core/io/marshalls.h"
-#include "core/os/keyboard.h"
 #include "core/os/os.h"
 #include "core/variant/variant_parser.h"
-
-#include <zlib.h>
 
 ProjectSettings *ProjectSettings::singleton = nullptr;
 
@@ -176,7 +175,7 @@ bool ProjectSettings::_set(const StringName &p_name, const Variant &p_value) {
 		}
 	} else {
 		if (p_name == CoreStringNames::get_singleton()->_custom_features) {
-			Vector<String> custom_feature_array = String(p_value).split(",");
+			std::vector<String> custom_feature_array = String(p_value).split(",");
 			for (int i = 0; i < custom_feature_array.size(); i++) {
 				custom_features.insert(custom_feature_array[i]);
 			}
@@ -186,7 +185,7 @@ bool ProjectSettings::_set(const StringName &p_name, const Variant &p_value) {
 		if (!disable_feature_overrides) {
 			int dot = p_name.operator String().find(".");
 			if (dot != -1) {
-				Vector<String> s = p_name.operator String().split(".");
+				std::vector<String> s = p_name.operator String().split(".");
 
 				bool override_valid = false;
 				for (int i = 1; i < s.size(); i++) {
@@ -559,11 +558,11 @@ Error ProjectSettings::_load_settings_binary(const String &p_path) {
 		key.parse_utf8(cs.ptr());
 
 		uint32_t vlen = f->get_32();
-		Vector<uint8_t> d;
+		std::vector<uint8_t> d;
 		d.resize(vlen);
-		f->get_buffer(d.ptrw(), vlen);
+		f->get_buffer(d.data(), vlen);
 		Variant value;
-		err = decode_variant(value, d.ptr(), d.size(), nullptr, true);
+		err = decode_variant(value, d.data(), d.size(), nullptr, true);
 		ERR_CONTINUE_MSG(err != OK, "Error decoding property: " + key + ".");
 		set(key, value);
 	}
@@ -720,16 +719,16 @@ Error ProjectSettings::_save_settings_binary(const String &p_file, const Map<Str
 			ERR_FAIL_V(err);
 		}
 
-		Vector<uint8_t> buff;
+		std::vector<uint8_t> buff;
 		buff.resize(len);
 
-		err = encode_variant(p_custom_features, buff.ptrw(), len, false);
+		err = encode_variant(p_custom_features, buff.data(), len, false);
 		if (err != OK) {
 			memdelete(file);
 			ERR_FAIL_V(err);
 		}
 		file->store_32(len);
-		file->store_buffer(buff.ptr(), buff.size());
+		file->store_buffer(buff.data(), buff.size());
 
 	} else {
 		file->store_32(count); //store how many properties are saved
@@ -757,16 +756,16 @@ Error ProjectSettings::_save_settings_binary(const String &p_file, const Map<Str
 			}
 			ERR_FAIL_COND_V_MSG(err != OK, ERR_INVALID_DATA, "Error when trying to encode Variant.");
 
-			Vector<uint8_t> buff;
+			std::vector<uint8_t> buff;
 			buff.resize(len);
 
-			err = encode_variant(value, buff.ptrw(), len, true);
+			err = encode_variant(value, buff.data(), len, true);
 			if (err != OK) {
 				memdelete(file);
 			}
 			ERR_FAIL_COND_V_MSG(err != OK, ERR_INVALID_DATA, "Error when trying to encode Variant.");
 			file->store_32(len);
-			file->store_buffer(buff.ptr(), buff.size());
+			file->store_buffer(buff.data(), buff.size());
 		}
 	}
 
@@ -834,7 +833,7 @@ Error ProjectSettings::_save_custom_bnd(const String &p_file) { // add other par
 	return save_custom(p_file);
 }
 
-Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_custom, const Vector<String> &p_custom_features, bool p_merge_with_current) {
+Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_custom, const std::vector<String> &p_custom_features, bool p_merge_with_current) {
 	ERR_FAIL_COND_V_MSG(p_path == "", ERR_INVALID_PARAMETER, "Project settings save path cannot be empty.");
 
 	Set<_VCSort> vclist;
@@ -928,10 +927,10 @@ Variant _GLOBAL_DEF(const String &p_var, const Variant &p_default, bool p_restar
 	return ret;
 }
 
-Vector<String> ProjectSettings::get_optimizer_presets() const {
+std::vector<String> ProjectSettings::get_optimizer_presets() const {
 	List<PropertyInfo> pi;
 	ProjectSettings::get_singleton()->get_property_list(&pi);
-	Vector<String> names;
+	std::vector<String> names;
 
 	for (List<PropertyInfo>::Element *E = pi.front(); E; E = E->next()) {
 		if (!E->get().name.begins_with("optimizer_presets/")) {
@@ -940,7 +939,7 @@ Vector<String> ProjectSettings::get_optimizer_presets() const {
 		names.push_back(E->get().name.get_slicec('/', 1));
 	}
 
-	names.sort();
+	std::sort(names.begin(), names.end());
 
 	return names;
 }

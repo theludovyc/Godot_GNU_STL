@@ -31,10 +31,11 @@
 #ifndef ENGINE_DEBUGGER_H
 #define ENGINE_DEBUGGER_H
 
+#include <vector>
+
 #include "core/string/string_name.h"
 #include "core/string/ustring.h"
 #include "core/templates/map.h"
-#include "core/templates/vector.h"
 #include "core/variant/array.h"
 #include "core/variant/variant.h"
 

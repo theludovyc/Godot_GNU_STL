@@ -49,7 +49,7 @@
 
 namespace GDScriptTests {
 
-static void test_tokenizer(const String &p_code, const Vector<String> &p_lines) {
+static void test_tokenizer(const String &p_code, const std::vector<String> &p_lines) {
 	GDScriptTokenizer tokenizer;
 	tokenizer.set_source_code(p_code);
 
@@ -107,7 +107,7 @@ static void test_tokenizer(const String &p_code, const Vector<String> &p_lines) 
 	print_line(current.get_name()); // Should be EOF
 }
 
-static void test_parser(const String &p_code, const String &p_script_path, const Vector<String> &p_lines) {
+static void test_parser(const String &p_code, const String &p_script_path, const std::vector<String> &p_lines) {
 	GDScriptParser parser;
 	Error err = parser.parse(p_code, p_script_path, false);
 
@@ -136,7 +136,7 @@ static void test_parser(const String &p_code, const String &p_script_path, const
 #endif
 }
 
-static void test_compiler(const String &p_code, const String &p_script_path, const Vector<String> &p_lines) {
+static void test_compiler(const String &p_code, const String &p_script_path, const std::vector<String> &p_lines) {
 	GDScriptParser parser;
 	Error err = parser.parse(p_code, p_script_path, false);
 
@@ -214,7 +214,7 @@ void test(TestType p_type) {
 	// Initialize the language for the test routine.
 	init_language(fa->get_path_absolute().get_base_dir());
 
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	uint64_t flen = fa->get_length();
 	buf.resize(flen + 1);
 	fa->get_buffer(buf.ptrw(), flen);
@@ -223,7 +223,7 @@ void test(TestType p_type) {
 	String code;
 	code.parse_utf8((const char *)&buf[0]);
 
-	Vector<String> lines;
+	std::vector<String> lines;
 	int last = 0;
 	for (int i = 0; i <= code.length(); i++) {
 		if (code[i] == '\n' || code[i] == 0) {

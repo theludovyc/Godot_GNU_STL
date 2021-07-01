@@ -31,6 +31,8 @@
 #ifndef PROJECT_SETTINGS_H
 #define PROJECT_SETTINGS_H
 
+#include <vector>
+
 #include "core/object/class_db.h"
 #include "core/os/thread_safe.h"
 #include "core/templates/set.h"
@@ -152,13 +154,13 @@ public:
 
 	Error setup(const String &p_path, const String &p_main_pack, bool p_upwards = false);
 
-	Error save_custom(const String &p_path = "", const CustomMap &p_custom = CustomMap(), const Vector<String> &p_custom_features = Vector<String>(), bool p_merge_with_current = true);
+	Error save_custom(const String &p_path = "", const CustomMap &p_custom = CustomMap(), const std::vector<String> &p_custom_features = std::vector<String>(), bool p_merge_with_current = true);
 	Error save();
 	void set_custom_property_info(const String &p_prop, const PropertyInfo &p_info);
 	const Map<StringName, PropertyInfo> &get_custom_property_info() const;
 	uint64_t get_last_saved_time() { return last_save_time; }
 
-	Vector<String> get_optimizer_presets() const;
+	std::vector<String> get_optimizer_presets() const;
 
 	List<String> get_input_presets() const { return input_presets; }
 

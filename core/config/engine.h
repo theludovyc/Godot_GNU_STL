@@ -31,10 +31,11 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <vector>
+
 #include "core/os/main_loop.h"
 #include "core/string/ustring.h"
 #include "core/templates/list.h"
-#include "core/templates/vector.h"
 
 class Engine {
 public:

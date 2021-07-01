@@ -31,6 +31,8 @@
 #ifndef SPHERE_SHAPE_3D_H
 #define SPHERE_SHAPE_3D_H
 
+#include <vector>
+
 #include "scene/resources/shape_3d.h"
 
 class SphereShape3D : public Shape3D {
@@ -46,7 +48,7 @@ public:
 	void set_radius(float p_radius);
 	float get_radius() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines() const override;
+	virtual std::vector<Vector3> get_debug_mesh_lines() const override;
 	virtual real_t get_enclosing_radius() const override;
 
 	SphereShape3D();
