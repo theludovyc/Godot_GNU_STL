@@ -56,7 +56,7 @@ public:
 		String description;
 		bool installs = false;
 		String script;
-		Vector<String> install_files;
+		std::vector<String> install_files;
 	};
 
 private:
@@ -89,8 +89,8 @@ private:
 
 	String config_file_path;
 
-	Vector<String> favorites;
-	Vector<String> recent_dirs;
+	std::vector<String> favorites;
+	std::vector<String> recent_dirs;
 
 	bool save_changed_setting;
 	bool optimize_save; //do not save stuff that came from config but was not set from engine
@@ -157,10 +157,10 @@ public:
 	void set_project_metadata(const String &p_section, const String &p_key, Variant p_data);
 	Variant get_project_metadata(const String &p_section, const String &p_key, Variant p_default) const;
 
-	void set_favorites(const Vector<String> &p_favorites);
-	Vector<String> get_favorites() const;
-	void set_recent_dirs(const Vector<String> &p_recent_dirs);
-	Vector<String> get_recent_dirs() const;
+	void set_favorites(const std::vector<String> &p_favorites);
+	std::vector<String> get_favorites() const;
+	void set_recent_dirs(const std::vector<String> &p_recent_dirs);
+	std::vector<String> get_recent_dirs() const;
 	void load_favorites();
 
 	bool is_dark_theme();
@@ -172,7 +172,7 @@ public:
 	bool save_text_editor_theme_as(String p_file);
 	bool is_default_text_editor_theme();
 
-	Vector<String> get_script_templates(const String &p_extension, const String &p_custom_path = String());
+	std::vector<String> get_script_templates(const String &p_extension, const String &p_custom_path = String());
 	String get_editor_layouts_config() const;
 	float get_auto_display_scale() const;
 

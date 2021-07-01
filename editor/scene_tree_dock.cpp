@@ -30,6 +30,8 @@
 
 #include "scene_tree_dock.h"
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
 #include "core/io/resource_saver.h"
@@ -129,12 +131,12 @@ void SceneTreeDock::_unhandled_key_input(Ref<InputEvent> p_event) {
 }
 
 void SceneTreeDock::instantiate(const String &p_file) {
-	Vector<String> scenes;
+	std::vector<String> scenes;
 	scenes.push_back(p_file);
 	instantiate_scenes(scenes, scene_tree->get_selected());
 }
 
-void SceneTreeDock::instantiate_scenes(const Vector<String> &p_files, Node *p_parent) {
+void SceneTreeDock::instantiate_scenes(const std::vector<String> &p_files, Node *p_parent) {
 	Node *parent = p_parent;
 
 	if (!parent) {
@@ -158,10 +160,10 @@ void SceneTreeDock::instantiate_scenes(const Vector<String> &p_files, Node *p_pa
 	_perform_instantiate_scenes(p_files, parent, -1);
 }
 
-void SceneTreeDock::_perform_instantiate_scenes(const Vector<String> &p_files, Node *parent, int p_pos) {
+void SceneTreeDock::_perform_instantiate_scenes(const std::vector<String> &p_files, Node *parent, int p_pos) {
 	ERR_FAIL_COND(!parent);
 
-	Vector<Node *> instances;
+	std::vector<Node *> instances;
 
 	bool error = false;
 
@@ -302,7 +304,7 @@ bool SceneTreeDock::_cyclical_dependency_exists(const String &p_target_scene_pat
 bool SceneTreeDock::_track_inherit(const String &p_target_scene_path, Node *p_desired_node) {
 	Node *p = p_desired_node;
 	bool result = false;
-	Vector<Node *> instances;
+	std::vector<Node *> instances;
 	while (true) {
 		if (p->get_filename() == p_target_scene_path) {
 			result = true;
@@ -368,8 +370,8 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 			Node *current_edited_scene_root = EditorNode::get_singleton()->get_edited_scene();
 			if (current_edited_scene_root) {
 				String root_class = current_edited_scene_root->get_class_name();
-				static Vector<String> preferred_types;
-				if (preferred_types.is_empty()) {
+				static std::vector<String> preferred_types;
+				if (preferred_types.empty()) {
 					preferred_types.push_back("Control");
 					preferred_types.push_back("Node2D");
 					preferred_types.push_back("Node3D");
@@ -1363,7 +1365,7 @@ void SceneTreeDock::_set_owners(Node *p_owner, const Array &p_nodes) {
 	}
 }
 
-void SceneTreeDock::_fill_path_renames(Vector<StringName> base_path, Vector<StringName> new_base_path, Node *p_node, List<Pair<NodePath, NodePath>> *p_renames) {
+void SceneTreeDock::_fill_path_renames(std::vector<StringName> base_path, std::vector<StringName> new_base_path, Node *p_node, List<Pair<NodePath, NodePath>> *p_renames) {
 	base_path.push_back(p_node->get_name());
 	if (new_base_path.size()) {
 		new_base_path.push_back(p_node->get_name());
@@ -1387,15 +1389,16 @@ void SceneTreeDock::_fill_path_renames(Vector<StringName> base_path, Vector<Stri
 }
 
 void SceneTreeDock::fill_path_renames(Node *p_node, Node *p_new_parent, List<Pair<NodePath, NodePath>> *p_renames) {
-	Vector<StringName> base_path;
+	std::vector<StringName> base_path;
 	Node *n = p_node->get_parent();
 	while (n) {
 		base_path.push_back(n->get_name());
 		n = n->get_parent();
 	}
-	base_path.reverse();
 
-	Vector<StringName> new_base_path;
+	std::reverse(base_path.begin(),  base_path.end());
+
+	std::vector<StringName> new_base_path;
 	if (p_new_parent) {
 		n = p_new_parent;
 		while (n) {
@@ -1403,7 +1406,7 @@ void SceneTreeDock::fill_path_renames(Node *p_node, Node *p_new_parent, List<Pai
 			n = n->get_parent();
 		}
 
-		new_base_path.reverse();
+		std::reverse(new_base_path.begin(),  new_base_path.end());
 	}
 
 	_fill_path_renames(base_path, new_base_path, p_node, p_renames);
@@ -1638,15 +1641,15 @@ void SceneTreeDock::perform_node_renames(Node *p_base, List<Pair<NodePath, NodeP
 void SceneTreeDock::_node_prerenamed(Node *p_node, const String &p_new_name) {
 	List<Pair<NodePath, NodePath>> path_renames;
 
-	Vector<StringName> base_path;
+	std::vector<StringName> base_path;
 	Node *n = p_node->get_parent();
 	while (n) {
 		base_path.push_back(n->get_name());
 		n = n->get_parent();
 	}
-	base_path.reverse();
+	std::reverse(base_path.begin(),  base_path.end());
 
-	Vector<StringName> new_base_path = base_path;
+	std::vector<StringName> new_base_path = base_path;
 	base_path.push_back(p_node->get_name());
 
 	new_base_path.push_back(p_new_name);
@@ -1714,7 +1717,7 @@ void SceneTreeDock::_node_reparent(NodePath p_path, bool p_keep_global_xform) {
 		return; // Nothing to reparent.
 	}
 
-	Vector<Node *> nodes;
+	std::vector<Node *> nodes;
 
 	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 		nodes.push_back(E->get());
@@ -1723,7 +1726,7 @@ void SceneTreeDock::_node_reparent(NodePath p_path, bool p_keep_global_xform) {
 	_do_reparent(new_parent, -1, nodes, p_keep_global_xform);
 }
 
-void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, Vector<Node *> p_nodes, bool p_keep_global_xform) {
+void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, std::vector<Node *> p_nodes, bool p_keep_global_xform) {
 	Node *new_parent = p_new_parent;
 	ERR_FAIL_COND(!new_parent);
 
@@ -1750,7 +1753,9 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, V
 
 	Node *validate = new_parent;
 	while (validate) {
-		ERR_FAIL_COND_MSG(p_nodes.find(validate) != -1, "Selection changed at some point. Can't reparent.");
+		auto it = std::find(p_nodes.begin(), p_nodes.end(), validate);
+
+		ERR_FAIL_COND_MSG(it != p_nodes.end(), "Selection changed at some point. Can't reparent.");
 		validate = validate->get_parent();
 	}
 
@@ -1760,7 +1765,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, V
 	editor_data->get_undo_redo().create_action(TTR("Reparent Node"));
 
 	List<Pair<NodePath, NodePath>> path_renames;
-	Vector<StringName> former_names;
+	std::vector<StringName> former_names;
 
 	int inc = 0;
 
@@ -1799,8 +1804,8 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, V
 			NodePath old_new_name = path_renames[ni].second;
 			NodePath new_path;
 
-			Vector<StringName> unfixed_new_names = old_new_name.get_names();
-			Vector<StringName> fixed_new_names;
+			std::vector<StringName> unfixed_new_names = old_new_name.get_names();
+			std::vector<StringName> fixed_new_names;
 
 			// Get last name and replace with fixed new name.
 			for (int a = 0; a < (unfixed_new_names.size() - 1); a++) {
@@ -2255,7 +2260,7 @@ void SceneTreeDock::_create() {
 
 		_do_create(parent);
 
-		Vector<Node *> nodes;
+		std::vector<Node *> nodes;
 		for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 			nodes.push_back(E->get());
 		}
@@ -2508,7 +2513,7 @@ void SceneTreeDock::_normalize_drop(Node *&to_node, int &to_pos, int p_type) {
 	}
 }
 
-void SceneTreeDock::_files_dropped(Vector<String> p_files, NodePath p_to, int p_type) {
+void SceneTreeDock::_files_dropped(std::vector<String> p_files, NodePath p_to, int p_type) {
 	Node *node = get_node(p_to);
 	ERR_FAIL_COND(!node);
 
@@ -2543,7 +2548,7 @@ void SceneTreeDock::_nodes_dragged(Array p_nodes, NodePath p_to, int p_type) {
 		return;
 	}
 
-	Vector<Node *> nodes;
+	std::vector<Node *> nodes;
 	for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 		nodes.push_back(E->get());
 	}

@@ -75,7 +75,7 @@ void EditorQuickOpen::_update_search() {
 	const bool empty_search = search_text == "";
 
 	// Filter possible candidates.
-	Vector<Entry> entries;
+	std::vector<Entry> entries;
 	for (int i = 0; i < files.size(); i++) {
 		if (empty_search || search_text.is_subsequence_ofi(files[i])) {
 			Entry r;
@@ -92,7 +92,7 @@ void EditorQuickOpen::_update_search() {
 	if (entries.size() > 0) {
 		if (!empty_search) {
 			SortArray<Entry, EntryComparator> sorter;
-			sorter.sort(entries.ptrw(), entries.size());
+			sorter.sort(entries.data(), entries.size());
 		}
 
 		const int entry_limit = MIN(entries.size(), 300);
@@ -198,8 +198,8 @@ String EditorQuickOpen::get_selected() const {
 	return "res://" + ti->get_text(0);
 }
 
-Vector<String> EditorQuickOpen::get_selected_files() const {
-	Vector<String> selected_files;
+std::vector<String> EditorQuickOpen::get_selected_files() const {
+	std::vector<String> selected_files;
 
 	TreeItem *item = search_options->get_next_selected(search_options->get_root());
 	while (item) {

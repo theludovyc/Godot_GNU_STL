@@ -30,6 +30,8 @@
 
 #include "editor_node.h"
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "core/core_bind.h"
 #include "core/extension/native_extension_manager.h"
@@ -1675,7 +1677,10 @@ void EditorNode::save_scene_list(std::vector<String> p_scene_filenames) {
 	for (int i = 0; i < editor_data.get_edited_scene_count(); i++) {
 		Node *scene = editor_data.get_edited_scene_root(i);
 
-		if (scene && (p_scene_filenames.find(scene->get_filename()) >= 0)) {
+		//TODO
+		auto it = std::find(p_scene_filenames.begin(), p_scene_filenames.end(), scene->get_filename());
+
+		if (scene && it != p_scene_filenames.end()) {
 			_save_scene(scene->get_filename(), i);
 		}
 	}
@@ -1951,7 +1956,7 @@ void EditorNode::edit_item(Object *p_object) {
 		sub_plugins = editor_data.get_subeditors(p_object);
 	}
 
-	if (!sub_plugins.is_empty()) {
+	if (!sub_plugins.empty()) {
 		bool same = true;
 		if (sub_plugins.size() == editor_plugins_over->get_plugins_list().size()) {
 			for (int i = 0; i < sub_plugins.size(); i++) {
@@ -2197,13 +2202,13 @@ void EditorNode::_edit_current() {
 			sub_plugins = editor_data.get_subeditors(current_obj);
 		}
 
-		if (!sub_plugins.is_empty()) {
+		if (!sub_plugins.empty()) {
 			_display_top_editors(false);
 
 			_set_top_editors(sub_plugins);
 			_set_editing_top_editors(current_obj);
 			_display_top_editors(true);
-		} else if (!editor_plugins_over->get_plugins_list().is_empty()) {
+		} else if (!editor_plugins_over->get_plugins_list().empty()) {
 			hide_top_editors();
 		}
 	}
@@ -3089,13 +3094,15 @@ void EditorNode::remove_editor_plugin(EditorPlugin *p_editor, bool p_config_chan
 				}
 
 				memdelete(singleton->main_editor_buttons[i]);
-				singleton->main_editor_buttons.remove(i);
+
+				//TODO
+				singleton->main_editor_buttons.erase(singleton->main_editor_buttons.begin() + i);
 
 				break;
 			}
 		}
 
-		singleton->editor_table.erase(p_editor);
+		std::remove(singleton->editor_table.begin(),  singleton->editor_table.end(), p_editor);
 	}
 	p_editor->make_visible(false);
 	p_editor->clear();
@@ -4103,7 +4110,7 @@ void EditorNode::_dock_floating_close_request(Control *p_control) {
 
 	_update_dock_containers();
 
-	floating_docks.erase(p_control);
+	std::remove(floating_docks.begin(), floating_docks.end(), p_control);
 }
 
 void EditorNode::_dock_make_float() {
@@ -5001,7 +5008,9 @@ void EditorNode::remove_bottom_panel_item(Control *p_item) {
 			bottom_panel_vb->remove_child(bottom_panel_items[i].control);
 			bottom_panel_hb_editors->remove_child(bottom_panel_items[i].button);
 			memdelete(bottom_panel_items[i].button);
-			bottom_panel_items.remove(i);
+
+			//TODO
+			bottom_panel_items.erase(bottom_panel_items.begin() + i);
 			break;
 		}
 	}
@@ -5289,7 +5298,7 @@ void EditorNode::_add_dropped_files_recursive(const std::vector<String> &p_files
 				next_file = sub_dir->get_next();
 			}
 
-			if (!sub_files.is_empty()) {
+			if (!sub_files.empty()) {
 				dir->make_dir(to);
 				_add_dropped_files_recursive(sub_files, to);
 			}
@@ -5429,7 +5438,7 @@ void EditorNode::add_resource_conversion_plugin(const Ref<EditorResourceConversi
 }
 
 void EditorNode::remove_resource_conversion_plugin(const Ref<EditorResourceConversionPlugin> &p_plugin) {
-	resource_conversion_plugins.erase(p_plugin);
+	std::remove(resource_conversion_plugins.begin(),  resource_conversion_plugins.end(), p_plugin);
 }
 
 std::vector<Ref<EditorResourceConversionPlugin>> EditorNode::find_resource_conversion_plugin(const Ref<Resource> &p_for_resource) {
@@ -7085,11 +7094,11 @@ void EditorPluginList::add_plugin(EditorPlugin *p_plugin) {
 }
 
 void EditorPluginList::remove_plugin(EditorPlugin *p_plugin) {
-	plugins_list.erase(p_plugin);
+	std::remove(plugins_list.begin(),  plugins_list.end(), p_plugin);
 }
 
 bool EditorPluginList::is_empty() {
-	return plugins_list.is_empty();
+	return plugins_list.empty();
 }
 
 void EditorPluginList::clear() {

@@ -452,8 +452,8 @@ void DependencyRemoveDialog::show(const std::vector<String> &p_folders, const st
 
 	std::vector<RemovedDependency> removed_deps;
 	_find_all_removed_dependencies(EditorFileSystem::get_singleton()->get_filesystem(), removed_deps);
-	removed_deps.sort();
-	if (removed_deps.is_empty()) {
+	std::sort(removed_deps.begin(), removed_deps.end());
+	if (removed_deps.empty()) {
 		owners->hide();
 		text->set_text(TTR("Remove selected files from the project? (no undo)\nYou can find the removed files in the system trash to restore them."));
 		set_size(Size2());
@@ -535,13 +535,18 @@ void DependencyRemoveDialog::ok_pressed() {
 	std::vector<String> previous_favorites = EditorSettings::get_singleton()->get_favorites();
 	std::vector<String> new_favorites;
 
+	//TODO
 	for (int i = 0; i < previous_favorites.size(); ++i) {
 		if (previous_favorites[i].ends_with("/")) {
-			if (dirs_to_delete.find(previous_favorites[i]) < 0) {
+			auto it = std::find(dirs_to_delete.begin(), dirs_to_delete.end(), previous_favorites[i]);
+
+			if (it == dirs_to_delete.end()) {
 				new_favorites.push_back(previous_favorites[i]);
 			}
 		} else {
-			if (files_to_delete.find(previous_favorites[i]) < 0) {
+			auto it = std::find(files_to_delete.begin(), files_to_delete.end(), previous_favorites[i]);
+
+			if (it == files_to_delete.end()) {
 				new_favorites.push_back(previous_favorites[i]);
 			}
 		}

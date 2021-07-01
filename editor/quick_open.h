@@ -44,7 +44,7 @@ class EditorQuickOpen : public ConfirmationDialog {
 	StringName base_type;
 	bool allow_multi_select;
 
-	Vector<String> files;
+	std::vector<String> files;
 	OAHashMap<String, Ref<Texture2D>> icons;
 
 	struct Entry {
@@ -79,7 +79,7 @@ public:
 	StringName get_base_type() const;
 
 	String get_selected() const;
-	Vector<String> get_selected_files() const;
+	std::vector<String> get_selected_files() const;
 
 	void popup_dialog(const StringName &p_base, bool p_enable_multi = false, bool p_dontclear = false);
 	EditorQuickOpen();

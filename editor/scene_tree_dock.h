@@ -97,7 +97,7 @@ class SceneTreeDock : public VBoxContainer {
 		EDIT_SUBRESOURCE_BASE = 100
 	};
 
-	Vector<ObjectID> subresources;
+	std::vector<ObjectID> subresources;
 
 	bool restore_script_editor_on_drag;
 	bool reset_create_dialog = false;
@@ -163,7 +163,7 @@ class SceneTreeDock : public VBoxContainer {
 	void _add_children_to_popup(Object *p_obj, int p_depth);
 
 	void _node_reparent(NodePath p_path, bool p_keep_global_xform);
-	void _do_reparent(Node *p_new_parent, int p_position_in_parent, Vector<Node *> p_nodes, bool p_keep_global_xform);
+	void _do_reparent(Node *p_new_parent, int p_position_in_parent, std::vector<Node *> p_nodes, bool p_keep_global_xform);
 
 	bool _is_collapsed_recursive(TreeItem *p_item) const;
 	void _set_collapsed_recursive(TreeItem *p_item, bool p_collapsed);
@@ -211,12 +211,12 @@ class SceneTreeDock : public VBoxContainer {
 	void _selection_changed();
 	void _update_script_button();
 
-	void _fill_path_renames(Vector<StringName> base_path, Vector<StringName> new_base_path, Node *p_node, List<Pair<NodePath, NodePath>> *p_renames);
+	void _fill_path_renames(std::vector<StringName> base_path, std::vector<StringName> new_base_path, Node *p_node, List<Pair<NodePath, NodePath>> *p_renames);
 
 	void _normalize_drop(Node *&to_node, int &to_pos, int p_type);
 
 	void _nodes_dragged(Array p_nodes, NodePath p_to, int p_type);
-	void _files_dropped(Vector<String> p_files, NodePath p_to, int p_type);
+	void _files_dropped(std::vector<String> p_files, NodePath p_to, int p_type);
 	void _script_dropped(String p_file, NodePath p_to);
 	void _quick_open();
 
@@ -224,7 +224,7 @@ class SceneTreeDock : public VBoxContainer {
 
 	void _filter_changed(const String &p_filter);
 
-	void _perform_instantiate_scenes(const Vector<String> &p_files, Node *parent, int p_pos);
+	void _perform_instantiate_scenes(const std::vector<String> &p_files, Node *parent, int p_pos);
 	void _replace_with_branch_scene(const String &p_file, Node *base);
 
 	void _file_selected(String p_file);
@@ -263,7 +263,7 @@ public:
 	void import_subscene();
 	void set_edited_scene(Node *p_scene);
 	void instantiate(const String &p_file);
-	void instantiate_scenes(const Vector<String> &p_files, Node *p_parent = nullptr);
+	void instantiate_scenes(const std::vector<String> &p_files, Node *p_parent = nullptr);
 	void set_selected(Node *p_node, bool p_emit_selected = false);
 	void fill_path_renames(Node *p_node, Node *p_new_parent, List<Pair<NodePath, NodePath>> *p_renames);
 	void perform_node_renames(Node *p_base, List<Pair<NodePath, NodePath>> *p_renames, Map<Ref<Animation>, Set<int>> *r_rem_anims = nullptr);

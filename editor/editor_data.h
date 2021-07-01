@@ -51,15 +51,15 @@ class EditorHistory {
 	};
 
 	struct History {
-		Vector<Obj> path;
+		std::vector<Obj> path;
 		int level = 0;
 	};
 	friend class EditorData;
 
-	Vector<History> history;
+	std::vector<History> history;
 	int current;
 
-	//Vector<EditorPlugin*> editor_plugins;
+	//std::vector<EditorPlugin*> editor_plugins;
 
 	struct PropertyData {
 		String name;
@@ -114,7 +114,7 @@ public:
 		uint64_t file_modified_time = 0;
 		Dictionary editor_states;
 		List<Node *> selection;
-		Vector<EditorHistory::History> history_stored;
+		std::vector<EditorHistory::History> history_stored;
 		int history_current = 0;
 		Dictionary custom_state;
 		uint64_t version = 0;
@@ -122,21 +122,21 @@ public:
 	};
 
 private:
-	Vector<EditorPlugin *> editor_plugins;
+	std::vector<EditorPlugin *> editor_plugins;
 
 	struct PropertyData {
 		String name;
 		Variant value;
 	};
-	Map<String, Vector<CustomType>> custom_types;
+	Map<String, std::vector<CustomType>> custom_types;
 
 	List<PropertyData> clipboard;
 	UndoRedo undo_redo;
-	Vector<Callable> undo_redo_callbacks;
+	std::vector<Callable> undo_redo_callbacks;
 
 	void _cleanup_history();
 
-	Vector<EditedScene> edited_scene;
+	std::vector<EditedScene> edited_scene;
 	int current_edited_scene;
 
 	bool _find_updated_instances(Node *p_root, Node *p_node, Set<String> &checked_paths);
@@ -146,7 +146,7 @@ private:
 
 public:
 	EditorPlugin *get_editor(Object *p_object);
-	Vector<EditorPlugin *> get_subeditors(Object *p_object);
+	std::vector<EditorPlugin *> get_subeditors(Object *p_object);
 	EditorPlugin *get_editor(String p_name);
 
 	void copy_object_params(Object *p_object);
@@ -169,7 +169,7 @@ public:
 	UndoRedo &get_undo_redo();
 	void add_undo_redo_inspector_hook_callback(Callable p_callable); // Callbacks should have 4 args: (Object* undo_redo, Object *modified_object, String property, Variant new_value)
 	void remove_undo_redo_inspector_hook_callback(Callable p_callable);
-	const Vector<Callable> get_undo_redo_inspector_hook_callback();
+	const std::vector<Callable> get_undo_redo_inspector_hook_callback();
 
 	void save_editor_global_states();
 	void restore_editor_global_states();
@@ -177,7 +177,7 @@ public:
 	void add_custom_type(const String &p_type, const String &p_inherits, const Ref<Script> &p_script, const Ref<Texture2D> &p_icon);
 	Variant instance_custom_type(const String &p_type, const String &p_inherits);
 	void remove_custom_type(const String &p_type);
-	const Map<String, Vector<CustomType>> &get_custom_types() const { return custom_types; }
+	const Map<String, std::vector<CustomType>> &get_custom_types() const { return custom_types; }
 
 	int add_edited_scene(int p_at_pos);
 	void move_edited_scene_index(int p_idx, int p_to_idx);
@@ -187,7 +187,7 @@ public:
 	int get_edited_scene() const;
 	Node *get_edited_scene_root(int p_idx = -1);
 	int get_edited_scene_count() const;
-	Vector<EditedScene> get_edited_scenes() const;
+	std::vector<EditedScene> get_edited_scenes() const;
 	String get_scene_title(int p_idx, bool p_always_strip_extension = false) const;
 	String get_scene_path(int p_idx) const;
 	String get_scene_type(int p_idx) const;
