@@ -239,8 +239,8 @@ private:
 	VSplitContainer *center_split;
 
 	// To access those easily by index
-	Vector<VSplitContainer *> vsplits;
-	Vector<HSplitContainer *> hsplits;
+	std::vector<VSplitContainer *> vsplits;
+	std::vector<HSplitContainer *> hsplits;
 
 	// Main tabs
 
@@ -341,8 +341,8 @@ private:
 	EditorQuickOpen *quick_run;
 
 	HBoxContainer *main_editor_button_vb;
-	Vector<Button *> main_editor_buttons;
-	Vector<EditorPlugin *> editor_table;
+	std::vector<Button *> main_editor_buttons;
+	std::vector<EditorPlugin *> editor_table;
 
 	AudioStreamPreviewGenerator *preview_gen;
 	ProgressDialog *progress_dialog;
@@ -355,7 +355,7 @@ private:
 	Button *new_inherited_button;
 	String open_import_request;
 
-	Vector<Control *> floating_docks;
+	std::vector<Control *> floating_docks;
 
 	TabContainer *dock_slot[DOCK_SLOT_MAX];
 	Rect2 dock_select_rect[DOCK_SLOT_MAX];
@@ -400,7 +400,7 @@ private:
 	uint64_t update_spinner_step_frame;
 	int update_spinner_step;
 
-	Vector<EditorPlugin *> editor_plugins;
+	std::vector<EditorPlugin *> editor_plugins;
 	EditorPlugin *editor_plugin_screen;
 	EditorPluginList *editor_plugins_over;
 	EditorPluginList *editor_plugins_force_over;
@@ -421,7 +421,7 @@ private:
 		Button *button = nullptr;
 	};
 
-	Vector<BottomPanelItem> bottom_panel_items;
+	std::vector<BottomPanelItem> bottom_panel_items;
 
 	PanelContainer *bottom_panel;
 	HBoxContainer *bottom_panel_hb;
@@ -466,7 +466,7 @@ private:
 	void _remove_plugin_from_enabled(const String &p_name);
 
 	void _fs_changed();
-	void _resources_reimported(const Vector<String> &p_resources);
+	void _resources_reimported(const std::vector<String> &p_resources);
 	void _sources_changed(bool p_exist);
 
 	void _node_renamed();
@@ -492,10 +492,10 @@ private:
 	void _discard_changes(const String &p_str = String());
 
 	void _inherit_request(String p_file);
-	void _instantiate_request(const Vector<String> &p_files);
+	void _instantiate_request(const std::vector<String> &p_files);
 
 	void _display_top_editors(bool p_display);
-	void _set_top_editors(Vector<EditorPlugin *> p_editor_plugins_over);
+	void _set_top_editors(std::vector<EditorPlugin *> p_editor_plugins_over);
 	void _set_editing_top_editors(Object *p_current_object);
 
 	void _quick_opened();
@@ -512,8 +512,8 @@ private:
 	void _open_recent_scene(int p_idx);
 	void _global_menu_scene(const Variant &p_tag);
 	void _global_menu_new_window(const Variant &p_tag);
-	void _dropped_files(const Vector<String> &p_files, int p_screen);
-	void _add_dropped_files_recursive(const Vector<String> &p_files, String to_path);
+	void _dropped_files(const std::vector<String> &p_files, int p_screen);
+	void _add_dropped_files_recursive(const std::vector<String> &p_files, String to_path);
 	String _recent_scene;
 
 	void _exit_editor();
@@ -575,7 +575,7 @@ private:
 
 	static EditorNode *singleton;
 
-	static Vector<EditorNodeInitCallback> _init_callbacks;
+	static std::vector<EditorNodeInitCallback> _init_callbacks;
 
 	bool _find_scene_in_use(Node *p_node, const String &p_path) const;
 
@@ -645,7 +645,7 @@ private:
 
 	void _update_update_spinner();
 
-	Vector<Ref<EditorResourceConversionPlugin>> resource_conversion_plugins;
+	std::vector<Ref<EditorResourceConversionPlugin>> resource_conversion_plugins;
 
 	PrintHandlerList print_handler;
 	static void _print_handler(void *p_this, const String &p_string, bool p_error);
@@ -653,7 +653,7 @@ private:
 	static void _resource_saved(RES p_resource, const String &p_path);
 	static void _resource_loaded(RES p_resource, const String &p_path);
 
-	void _resources_changed(const Vector<String> &p_resources);
+	void _resources_changed(const std::vector<String> &p_resources);
 	void _scan_external_changes();
 	void _reload_modified_scenes();
 	void _reload_project_settings();
@@ -702,7 +702,7 @@ public:
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 
-	static void disambiguate_filenames(const Vector<String> p_full_paths, Vector<String> &r_filenames);
+	static void disambiguate_filenames(const std::vector<String> p_full_paths, std::vector<String> &r_filenames);
 
 	void new_inherited_scene() { _menu_option_confirm(FILE_NEW_INHERITED_SCENE, false); }
 
@@ -771,7 +771,7 @@ public:
 	static VSplitContainer *get_top_split() { return singleton->top_split; }
 
 	void request_instance_scene(const String &p_path);
-	void request_instantiate_scenes(const Vector<String> &p_files);
+	void request_instantiate_scenes(const std::vector<String> &p_files);
 	FileSystemDock *get_filesystem_dock();
 	ImportDock *get_import_dock();
 	SceneTreeDock *get_scene_tree_dock();
@@ -845,14 +845,14 @@ public:
 	void remove_bottom_panel_item(Control *p_item);
 
 	Variant drag_resource(const Ref<Resource> &p_res, Control *p_from);
-	Variant drag_files_and_dirs(const Vector<String> &p_paths, Control *p_from);
+	Variant drag_files_and_dirs(const std::vector<String> &p_paths, Control *p_from);
 
 	void add_tool_menu_item(const String &p_name, const Callable &p_callback);
 	void add_tool_submenu_item(const String &p_name, PopupMenu *p_submenu);
 	void remove_tool_menu_item(const String &p_name);
 
 	void save_all_scenes();
-	void save_scene_list(Vector<String> p_scene_filenames);
+	void save_scene_list(std::vector<String> p_scene_filenames);
 	void restart_editor();
 
 	void notify_settings_changed();
@@ -873,7 +873,7 @@ public:
 
 	void add_resource_conversion_plugin(const Ref<EditorResourceConversionPlugin> &p_plugin);
 	void remove_resource_conversion_plugin(const Ref<EditorResourceConversionPlugin> &p_plugin);
-	Vector<Ref<EditorResourceConversionPlugin>> find_resource_conversion_plugin(const Ref<Resource> &p_for_resource);
+	std::vector<Ref<EditorResourceConversionPlugin>> find_resource_conversion_plugin(const Ref<Resource> &p_for_resource);
 
 	static void add_init_callback(EditorNodeInitCallback p_callback) { _init_callbacks.push_back(p_callback); }
 	static void add_build_callback(EditorBuildCallback p_callback);
@@ -900,14 +900,14 @@ struct EditorProgress {
 
 class EditorPluginList : public Object {
 private:
-	Vector<EditorPlugin *> plugins_list;
+	std::vector<EditorPlugin *> plugins_list;
 
 public:
-	void set_plugins_list(Vector<EditorPlugin *> p_plugins_list) {
+	void set_plugins_list(std::vector<EditorPlugin *> p_plugins_list) {
 		plugins_list = p_plugins_list;
 	}
 
-	Vector<EditorPlugin *> &get_plugins_list() {
+	std::vector<EditorPlugin *> &get_plugins_list() {
 		return plugins_list;
 	}
 

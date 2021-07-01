@@ -137,8 +137,8 @@ public:
 	void set_collide_with_areas(bool p_enable);
 	bool is_collide_with_areas_enabled() const;
 
-	void set_exclude(const Vector<RID> &p_exclude);
-	Vector<RID> get_exclude() const;
+	void set_exclude(const std::vector<RID> &p_exclude);
+	std::vector<RID> get_exclude() const;
 
 	PhysicsShapeQueryParameters2D();
 };
@@ -146,10 +146,10 @@ public:
 class PhysicsDirectSpaceState2D : public Object {
 	GDCLASS(PhysicsDirectSpaceState2D, Object);
 
-	Dictionary _intersect_ray(const Vector2 &p_from, const Vector2 &p_to, const Vector<RID> &p_exclude = Vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
-	Array _intersect_point(const Vector2 &p_point, int p_max_results = 32, const Vector<RID> &p_exclude = Vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
-	Array _intersect_point_on_canvas(const Vector2 &p_point, ObjectID p_canvas_intance_id, int p_max_results = 32, const Vector<RID> &p_exclude = Vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
-	Array _intersect_point_impl(const Vector2 &p_point, int p_max_results, const Vector<RID> &p_exclud, uint32_t p_layers, bool p_collide_with_bodies, bool p_collide_with_areas, bool p_filter_by_canvas = false, ObjectID p_canvas_instance_id = ObjectID());
+	Dictionary _intersect_ray(const Vector2 &p_from, const Vector2 &p_to, const std::vector<RID> &p_exclude = std::vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
+	Array _intersect_point(const Vector2 &p_point, int p_max_results = 32, const std::vector<RID> &p_exclude = std::vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
+	Array _intersect_point_on_canvas(const Vector2 &p_point, ObjectID p_canvas_intance_id, int p_max_results = 32, const std::vector<RID> &p_exclude = std::vector<RID>(), uint32_t p_layers = 0, bool p_collide_with_bodies = true, bool p_collide_with_areas = false);
+	Array _intersect_point_impl(const Vector2 &p_point, int p_max_results, const std::vector<RID> &p_exclud, uint32_t p_layers, bool p_collide_with_bodies, bool p_collide_with_areas, bool p_filter_by_canvas = false, ObjectID p_canvas_instance_id = ObjectID());
 	Array _intersect_shape(const Ref<PhysicsShapeQueryParameters2D> &p_shape_query, int p_max_results = 32);
 	Array _cast_motion(const Ref<PhysicsShapeQueryParameters2D> &p_shape_query);
 	Array _collide_shape(const Ref<PhysicsShapeQueryParameters2D> &p_shape_query, int p_max_results = 32);
@@ -206,7 +206,7 @@ public:
 class PhysicsShapeQueryResult2D : public RefCounted {
 	GDCLASS(PhysicsShapeQueryResult2D, RefCounted);
 
-	Vector<PhysicsDirectSpaceState2D::ShapeResult> result;
+	std::vector<PhysicsDirectSpaceState2D::ShapeResult> result;
 
 	friend class PhysicsDirectSpaceState2D;
 
@@ -293,7 +293,7 @@ public:
 	virtual PhysicsDirectSpaceState2D *space_get_direct_state(RID p_space) = 0;
 
 	virtual void space_set_debug_contacts(RID p_space, int p_max_contacts) = 0;
-	virtual Vector<Vector2> space_get_contacts(RID p_space) const = 0;
+	virtual std::vector<Vector2> space_get_contacts(RID p_space) const = 0;
 	virtual int space_get_contact_count(RID p_space) const = 0;
 
 	//missing space parameters
@@ -651,7 +651,7 @@ class PhysicsServer2DManager {
 		}
 	};
 
-	static Vector<ClassInfo> physics_2d_servers;
+	static std::vector<ClassInfo> physics_2d_servers;
 	static int default_server_id;
 	static int default_server_priority;
 

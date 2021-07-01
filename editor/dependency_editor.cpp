@@ -30,6 +30,8 @@
 
 #include "dependency_editor.h"
 
+#include <algorithm>
+
 #include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
 #include "editor_node.h"
@@ -85,12 +87,15 @@ void DependencyEditor::_fix_and_find(EditorFileSystemDirectory *efsd, Map<String
 			String current = path.replace_first("res://", "");
 			String lost = E->key().replace_first("res://", "");
 
-			Vector<String> existingv = existing.split("/");
-			existingv.reverse();
-			Vector<String> currentv = current.split("/");
-			currentv.reverse();
-			Vector<String> lostv = lost.split("/");
-			lostv.reverse();
+			std::vector<String> existingv = existing.split("/");
+			std::reverse(existingv.begin(), existingv.end());
+
+			std::vector<String> currentv = current.split("/");
+			std::reverse(currentv.begin(),  currentv.end());
+
+			std::vector<String> lostv = lost.split("/");
+			std::reverse(lostv.begin(), lostv.end());
+
 
 			int existing_score = 0;
 			int current_score = 0;
@@ -301,7 +306,7 @@ void DependencyEditorOwners::_fill_owners(EditorFileSystemDirectory *efsd) {
 	}
 
 	for (int i = 0; i < efsd->get_file_count(); i++) {
-		Vector<String> deps = efsd->get_file_deps(i);
+		std::vector<String> deps = efsd->get_file_deps(i);
 		bool found = false;
 		for (int j = 0; j < deps.size(); j++) {
 			if (deps[j] == editing) {
@@ -360,7 +365,7 @@ void DependencyRemoveDialog::_find_files_in_removed_folder(EditorFileSystemDirec
 	}
 }
 
-void DependencyRemoveDialog::_find_all_removed_dependencies(EditorFileSystemDirectory *efsd, Vector<RemovedDependency> &p_removed) {
+void DependencyRemoveDialog::_find_all_removed_dependencies(EditorFileSystemDirectory *efsd, std::vector<RemovedDependency> &p_removed) {
 	if (!efsd) {
 		return;
 	}
@@ -377,7 +382,7 @@ void DependencyRemoveDialog::_find_all_removed_dependencies(EditorFileSystemDire
 			continue;
 		}
 
-		Vector<String> all_deps = efsd->get_file_deps(i);
+		std::vector<String> all_deps = efsd->get_file_deps(i);
 		for (int j = 0; j < all_deps.size(); ++j) {
 			if (all_remove_files.has(all_deps[j])) {
 				RemovedDependency dep;
@@ -391,7 +396,7 @@ void DependencyRemoveDialog::_find_all_removed_dependencies(EditorFileSystemDire
 	}
 }
 
-void DependencyRemoveDialog::_build_removed_dependency_tree(const Vector<RemovedDependency> &p_removed) {
+void DependencyRemoveDialog::_build_removed_dependency_tree(const std::vector<RemovedDependency> &p_removed) {
 	owners->clear();
 	owners->create_item(); // root
 
@@ -429,7 +434,7 @@ void DependencyRemoveDialog::_build_removed_dependency_tree(const Vector<Removed
 	}
 }
 
-void DependencyRemoveDialog::show(const Vector<String> &p_folders, const Vector<String> &p_files) {
+void DependencyRemoveDialog::show(const std::vector<String> &p_folders, const std::vector<String> &p_files) {
 	all_remove_files.clear();
 	dirs_to_delete.clear();
 	files_to_delete.clear();
@@ -445,7 +450,7 @@ void DependencyRemoveDialog::show(const Vector<String> &p_folders, const Vector<
 		files_to_delete.push_back(p_files[i]);
 	}
 
-	Vector<RemovedDependency> removed_deps;
+	std::vector<RemovedDependency> removed_deps;
 	_find_all_removed_dependencies(EditorFileSystem::get_singleton()->get_filesystem(), removed_deps);
 	removed_deps.sort();
 	if (removed_deps.is_empty()) {
@@ -527,8 +532,8 @@ void DependencyRemoveDialog::ok_pressed() {
 	}
 
 	// If some files/dirs would be deleted, favorite dirs need to be updated
-	Vector<String> previous_favorites = EditorSettings::get_singleton()->get_favorites();
-	Vector<String> new_favorites;
+	std::vector<String> previous_favorites = EditorSettings::get_singleton()->get_favorites();
+	std::vector<String> new_favorites;
 
 	for (int i = 0; i < previous_favorites.size(); ++i) {
 		if (previous_favorites[i].ends_with("/")) {
@@ -569,7 +574,7 @@ DependencyRemoveDialog::DependencyRemoveDialog() {
 
 //////////////
 
-void DependencyErrorDialog::show(Mode p_mode, const String &p_for_file, const Vector<String> &report) {
+void DependencyErrorDialog::show(Mode p_mode, const String &p_for_file, const std::vector<String> &report) {
 	mode = p_mode;
 	for_file = p_for_file;
 	set_title(TTR("Error loading:") + " " + p_for_file.get_file());
@@ -674,7 +679,7 @@ bool OrphanResourcesDialog::_fill_owners(EditorFileSystemDirectory *efsd, HashMa
 
 	for (int i = 0; i < efsd->get_file_count(); i++) {
 		if (!p_parent) {
-			Vector<String> deps = efsd->get_file_deps(i);
+			std::vector<String> deps = efsd->get_file_deps(i);
 			for (int j = 0; j < deps.size(); j++) {
 				if (!refs.has(deps[j])) {
 					refs[deps[j]] = 1;

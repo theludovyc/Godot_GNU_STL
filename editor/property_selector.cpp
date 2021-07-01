@@ -30,6 +30,8 @@
 
 #include "property_selector.h"
 
+#include <algorithm>
+
 #include "core/os/keyboard.h"
 #include "editor/doc_tools.h"
 #include "editor/editor_node.h"
@@ -180,7 +182,9 @@ void PropertySelector::_update_search() {
 				continue;
 			}
 
-			if (type_filter.size() && type_filter.find(E->get().type) == -1) {
+			auto it = std::find(type_filter.begin(), type_filter.end(), E->get().type);
+
+			if (it == type_filter.end()) {
 				continue;
 			}
 
@@ -540,7 +544,7 @@ void PropertySelector::select_property_from_instance(Object *p_instance, const S
 	_update_search();
 }
 
-void PropertySelector::set_type_filter(const Vector<Variant::Type> &p_type_filter) {
+void PropertySelector::set_type_filter(const std::vector<Variant::Type> &p_type_filter) {
 	type_filter = p_type_filter;
 }
 

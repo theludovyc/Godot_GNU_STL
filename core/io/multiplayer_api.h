@@ -89,7 +89,7 @@ private:
 	HashMap<NodePath, PathSentCache> path_send_cache;
 	Map<int, PathGetCache> path_get_cache;
 	int last_send_cache_id;
-	Vector<uint8_t> packet_cache;
+	std::vector<uint8_t> packet_cache;
 	Node *root_node = nullptr;
 	bool allow_object_decoding = false;
 
@@ -134,7 +134,7 @@ public:
 	Node *get_root_node();
 	void set_network_peer(const Ref<NetworkedMultiplayerPeer> &p_peer);
 	Ref<NetworkedMultiplayerPeer> get_network_peer() const;
-	Error send_bytes(Vector<uint8_t> p_data, int p_to = NetworkedMultiplayerPeer::TARGET_PEER_BROADCAST, NetworkedMultiplayerPeer::TransferMode p_mode = NetworkedMultiplayerPeer::TRANSFER_MODE_RELIABLE);
+	Error send_bytes(std::vector<uint8_t> p_data, int p_to = NetworkedMultiplayerPeer::TARGET_PEER_BROADCAST, NetworkedMultiplayerPeer::TransferMode p_mode = NetworkedMultiplayerPeer::TRANSFER_MODE_RELIABLE);
 
 	// Called by Node.rpc
 	void rpcp(Node *p_node, int p_peer_id, bool p_unreliable, const StringName &p_method, const Variant **p_arg, int p_argcount);
@@ -146,7 +146,7 @@ public:
 	void _server_disconnected();
 
 	bool has_network_peer() const { return network_peer.is_valid(); }
-	Vector<int> get_network_connected_peers() const;
+	std::vector<int> get_network_connected_peers() const;
 	int get_rpc_sender_id() const { return rpc_sender_id; }
 	int get_network_unique_id() const;
 	bool is_network_server() const;

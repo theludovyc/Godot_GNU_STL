@@ -30,6 +30,8 @@
 
 #include "node.h"
 
+#include <algorithm>
+
 #include "core/core_string_names.h"
 #include "core/io/resource_loader.h"
 #include "core/object/message_queue.h"
@@ -310,8 +312,8 @@ void Node::move_child(Node *p_child, int p_pos) {
 	int motion_from = MIN(p_pos, p_child->data.pos);
 	int motion_to = MAX(p_pos, p_child->data.pos);
 
-	data.children.remove(p_child->data.pos);
-	data.children.insert(p_pos, p_child);
+	std::remove(data.children.begin(), data.children.end(), p_child->data.pos);
+	data.children.insert(data.children.begin() + p_pos, p_child);
 
 	if (data.tree) {
 		data.tree->tree_changed();
@@ -510,7 +512,7 @@ bool Node::is_network_master() const {
 uint16_t Node::rpc_config(const StringName &p_method, MultiplayerAPI::RPCMode p_rpc_mode, NetworkedMultiplayerPeer::TransferMode p_transfer_mode, int p_channel) {
 	for (int i = 0; i < data.rpc_methods.size(); i++) {
 		if (data.rpc_methods[i].name == p_method) {
-			MultiplayerAPI::RPCConfig &nd = data.rpc_methods.write[i];
+			MultiplayerAPI::RPCConfig &nd = data.rpc_methods[i];
 			nd.rpc_mode = p_rpc_mode;
 			nd.transfer_mode = p_transfer_mode;
 			nd.channel = p_channel;
@@ -632,7 +634,7 @@ void Node::set_custom_multiplayer(Ref<MultiplayerAPI> p_multiplayer) {
 	multiplayer = p_multiplayer;
 }
 
-Vector<MultiplayerAPI::RPCConfig> Node::get_node_rpc_methods() const {
+std::vector<MultiplayerAPI::RPCConfig> Node::get_node_rpc_methods() const {
 	return data.rpc_methods;
 }
 
@@ -915,7 +917,7 @@ void Node::_validate_child_name(Node *p_child, bool p_force_human_readable) {
 			unique = false;
 		} else {
 			//check if exists
-			Node **children = data.children.ptrw();
+			Node **children = data.children.data();
 			int cc = data.children.size();
 
 			for (int i = 0; i < cc; i++) {
@@ -984,7 +986,7 @@ void Node::_generate_serial_child_name(const Node *p_child, StringName &name) co
 
 	//quickly test if proposed name exists
 	int cc = data.children.size(); //children count
-	const Node *const *children_ptr = data.children.ptr();
+	const Node *const *children_ptr = data.children.data();
 
 	{
 		bool exists = false;
@@ -1126,7 +1128,7 @@ void Node::remove_child(Node *p_child) {
 	ERR_FAIL_COND_MSG(data.blocked > 0, "Parent node is busy setting up children, remove_node() failed. Consider using call_deferred(\"remove_child\", child) instead.");
 
 	int child_count = data.children.size();
-	Node **children = data.children.ptrw();
+	Node **children = data.children.data();
 	int idx = -1;
 
 	if (p_child->data.pos >= 0 && p_child->data.pos < child_count) {
@@ -1155,11 +1157,11 @@ void Node::remove_child(Node *p_child) {
 	remove_child_notify(p_child);
 	p_child->notification(NOTIFICATION_UNPARENTED);
 
-	data.children.remove(idx);
+	data.children.erase(data.children.begin() + idx);
 
 	//update pointer and size
 	child_count = data.children.size();
-	children = data.children.ptrw();
+	children = data.children.data();
 
 	for (int i = idx; i < child_count; i++) {
 		children[i]->data.pos = i;
@@ -1192,7 +1194,7 @@ Node *Node::get_child(int p_index) const {
 
 Node *Node::_get_child_by_name(const StringName &p_name) const {
 	int cc = data.children.size();
-	Node *const *cd = data.children.ptr();
+	Node *const *cd = data.children.data();
 
 	for (int i = 0; i < cc; i++) {
 		if (cd[i]->data.name == p_name) {
@@ -1282,7 +1284,7 @@ bool Node::has_node(const NodePath &p_path) const {
 }
 
 Node *Node::find_node(const String &p_mask, bool p_recursive, bool p_owned) const {
-	Node *const *cptr = data.children.ptr();
+	Node *const *cptr = data.children.data();
 	int ccount = data.children.size();
 	for (int i = 0; i < ccount; i++) {
 		if (p_owned && !cptr[i]->data.owner) {
@@ -1342,8 +1344,8 @@ bool Node::is_greater_than(const Node *p_node) const {
 	ERR_FAIL_COND_V(p_node->data.depth < 0, false);
 #ifdef NO_ALLOCA
 
-	Vector<int> this_stack;
-	Vector<int> that_stack;
+	std::vector<int> this_stack;
+	std::vector<int> that_stack;
 	this_stack.resize(data.depth);
 	that_stack.resize(p_node->data.depth);
 
@@ -1510,7 +1512,7 @@ NodePath Node::get_path_to(const Node *p_node) const {
 
 	visited.clear();
 
-	Vector<StringName> path;
+	std::vector<StringName> path;
 
 	n = p_node;
 
@@ -1527,7 +1529,7 @@ NodePath Node::get_path_to(const Node *p_node) const {
 		n = n->data.parent;
 	}
 
-	path.reverse();
+	std::reverse(path.begin(), path.end());
 
 	return NodePath(path, false);
 }
@@ -1541,14 +1543,14 @@ NodePath Node::get_path() const {
 
 	const Node *n = this;
 
-	Vector<StringName> path;
+	std::vector<StringName> path;
 
 	while (n) {
 		path.push_back(n->get_name());
 		n = n->data.parent;
 	}
 
-	path.reverse();
+	std::reverse(path.begin(), path.end());
 
 	data.path_cache = memnew(NodePath(path, true));
 
@@ -1896,7 +1898,7 @@ Node *Node::_duplicate(int p_flags, Map<const Node *, Node *> *r_duplimap) const
 		// Since nodes in the instantiated hierarchy won't be duplicated explicitly, we need to make an inventory
 		// of all the nodes in the tree of the instantiated scene in order to transfer the values of the properties
 
-		Vector<const Node *> instance_roots;
+		std::vector<const Node *> instance_roots;
 		instance_roots.push_back(this);
 
 		for (List<const Node *>::Element *N = node_tree.front(); N; N = N->next()) {
@@ -1904,7 +1906,10 @@ Node *Node::_duplicate(int p_flags, Map<const Node *, Node *> *r_duplimap) const
 				Node *descendant = N->get()->get_child(i);
 				// Skip nodes not really belonging to the instantiated hierarchy; they'll be processed normally later
 				// but remember non-instantiated nodes that are hidden below instantiated ones
-				if (!instance_roots.has(descendant->get_owner())) {
+
+				auto it = std::find(instance_roots.begin(), instance_roots.end(), descendant->get_owner());
+
+				if (it == instance_roots.end()) {
 					if (descendant->get_parent() && descendant->get_parent() != this && descendant->data.owner != descendant->get_parent()) {
 						hidden_roots.push_back(descendant);
 					}
@@ -1913,7 +1918,9 @@ Node *Node::_duplicate(int p_flags, Map<const Node *, Node *> *r_duplimap) const
 
 				node_tree.push_back(descendant);
 
-				if (descendant->get_filename() != "" && instance_roots.has(descendant->get_owner())) {
+				auto it1 = std::find(instance_roots.begin(), instance_roots.end(), descendant->get_owner());
+
+				if (descendant->get_filename() != "" && it1 != instance_roots.end()) {
 					instance_roots.push_back(descendant);
 				}
 			}
@@ -2241,8 +2248,8 @@ void Node::_replace_connections_target(Node *p_new_target) {
 	}
 }
 
-Vector<Variant> Node::make_binds(VARIANT_ARG_DECLARE) {
-	Vector<Variant> ret;
+std::vector<Variant> Node::make_binds(VARIANT_ARG_DECLARE) {
+	std::vector<Variant> ret;
 
 	if (p_arg1.get_type() == Variant::NIL) {
 		return ret;
@@ -2282,7 +2289,7 @@ bool Node::has_node_and_resource(const NodePath &p_path) const {
 		return false;
 	}
 	RES res;
-	Vector<StringName> leftover_path;
+	std::vector<StringName> leftover_path;
 	Node *node = get_node_and_resource(p_path, res, leftover_path, false);
 
 	return node;
@@ -2290,7 +2297,7 @@ bool Node::has_node_and_resource(const NodePath &p_path) const {
 
 Array Node::_get_node_and_resource(const NodePath &p_path) {
 	RES res;
-	Vector<StringName> leftover_path;
+	std::vector<StringName> leftover_path;
 	Node *node = get_node_and_resource(p_path, res, leftover_path, false);
 	Array result;
 
@@ -2306,15 +2313,15 @@ Array Node::_get_node_and_resource(const NodePath &p_path) {
 		result.push_back(Variant());
 	}
 
-	result.push_back(NodePath(Vector<StringName>(), leftover_path, false));
+	result.push_back(NodePath(std::vector<StringName>(), leftover_path, false));
 
 	return result;
 }
 
-Node *Node::get_node_and_resource(const NodePath &p_path, RES &r_res, Vector<StringName> &r_leftover_subpath, bool p_last_is_property) const {
+Node *Node::get_node_and_resource(const NodePath &p_path, RES &r_res, std::vector<StringName> &r_leftover_subpath, bool p_last_is_property) const {
 	Node *node = get_node(p_path);
 	r_res = RES();
-	r_leftover_subpath = Vector<StringName>();
+	r_leftover_subpath = std::vector<StringName>();
 	if (!node) {
 		return nullptr;
 	}

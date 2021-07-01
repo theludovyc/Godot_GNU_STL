@@ -42,8 +42,8 @@ class TriangleMesh : public RefCounted {
 		int indices[3];
 	};
 
-	Vector<Triangle> triangles;
-	Vector<Vector3> vertices;
+	std::vector<Triangle> triangles;
+	std::vector<Vector3> vertices;
 
 	struct BVH {
 		AABB aabb;
@@ -73,7 +73,7 @@ class TriangleMesh : public RefCounted {
 
 	int _create_bvh(BVH *p_bvh, BVH **p_bb, int p_from, int p_size, int p_depth, int &max_depth, int &max_alloc);
 
-	Vector<BVH> bvh;
+	std::vector<BVH> bvh;
 	int max_depth;
 	bool valid;
 
@@ -84,13 +84,13 @@ public:
 	bool intersect_convex_shape(const Plane *p_planes, int p_plane_count, const Vector3 *p_points, int p_point_count) const;
 	bool inside_convex_shape(const Plane *p_planes, int p_plane_count, const Vector3 *p_points, int p_point_count, Vector3 p_scale = Vector3(1, 1, 1)) const;
 	Vector3 get_area_normal(const AABB &p_aabb) const;
-	Vector<Face3> get_faces() const;
+	std::vector<Face3> get_faces() const;
 
-	Vector<Triangle> get_triangles() const { return triangles; }
-	Vector<Vector3> get_vertices() const { return vertices; }
-	void get_indices(Vector<int> *r_triangles_indices) const;
+	std::vector<Triangle> get_triangles() const { return triangles; }
+	std::vector<Vector3> get_vertices() const { return vertices; }
+	void get_indices(std::vector<int> *r_triangles_indices) const;
 
-	void create(const Vector<Vector3> &p_faces);
+	void create(const std::vector<Vector3> &p_faces);
 	TriangleMesh();
 };
 

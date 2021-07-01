@@ -303,8 +303,8 @@ class AnimationTrackEditor : public VBoxContainer {
 	void _show_imported_anim_warning();
 
 	void _snap_mode_changed(int p_mode);
-	Vector<AnimationTrackEdit *> track_edits;
-	Vector<AnimationTrackEditGroup *> groups;
+	std::vector<AnimationTrackEdit *> track_edits;
+	std::vector<AnimationTrackEditGroup *> groups;
 
 	bool animation_changing_awaiting_update;
 	void _animation_update();
@@ -424,7 +424,7 @@ class AnimationTrackEditor : public VBoxContainer {
 	Rect2 box_select_rect;
 	void _scroll_input(const Ref<InputEvent> &p_event);
 
-	Vector<Ref<AnimationTrackEditPlugin>> track_edit_plugins;
+	std::vector<Ref<AnimationTrackEditPlugin>> track_edit_plugins;
 
 	void _cancel_bezier_edit();
 	void _bezier_edit(int p_for_track);
@@ -477,15 +477,15 @@ class AnimationTrackEditor : public VBoxContainer {
 			float transition = 0;
 			Variant value;
 		};
-		Vector<Key> keys;
+		std::vector<Key> keys;
 	};
 
-	Vector<TrackClipboard> track_clipboard;
+	std::vector<TrackClipboard> track_clipboard;
 
 	void _insert_animation_key(NodePath p_path, const Variant &p_value);
 
 	void _pick_track_filter_text_changed(const String &p_newtext);
-	void _pick_track_select_recursive(TreeItem *p_item, const String &p_filter, Vector<Node *> &p_select_candidates);
+	void _pick_track_select_recursive(TreeItem *p_item, const String &p_filter, std::vector<Node *> &p_select_candidates);
 	void _pick_track_filter_input(const Ref<InputEvent> &p_ie);
 
 protected:

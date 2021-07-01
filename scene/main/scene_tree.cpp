@@ -30,6 +30,10 @@
 
 #include "scene_tree.h"
 
+#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "core/config/project_settings.h"
 #include "core/debugger/engine_debugger.h"
 #include "core/input/input.h"
@@ -53,9 +57,6 @@
 #include "servers/physics_server_2d.h"
 #include "servers/physics_server_3d.h"
 #include "window.h"
-
-#include <stdio.h>
-#include <stdlib.h>
 
 void SceneTreeTimer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_time_left", "time"), &SceneTreeTimer::set_time_left);
@@ -123,7 +124,10 @@ SceneTree::Group *SceneTree::add_to_group(const StringName &p_group, Node *p_nod
 		E = group_map.insert(p_group, Group());
 	}
 
-	ERR_FAIL_COND_V_MSG(E->get().nodes.find(p_node) != -1, &E->get(), "Already in group: " + p_group + ".");
+	auto it = std::find(E->get().nodes.begin(), E->get().nodes.end(), p_node);
+
+	ERR_FAIL_COND_V_MSG(it != E->get().nodes.end(), &E->get(), "Already in group: " + p_group + ".");
+
 	E->get().nodes.push_back(p_node);
 	//E->get().last_tree_version=0;
 	E->get().changed = true;
@@ -134,8 +138,9 @@ void SceneTree::remove_from_group(const StringName &p_group, Node *p_node) {
 	Map<StringName, Group>::Element *E = group_map.find(p_group);
 	ERR_FAIL_COND(!E);
 
-	E->get().nodes.erase(p_node);
-	if (E->get().nodes.is_empty()) {
+	std::remove(E->get().nodes.begin(), E->get().nodes.end(), p_node);
+
+	if (E->get().nodes.empty()) {
 		group_map.erase(E);
 	}
 }
@@ -162,7 +167,7 @@ void SceneTree::_flush_ugc() {
 	ugc_locked = true;
 
 	while (unique_group_calls.size()) {
-		Map<UGCall, Vector<Variant>>::Element *E = unique_group_calls.front();
+		Map<UGCall, std::vector<Variant>>::Element *E = unique_group_calls.front();
 
 		Variant v[VARIANT_ARG_MAX];
 		for (int i = 0; i < E->get().size(); i++) {
@@ -182,11 +187,11 @@ void SceneTree::_update_group_order(Group &g, bool p_use_priority) {
 	if (!g.changed) {
 		return;
 	}
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
-	Node **nodes = g.nodes.ptrw();
+	Node **nodes = g.nodes.data();
 	int node_count = g.nodes.size();
 
 	if (p_use_priority) {
@@ -205,7 +210,7 @@ void SceneTree::call_group_flags(uint32_t p_call_flags, const StringName &p_grou
 		return;
 	}
 	Group &g = E->get();
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
@@ -222,7 +227,7 @@ void SceneTree::call_group_flags(uint32_t p_call_flags, const StringName &p_grou
 
 		VARIANT_ARGPTRS;
 
-		Vector<Variant> args;
+		std::vector<Variant> args;
 		for (int i = 0; i < VARIANT_ARG_MAX; i++) {
 			if (argptr[i]->get_type() == Variant::NIL) {
 				break;
@@ -236,8 +241,8 @@ void SceneTree::call_group_flags(uint32_t p_call_flags, const StringName &p_grou
 
 	_update_group_order(g);
 
-	Vector<Node *> nodes_copy = g.nodes;
-	Node **nodes = nodes_copy.ptrw();
+	std::vector<Node *> nodes_copy = g.nodes;
+	Node **nodes = nodes_copy.data();
 	int node_count = nodes_copy.size();
 
 	call_lock++;
@@ -281,14 +286,14 @@ void SceneTree::notify_group_flags(uint32_t p_call_flags, const StringName &p_gr
 		return;
 	}
 	Group &g = E->get();
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
 	_update_group_order(g);
 
-	Vector<Node *> nodes_copy = g.nodes;
-	Node **nodes = nodes_copy.ptrw();
+	std::vector<Node *> nodes_copy = g.nodes;
+	Node **nodes = nodes_copy.data();
 	int node_count = nodes_copy.size();
 
 	call_lock++;
@@ -332,14 +337,14 @@ void SceneTree::set_group_flags(uint32_t p_call_flags, const StringName &p_group
 		return;
 	}
 	Group &g = E->get();
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
 	_update_group_order(g);
 
-	Vector<Node *> nodes_copy = g.nodes;
-	Node **nodes = nodes_copy.ptrw();
+	std::vector<Node *> nodes_copy = g.nodes;
+	Node **nodes = nodes_copy.data();
 	int node_count = nodes_copy.size();
 
 	call_lock++;
@@ -764,12 +769,12 @@ Ref<ArrayMesh> SceneTree::get_debug_contact_mesh() {
 	};
 	/* clang-format on */
 
-	Vector<int> indices;
+	std::vector<int> indices;
 	for (int i = 0; i < 8 * 3; i++) {
 		indices.push_back(diamond_faces[i]);
 	}
 
-	Vector<Vector3> vertices;
+	std::vector<Vector3> vertices;
 	for (int i = 0; i < 6; i++) {
 		vertices.push_back(diamond[i] * 0.1);
 	}
@@ -808,7 +813,7 @@ void SceneTree::_notify_group_pause(const StringName &p_group, int p_notificatio
 		return;
 	}
 	Group &g = E->get();
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
@@ -816,10 +821,10 @@ void SceneTree::_notify_group_pause(const StringName &p_group, int p_notificatio
 
 	//copy, so copy on write happens in case something is removed from process while being called
 	//performance is not lost because only if something is added/removed the vector is copied.
-	Vector<Node *> nodes_copy = g.nodes;
+	std::vector<Node *> nodes_copy = g.nodes;
 
 	int node_count = nodes_copy.size();
-	Node **nodes = nodes_copy.ptrw();
+	Node **nodes = nodes_copy.data();
 
 	call_lock++;
 
@@ -861,7 +866,7 @@ void SceneTree::_call_input_pause(const StringName &p_group, const StringName &p
 		return;
 	}
 	Group &g = E->get();
-	if (g.nodes.is_empty()) {
+	if (g.nodes.empty()) {
 		return;
 	}
 
@@ -869,10 +874,10 @@ void SceneTree::_call_input_pause(const StringName &p_group, const StringName &p
 
 	//copy, so copy on write happens in case something is removed from process while being called
 	//performance is not lost because only if something is added/removed the vector is copied.
-	Vector<Node *> nodes_copy = g.nodes;
+	std::vector<Node *> nodes_copy = g.nodes;
 
 	int node_count = nodes_copy.size();
-	Node **nodes = nodes_copy.ptrw();
+	Node **nodes = nodes_copy.data();
 
 	Variant arg = p_input;
 	const Variant *v[1] = { &arg };
@@ -971,7 +976,7 @@ Array SceneTree::_get_nodes_in_group(const StringName &p_group) {
 
 	ret.resize(nc);
 
-	Node **ptr = E->get().nodes.ptrw();
+	Node **ptr = E->get().nodes.data();
 	for (int i = 0; i < nc; i++) {
 		ret[i] = ptr[i];
 	}
@@ -1009,7 +1014,7 @@ void SceneTree::get_nodes_in_group(const StringName &p_group, List<Node *> *p_li
 	if (nc == 0) {
 		return;
 	}
-	Node **ptr = E->get().nodes.ptrw();
+	Node **ptr = E->get().nodes.data();
 	for (int i = 0; i < nc; i++) {
 		p_list->push_back(ptr[i]);
 	}
@@ -1215,7 +1220,7 @@ int SceneTree::get_network_unique_id() const {
 	return multiplayer->get_network_unique_id();
 }
 
-Vector<int> SceneTree::get_network_connected_peers() const {
+std::vector<int> SceneTree::get_network_connected_peers() const {
 	return multiplayer->get_network_connected_peers();
 }
 

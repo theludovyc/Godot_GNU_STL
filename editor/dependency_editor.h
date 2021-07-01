@@ -101,8 +101,8 @@ class DependencyRemoveDialog : public ConfirmationDialog {
 	Tree *owners;
 
 	Map<String, String> all_remove_files;
-	Vector<String> dirs_to_delete;
-	Vector<String> files_to_delete;
+	std::vector<String> dirs_to_delete;
+	std::vector<String> files_to_delete;
 
 	struct RemovedDependency {
 		String file;
@@ -120,15 +120,15 @@ class DependencyRemoveDialog : public ConfirmationDialog {
 	};
 
 	void _find_files_in_removed_folder(EditorFileSystemDirectory *efsd, const String &p_folder);
-	void _find_all_removed_dependencies(EditorFileSystemDirectory *efsd, Vector<RemovedDependency> &p_removed);
-	void _build_removed_dependency_tree(const Vector<RemovedDependency> &p_removed);
+	void _find_all_removed_dependencies(EditorFileSystemDirectory *efsd, std::vector<RemovedDependency> &p_removed);
+	void _build_removed_dependency_tree(const std::vector<RemovedDependency> &p_removed);
 
 	void ok_pressed() override;
 
 	static void _bind_methods();
 
 public:
-	void show(const Vector<String> &p_folders, const Vector<String> &p_files);
+	void show(const std::vector<String> &p_folders, const std::vector<String> &p_files);
 	DependencyRemoveDialog();
 };
 
@@ -151,7 +151,7 @@ private:
 	void custom_action(const String &) override;
 
 public:
-	void show(Mode p_mode, const String &p_for_file, const Vector<String> &report);
+	void show(Mode p_mode, const String &p_for_file, const std::vector<String> &report);
 	DependencyErrorDialog();
 };
 

@@ -114,8 +114,8 @@ String EditorFileSystemDirectory::get_file_path(int p_idx) const {
 	return "res://" + file;
 }
 
-Vector<String> EditorFileSystemDirectory::get_file_deps(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, files.size(), Vector<String>());
+std::vector<String> EditorFileSystemDirectory::get_file_deps(int p_idx) const {
+	ERR_FAIL_INDEX_V(p_idx, files.size(), std::vector<String>());
 	return files[p_idx]->deps;
 }
 
@@ -226,14 +226,14 @@ void EditorFileSystem::_scan_filesystem() {
 			}
 
 			if (l.begins_with("::")) {
-				Vector<String> split = l.split("::");
+				std::vector<String> split = l.split("::");
 				ERR_CONTINUE(split.size() != 3);
 				String name = split[1];
 
 				cpath = name;
 
 			} else {
-				Vector<String> split = l.split("::");
+				std::vector<String> split = l.split("::");
 				ERR_CONTINUE(split.size() != 8);
 				String name = split[0];
 				String file;
@@ -253,7 +253,7 @@ void EditorFileSystem::_scan_filesystem() {
 
 				String deps = split[7].strip_edges();
 				if (deps.length()) {
-					Vector<String> dp = deps.split("<>");
+					std::vector<String> dp = deps.split("<>");
 					for (int i = 0; i < dp.size(); i++) {
 						String path = dp[i];
 						fc.deps.push_back(path);
@@ -365,7 +365,7 @@ bool EditorFileSystem::_test_for_reimport(const String &p_path, bool p_only_impo
 	String importer_name;
 	String source_file = "";
 	String source_md5 = "";
-	Vector<String> dest_files;
+	std::vector<String> dest_files;
 	String dest_md5 = "";
 	int version = 0;
 
@@ -494,8 +494,8 @@ bool EditorFileSystem::_update_scan_actions() {
 
 	bool fs_changed = false;
 
-	Vector<String> reimports;
-	Vector<String> reloads;
+	std::vector<String> reimports;
+	std::vector<String> reloads;
 
 	for (List<ItemAction>::Element *E = scan_actions.front(); E; E = E->next()) {
 		ItemAction &ia = E->get();
@@ -824,7 +824,7 @@ void EditorFileSystem::_scan_new_dir(EditorFileSystemDirectory *p_dir, DirAccess
 				if (script == nullptr) {
 					continue;
 				}
-				const Vector<DocData::ClassDoc> &docs = script->get_documentation();
+				const std::vector<DocData::ClassDoc> &docs = script->get_documentation();
 				for (int j = 0; j < docs.size(); j++) {
 					EditorHelp::get_doc_data()->add_doc(docs[j]);
 				}
@@ -1213,7 +1213,7 @@ bool EditorFileSystem::_find_file(const String &p_file, EditorFileSystemDirector
 	f = f.substr(6, f.length());
 	f = f.replace("\\", "/");
 
-	Vector<String> path = f.split("/");
+	std::vector<String> path = f.split("/");
 
 	if (path.size() == 0) {
 		return false;
@@ -1326,7 +1326,7 @@ EditorFileSystemDirectory *EditorFileSystem::get_filesystem_path(const String &p
 		f = f.substr(0, f.length() - 1);
 	}
 
-	Vector<String> path = f.split("/");
+	std::vector<String> path = f.split("/");
 
 	if (path.size() == 0) {
 		return nullptr;
@@ -1363,11 +1363,11 @@ void EditorFileSystem::_save_late_updated_files() {
 	}
 }
 
-Vector<String> EditorFileSystem::_get_dependencies(const String &p_path) {
+std::vector<String> EditorFileSystem::_get_dependencies(const String &p_path) {
 	List<String> deps;
 	ResourceLoader::get_dependencies(p_path, &deps);
 
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<String>::Element *E = deps.front(); E; E = E->next()) {
 		ret.push_back(E->get());
 	}
@@ -1517,7 +1517,7 @@ void EditorFileSystem::update_file(const String &p_file) {
 	_queue_update_script_classes();
 }
 
-Error EditorFileSystem::_reimport_group(const String &p_group_file, const Vector<String> &p_files) {
+Error EditorFileSystem::_reimport_group(const String &p_group_file, const std::vector<String> &p_files) {
 	String importer_name;
 
 	Map<String, Map<StringName, Variant>> source_file_options;
@@ -1596,7 +1596,7 @@ Error EditorFileSystem::_reimport_group(const String &p_group_file, const Vector
 			f->store_line("type=\"" + importer->get_resource_type() + "\"");
 		}
 
-		Vector<String> dest_paths;
+		std::vector<String> dest_paths;
 
 		if (err == OK) {
 			String path = base_path + "." + importer->get_save_extension();
@@ -1800,7 +1800,7 @@ void EditorFileSystem::_reimport_file(const String &p_file, const Map<StringName
 		f->store_line("type=\"" + importer->get_resource_type() + "\"");
 	}
 
-	Vector<String> dest_paths;
+	std::vector<String> dest_paths;
 
 	if (err == OK) {
 		if (importer->get_save_extension() == "") {
@@ -1902,13 +1902,13 @@ void EditorFileSystem::_reimport_file(const String &p_file, const Map<StringName
 	EditorResourcePreview::get_singleton()->check_for_invalidation(p_file);
 }
 
-void EditorFileSystem::_find_group_files(EditorFileSystemDirectory *efd, Map<String, Vector<String>> &group_files, Set<String> &groups_to_reimport) {
+void EditorFileSystem::_find_group_files(EditorFileSystemDirectory *efd, Map<String, std::vector<String>> &group_files, Set<String> &groups_to_reimport) {
 	int fc = efd->files.size();
 	const EditorFileSystemDirectory::FileInfo *const *files = efd->files.ptr();
 	for (int i = 0; i < fc; i++) {
 		if (groups_to_reimport.has(files[i]->import_group_file)) {
 			if (!group_files.has(files[i]->import_group_file)) {
-				group_files[files[i]->import_group_file] = Vector<String>();
+				group_files[files[i]->import_group_file] = std::vector<String>();
 			}
 			group_files[files[i]->import_group_file].push_back(efd->get_file_path(i));
 		}
@@ -1928,11 +1928,11 @@ void EditorFileSystem::_reimport_thread(uint32_t p_index, ImportThreadData *p_im
 	_reimport_file(p_import_data->reimport_files[p_import_data->reimport_from + p_index].path);
 }
 
-void EditorFileSystem::reimport_files(const Vector<String> &p_files) {
+void EditorFileSystem::reimport_files(const std::vector<String> &p_files) {
 	importing = true;
 	EditorProgress pr("reimport", TTR("(Re)Importing Assets"), p_files.size());
 
-	Vector<ImportFile> reimport_files;
+	std::vector<ImportFile> reimport_files;
 
 	Set<String> groups_to_reimport;
 
@@ -2013,9 +2013,9 @@ void EditorFileSystem::reimport_files(const Vector<String> &p_files) {
 	//reimport groups
 
 	if (groups_to_reimport.size()) {
-		Map<String, Vector<String>> group_files;
+		Map<String, std::vector<String>> group_files;
 		_find_group_files(filesystem, group_files, groups_to_reimport);
-		for (Map<String, Vector<String>>::Element *E = group_files.front(); E; E = E->next()) {
+		for (Map<String, std::vector<String>>::Element *E = group_files.front(); E; E = E->next()) {
 			Error err = _reimport_group(E->key(), E->get());
 			if (err == OK) {
 				_reimport_file(E->key());
@@ -2033,7 +2033,7 @@ void EditorFileSystem::reimport_files(const Vector<String> &p_files) {
 }
 
 Error EditorFileSystem::_resource_import(const String &p_path) {
-	Vector<String> files;
+	std::vector<String> files;
 	files.push_back(p_path);
 
 	singleton->update_file(p_path);

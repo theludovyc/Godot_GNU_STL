@@ -922,7 +922,7 @@ void Window::_window_input_text(const String &p_text) {
 	input_text(p_text);
 }
 
-void Window::_window_drop_files(const Vector<String> &p_files) {
+void Window::_window_drop_files(const std::vector<String> &p_files) {
 	emit_signal("files_dropped", p_files, current_screen);
 }
 

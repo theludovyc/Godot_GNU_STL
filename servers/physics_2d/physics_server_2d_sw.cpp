@@ -262,9 +262,9 @@ void PhysicsServer2DSW::space_set_debug_contacts(RID p_space, int p_max_contacts
 	space->set_debug_contacts(p_max_contacts);
 }
 
-Vector<Vector2> PhysicsServer2DSW::space_get_contacts(RID p_space) const {
+std::vector<Vector2> PhysicsServer2DSW::space_get_contacts(RID p_space) const {
 	Space2DSW *space = space_owner.getornull(p_space);
-	ERR_FAIL_COND_V(!space, Vector<Vector2>());
+	ERR_FAIL_COND_V(!space, std::vector<Vector2>());
 	return space->get_debug_contacts();
 }
 

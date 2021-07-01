@@ -90,7 +90,7 @@ private:
 
 		Node *parent = nullptr;
 		Node *owner = nullptr;
-		Vector<Node *> children;
+		std::vector<Node *> children;
 		int pos = -1;
 		int depth = -1;
 		int blocked = 0; // Safeguard that throws an error when attempting to modify the tree in a harmful way while being traversed.
@@ -114,7 +114,7 @@ private:
 		Node *process_owner = nullptr;
 
 		int network_master = 1; // Server by default.
-		Vector<MultiplayerAPI::RPCConfig> rpc_methods;
+		std::vector<MultiplayerAPI::RPCConfig> rpc_methods;
 
 		// Variables used to properly sort the node when processing, ignored otherwise.
 		// TODO: Should move all the stuff below to bits.
@@ -273,7 +273,7 @@ public:
 	Node *get_node_or_null(const NodePath &p_path) const;
 	Node *find_node(const String &p_mask, bool p_recursive = true, bool p_owned = true) const;
 	bool has_node_and_resource(const NodePath &p_path) const;
-	Node *get_node_and_resource(const NodePath &p_path, RES &r_res, Vector<StringName> &r_leftover_subpath, bool p_last_is_property = true) const;
+	Node *get_node_and_resource(const NodePath &p_path, RES &r_res, std::vector<StringName> &r_leftover_subpath, bool p_last_is_property = true) const;
 
 	Node *get_parent() const;
 	Node *find_parent(const String &p_mask) const;
@@ -380,7 +380,7 @@ public:
 	void set_scene_instance_load_placeholder(bool p_enable);
 	bool get_scene_instance_load_placeholder() const;
 
-	static Vector<Variant> make_binds(VARIANT_ARG_LIST);
+	static std::vector<Variant> make_binds(VARIANT_ARG_LIST);
 
 	void replace_by(Node *p_node, bool p_keep_data = false);
 
@@ -431,7 +431,7 @@ public:
 	bool is_network_master() const;
 
 	uint16_t rpc_config(const StringName &p_method, MultiplayerAPI::RPCMode p_rpc_mode, NetworkedMultiplayerPeer::TransferMode p_transfer_mode, int p_channel = 0); // config a local method for RPC
-	Vector<MultiplayerAPI::RPCConfig> get_node_rpc_methods() const;
+	std::vector<MultiplayerAPI::RPCConfig> get_node_rpc_methods() const;
 
 	void rpc(const StringName &p_method, VARIANT_ARG_LIST); // RPC, honors RPCMode, TransferMode, channel
 	void rpc_id(int p_peer_id, const StringName &p_method, VARIANT_ARG_LIST); // RPC to specific peer(s), honors RPCMode, TransferMode, channel

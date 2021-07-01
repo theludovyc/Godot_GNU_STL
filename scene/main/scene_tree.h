@@ -80,7 +80,7 @@ public:
 
 private:
 	struct Group {
-		Vector<Node *> nodes;
+		std::vector<Node *> nodes;
 		bool changed = false;
 	};
 
@@ -127,7 +127,7 @@ private:
 
 	List<ObjectID> delete_queue;
 
-	Map<UGCall, Vector<Variant>> unique_group_calls;
+	Map<UGCall, std::vector<Variant>> unique_group_calls;
 	bool ugc_locked = false;
 	void _flush_ugc();
 
@@ -342,7 +342,7 @@ public:
 	bool is_network_server() const;
 	bool has_network_peer() const;
 	int get_network_unique_id() const;
-	Vector<int> get_network_connected_peers() const;
+	std::vector<int> get_network_connected_peers() const;
 	int get_rpc_sender_id() const;
 
 	void set_refuse_new_network_connections(bool p_refuse);

@@ -84,7 +84,7 @@ int TriangleMesh::_create_bvh(BVH *p_bvh, BVH **p_bb, int p_from, int p_size, in
 	return index;
 }
 
-void TriangleMesh::get_indices(Vector<int> *r_triangles_indices) const {
+void TriangleMesh::get_indices(std::vector<int> *r_triangles_indices) const {
 	if (!valid) {
 		return;
 	}
@@ -92,10 +92,10 @@ void TriangleMesh::get_indices(Vector<int> *r_triangles_indices) const {
 	const int triangles_num = triangles.size();
 
 	// Parse vertices indices
-	const Triangle *triangles_read = triangles.ptr();
+	const Triangle *triangles_read = triangles.data();
 
 	r_triangles_indices->resize(triangles_num * 3);
-	int *r_indices_write = r_triangles_indices->ptrw();
+	int *r_indices_write = r_triangles_indices->data();
 
 	for (int i = 0; i < triangles_num; ++i) {
 		r_indices_write[3 * i + 0] = triangles_read[i].indices[0];
@@ -104,7 +104,7 @@ void TriangleMesh::get_indices(Vector<int> *r_triangles_indices) const {
 	}
 }
 
-void TriangleMesh::create(const Vector<Vector3> &p_faces) {
+void TriangleMesh::create(const std::vector<Vector3> &p_faces) {
 	valid = false;
 
 	int fc = p_faces.size();
@@ -113,15 +113,15 @@ void TriangleMesh::create(const Vector<Vector3> &p_faces) {
 	triangles.resize(fc);
 
 	bvh.resize(fc * 3); //will never be larger than this (todo make better)
-	BVH *bw = bvh.ptrw();
+	BVH *bw = bvh.data();
 
 	{
 		//create faces and indices and base bvh
 		//except for the Set for repeated triangles, everything
 		//goes in-place.
 
-		const Vector3 *r = p_faces.ptr();
-		Triangle *w = triangles.ptrw();
+		const Vector3 *r = p_faces.data();
+		Triangle *w = triangles.data();
 		Map<Vector3, int> db;
 
 		for (int i = 0; i < fc; i++) {
@@ -156,15 +156,15 @@ void TriangleMesh::create(const Vector<Vector3> &p_faces) {
 		}
 
 		vertices.resize(db.size());
-		Vector3 *vw = vertices.ptrw();
+		Vector3 *vw = vertices.data();
 		for (Map<Vector3, int>::Element *E = db.front(); E; E = E->next()) {
 			vw[E->get()] = E->key();
 		}
 	}
 
-	Vector<BVH *> bwptrs;
+	std::vector<BVH *> bwptrs;
 	bwptrs.resize(fc);
-	BVH **bwp = bwptrs.ptrw();
+	BVH **bwp = bwptrs.data();
 	for (int i = 0; i < fc; i++) {
 		bwp[i] = &bw[i];
 	}
@@ -197,9 +197,9 @@ Vector3 TriangleMesh::get_area_normal(const AABB &p_aabb) const {
 
 	int level = 0;
 
-	const Triangle *triangleptr = triangles.ptr();
-	//	const Vector3 *verticesr = vertices.ptr();
-	const BVH *bvhptr = bvh.ptr();
+	const Triangle *triangleptr = triangles.data();
+	//	const Vector3 *verticesr = vertices.data();
+	const BVH *bvhptr = bvh.data();
 
 	int pos = bvh.size() - 1;
 
@@ -284,9 +284,9 @@ bool TriangleMesh::intersect_segment(const Vector3 &p_begin, const Vector3 &p_en
 
 	int level = 0;
 
-	const Triangle *triangleptr = triangles.ptr();
-	const Vector3 *vertexptr = vertices.ptr();
-	const BVH *bvhptr = bvh.ptr();
+	const Triangle *triangleptr = triangles.data();
+	const Vector3 *vertexptr = vertices.data();
+	const BVH *bvhptr = bvh.data();
 
 	int pos = bvh.size() - 1;
 
@@ -386,9 +386,9 @@ bool TriangleMesh::intersect_ray(const Vector3 &p_begin, const Vector3 &p_dir, V
 
 	int level = 0;
 
-	const Triangle *triangleptr = triangles.ptr();
-	const Vector3 *vertexptr = vertices.ptr();
-	const BVH *bvhptr = bvh.ptr();
+	const Triangle *triangleptr = triangles.data();
+	const Vector3 *vertexptr = vertices.data();
+	const BVH *bvhptr = bvh.data();
 
 	int pos = bvh.size() - 1;
 
@@ -484,9 +484,9 @@ bool TriangleMesh::intersect_convex_shape(const Plane *p_planes, int p_plane_cou
 
 	int level = 0;
 
-	const Triangle *triangleptr = triangles.ptr();
-	const Vector3 *vertexptr = vertices.ptr();
-	const BVH *bvhptr = bvh.ptr();
+	const Triangle *triangleptr = triangles.data();
+	const Vector3 *vertexptr = vertices.data();
+	const BVH *bvhptr = bvh.data();
 
 	int pos = bvh.size() - 1;
 
@@ -596,9 +596,9 @@ bool TriangleMesh::inside_convex_shape(const Plane *p_planes, int p_plane_count,
 
 	int level = 0;
 
-	const Triangle *triangleptr = triangles.ptr();
-	const Vector3 *vertexptr = vertices.ptr();
-	const BVH *bvhptr = bvh.ptr();
+	const Triangle *triangleptr = triangles.data();
+	const Vector3 *vertexptr = vertices.data();
+	const BVH *bvhptr = bvh.data();
 
 	Transform3D scale(Basis().scaled(p_scale));
 
@@ -677,18 +677,18 @@ bool TriangleMesh::is_valid() const {
 	return valid;
 }
 
-Vector<Face3> TriangleMesh::get_faces() const {
+std::vector<Face3> TriangleMesh::get_faces() const {
 	if (!valid) {
-		return Vector<Face3>();
+		return std::vector<Face3>();
 	}
 
-	Vector<Face3> faces;
+	std::vector<Face3> faces;
 	int ts = triangles.size();
 	faces.resize(triangles.size());
 
-	Face3 *w = faces.ptrw();
-	const Triangle *r = triangles.ptr();
-	const Vector3 *rv = vertices.ptr();
+	Face3 *w = faces.data();
+	const Triangle *r = triangles.data();
+	const Vector3 *rv = vertices.data();
 
 	for (int i = 0; i < ts; i++) {
 		for (int j = 0; j < 3; j++) {
