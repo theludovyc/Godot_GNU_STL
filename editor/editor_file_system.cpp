@@ -30,6 +30,8 @@
 
 #include "editor_file_system.h"
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "core/io/file_access.h"
 #include "core/io/resource_importer.h"
@@ -46,7 +48,7 @@ EditorFileSystem *EditorFileSystem::singleton = nullptr;
 #define CACHE_FILE_NAME "filesystem_cache6"
 
 void EditorFileSystemDirectory::sort_files() {
-	files.sort_custom<FileInfoSort>();
+	std::sort(files.begin(), files.end());
 }
 
 int EditorFileSystemDirectory::find_file_index(const String &p_file) const {
@@ -514,14 +516,17 @@ bool EditorFileSystem::_update_scan_actions() {
 				if (idx == ia.dir->subdirs.size()) {
 					ia.dir->subdirs.push_back(ia.new_dir);
 				} else {
-					ia.dir->subdirs.insert(idx, ia.new_dir);
+
+					//TODO
+					ia.dir->subdirs.insert(ia.dir->subdirs.begin() + idx, ia.new_dir);
+
 				}
 
 				fs_changed = true;
 			} break;
 			case ItemAction::ACTION_DIR_REMOVE: {
 				ERR_CONTINUE(!ia.dir->parent);
-				ia.dir->parent->subdirs.erase(ia.dir);
+				std::remove(ia.dir->parent->subdirs.begin(),  ia.dir->parent->subdirs.end(), ia.dir);
 				memdelete(ia.dir);
 				fs_changed = true;
 			} break;
@@ -536,7 +541,10 @@ bool EditorFileSystem::_update_scan_actions() {
 				if (idx == ia.dir->files.size()) {
 					ia.dir->files.push_back(ia.new_file);
 				} else {
-					ia.dir->files.insert(idx, ia.new_file);
+
+					//TODO
+					ia.dir->files.insert(ia.dir->files.begin() + idx, ia.new_file);
+
 				}
 
 				fs_changed = true;
@@ -547,7 +555,9 @@ bool EditorFileSystem::_update_scan_actions() {
 				ERR_CONTINUE(idx == -1);
 				_delete_internal_files(ia.dir->files[idx]->file);
 				memdelete(ia.dir->files[idx]);
-				ia.dir->files.remove(idx);
+
+				//TODO
+				ia.dir->files.erase(ia.dir->files.begin() + idx);
 
 				fs_changed = true;
 
@@ -559,7 +569,11 @@ bool EditorFileSystem::_update_scan_actions() {
 				if (_test_for_reimport(full_path, false)) {
 					//must reimport
 					reimports.push_back(full_path);
-					reimports.append_array(_get_dependencies(full_path));
+
+					//TODO
+					auto array = _get_dependencies(full_path);
+
+					reimports.insert(reimports.begin(), array.begin(), array.end());
 				} else {
 					//must not reimport, all was good
 					//update modified times, to avoid reimport
@@ -721,7 +735,10 @@ void EditorFileSystem::_scan_new_dir(EditorFileSystemDirectory *p_dir, DirAccess
 				if (idx2 == p_dir->subdirs.size()) {
 					p_dir->subdirs.push_back(efd);
 				} else {
-					p_dir->subdirs.insert(idx2, efd);
+
+					//TODO
+					p_dir->subdirs.insert(p_dir->subdirs.begin() + idx2, efd);
+
 				}
 
 				da->change_dir("..");
@@ -1254,7 +1271,10 @@ bool EditorFileSystem::_find_file(const String &p_file, EditorFileSystemDirector
 			if (idx2 == fs->get_subdir_count()) {
 				fs->subdirs.push_back(efsd);
 			} else {
-				fs->subdirs.insert(idx2, efsd);
+
+				//TODO
+				fs->subdirs.insert(fs->subdirs.begin() + idx2, efsd);
+
 			}
 			fs = efsd;
 		} else {
@@ -1395,7 +1415,7 @@ String EditorFileSystem::_get_global_script_class(const String &p_type, const St
 
 void EditorFileSystem::_scan_script_classes(EditorFileSystemDirectory *p_dir) {
 	int filecount = p_dir->files.size();
-	const EditorFileSystemDirectory::FileInfo *const *files = p_dir->files.ptr();
+	const EditorFileSystemDirectory::FileInfo *const *files = p_dir->files.data();
 	for (int i = 0; i < filecount; i++) {
 		if (files[i]->script_class_name == String()) {
 			continue;
@@ -1463,7 +1483,10 @@ void EditorFileSystem::update_file(const String &p_file) {
 		_delete_internal_files(p_file);
 		if (cpos != -1) { // Might've never been part of the editor file system (*.* files deleted in Open dialog).
 			memdelete(fs->files[cpos]);
-			fs->files.remove(cpos);
+
+			//TODO
+			fs->files.erase(fs->files.begin() + cpos);
+
 		}
 
 		call_deferred("emit_signal", "filesystem_changed"); //update later
@@ -1493,7 +1516,10 @@ void EditorFileSystem::update_file(const String &p_file) {
 		if (idx == fs->files.size()) {
 			fs->files.push_back(fi);
 		} else {
-			fs->files.insert(idx, fi);
+
+			//TODO
+			fs->files.insert(fs->files.begin() + idx, fi);
+
 		}
 		cpos = idx;
 	} else {
@@ -1904,7 +1930,7 @@ void EditorFileSystem::_reimport_file(const String &p_file, const Map<StringName
 
 void EditorFileSystem::_find_group_files(EditorFileSystemDirectory *efd, Map<String, std::vector<String>> &group_files, Set<String> &groups_to_reimport) {
 	int fc = efd->files.size();
-	const EditorFileSystemDirectory::FileInfo *const *files = efd->files.ptr();
+	const EditorFileSystemDirectory::FileInfo *const *files = efd->files.data();
 	for (int i = 0; i < fc; i++) {
 		if (groups_to_reimport.has(files[i]->import_group_file)) {
 			if (!group_files.has(files[i]->import_group_file)) {
@@ -1959,11 +1985,11 @@ void EditorFileSystem::reimport_files(const std::vector<String> &p_files) {
 		EditorFileSystemDirectory *fs = nullptr;
 		int cpos = -1;
 		if (_find_file(p_files[i], &fs, cpos)) {
-			fs->files.write[cpos]->import_group_file = group_file;
+			fs->files[cpos]->import_group_file = group_file;
 		}
 	}
 
-	reimport_files.sort();
+	std::sort(reimport_files.begin(), reimport_files.end());
 
 	bool use_threads = GLOBAL_GET("editor/import/use_multiple_threads");
 
@@ -1984,7 +2010,7 @@ void EditorFileSystem::reimport_files(const std::vector<String> &p_files) {
 					ImportThreadData data;
 					data.max_index = from;
 					data.reimport_from = from;
-					data.reimport_files = reimport_files.ptr();
+					data.reimport_files = reimport_files.data();
 
 					import_threads.begin_work(i - from + 1, this, &EditorFileSystem::_reimport_thread, &data);
 					int current_index = from - 1;
@@ -2062,7 +2088,7 @@ bool EditorFileSystem::is_group_file(const String &p_path) const {
 
 void EditorFileSystem::_move_group_files(EditorFileSystemDirectory *efd, const String &p_group_file, const String &p_new_location) {
 	int fc = efd->files.size();
-	EditorFileSystemDirectory::FileInfo *const *files = efd->files.ptrw();
+	EditorFileSystemDirectory::FileInfo *const *files = efd->files.data();
 	for (int i = 0; i < fc; i++) {
 		if (files[i]->import_group_file == p_group_file) {
 			files[i]->import_group_file = p_new_location;
