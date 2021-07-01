@@ -37,10 +37,10 @@
 class SceneState : public RefCounted {
 	GDCLASS(SceneState, RefCounted);
 
-	Vector<StringName> names;
-	Vector<Variant> variants;
-	Vector<NodePath> node_paths;
-	Vector<NodePath> editable_instances;
+	std::vector<StringName> names;
+	std::vector<Variant> variants;
+	std::vector<NodePath> node_paths;
+	std::vector<NodePath> editable_instances;
 	mutable HashMap<NodePath, int> node_path_cache;
 	mutable Map<int, int> base_scene_node_remap;
 
@@ -65,8 +65,8 @@ class SceneState : public RefCounted {
 			int value = 0;
 		};
 
-		Vector<Property> properties;
-		Vector<int> groups;
+		std::vector<Property> properties;
+		std::vector<int> groups;
 	};
 
 	struct PackState {
@@ -74,7 +74,7 @@ class SceneState : public RefCounted {
 		int node = -1;
 	};
 
-	Vector<NodeData> nodes;
+	std::vector<NodeData> nodes;
 
 	struct ConnectionData {
 		int from = 0;
@@ -82,10 +82,10 @@ class SceneState : public RefCounted {
 		int signal = 0;
 		int method = 0;
 		int flags = 0;
-		Vector<int> binds;
+		std::vector<int> binds;
 	};
 
-	Vector<ConnectionData> connections;
+	std::vector<ConnectionData> connections;
 
 	Error _parse_node(Node *p_owner, Node *p_node, int p_parent_idx, Map<StringName, int> &name_map, HashMap<Variant, int, VariantHasher, VariantComparator> &variant_map, Map<Node *, int> &node_map, Map<Node *, int> &nodepath_map);
 	Error _parse_connections(Node *p_owner, Node *p_node, Map<StringName, int> &name_map, HashMap<Variant, int, VariantHasher, VariantComparator> &variant_map, Map<Node *, int> &node_map, Map<Node *, int> &nodepath_map);
@@ -98,7 +98,7 @@ class SceneState : public RefCounted {
 
 	static bool disable_placeholders;
 
-	Vector<String> _get_node_groups(int p_idx) const;
+	std::vector<String> _get_node_groups(int p_idx) const;
 
 	int _find_base_scene_node_remap_key(int p_idx) const;
 
@@ -149,7 +149,7 @@ public:
 	Ref<PackedScene> get_node_instance(int p_idx) const;
 	String get_node_instance_placeholder(int p_idx) const;
 	bool is_node_instance_placeholder(int p_idx) const;
-	Vector<StringName> get_node_groups(int p_idx) const;
+	std::vector<StringName> get_node_groups(int p_idx) const;
 	int get_node_index(int p_idx) const;
 
 	int get_node_property_count(int p_idx) const;
@@ -166,7 +166,7 @@ public:
 
 	bool has_connection(const NodePath &p_node_from, const StringName &p_signal, const NodePath &p_node_to, const StringName &p_method);
 
-	Vector<NodePath> get_editable_instances() const;
+	std::vector<NodePath> get_editable_instances() const;
 
 	//build API
 
@@ -177,7 +177,7 @@ public:
 	void add_node_property(int p_node, int p_name, int p_value);
 	void add_node_group(int p_node, int p_group);
 	void set_base_scene(int p_idx);
-	void add_connection(int p_from, int p_to, int p_signal, int p_method, int p_flags, const Vector<int> &p_binds);
+	void add_connection(int p_from, int p_to, int p_signal, int p_method, int p_flags, const std::vector<int> &p_binds);
 	void add_editable_instance(const NodePath &p_path);
 
 	virtual void set_last_modified_time(uint64_t p_time) { last_modified_time = p_time; }
