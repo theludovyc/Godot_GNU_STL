@@ -74,7 +74,7 @@ private:
 		uint64_t last_tick;
 	};
 
-	Vector<Action> actions;
+	std::vector<Action> actions;
 	int current_action = -1;
 	int action_level = 0;
 	MergeMode merge_mode = MERGE_DISABLE;

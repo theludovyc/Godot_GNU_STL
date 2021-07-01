@@ -53,6 +53,10 @@ VARIANT_ENUM_CAST(Node::ProcessMode);
 
 int Node::orphan_node_count = 0;
 
+bool Node::operator<(const Node *p_b) {
+	return p_b->is_greater_than(this);
+}
+
 void Node::_notification(int p_notification) {
 	switch (p_notification) {
 		case NOTIFICATION_PROCESS: {

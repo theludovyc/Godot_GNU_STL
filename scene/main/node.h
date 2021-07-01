@@ -67,6 +67,8 @@ public:
 #endif
 	};
 
+	bool operator<(const Node *p_b);
+
 	struct Comparator {
 		bool operator()(const Node *p_a, const Node *p_b) const { return p_b->is_greater_than(p_a); }
 	};

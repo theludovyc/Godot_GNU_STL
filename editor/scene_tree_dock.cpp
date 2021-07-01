@@ -1734,7 +1734,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 		return; // Nothing to reparent.
 	}
 
-	p_nodes.sort_custom<Node::Comparator>(); //Makes result reliable.
+	std::sort(p_nodes.begin(), p_nodes.end()); //Makes result reliable.
 
 	bool no_change = true;
 	for (int ni = 0; ni < p_nodes.size(); ni++) {
@@ -1760,7 +1760,7 @@ void SceneTreeDock::_do_reparent(Node *p_new_parent, int p_position_in_parent, s
 	}
 
 	// Sort by tree order, so re-adding is easy.
-	p_nodes.sort_custom<Node::Comparator>();
+	std::sort(p_nodes.begin(),  p_nodes.end());
 
 	editor_data->get_undo_redo().create_action(TTR("Reparent Node"));
 
