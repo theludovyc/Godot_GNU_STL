@@ -62,7 +62,7 @@ public:
 
 	RID get_instance() const;
 	virtual AABB get_aabb() const = 0;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const = 0;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const = 0;
 
 	virtual AABB get_transformed_aabb() const; // helper
 
@@ -113,7 +113,7 @@ private:
 	float visibility_range_begin_margin = 0.0;
 	float visibility_range_end_margin = 0.0;
 
-	Vector<NodePath> visibility_range_children;
+	std::vector<NodePath> visibility_range_children;
 
 	float lod_bias = 1.0;
 
