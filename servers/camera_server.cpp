@@ -124,7 +124,8 @@ void CameraServer::remove_feed(const Ref<CameraFeed> &p_feed) {
 #endif
 
 			// remove it from our array, if this results in our feed being unreferenced it will be destroyed
-			feeds.remove(i);
+			//TODO
+			feeds.erase(feeds.begin() + i);
 
 			// let whomever is interested know
 			emit_signal("camera_feed_removed", feed_id);

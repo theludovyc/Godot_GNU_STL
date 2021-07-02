@@ -65,7 +65,7 @@ private:
 protected:
 	static CreateFunc create_func;
 
-	Vector<Ref<CameraFeed>> feeds;
+	std::vector<Ref<CameraFeed>> feeds;
 
 	static CameraServer *singleton;
 
