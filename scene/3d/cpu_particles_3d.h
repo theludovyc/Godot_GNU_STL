@@ -107,9 +107,9 @@ private:
 
 	RID multimesh;
 
-	Vector<Particle> particles;
-	Vector<float> particle_data;
-	Vector<int> particle_order;
+	std::vector<Particle> particles;
+	std::vector<float> particle_data;
+	std::vector<int> particle_order;
 
 	struct SortLifetime {
 		const Particle *particles = nullptr;
@@ -167,9 +167,9 @@ private:
 	EmissionShape emission_shape = EMISSION_SHAPE_POINT;
 	float emission_sphere_radius = 1.0;
 	Vector3 emission_box_extents = Vector3(1, 1, 1);
-	Vector<Vector3> emission_points;
-	Vector<Vector3> emission_normals;
-	Vector<Color> emission_colors;
+	std::vector<Vector3> emission_points;
+	std::vector<Vector3> emission_normals;
+	std::vector<Color> emission_colors;
 	int emission_point_count = 0;
 
 	Vector3 gravity = Vector3(0, -9.8, 0);
@@ -191,7 +191,7 @@ protected:
 
 public:
 	AABB get_aabb() const override;
-	Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	void set_emitting(bool p_emitting);
 	void set_amount(int p_amount);
@@ -264,17 +264,17 @@ public:
 	void set_emission_shape(EmissionShape p_shape);
 	void set_emission_sphere_radius(float p_radius);
 	void set_emission_box_extents(Vector3 p_extents);
-	void set_emission_points(const Vector<Vector3> &p_points);
-	void set_emission_normals(const Vector<Vector3> &p_normals);
-	void set_emission_colors(const Vector<Color> &p_colors);
+	void set_emission_points(const std::vector<Vector3> &p_points);
+	void set_emission_normals(const std::vector<Vector3> &p_normals);
+	void set_emission_colors(const std::vector<Color> &p_colors);
 	void set_emission_point_count(int p_count);
 
 	EmissionShape get_emission_shape() const;
 	float get_emission_sphere_radius() const;
 	Vector3 get_emission_box_extents() const;
-	Vector<Vector3> get_emission_points() const;
-	Vector<Vector3> get_emission_normals() const;
-	Vector<Color> get_emission_colors() const;
+	std::vector<Vector3> get_emission_points() const;
+	std::vector<Vector3> get_emission_normals() const;
+	std::vector<Color> get_emission_colors() const;
 	int get_emission_point_count() const;
 
 	void set_gravity(const Vector3 &p_gravity);

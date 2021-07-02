@@ -35,12 +35,14 @@
 #include "scene/resources/particles_material.h"
 #include "servers/rendering_server.h"
 
+//TODO std::vector.data()
+
 AABB CPUParticles3D::get_aabb() const {
 	return AABB();
 }
 
-Vector<Face3> CPUParticles3D::get_faces(uint32_t p_usage_particle_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> CPUParticles3D::get_faces(uint32_t p_usage_particle_flags) const {
+	return std::vector<Face3>();
 }
 
 void CPUParticles3D::set_emitting(bool p_emitting) {
@@ -64,7 +66,7 @@ void CPUParticles3D::set_amount(int p_amount) {
 
 	particles.resize(p_amount);
 	{
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < p_amount; i++) {
 			w[i].active = false;
@@ -229,7 +231,7 @@ void CPUParticles3D::restart() {
 
 	{
 		int pc = particles.size();
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < pc; i++) {
 			w[i].active = false;
@@ -389,15 +391,15 @@ void CPUParticles3D::set_emission_box_extents(Vector3 p_extents) {
 	emission_box_extents = p_extents;
 }
 
-void CPUParticles3D::set_emission_points(const Vector<Vector3> &p_points) {
+void CPUParticles3D::set_emission_points(const std::vector<Vector3> &p_points) {
 	emission_points = p_points;
 }
 
-void CPUParticles3D::set_emission_normals(const Vector<Vector3> &p_normals) {
+void CPUParticles3D::set_emission_normals(const std::vector<Vector3> &p_normals) {
 	emission_normals = p_normals;
 }
 
-void CPUParticles3D::set_emission_colors(const Vector<Color> &p_colors) {
+void CPUParticles3D::set_emission_colors(const std::vector<Color> &p_colors) {
 	emission_colors = p_colors;
 }
 
@@ -409,15 +411,15 @@ Vector3 CPUParticles3D::get_emission_box_extents() const {
 	return emission_box_extents;
 }
 
-Vector<Vector3> CPUParticles3D::get_emission_points() const {
+std::vector<Vector3> CPUParticles3D::get_emission_points() const {
 	return emission_points;
 }
 
-Vector<Vector3> CPUParticles3D::get_emission_normals() const {
+std::vector<Vector3> CPUParticles3D::get_emission_normals() const {
 	return emission_normals;
 }
 
-Vector<Color> CPUParticles3D::get_emission_colors() const {
+std::vector<Color> CPUParticles3D::get_emission_colors() const {
 	return emission_colors;
 }
 
@@ -559,7 +561,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 	p_delta *= speed_scale;
 
 	int pcount = particles.size();
-	Particle *w = particles.ptrw();
+	Particle *w = particles.data();
 
 	Particle *parray = w;
 
@@ -720,11 +722,11 @@ void CPUParticles3D::_particles_process(float p_delta) {
 
 					int random_idx = Math::rand() % pc;
 
-					p.transform.origin = emission_points.get(random_idx);
+					p.transform.origin = emission_points[random_idx];
 
 					if (emission_shape == EMISSION_SHAPE_DIRECTED_POINTS && emission_normals.size() == pc) {
 						if (particle_flags[PARTICLE_FLAG_DISABLE_Z]) {
-							Vector3 normal = emission_normals.get(random_idx);
+							Vector3 normal = emission_normals[random_idx];
 							Vector2 normal_2d(normal.x, normal.y);
 							Transform2D m2;
 							m2.set_axis(0, normal_2d);
@@ -734,7 +736,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 							p.velocity.x = velocity_2d.x;
 							p.velocity.y = velocity_2d.y;
 						} else {
-							Vector3 normal = emission_normals.get(random_idx);
+							Vector3 normal = emission_normals[random_idx];
 							Vector3 v0 = Math::abs(normal.z) < 0.999 ? Vector3(0.0, 0.0, 1.0) : Vector3(0, 1.0, 0.0);
 							Vector3 tangent = v0.cross(normal).normalized();
 							Vector3 bitangent = tangent.cross(normal).normalized();
@@ -747,7 +749,7 @@ void CPUParticles3D::_particles_process(float p_delta) {
 					}
 
 					if (emission_colors.size() == pc) {
-						p.base_color = emission_colors.get(random_idx);
+						p.base_color = emission_colors[random_idx];
 					}
 				} break;
 				case EMISSION_SHAPE_MAX: { // Max value for validity check.
@@ -990,12 +992,12 @@ void CPUParticles3D::_update_particle_data_buffer() {
 	int *ow;
 	int *order = nullptr;
 
-	float *w = particle_data.ptrw();
-	const Particle *r = particles.ptr();
+	float *w = particle_data.data();
+	const Particle *r = particles.data();
 	float *ptr = w;
 
 	if (draw_order != DRAW_ORDER_INDEX) {
-		ow = particle_order.ptrw();
+		ow = particle_order.data();
 		order = ow;
 
 		for (int i = 0; i < pc; i++) {
@@ -1134,8 +1136,8 @@ void CPUParticles3D::_notification(int p_what) {
 		if (!local_coords) {
 			int pc = particles.size();
 
-			float *w = particle_data.ptrw();
-			const Particle *r = particles.ptr();
+			float *w = particle_data.data();
+			const Particle *r = particles.data();
 			float *ptr = w;
 
 			for (int i = 0; i < pc; i++) {
