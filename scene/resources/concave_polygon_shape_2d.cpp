@@ -34,14 +34,16 @@
 #include "servers/physics_server_2d.h"
 #include "servers/rendering_server.h"
 
+//TODO std::vector.data()
+
 bool ConcavePolygonShape2D::_edit_is_selected_on_click(const Point2 &p_point, double p_tolerance) const {
-	Vector<Vector2> s = get_segments();
+	std::vector<Vector2> s = get_segments();
 	int len = s.size();
 	if (len == 0 || (len % 2) == 1) {
 		return false;
 	}
 
-	const Vector2 *r = s.ptr();
+	const Vector2 *r = s.data();
 	for (int i = 0; i < len; i += 2) {
 		Vector2 closest = Geometry2D::get_closest_point_to_segment(p_point, &r[i]);
 		if (p_point.distance_to(closest) < p_tolerance) {
@@ -52,30 +54,30 @@ bool ConcavePolygonShape2D::_edit_is_selected_on_click(const Point2 &p_point, do
 	return false;
 }
 
-void ConcavePolygonShape2D::set_segments(const Vector<Vector2> &p_segments) {
+void ConcavePolygonShape2D::set_segments(const std::vector<Vector2> &p_segments) {
 	PhysicsServer2D::get_singleton()->shape_set_data(get_rid(), p_segments);
 	emit_changed();
 }
 
-Vector<Vector2> ConcavePolygonShape2D::get_segments() const {
+std::vector<Vector2> ConcavePolygonShape2D::get_segments() const {
 	return PhysicsServer2D::get_singleton()->shape_get_data(get_rid());
 }
 
 void ConcavePolygonShape2D::draw(const RID &p_to_rid, const Color &p_color) {
-	Vector<Vector2> s = get_segments();
+	std::vector<Vector2> s = get_segments();
 	int len = s.size();
 	if (len == 0 || (len % 2) == 1) {
 		return;
 	}
 
-	const Vector2 *r = s.ptr();
+	const Vector2 *r = s.data();
 	for (int i = 0; i < len; i += 2) {
 		RenderingServer::get_singleton()->canvas_item_add_line(p_to_rid, r[i], r[i + 1], p_color, 2);
 	}
 }
 
 Rect2 ConcavePolygonShape2D::get_rect() const {
-	Vector<Vector2> s = get_segments();
+	std::vector<Vector2> s = get_segments();
 	int len = s.size();
 	if (len == 0) {
 		return Rect2();
@@ -83,7 +85,7 @@ Rect2 ConcavePolygonShape2D::get_rect() const {
 
 	Rect2 rect;
 
-	const Vector2 *r = s.ptr();
+	const Vector2 *r = s.data();
 	for (int i = 0; i < len; i++) {
 		if (i == 0) {
 			rect.position = r[i];
@@ -96,8 +98,8 @@ Rect2 ConcavePolygonShape2D::get_rect() const {
 }
 
 real_t ConcavePolygonShape2D::get_enclosing_radius() const {
-	Vector<Vector2> data = get_segments();
-	const Vector2 *read = data.ptr();
+	std::vector<Vector2> data = get_segments();
+	const Vector2 *read = data.data();
 	real_t r = 0.0;
 	for (int i(0); i < data.size(); i++) {
 		r = MAX(read[i].length_squared(), r);
@@ -114,6 +116,6 @@ void ConcavePolygonShape2D::_bind_methods() {
 
 ConcavePolygonShape2D::ConcavePolygonShape2D() :
 		Shape2D(PhysicsServer2D::get_singleton()->concave_polygon_shape_create()) {
-	Vector<Vector2> empty;
+	std::vector<Vector2> empty;
 	set_segments(empty);
 }
