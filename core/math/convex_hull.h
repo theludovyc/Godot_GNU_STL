@@ -86,7 +86,7 @@ public:
 	};
 
 	// Vertices of the output hull
-	Vector<Vector3> vertices;
+	std::vector<Vector3> vertices;
 
 	// Edges of the output hull
 	LocalVector<Edge> edges;
@@ -106,7 +106,7 @@ public:
 		*/
 	real_t compute(const Vector3 *p_coords, int32_t p_count, real_t p_shrink, real_t p_shrink_clamp);
 
-	static Error convex_hull(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh);
+	static Error convex_hull(const std::vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh);
 };
 
 #endif // CONVEX_HULL_H

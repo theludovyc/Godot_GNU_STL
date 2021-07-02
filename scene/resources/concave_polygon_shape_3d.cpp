@@ -32,13 +32,13 @@
 
 #include "servers/physics_server_3d.h"
 
-Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() const {
+std::vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() const {
 	Set<DrawEdge> edges;
 
 	int index_count = faces.size();
-	ERR_FAIL_COND_V((index_count % 3) != 0, Vector<Vector3>());
+	ERR_FAIL_COND_V((index_count % 3) != 0, std::vector<Vector3>());
 
-	const Vector3 *r = faces.ptr();
+	const Vector3 *r = faces.data();
 
 	for (int i = 0; i < index_count; i += 3) {
 		for (int j = 0; j < 3; j++) {
@@ -47,12 +47,12 @@ Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() const {
 		}
 	}
 
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
 	points.resize(edges.size() * 2);
 	int idx = 0;
 	for (Set<DrawEdge>::Element *E = edges.front(); E; E = E->next()) {
-		points.write[idx + 0] = E->get().a;
-		points.write[idx + 1] = E->get().b;
+		points[idx + 0] = E->get().a;
+		points[idx + 1] = E->get().b;
 		idx += 2;
 	}
 
@@ -60,8 +60,8 @@ Vector<Vector3> ConcavePolygonShape3D::get_debug_mesh_lines() const {
 }
 
 real_t ConcavePolygonShape3D::get_enclosing_radius() const {
-	Vector<Vector3> data = get_faces();
-	const Vector3 *read = data.ptr();
+	std::vector<Vector3> data = get_faces();
+	const Vector3 *read = data.data();
 	real_t r = 0.0;
 	for (int i(0); i < data.size(); i++) {
 		r = MAX(read[i].length_squared(), r);
@@ -78,20 +78,20 @@ void ConcavePolygonShape3D::_update_shape() {
 	Shape3D::_update_shape();
 }
 
-void ConcavePolygonShape3D::set_faces(const Vector<Vector3> &p_faces) {
+void ConcavePolygonShape3D::set_faces(const std::vector<Vector3> &p_faces) {
 	faces = p_faces;
 	_update_shape();
 	notify_change_to_owners();
 }
 
-Vector<Vector3> ConcavePolygonShape3D::get_faces() const {
+std::vector<Vector3> ConcavePolygonShape3D::get_faces() const {
 	return faces;
 }
 
 void ConcavePolygonShape3D::set_backface_collision_enabled(bool p_enabled) {
 	backface_collision = p_enabled;
 
-	if (!faces.is_empty()) {
+	if (!faces.empty()) {
 		_update_shape();
 		notify_change_to_owners();
 	}

@@ -2248,7 +2248,7 @@ real_t ConvexHullComputer::compute(const Vector3 *p_coords, int32_t p_count, rea
 	return shift;
 }
 
-Error ConvexHullComputer::convex_hull(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh) {
+Error ConvexHullComputer::convex_hull(const std::vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh) {
 	r_mesh = Geometry3D::MeshData(); // clear
 
 	if (p_points.size() == 0) {
@@ -2256,21 +2256,21 @@ Error ConvexHullComputer::convex_hull(const Vector<Vector3> &p_points, Geometry3
 	}
 
 	ConvexHullComputer ch;
-	ch.compute(p_points.ptr(), p_points.size(), -1.0, -1.0);
+	ch.compute(p_points.data(), p_points.size(), -1.0, -1.0);
 
 	r_mesh.vertices = ch.vertices;
 
 	r_mesh.edges.resize(ch.edges.size());
 	for (uint32_t i = 0; i < ch.edges.size(); i++) {
-		r_mesh.edges.write[i].a = (&ch.edges[i])->get_source_vertex();
-		r_mesh.edges.write[i].b = (&ch.edges[i])->get_target_vertex();
+		r_mesh.edges[i].a = (&ch.edges[i])->get_source_vertex();
+		r_mesh.edges[i].b = (&ch.edges[i])->get_target_vertex();
 	}
 
 	r_mesh.faces.resize(ch.faces.size());
 	for (uint32_t i = 0; i < ch.faces.size(); i++) {
 		const Edge *e_start = &ch.edges[ch.faces[i]];
 		const Edge *e = e_start;
-		Geometry3D::MeshData::Face &face = r_mesh.faces.write[i];
+		Geometry3D::MeshData::Face &face = r_mesh.faces[i];
 
 		do {
 			face.indices.push_back(e->get_target_vertex());
