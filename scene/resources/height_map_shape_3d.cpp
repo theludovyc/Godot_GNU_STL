@@ -31,8 +31,10 @@
 #include "height_map_shape_3d.h"
 #include "servers/physics_server_3d.h"
 
-Vector<Vector3> HeightMapShape3D::get_debug_mesh_lines() const {
-	Vector<Vector3> points;
+//TODO std::vector.data()
+
+std::vector<Vector3> HeightMapShape3D::get_debug_mesh_lines() const {
+	std::vector<Vector3> points;
 
 	if ((map_width != 0) && (map_depth != 0)) {
 		// This will be slow for large maps...
@@ -41,7 +43,7 @@ Vector<Vector3> HeightMapShape3D::get_debug_mesh_lines() const {
 		Vector2 size(map_width - 1, map_depth - 1);
 		Vector2 start = size * -0.5;
 
-		const float *r = map_data.ptr();
+		const float *r = map_data.data();
 
 		// reserve some memory for our points..
 		points.resize(((map_width - 1) * map_depth * 2) + (map_width * (map_depth - 1) * 2) + ((map_width - 1) * (map_depth - 1) * 2));
@@ -56,18 +58,18 @@ Vector<Vector3> HeightMapShape3D::get_debug_mesh_lines() const {
 				height.y = r[r_offset++];
 
 				if (w != map_width - 1) {
-					points.write[w_offset++] = height;
-					points.write[w_offset++] = Vector3(height.x + 1.0, r[r_offset], height.z);
+					points[w_offset++] = height;
+					points[w_offset++] = Vector3(height.x + 1.0, r[r_offset], height.z);
 				}
 
 				if (d != map_depth - 1) {
-					points.write[w_offset++] = height;
-					points.write[w_offset++] = Vector3(height.x, r[r_offset + map_width - 1], height.z + 1.0);
+					points[w_offset++] = height;
+					points[w_offset++] = Vector3(height.x, r[r_offset + map_width - 1], height.z + 1.0);
 				}
 
 				if ((w != map_width - 1) && (d != map_depth - 1)) {
-					points.write[w_offset++] = Vector3(height.x + 1.0, r[r_offset], height.z);
-					points.write[w_offset++] = Vector3(height.x, r[r_offset + map_width - 1], height.z + 1.0);
+					points[w_offset++] = Vector3(height.x + 1.0, r[r_offset], height.z);
+					points[w_offset++] = Vector3(height.x, r[r_offset + map_width - 1], height.z + 1.0);
 				}
 
 				height.x += 1.0;
@@ -105,7 +107,7 @@ void HeightMapShape3D::set_map_width(int p_new) {
 		int new_size = map_width * map_depth;
 		map_data.resize(map_width * map_depth);
 
-		float *w = map_data.ptrw();
+		float *w = map_data.data();
 		while (was_size < new_size) {
 			w[was_size++] = 0.0;
 		}
@@ -129,7 +131,7 @@ void HeightMapShape3D::set_map_depth(int p_new) {
 		int new_size = map_width * map_depth;
 		map_data.resize(new_size);
 
-		float *w = map_data.ptrw();
+		float *w = map_data.data();
 		while (was_size < new_size) {
 			w[was_size++] = 0.0;
 		}
@@ -151,8 +153,8 @@ void HeightMapShape3D::set_map_data(PackedFloat32Array p_new) {
 	}
 
 	// copy
-	float *w = map_data.ptrw();
-	const float *r = p_new.ptr();
+	float *w = map_data.data();
+	const float *r = p_new.data();
 	for (int i = 0; i < size; i++) {
 		float val = r[i];
 		w[i] = val;
@@ -194,7 +196,7 @@ void HeightMapShape3D::_bind_methods() {
 HeightMapShape3D::HeightMapShape3D() :
 		Shape3D(PhysicsServer3D::get_singleton()->shape_create(PhysicsServer3D::SHAPE_HEIGHTMAP)) {
 	map_data.resize(map_width * map_depth);
-	float *w = map_data.ptrw();
+	float *w = map_data.data();
 	w[0] = 0.0;
 	w[1] = 0.0;
 	w[2] = 0.0;

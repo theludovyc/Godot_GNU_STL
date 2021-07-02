@@ -165,7 +165,7 @@ private:
 
 	// Glow
 	bool glow_enabled = false;
-	Vector<float> glow_levels;
+	std::vector<float> glow_levels;
 	bool glow_normalize_levels = false;
 	float glow_intensity = 0.8;
 	float glow_strength = 1.0;
