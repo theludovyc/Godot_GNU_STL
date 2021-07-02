@@ -34,8 +34,8 @@
 #include "servers/physics_server_2d.h"
 #include "servers/rendering_server.h"
 
-Vector<Vector2> CapsuleShape2D::_get_points() const {
-	Vector<Vector2> points;
+std::vector<Vector2> CapsuleShape2D::_get_points() const {
+	std::vector<Vector2> points;
 	const real_t turn_step = Math_TAU / 24.0;
 	for (int i = 0; i < 24; i++) {
 		Vector2 ofs = Vector2(0, (i > 6 && i <= 18) ? -get_height() * 0.5 : get_height() * 0.5);
@@ -81,8 +81,8 @@ real_t CapsuleShape2D::get_height() const {
 }
 
 void CapsuleShape2D::draw(const RID &p_to_rid, const Color &p_color) {
-	Vector<Vector2> points = _get_points();
-	Vector<Color> col;
+	std::vector<Vector2> points = _get_points();
+	std::vector<Color> col;
 	col.push_back(p_color);
 	RenderingServer::get_singleton()->canvas_item_add_polygon(p_to_rid, points, col);
 	if (is_collision_outline_enabled()) {

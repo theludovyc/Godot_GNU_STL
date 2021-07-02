@@ -40,7 +40,7 @@ class CapsuleShape2D : public Shape2D {
 	real_t radius = 10.0;
 
 	void _update_shape();
-	Vector<Vector2> _get_points() const;
+	std::vector<Vector2> _get_points() const;
 
 protected:
 	static void _bind_methods();
