@@ -197,7 +197,7 @@ void DisplayServer::delete_sub_window(WindowID p_id) {
 	ERR_FAIL_MSG("Sub-windows not supported by this display server.");
 }
 
-void DisplayServer::window_set_mouse_passthrough(const Vector<Vector2> &p_region, WindowID p_window) {
+void DisplayServer::window_set_mouse_passthrough(const std::vector<Vector2> &p_region, WindowID p_window) {
 	ERR_FAIL_MSG("Mouse passthrough not supported by this display server.");
 }
 
@@ -257,7 +257,7 @@ bool DisplayServer::get_swap_cancel_ok() {
 void DisplayServer::enable_for_stealing_focus(OS::ProcessID pid) {
 }
 
-Error DisplayServer::dialog_show(String p_title, String p_description, Vector<String> p_buttons, const Callable &p_callback) {
+Error DisplayServer::dialog_show(String p_title, String p_description, std::vector<String> p_buttons, const Callable &p_callback) {
 	WARN_PRINT("Native dialogs not supported by this display server.");
 	return OK;
 }
@@ -582,8 +582,8 @@ const char *DisplayServer::get_create_function_name(int p_index) {
 	return server_create_functions[p_index].name;
 }
 
-Vector<String> DisplayServer::get_create_function_rendering_drivers(int p_index) {
-	ERR_FAIL_INDEX_V(p_index, server_create_count, Vector<String>());
+std::vector<String> DisplayServer::get_create_function_rendering_drivers(int p_index) {
+	ERR_FAIL_INDEX_V(p_index, server_create_count, std::vector<String>());
 	return server_create_functions[p_index].get_rendering_drivers_function();
 }
 

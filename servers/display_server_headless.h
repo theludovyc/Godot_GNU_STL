@@ -39,8 +39,8 @@ class DisplayServerHeadless : public DisplayServer {
 private:
 	friend class DisplayServer;
 
-	static Vector<String> get_rendering_drivers_func() {
-		Vector<String> drivers;
+	static std::vector<String> get_rendering_drivers_func() {
+		std::vector<String> drivers;
 		drivers.push_back("dummy");
 		return drivers;
 	}
@@ -65,7 +65,7 @@ public:
 	float screen_get_scale(int p_screen = SCREEN_OF_MAIN_WINDOW) const override { return 1; }
 	float screen_get_max_scale() const override { return 1; }
 
-	Vector<DisplayServer::WindowID> get_window_list() const override { return Vector<DisplayServer::WindowID>(); }
+	std::vector<DisplayServer::WindowID> get_window_list() const override { return std::vector<DisplayServer::WindowID>(); }
 
 	WindowID get_window_at_screen_position(const Point2i &p_position) const override { return -1; }
 
@@ -81,7 +81,7 @@ public:
 
 	void window_set_title(const String &p_title, WindowID p_window = MAIN_WINDOW_ID) override {}
 
-	void window_set_mouse_passthrough(const Vector<Vector2> &p_region, WindowID p_window = MAIN_WINDOW_ID) override {}
+	void window_set_mouse_passthrough(const std::vector<Vector2> &p_region, WindowID p_window = MAIN_WINDOW_ID) override {}
 
 	int window_get_current_screen(WindowID p_window = MAIN_WINDOW_ID) const override { return -1; }
 	void window_set_current_screen(int p_screen, WindowID p_window = MAIN_WINDOW_ID) override {}
