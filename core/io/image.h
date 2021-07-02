@@ -46,7 +46,7 @@
 class Image;
 
 typedef Error (*SavePNGFunc)(const String &p_path, const Ref<Image> &p_img);
-typedef Vector<uint8_t> (*SavePNGBufferFunc)(const Ref<Image> &p_img);
+typedef std::vector<uint8_t> (*SavePNGBufferFunc)(const Ref<Image> &p_img);
 typedef Ref<Image> (*ImageMemLoadFunc)(const uint8_t *p_png, int p_size);
 
 typedef Error (*SaveEXRFunc)(const String &p_path, const Ref<Image> &p_img, bool p_grayscale);
@@ -148,13 +148,13 @@ public:
 	static void (*_image_decompress_etc1)(Image *);
 	static void (*_image_decompress_etc2)(Image *);
 
-	static Vector<uint8_t> (*webp_lossy_packer)(const Ref<Image> &p_image, float p_quality);
-	static Vector<uint8_t> (*webp_lossless_packer)(const Ref<Image> &p_image);
-	static Ref<Image> (*webp_unpacker)(const Vector<uint8_t> &p_buffer);
-	static Vector<uint8_t> (*png_packer)(const Ref<Image> &p_image);
-	static Ref<Image> (*png_unpacker)(const Vector<uint8_t> &p_buffer);
-	static Vector<uint8_t> (*basis_universal_packer)(const Ref<Image> &p_image, UsedChannels p_channels);
-	static Ref<Image> (*basis_universal_unpacker)(const Vector<uint8_t> &p_buffer);
+	static std::vector<uint8_t> (*webp_lossy_packer)(const Ref<Image> &p_image, float p_quality);
+	static std::vector<uint8_t> (*webp_lossless_packer)(const Ref<Image> &p_image);
+	static Ref<Image> (*webp_unpacker)(const std::vector<uint8_t> &p_buffer);
+	static std::vector<uint8_t> (*png_packer)(const Ref<Image> &p_image);
+	static Ref<Image> (*png_unpacker)(const std::vector<uint8_t> &p_buffer);
+	static std::vector<uint8_t> (*basis_universal_packer)(const Ref<Image> &p_image, UsedChannels p_channels);
+	static Ref<Image> (*basis_universal_unpacker)(const std::vector<uint8_t> &p_buffer);
 
 	_FORCE_INLINE_ Color _get_color_at_ofs(const uint8_t *ptr, uint32_t ofs) const;
 	_FORCE_INLINE_ void _set_color_at_ofs(uint8_t *ptr, uint32_t ofs, const Color &p_color);
@@ -167,12 +167,12 @@ private:
 		create(p_width, p_height, p_use_mipmaps, p_format);
 	}
 
-	void _create_from_data(int p_width, int p_height, bool p_use_mipmaps, Format p_format, const Vector<uint8_t> &p_data) {
+	void _create_from_data(int p_width, int p_height, bool p_use_mipmaps, Format p_format, const std::vector<uint8_t> &p_data) {
 		create(p_width, p_height, p_use_mipmaps, p_format, p_data);
 	}
 
 	Format format = FORMAT_L8;
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	int width = 0;
 	int height = 0;
 	bool mipmaps = false;
@@ -196,7 +196,7 @@ private:
 	void _set_data(const Dictionary &p_data);
 	Dictionary _get_data() const;
 
-	Error _load_from_buffer(const Vector<uint8_t> &p_array, ImageMemLoadFunc p_loader);
+	Error _load_from_buffer(const std::vector<uint8_t> &p_array, ImageMemLoadFunc p_loader);
 
 	static void average_4_uint8(uint8_t &p_out, const uint8_t &p_a, const uint8_t &p_b, const uint8_t &p_c, const uint8_t &p_d);
 	static void average_4_float(float &p_out, const float &p_a, const float &p_b, const float &p_c, const float &p_d);
@@ -239,7 +239,7 @@ public:
 		VALIDATE_3D_ERR_IMAGE_HAS_MIPMAPS,
 	};
 
-	static Image3DValidateError validate_3d_image(Format p_format, int p_width, int p_height, int p_depth, bool p_mipmaps, const Vector<Ref<Image>> &p_images);
+	static Image3DValidateError validate_3d_image(Format p_format, int p_width, int p_height, int p_depth, bool p_mipmaps, const std::vector<Ref<Image>> &p_images);
 	static String get_3d_image_validation_error_text(Image3DValidateError p_error);
 
 	/**
@@ -280,7 +280,7 @@ public:
 	 * Create a new image of a given size and format. Current image will be lost
 	 */
 	void create(int p_width, int p_height, bool p_use_mipmaps, Format p_format);
-	void create(int p_width, int p_height, bool p_use_mipmaps, Format p_format, const Vector<uint8_t> &p_data);
+	void create(int p_width, int p_height, bool p_use_mipmaps, Format p_format, const std::vector<uint8_t> &p_data);
 
 	void create(const char **p_xpm);
 	/**
@@ -288,11 +288,11 @@ public:
 	 */
 	bool is_empty() const;
 
-	Vector<uint8_t> get_data() const;
+	std::vector<uint8_t> get_data() const;
 
 	Error load(const String &p_path);
 	Error save_png(const String &p_path) const;
-	Vector<uint8_t> save_png_to_buffer() const;
+	std::vector<uint8_t> save_png_to_buffer() const;
 	Error save_exr(const String &p_path, bool p_grayscale) const;
 
 	/**
@@ -306,7 +306,7 @@ public:
 	/**
 	 * import an image of a specific size and format from a pointer
 	 */
-	Image(int p_width, int p_height, bool p_mipmaps, Format p_format, const Vector<uint8_t> &p_data);
+	Image(int p_width, int p_height, bool p_mipmaps, Format p_format, const std::vector<uint8_t> &p_data);
 
 	~Image() {}
 
@@ -371,11 +371,11 @@ public:
 	static void set_compress_bptc_func(void (*p_compress_func)(Image *, float, UsedChannels));
 	static String get_format_name(Format p_format);
 
-	Error load_png_from_buffer(const Vector<uint8_t> &p_array);
-	Error load_jpg_from_buffer(const Vector<uint8_t> &p_array);
-	Error load_webp_from_buffer(const Vector<uint8_t> &p_array);
-	Error load_tga_from_buffer(const Vector<uint8_t> &p_array);
-	Error load_bmp_from_buffer(const Vector<uint8_t> &p_array);
+	Error load_png_from_buffer(const std::vector<uint8_t> &p_array);
+	Error load_jpg_from_buffer(const std::vector<uint8_t> &p_array);
+	Error load_webp_from_buffer(const std::vector<uint8_t> &p_array);
+	Error load_tga_from_buffer(const std::vector<uint8_t> &p_array);
+	Error load_bmp_from_buffer(const std::vector<uint8_t> &p_array);
 
 	void convert_rg_to_ra_rgba8();
 	void convert_ra_rgba8_to_rg();

@@ -88,7 +88,7 @@ public:
 	virtual real_t map_get_edge_connection_margin(RID p_map) const = 0;
 
 	/// Returns the navigation path to reach the destination from the origin.
-	virtual Vector<Vector3> map_get_path(RID p_map, Vector3 p_origin, Vector3 p_destination, bool p_optimize, uint32_t p_navigable_layers = 1) const = 0;
+	virtual std::vector<Vector3> map_get_path(RID p_map, Vector3 p_origin, Vector3 p_destination, bool p_optimize, uint32_t p_navigable_layers = 1) const = 0;
 
 	virtual Vector3 map_get_closest_point_to_segment(RID p_map, const Vector3 &p_from, const Vector3 &p_to, const bool p_use_collision = false) const = 0;
 	virtual Vector3 map_get_closest_point(RID p_map, const Vector3 &p_point) const = 0;

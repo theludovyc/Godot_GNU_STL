@@ -70,18 +70,18 @@ void RectangleShape2D::draw(const RID &p_to_rid, const Color &p_color) {
 	RenderingServer::get_singleton()->canvas_item_add_rect(p_to_rid, Rect2(-size * 0.5, size), p_color);
 	if (is_collision_outline_enabled()) {
 		// Draw an outlined rectangle to make individual shapes easier to distinguish.
-		Vector<Vector2> stroke_points;
+		std::vector<Vector2> stroke_points;
 		stroke_points.resize(5);
-		stroke_points.write[0] = -size * 0.5;
-		stroke_points.write[1] = Vector2(size.x, -size.y) * 0.5;
-		stroke_points.write[2] = size * 0.5;
-		stroke_points.write[3] = Vector2(-size.x, size.y) * 0.5;
-		stroke_points.write[4] = -size * 0.5;
+		stroke_points[0] = -size * 0.5;
+		stroke_points[1] = Vector2(size.x, -size.y) * 0.5;
+		stroke_points[2] = size * 0.5;
+		stroke_points[3] = Vector2(-size.x, size.y) * 0.5;
+		stroke_points[4] = -size * 0.5;
 
-		Vector<Color> stroke_colors;
+		std::vector<Color> stroke_colors;
 		stroke_colors.resize(5);
 		for (int i = 0; i < 5; i++) {
-			stroke_colors.write[i] = (p_color);
+			stroke_colors[i] = (p_color);
 		}
 
 		RenderingServer::get_singleton()->canvas_item_add_polyline(p_to_rid, stroke_points, stroke_colors);
