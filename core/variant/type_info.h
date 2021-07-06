@@ -217,11 +217,11 @@ struct GetTypeInfo<const Variant &> {
 		}                                                                             \
 	};
 
-MAKE_TEMPLATE_TYPE_INFO(Vector, Variant, Variant::ARRAY)
-MAKE_TEMPLATE_TYPE_INFO(Vector, RID, Variant::ARRAY)
-MAKE_TEMPLATE_TYPE_INFO(Vector, Plane, Variant::ARRAY)
-MAKE_TEMPLATE_TYPE_INFO(Vector, Face3, Variant::PACKED_VECTOR3_ARRAY)
-MAKE_TEMPLATE_TYPE_INFO(Vector, StringName, Variant::PACKED_STRING_ARRAY)
+MAKE_TEMPLATE_TYPE_INFO(std::vector, Variant, Variant::ARRAY)
+MAKE_TEMPLATE_TYPE_INFO(std::vector, RID, Variant::ARRAY)
+MAKE_TEMPLATE_TYPE_INFO(std::vector, Plane, Variant::ARRAY)
+MAKE_TEMPLATE_TYPE_INFO(std::vector, Face3, Variant::PACKED_VECTOR3_ARRAY)
+MAKE_TEMPLATE_TYPE_INFO(std::vector, StringName, Variant::PACKED_STRING_ARRAY)
 
 template <typename T>
 struct GetTypeInfo<T *, typename EnableIf<TypeInherits<Object, T>::value>::type> {

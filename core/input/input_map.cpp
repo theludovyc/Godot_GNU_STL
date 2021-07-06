@@ -705,7 +705,7 @@ void InputMap::load_default() {
 	OrderedHashMap<String, List<Ref<InputEvent>>> builtins = get_builtins();
 
 	// List of Builtins which have an override for OSX.
-	Vector<String> osx_builtins;
+	std::vector<String> osx_builtins;
 	for (OrderedHashMap<String, List<Ref<InputEvent>>>::Element E = builtins.front(); E; E = E.next()) {
 		if (String(E.key()).ends_with(".OSX")) {
 			// Strip .OSX from name: some_input_name.OSX -> some_input_name

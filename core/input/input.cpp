@@ -1229,7 +1229,7 @@ void Input::parse_mapping(String p_mapping) {
 	_THREAD_SAFE_METHOD_;
 	JoyDeviceMapping mapping;
 
-	Vector<String> entry = p_mapping.split(",");
+	std::vector<String> entry = p_mapping.split(",");
 	if (entry.size() < 2) {
 		return;
 	}
@@ -1328,7 +1328,7 @@ void Input::parse_mapping(String p_mapping) {
 void Input::add_joy_mapping(String p_mapping, bool p_update_existing) {
 	parse_mapping(p_mapping);
 	if (p_update_existing) {
-		Vector<String> entry = p_mapping.split(",");
+		std::vector<String> entry = p_mapping.split(",");
 		String uid = entry[0];
 		for (Map<int, Joypad>::Element *E = joy_names.front(); E; E = E->next()) {
 			Joypad &joy = E->get();
@@ -1342,7 +1342,9 @@ void Input::add_joy_mapping(String p_mapping, bool p_update_existing) {
 void Input::remove_joy_mapping(String p_guid) {
 	for (int i = map_db.size() - 1; i >= 0; i--) {
 		if (p_guid == map_db[i].uid) {
-			map_db.remove(i);
+
+			//todo
+			map_db.erase(map_db.begin() + i);
 		}
 	}
 	for (Map<int, Joypad>::Element *E = joy_names.front(); E; E = E->next()) {
@@ -1413,7 +1415,7 @@ Input::Input() {
 	// If defined, parse SDL_GAMECONTROLLERCONFIG for possible new mappings/overrides.
 	String env_mapping = OS::get_singleton()->get_environment("SDL_GAMECONTROLLERCONFIG");
 	if (env_mapping != "") {
-		Vector<String> entries = env_mapping.split("\n");
+		std::vector<String> entries = env_mapping.split("\n");
 		for (int i = 0; i < entries.size(); i++) {
 			if (entries[i] == "") {
 				continue;

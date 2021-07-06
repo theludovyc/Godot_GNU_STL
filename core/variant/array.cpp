@@ -30,18 +30,21 @@
 
 #include "array.h"
 
+#include <algorithm>
+
 #include "container_type_validate.h"
 #include "core/object/class_db.h"
 #include "core/object/script_language.h"
 #include "core/templates/hashfuncs.h"
-#include "core/templates/vector.h"
 #include "core/variant/callable.h"
 #include "core/variant/variant.h"
+
+//todo std::vector.data()
 
 class ArrayPrivate {
 public:
 	SafeRefCount refcount;
-	Vector<Variant> array;
+	std::vector<Variant> array;
 
 	ContainerTypeValidate typed;
 };
@@ -76,7 +79,7 @@ void Array::_unref() const {
 }
 
 Variant &Array::operator[](int p_idx) {
-	return _p->array.write[p_idx];
+	return _p->array[p_idx];
 }
 
 const Variant &Array::operator[](int p_idx) const {
@@ -88,7 +91,7 @@ int Array::size() const {
 }
 
 bool Array::is_empty() const {
-	return _p->array.is_empty();
+	return _p->array.empty();
 }
 
 void Array::clear() {
@@ -157,16 +160,16 @@ bool Array::_assign(const Array &p_array) {
 
 		} else {
 			//for non objects, we need to check if there is a valid conversion, which needs to happen one by one, so this is the worst case.
-			Vector<Variant> new_array;
+			std::vector<Variant> new_array;
 			new_array.resize(p_array._p->array.size());
 			for (int i = 0; i < p_array._p->array.size(); i++) {
 				Variant src_val = p_array._p->array[i];
 				if (src_val.get_type() == _p->typed.type) {
-					new_array.write[i] = src_val;
+					new_array[i] = src_val;
 				} else if (Variant::can_convert_strict(src_val.get_type(), _p->typed.type)) {
 					Variant *ptr = &src_val;
 					Callable::CallError ce;
-					Variant::construct(_p->typed.type, new_array.write[i], (const Variant **)&ptr, 1, ce);
+					Variant::construct(_p->typed.type, new_array[i], (const Variant **)&ptr, 1, ce);
 					if (ce.error != Callable::CallError::CALL_OK) {
 						ERR_FAIL_V_MSG(false, "Unable to convert array index " + itos(i) + " from '" + Variant::get_type_name(src_val.get_type()) + "' to '" + Variant::get_type_name(_p->typed.type) + "'.");
 					}
@@ -196,26 +199,33 @@ void Array::push_back(const Variant &p_value) {
 
 void Array::append_array(const Array &p_array) {
 	ERR_FAIL_COND(!_p->typed.validate(p_array, "append_array"));
-	_p->array.append_array(p_array._p->array);
+	_p->array.insert(_p->array.end(), p_array._p->array.begin(), p_array._p->array.end());
 }
 
 Error Array::resize(int p_new_size) {
-	return _p->array.resize(p_new_size);
+	try{
+		_p->array.resize(p_new_size);
+		return OK;
+	}catch (std::bad_alloc e){
+		return FAILED;
+	}
 }
 
 void Array::insert(int p_pos, const Variant &p_value) {
 	ERR_FAIL_COND(!_p->typed.validate(p_value, "insert"));
-	_p->array.insert(p_pos, p_value);
+
+	//todo
+	_p->array.insert(_p->array.begin() + p_pos, p_value);
 }
 
 void Array::fill(const Variant &p_value) {
 	ERR_FAIL_COND(!_p->typed.validate(p_value, "fill"));
-	_p->array.fill(p_value);
+	std::fill(_p->array.begin(), _p->array.end(), p_value);
 }
 
 void Array::erase(const Variant &p_value) {
 	ERR_FAIL_COND(!_p->typed.validate(p_value, "erase"));
-	_p->array.erase(p_value);
+	std::remove(_p->array.begin(),  _p->array.end(), p_value);
 }
 
 Variant Array::front() const {
@@ -230,7 +240,16 @@ Variant Array::back() const {
 
 int Array::find(const Variant &p_value, int p_from) const {
 	ERR_FAIL_COND_V(!_p->typed.validate(p_value, "find"), -1);
-	return _p->array.find(p_value, p_from);
+
+	//todo
+
+	auto it = std::find(_p->array.begin() + p_from, _p->array.end(), p_value);
+
+	if(it != _p->array.end()){
+		return std::distance(_p->array.begin(), it);
+	}
+
+	return -1;
 }
 
 int Array::rfind(const Variant &p_value, int p_from) const {
@@ -281,11 +300,17 @@ int Array::count(const Variant &p_value) const {
 bool Array::has(const Variant &p_value) const {
 	ERR_FAIL_COND_V(!_p->typed.validate(p_value, "use 'has'"), false);
 
-	return _p->array.find(p_value, 0) != -1;
+	auto it = std::find(_p->array.begin(), _p->array.end(), p_value);
+
+	if(it != _p->array.end()){
+		return std::distance(_p->array.begin(), it);
+	}
+
+	return -1;
 }
 
 void Array::remove(int p_pos) {
-	_p->array.remove(p_pos);
+	_p->array.erase(_p->array.begin() + p_pos);
 }
 
 void Array::set(int p_idx, const Variant &p_value) {
@@ -447,7 +472,7 @@ struct _ArrayVariantSort {
 };
 
 void Array::sort() {
-	_p->array.sort_custom<_ArrayVariantSort>();
+	std::sort(_p->array.begin(), _p->array.end(), _ArrayVariantSort());
 }
 
 struct _ArrayVariantSortCustom {
@@ -467,7 +492,7 @@ struct _ArrayVariantSortCustom {
 void Array::sort_custom(Callable p_callable) {
 	SortArray<Variant, _ArrayVariantSortCustom, true> avs;
 	avs.compare.func = p_callable;
-	avs.sort(_p->array.ptrw(), _p->array.size());
+	avs.sort(_p->array.data(), _p->array.size());
 }
 
 void Array::shuffle() {
@@ -475,7 +500,7 @@ void Array::shuffle() {
 	if (n < 2) {
 		return;
 	}
-	Variant *data = _p->array.ptrw();
+	Variant *data = _p->array.data();
 	for (int i = n - 1; i >= 1; i--) {
 		const int j = Math::rand() % (i + 1);
 		const Variant tmp = data[j];
@@ -485,13 +510,13 @@ void Array::shuffle() {
 }
 
 template <typename Less>
-_FORCE_INLINE_ int bisect(const Vector<Variant> &p_array, const Variant &p_value, bool p_before, const Less &p_less) {
+_FORCE_INLINE_ int bisect(const std::vector<Variant> &p_array, const Variant &p_value, bool p_before, const Less &p_less) {
 	int lo = 0;
 	int hi = p_array.size();
 	if (p_before) {
 		while (lo < hi) {
 			const int mid = (lo + hi) / 2;
-			if (p_less(p_array.get(mid), p_value)) {
+			if (p_less(p_array[mid], p_value)) {
 				lo = mid + 1;
 			} else {
 				hi = mid;
@@ -500,7 +525,7 @@ _FORCE_INLINE_ int bisect(const Vector<Variant> &p_array, const Variant &p_value
 	} else {
 		while (lo < hi) {
 			const int mid = (lo + hi) / 2;
-			if (p_less(p_value, p_array.get(mid))) {
+			if (p_less(p_value, p_array[mid])) {
 				hi = mid;
 			} else {
 				lo = mid + 1;
@@ -525,31 +550,32 @@ int Array::bsearch_custom(const Variant &p_value, Callable p_callable, bool p_be
 }
 
 void Array::reverse() {
-	_p->array.reverse();
+	std::reverse(_p->array.begin(), _p->array.end());
 }
 
 void Array::push_front(const Variant &p_value) {
 	ERR_FAIL_COND(!_p->typed.validate(p_value, "push_front"));
-	_p->array.insert(0, p_value);
+	_p->array.insert(_p->array.begin(), p_value);
 }
 
 Variant Array::pop_back() {
-	if (!_p->array.is_empty()) {
-		int n = _p->array.size() - 1;
-		Variant ret = _p->array.get(n);
-		_p->array.resize(n);
-		return ret;
-	}
-	return Variant();
+	if (_p->array.empty())
+		return Variant();
+
+	auto ret = _p->array[_p->array.size() - 1];
+	_p->array.pop_back();
+	return ret;
 }
 
 Variant Array::pop_front() {
-	if (!_p->array.is_empty()) {
-		Variant ret = _p->array.get(0);
-		_p->array.remove(0);
-		return ret;
-	}
-	return Variant();
+	if (_p->array.empty())
+		return Variant();
+
+	auto ret = *(_p->array.begin());
+
+	_p->array.erase(_p->array.begin());
+
+	return ret;
 }
 
 Variant Array::min() const {
@@ -597,7 +623,7 @@ Variant Array::max() const {
 }
 
 const void *Array::id() const {
-	return _p->array.ptr();
+	return _p->array.data();
 }
 
 Array::Array(const Array &p_from, uint32_t p_type, const StringName &p_class_name, const Variant &p_script) {
