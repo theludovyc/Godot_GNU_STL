@@ -58,7 +58,7 @@ public:
 			float gpu_time = 0;
 		};
 
-		Vector<Area> areas;
+		std::vector<Area> areas;
 	};
 
 	enum DisplayTimeMode {
@@ -72,7 +72,7 @@ private:
 
 	TextureRect *graph;
 	Ref<ImageTexture> graph_texture;
-	Vector<uint8_t> graph_image;
+	std::vector<uint8_t> graph_image;
 	Tree *variables;
 	HSplitContainer *h_split;
 	CheckBox *frame_relative;
@@ -82,7 +82,7 @@ private:
 
 	SpinBox *cursor_metric_edit;
 
-	Vector<Metric> frame_metrics;
+	std::vector<Metric> frame_metrics;
 	int last_metric;
 
 	StringName selected_area;
@@ -140,7 +140,7 @@ public:
 
 	void clear();
 
-	Vector<Vector<String>> get_data_as_csv() const;
+	std::vector<std::vector<String>> get_data_as_csv() const;
 
 	EditorVisualProfiler();
 };

@@ -46,7 +46,7 @@ class EditorPath : public Button {
 	TextureRect *sub_objects_icon;
 	PopupMenu *sub_objects_menu;
 
-	Vector<ObjectID> objects;
+	std::vector<ObjectID> objects;
 	EditorPath();
 
 	void _show_popup();

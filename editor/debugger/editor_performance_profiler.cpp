@@ -95,14 +95,14 @@ void EditorPerformanceProfiler::_monitor_select() {
 }
 
 void EditorPerformanceProfiler::_monitor_draw() {
-	Vector<StringName> active;
+	std::vector<StringName> active;
 	for (OrderedHashMap<StringName, Monitor>::Element i = monitors.front(); i; i = i.next()) {
 		if (i.value().item->is_checked(0)) {
 			active.push_back(i.key());
 		}
 	}
 
-	if (active.is_empty()) {
+	if (active.empty()) {
 		info_message->show();
 		return;
 	}
@@ -250,7 +250,7 @@ TreeItem *EditorPerformanceProfiler::_create_monitor_item(const StringName &p_mo
 void EditorPerformanceProfiler::_marker_input(const Ref<InputEvent> &p_event) {
 	Ref<InputEventMouseButton> mb = p_event;
 	if (mb.is_valid() && mb->is_pressed() && mb->get_button_index() == MOUSE_BUTTON_LEFT) {
-		Vector<StringName> active;
+		std::vector<StringName> active;
 		for (OrderedHashMap<StringName, Monitor>::Element i = monitors.front(); i; i = i.next()) {
 			if (i.value().item->is_checked(0)) {
 				active.push_back(i.key());
@@ -306,7 +306,7 @@ void EditorPerformanceProfiler::reset() {
 	monitor_draw->update();
 }
 
-void EditorPerformanceProfiler::update_monitors(const Vector<StringName> &p_names) {
+void EditorPerformanceProfiler::update_monitors(const std::vector<StringName> &p_names) {
 	OrderedHashMap<StringName, int> names;
 	for (int i = 0; i < p_names.size(); i++) {
 		names.insert("custom:" + p_names[i], Performance::MONITOR_MAX + i);
@@ -336,7 +336,7 @@ void EditorPerformanceProfiler::update_monitors(const Vector<StringName> &p_name
 	_build_monitor_tree();
 }
 
-void EditorPerformanceProfiler::add_profile_frame(const Vector<float> &p_values) {
+void EditorPerformanceProfiler::add_profile_frame(const std::vector<float> &p_values) {
 	for (OrderedHashMap<StringName, Monitor>::Element i = monitors.front(); i; i = i.next()) {
 		float data = 0.0f;
 		if (i.value().frame_index >= 0 && i.value().frame_index < p_values.size()) {

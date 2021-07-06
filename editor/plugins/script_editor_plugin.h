@@ -104,7 +104,7 @@ class ScriptEditorQuickOpen : public ConfirmationDialog {
 	void _update_search();
 
 	void _sbox_input(const Ref<InputEvent> &p_ie);
-	Vector<String> functions;
+	std::vector<String> functions;
 
 	void _confirmed();
 	void _text_changed(const String &p_newtext);
@@ -114,7 +114,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void popup_dialog(const Vector<String> &p_functions, bool p_dontclear = false);
+	void popup_dialog(const std::vector<String> &p_functions, bool p_dontclear = false);
 	ScriptEditorQuickOpen();
 };
 
@@ -132,7 +132,7 @@ public:
 
 	virtual void apply_code() = 0;
 	virtual RES get_edited_resource() const = 0;
-	virtual Vector<String> get_functions() = 0;
+	virtual std::vector<String> get_functions() = 0;
 	virtual void set_edited_resource(const RES &p_res) = 0;
 	virtual void enable_editor() = 0;
 	virtual void reload_text() = 0;
@@ -292,14 +292,14 @@ class ScriptEditor : public PanelContainer {
 	static int script_editor_func_count;
 	static CreateScriptEditorFunc script_editor_funcs[SCRIPT_EDITOR_FUNC_MAX];
 
-	Vector<Ref<EditorSyntaxHighlighter>> syntax_highlighters;
+	std::vector<Ref<EditorSyntaxHighlighter>> syntax_highlighters;
 
 	struct ScriptHistory {
 		Control *control = nullptr;
 		Variant state;
 	};
 
-	Vector<ScriptHistory> history;
+	std::vector<ScriptHistory> history;
 	int history_pos;
 
 	List<String> previous_scripts;
@@ -475,7 +475,7 @@ public:
 	void get_window_layout(Ref<ConfigFile> p_layout);
 
 	void set_scene_root_script(Ref<Script> p_script);
-	Vector<Ref<Script>> get_open_scripts() const;
+	std::vector<Ref<Script>> get_open_scripts() const;
 
 	bool script_goto_method(Ref<Script> p_script, const String &p_method);
 

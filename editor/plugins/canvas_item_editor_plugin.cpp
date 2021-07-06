@@ -582,7 +582,7 @@ Rect2 CanvasItemEditor::_get_encompassing_rect(const Node *p_node) {
 	return rect;
 }
 
-void CanvasItemEditor::_find_canvas_items_at_pos(const Point2 &p_pos, Node *p_node, Vector<_SelectResult> &r_items, const Transform2D &p_parent_xform, const Transform2D &p_canvas_xform) {
+void CanvasItemEditor::_find_canvas_items_at_pos(const Point2 &p_pos, Node *p_node, std::vector<_SelectResult> &r_items, const Transform2D &p_parent_xform, const Transform2D &p_canvas_xform) {
 	if (!p_node) {
 		return;
 	}
@@ -621,7 +621,7 @@ void CanvasItemEditor::_find_canvas_items_at_pos(const Point2 &p_pos, Node *p_no
 	}
 }
 
-void CanvasItemEditor::_get_canvas_items_at_pos(const Point2 &p_pos, Vector<_SelectResult> &r_items, bool p_allow_locked) {
+void CanvasItemEditor::_get_canvas_items_at_pos(const Point2 &p_pos, std::vector<_SelectResult> &r_items, bool p_allow_locked) {
 	Node *scene = editor->get_edited_scene();
 
 	_find_canvas_items_at_pos(p_pos, scene, r_items);
@@ -2266,9 +2266,9 @@ bool CanvasItemEditor::_gui_input_select(const Ref<InputEvent> &p_event) {
 			// Find the item to select
 			CanvasItem *canvas_item = nullptr;
 
-			Vector<_SelectResult> selection = Vector<_SelectResult>();
+			std::vector<_SelectResult> selection = std::vector<_SelectResult>();
 			// Retrieve the canvas items
-			selection = Vector<_SelectResult>();
+			selection = std::vector<_SelectResult>();
 			_get_canvas_items_at_pos(click, selection);
 			if (!selection.is_empty()) {
 				canvas_item = selection[0].item;
@@ -2421,12 +2421,12 @@ bool CanvasItemEditor::_gui_input_hover(const Ref<InputEvent> &p_event) {
 		Point2 click = transform.affine_inverse().xform(m->get_position());
 
 		// Checks if the hovered items changed, update the viewport if so
-		Vector<_SelectResult> hovering_results_items;
+		std::vector<_SelectResult> hovering_results_items;
 		_get_canvas_items_at_pos(click, hovering_results_items);
 		hovering_results_items.sort();
 
 		// Compute the nodes names and icon position
-		Vector<_HoverResult> hovering_results_tmp;
+		std::vector<_HoverResult> hovering_results_tmp;
 		for (int i = 0; i < hovering_results_items.size(); i++) {
 			CanvasItem *canvas_item = hovering_results_items[i].item;
 
@@ -3336,7 +3336,7 @@ void CanvasItemEditor::_draw_selection() {
 					Size2 move_factor = Size2(MOVE_HANDLE_DISTANCE, MOVE_HANDLE_DISTANCE);
 					viewport->draw_set_transform_matrix(simple_xform);
 
-					Vector<Point2> points;
+					std::vector<Point2> points;
 					points.push_back(Vector2(move_factor.x * EDSCALE, 5 * EDSCALE));
 					points.push_back(Vector2(move_factor.x * EDSCALE, -5 * EDSCALE));
 					points.push_back(Vector2((move_factor.x + 10) * EDSCALE, 0));
@@ -3422,7 +3422,7 @@ void CanvasItemEditor::_draw_selection() {
 void CanvasItemEditor::_draw_straight_line(Point2 p_from, Point2 p_to, Color p_color) {
 	// Draw a line going through the whole screen from a vector
 	RID ci = viewport->get_canvas_item();
-	Vector<Point2> points;
+	std::vector<Point2> points;
 	Point2 from = transform.xform(p_from);
 	Point2 to = transform.xform(p_to);
 	Size2 viewport_size = viewport->get_size();
@@ -5688,7 +5688,7 @@ void CanvasItemEditorViewport::_on_change_type_closed() {
 	_remove_preview();
 }
 
-void CanvasItemEditorViewport::_create_preview(const Vector<String> &files) const {
+void CanvasItemEditorViewport::_create_preview(const std::vector<String> &files) const {
 	bool add_preview = false;
 	for (int i = 0; i < files.size(); i++) {
 		String path = files[i];
@@ -5796,7 +5796,7 @@ void CanvasItemEditorViewport::_create_nodes(Node *parent, Node *child, String &
 	if (default_type == "NinePatchRect") {
 		editor_data->get_undo_redo().add_do_property(child, "rect/size", texture_size);
 	} else if (default_type == "Polygon2D") {
-		Vector<Vector2> list;
+		std::vector<Vector2> list;
 		list.push_back(Vector2(0, 0));
 		list.push_back(Vector2(texture_size.width, 0));
 		list.push_back(Vector2(texture_size.width, texture_size.height));
@@ -5869,7 +5869,7 @@ void CanvasItemEditorViewport::_perform_drop_data() {
 		return;
 	}
 
-	Vector<String> error_files;
+	std::vector<String> error_files;
 
 	editor_data->get_undo_redo().create_action(TTR("Create Node"));
 
@@ -5935,7 +5935,7 @@ bool CanvasItemEditorViewport::can_drop_data(const Point2 &p_point, const Varian
 	Dictionary d = p_data;
 	if (d.has("type")) {
 		if (String(d["type"]) == "files") {
-			Vector<String> files = d["files"];
+			std::vector<String> files = d["files"];
 			bool can_instantiate = false;
 			for (int i = 0; i < files.size(); i++) { // check if dragged files contain resource or scene can be created at least once
 				RES res = ResourceLoader::load(files[i]);

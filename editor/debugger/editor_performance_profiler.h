@@ -81,8 +81,8 @@ private:
 
 public:
 	void reset();
-	void update_monitors(const Vector<StringName> &p_names);
-	void add_profile_frame(const Vector<float> &p_values);
+	void update_monitors(const std::vector<StringName> &p_names);
+	void add_profile_frame(const std::vector<float> &p_values);
 	List<float> *get_monitor_data(const StringName &p_name);
 	EditorPerformanceProfiler();
 };

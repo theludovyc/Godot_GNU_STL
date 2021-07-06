@@ -36,6 +36,8 @@
 #include "scene/gui/separator.h"
 #include "scene/resources/particles_material.h"
 
+//todo std::vector.data()
+
 void GPUParticles2DEditorPlugin::edit(Object *p_object) {
 	particles = Object::cast_to<GPUParticles2D>(p_object);
 }
@@ -158,9 +160,9 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 	Size2i s = Size2(img->get_width(), img->get_height());
 	ERR_FAIL_COND(s.width == 0 || s.height == 0);
 
-	Vector<Point2> valid_positions;
-	Vector<Point2> valid_normals;
-	Vector<uint8_t> valid_colors;
+	std::vector<Point2> valid_positions;
+	std::vector<Point2> valid_normals;
+	std::vector<uint8_t> valid_colors;
 
 	valid_positions.resize(s.width * s.height);
 
@@ -179,8 +181,8 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 	int vpc = 0;
 
 	{
-		Vector<uint8_t> data = img->get_data();
-		const uint8_t *r = data.ptr();
+		std::vector<uint8_t> data = img->get_data();
+		const uint8_t *r = data.data();
 
 		for (int i = 0; i < s.width; i++) {
 			for (int j = 0; j < s.height; j++) {
@@ -189,12 +191,12 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 				if (a > 128) {
 					if (emode == EMISSION_MODE_SOLID) {
 						if (capture_colors) {
-							valid_colors.write[vpc * 4 + 0] = r[(j * s.width + i) * 4 + 0];
-							valid_colors.write[vpc * 4 + 1] = r[(j * s.width + i) * 4 + 1];
-							valid_colors.write[vpc * 4 + 2] = r[(j * s.width + i) * 4 + 2];
-							valid_colors.write[vpc * 4 + 3] = r[(j * s.width + i) * 4 + 3];
+							valid_colors[vpc * 4 + 0] = r[(j * s.width + i) * 4 + 0];
+							valid_colors[vpc * 4 + 1] = r[(j * s.width + i) * 4 + 1];
+							valid_colors[vpc * 4 + 2] = r[(j * s.width + i) * 4 + 2];
+							valid_colors[vpc * 4 + 3] = r[(j * s.width + i) * 4 + 3];
 						}
-						valid_positions.write[vpc++] = Point2(i, j);
+						valid_positions[vpc++] = Point2(i, j);
 
 					} else {
 						bool on_border = false;
@@ -212,7 +214,7 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 						}
 
 						if (on_border) {
-							valid_positions.write[vpc] = Point2(i, j);
+							valid_positions[vpc] = Point2(i, j);
 
 							if (emode == EMISSION_MODE_BORDER_DIRECTED) {
 								Vector2 normal;
@@ -229,14 +231,14 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 								}
 
 								normal.normalize();
-								valid_normals.write[vpc] = normal;
+								valid_normals[vpc] = normal;
 							}
 
 							if (capture_colors) {
-								valid_colors.write[vpc * 4 + 0] = r[(j * s.width + i) * 4 + 0];
-								valid_colors.write[vpc * 4 + 1] = r[(j * s.width + i) * 4 + 1];
-								valid_colors.write[vpc * 4 + 2] = r[(j * s.width + i) * 4 + 2];
-								valid_colors.write[vpc * 4 + 3] = r[(j * s.width + i) * 4 + 3];
+								valid_colors[vpc * 4 + 0] = r[(j * s.width + i) * 4 + 0];
+								valid_colors[vpc * 4 + 1] = r[(j * s.width + i) * 4 + 1];
+								valid_colors[vpc * 4 + 2] = r[(j * s.width + i) * 4 + 2];
+								valid_colors[vpc * 4 + 3] = r[(j * s.width + i) * 4 + 3];
 							}
 
 							vpc++;
@@ -254,7 +256,7 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 
 	ERR_FAIL_COND_MSG(valid_positions.size() == 0, "No pixels with transparency > 128 in image...");
 
-	Vector<uint8_t> texdata;
+	std::vector<uint8_t> texdata;
 
 	int w = 2048;
 	int h = (vpc / 2048) + 1;
@@ -262,7 +264,7 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 	texdata.resize(w * h * 2 * sizeof(float));
 
 	{
-		uint8_t *tw = texdata.ptrw();
+		uint8_t *tw = texdata.data();
 		float *twf = (float *)tw;
 		for (int i = 0; i < vpc; i++) {
 			twf[i * 2 + 0] = valid_positions[i].x;
@@ -281,11 +283,11 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 	pm->set_emission_point_count(vpc);
 
 	if (capture_colors) {
-		Vector<uint8_t> colordata;
+		std::vector<uint8_t> colordata;
 		colordata.resize(w * h * 4); //use RG texture
 
 		{
-			uint8_t *tw = colordata.ptrw();
+			uint8_t *tw = colordata.data();
 			for (int i = 0; i < vpc * 4; i++) {
 				tw[i] = valid_colors[i];
 			}
@@ -302,11 +304,11 @@ void GPUParticles2DEditorPlugin::_generate_emission_mask() {
 	if (valid_normals.size()) {
 		pm->set_emission_shape(ParticlesMaterial::EMISSION_SHAPE_DIRECTED_POINTS);
 
-		Vector<uint8_t> normdata;
+		std::vector<uint8_t> normdata;
 		normdata.resize(w * h * 2 * sizeof(float)); //use RG texture
 
 		{
-			uint8_t *tw = normdata.ptrw();
+			uint8_t *tw = normdata.data();
 			float *twf = (float *)tw;
 			for (int i = 0; i < vpc; i++) {
 				twf[i * 2 + 0] = valid_normals[i].x;
