@@ -41,8 +41,8 @@ protected:
 	static void _bind_methods();
 
 	//bind helpers
-	Error _put_data(const Vector<uint8_t> &p_data);
-	Array _put_partial_data(const Vector<uint8_t> &p_data);
+	Error _put_data(const std::vector<uint8_t> &p_data);
+	Array _put_partial_data(const std::vector<uint8_t> &p_data);
 
 	Array _get_data(int p_bytes);
 	Array _get_partial_data(int p_bytes);
@@ -95,7 +95,7 @@ public:
 class StreamPeerBuffer : public StreamPeer {
 	GDCLASS(StreamPeerBuffer, StreamPeer);
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	int pointer = 0;
 
 protected:
@@ -115,8 +115,8 @@ public:
 	int get_position() const;
 	void resize(int p_size);
 
-	void set_data_array(const Vector<uint8_t> &p_data);
-	Vector<uint8_t> get_data_array() const;
+	void set_data_array(const std::vector<uint8_t> &p_data);
+	std::vector<uint8_t> get_data_array() const;
 
 	void clear();
 

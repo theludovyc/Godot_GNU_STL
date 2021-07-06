@@ -30,6 +30,8 @@
 
 #include "image_loader.h"
 
+#include <algorithm>
+
 #include "core/string/print_string.h"
 
 bool ImageFormatLoader::recognize(const String &p_extension) const {
@@ -100,17 +102,17 @@ ImageFormatLoader *ImageLoader::recognize(const String &p_extension) {
 	return nullptr;
 }
 
-Vector<ImageFormatLoader *> ImageLoader::loader;
+std::vector<ImageFormatLoader *> ImageLoader::loader;
 
 void ImageLoader::add_image_format_loader(ImageFormatLoader *p_loader) {
 	loader.push_back(p_loader);
 }
 
 void ImageLoader::remove_image_format_loader(ImageFormatLoader *p_loader) {
-	loader.erase(p_loader);
+	std::remove(loader.begin(), loader.end(), p_loader);
 }
 
-const Vector<ImageFormatLoader *> &ImageLoader::get_image_format_loaders() {
+const std::vector<ImageFormatLoader *> &ImageLoader::get_image_format_loaders() {
 	return loader;
 }
 

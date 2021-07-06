@@ -163,7 +163,7 @@ Error DirAccess::make_dir_recursive(String p_dir) {
 
 	full_dir = full_dir.replace_first(base, "").simplify_path();
 
-	Vector<String> subdirs = full_dir.split("/");
+	std::vector<String> subdirs = full_dir.split("/");
 
 	String curpath = base;
 	for (int i = 0; i < subdirs.size(); i++) {

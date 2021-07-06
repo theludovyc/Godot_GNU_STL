@@ -37,6 +37,8 @@
 #include "core/io/marshalls.h"
 #include "core/version.h"
 
+//todo std::vector.data()
+
 //#define print_bl(m_what) print_line(m_what)
 #define print_bl(m_what) (void)(m_what)
 
@@ -274,8 +276,8 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		} break;
 
 		case VARIANT_NODE_PATH: {
-			Vector<StringName> names;
-			Vector<StringName> subnames;
+			std::vector<StringName> names;
+			std::vector<StringName> subnames;
 			bool absolute;
 
 			int name_count = f->get_16();
@@ -357,7 +359,7 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 							//cache not here yet, wait for it?
 							if (use_sub_threads) {
 								Error err;
-								external_resources.write[erindex].cache = ResourceLoader::load_threaded_get(external_resources[erindex].path, &err);
+								external_resources[erindex].cache = ResourceLoader::load_threaded_get(external_resources[erindex].path, &err);
 
 								if (err != OK || external_resources[erindex].cache.is_null()) {
 									if (!ResourceLoader::get_abort_on_missing_resources()) {
@@ -419,9 +421,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_RAW_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<uint8_t> array;
+			std::vector<uint8_t> array;
 			array.resize(len);
-			uint8_t *w = array.ptrw();
+			uint8_t *w = array.data();
 			f->get_buffer(w, len);
 			_advance_padding(len);
 
@@ -431,9 +433,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_INT32_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<int32_t> array;
+			std::vector<int32_t> array;
 			array.resize(len);
-			int32_t *w = array.ptrw();
+			int32_t *w = array.data();
 			f->get_buffer((uint8_t *)w, len * sizeof(int32_t));
 #ifdef BIG_ENDIAN_ENABLED
 			{
@@ -450,9 +452,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_INT64_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<int64_t> array;
+			std::vector<int64_t> array;
 			array.resize(len);
-			int64_t *w = array.ptrw();
+			int64_t *w = array.data();
 			f->get_buffer((uint8_t *)w, len * sizeof(int64_t));
 #ifdef BIG_ENDIAN_ENABLED
 			{
@@ -469,9 +471,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_FLOAT32_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<float> array;
+			std::vector<float> array;
 			array.resize(len);
-			float *w = array.ptrw();
+			float *w = array.data();
 			f->get_buffer((uint8_t *)w, len * sizeof(float));
 #ifdef BIG_ENDIAN_ENABLED
 			{
@@ -488,9 +490,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_FLOAT64_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<double> array;
+			std::vector<double> array;
 			array.resize(len);
-			double *w = array.ptrw();
+			double *w = array.data();
 			f->get_buffer((uint8_t *)w, len * sizeof(double));
 #ifdef BIG_ENDIAN_ENABLED
 			{
@@ -506,9 +508,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		} break;
 		case VARIANT_STRING_ARRAY: {
 			uint32_t len = f->get_32();
-			Vector<String> array;
+			std::vector<String> array;
 			array.resize(len);
-			String *w = array.ptrw();
+			String *w = array.data();
 			for (uint32_t i = 0; i < len; i++) {
 				w[i] = get_unicode_string();
 			}
@@ -519,9 +521,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_VECTOR2_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<Vector2> array;
+			std::vector<Vector2> array;
 			array.resize(len);
-			Vector2 *w = array.ptrw();
+			Vector2 *w = array.data();
 			if (sizeof(Vector2) == 8) {
 				f->get_buffer((uint8_t *)w, len * sizeof(real_t) * 2);
 #ifdef BIG_ENDIAN_ENABLED
@@ -544,9 +546,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_VECTOR3_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<Vector3> array;
+			std::vector<Vector3> array;
 			array.resize(len);
-			Vector3 *w = array.ptrw();
+			Vector3 *w = array.data();
 			if (sizeof(Vector3) == 12) {
 				f->get_buffer((uint8_t *)w, len * sizeof(real_t) * 3);
 #ifdef BIG_ENDIAN_ENABLED
@@ -569,9 +571,9 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 		case VARIANT_COLOR_ARRAY: {
 			uint32_t len = f->get_32();
 
-			Vector<Color> array;
+			std::vector<Color> array;
 			array.resize(len);
-			Color *w = array.ptrw();
+			Color *w = array.data();
 			if (sizeof(Color) == 16) {
 				f->get_buffer((uint8_t *)w, len * sizeof(real_t) * 4);
 #ifdef BIG_ENDIAN_ENABLED
@@ -625,10 +627,10 @@ Error ResourceLoaderBinary::load() {
 			path = ProjectSettings::get_singleton()->localize_path(path.get_base_dir().plus_file(external_resources[i].path));
 		}
 
-		external_resources.write[i].path = path; //remap happens here, not on load because on load it can actually be used for filesystem dock resource remap
+		external_resources[i].path = path; //remap happens here, not on load because on load it can actually be used for filesystem dock resource remap
 
 		if (!use_sub_threads) {
-			external_resources.write[i].cache = ResourceLoader::load(path, external_resources[i].type);
+			external_resources[i].cache = ResourceLoader::load(path, external_resources[i].type);
 
 			if (external_resources[i].cache.is_null()) {
 				if (!ResourceLoader::get_abort_on_missing_resources()) {
@@ -785,7 +787,7 @@ static void save_ustring(FileAccess *f, const String &p_string) {
 
 static String get_ustring(FileAccess *f) {
 	int len = f->get_32();
-	Vector<char> str_buf;
+	std::vector<char> str_buf;
 	str_buf.resize(len);
 	f->get_buffer((uint8_t *)&str_buf[0], len);
 	String s;
@@ -887,7 +889,7 @@ void ResourceLoaderBinary::open(FileAccess *p_f) {
 	string_map.resize(string_table_size);
 	for (uint32_t i = 0; i < string_table_size; i++) {
 		StringName s = get_unicode_string();
-		string_map.write[i] = s;
+		string_map[i] = s;
 	}
 
 	print_bl("strings: " + itos(string_table_size));
@@ -1542,20 +1544,20 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_BYTE_ARRAY: {
 			f->store_32(VARIANT_RAW_ARRAY);
-			Vector<uint8_t> arr = p_property;
+			std::vector<uint8_t> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const uint8_t *r = arr.ptr();
+			const uint8_t *r = arr.data();
 			f->store_buffer(r, len);
 			_pad_buffer(f, len);
 
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
 			f->store_32(VARIANT_INT32_ARRAY);
-			Vector<int32_t> arr = p_property;
+			std::vector<int32_t> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const int32_t *r = arr.ptr();
+			const int32_t *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_32(r[i]);
 			}
@@ -1563,10 +1565,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			f->store_32(VARIANT_INT64_ARRAY);
-			Vector<int64_t> arr = p_property;
+			std::vector<int64_t> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const int64_t *r = arr.ptr();
+			const int64_t *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_64(r[i]);
 			}
@@ -1574,10 +1576,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			f->store_32(VARIANT_FLOAT32_ARRAY);
-			Vector<float> arr = p_property;
+			std::vector<float> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const float *r = arr.ptr();
+			const float *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_real(r[i]);
 			}
@@ -1585,10 +1587,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_FLOAT64_ARRAY: {
 			f->store_32(VARIANT_FLOAT64_ARRAY);
-			Vector<double> arr = p_property;
+			std::vector<double> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const double *r = arr.ptr();
+			const double *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_double(r[i]);
 			}
@@ -1596,10 +1598,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_STRING_ARRAY: {
 			f->store_32(VARIANT_STRING_ARRAY);
-			Vector<String> arr = p_property;
+			std::vector<String> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const String *r = arr.ptr();
+			const String *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				save_unicode_string(f, r[i]);
 			}
@@ -1607,10 +1609,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			f->store_32(VARIANT_VECTOR3_ARRAY);
-			Vector<Vector3> arr = p_property;
+			std::vector<Vector3> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const Vector3 *r = arr.ptr();
+			const Vector3 *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_real(r[i].x);
 				f->store_real(r[i].y);
@@ -1620,10 +1622,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
 			f->store_32(VARIANT_VECTOR2_ARRAY);
-			Vector<Vector2> arr = p_property;
+			std::vector<Vector2> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const Vector2 *r = arr.ptr();
+			const Vector2 *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_real(r[i].x);
 				f->store_real(r[i].y);
@@ -1632,10 +1634,10 @@ void ResourceFormatSaverBinaryInstance::write_variant(FileAccess *f, const Varia
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 			f->store_32(VARIANT_COLOR_ARRAY);
-			Vector<Color> arr = p_property;
+			std::vector<Color> arr = p_property;
 			int len = arr.size();
 			f->store_32(len);
-			const Color *r = arr.ptr();
+			const Color *r = arr.data();
 			for (int i = 0; i < len; i++) {
 				f->store_real(r[i].r);
 				f->store_real(r[i].g);
@@ -1870,11 +1872,11 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 
 	// save external resource table
 	f->store_32(external_resources.size()); //amount of external resources
-	Vector<RES> save_order;
+	std::vector<RES> save_order;
 	save_order.resize(external_resources.size());
 
 	for (Map<RES, int>::Element *E = external_resources.front(); E; E = E->next()) {
-		save_order.write[E->get()] = E->key();
+		save_order[E->get()] = E->key();
 	}
 
 	for (int i = 0; i < save_order.size(); i++) {
@@ -1885,7 +1887,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 	}
 	// save internal resource table
 	f->store_32(saved_resources.size()); //amount of internal resources
-	Vector<uint64_t> ofs_pos;
+	std::vector<uint64_t> ofs_pos;
 	Set<int> used_indices;
 
 	for (List<RES>::Element *E = saved_resources.front(); E; E = E->next()) {
@@ -1928,7 +1930,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const RES &p
 		f->store_64(0); //offset in 64 bits
 	}
 
-	Vector<uint64_t> ofs_table;
+	std::vector<uint64_t> ofs_table;
 
 	//now actually save the resources
 	for (List<ResourceData>::Element *E = resources.front(); E; E = E->next()) {

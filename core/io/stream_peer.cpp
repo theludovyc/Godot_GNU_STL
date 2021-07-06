@@ -32,16 +32,18 @@
 
 #include "core/io/marshalls.h"
 
-Error StreamPeer::_put_data(const Vector<uint8_t> &p_data) {
+//todo std::vector.data()
+
+Error StreamPeer::_put_data(const std::vector<uint8_t> &p_data) {
 	int len = p_data.size();
 	if (len == 0) {
 		return OK;
 	}
-	const uint8_t *r = p_data.ptr();
+	const uint8_t *r = p_data.data();
 	return put_data(&r[0], len);
 }
 
-Array StreamPeer::_put_partial_data(const Vector<uint8_t> &p_data) {
+Array StreamPeer::_put_partial_data(const std::vector<uint8_t> &p_data) {
 	Array ret;
 
 	int len = p_data.size();
@@ -51,7 +53,7 @@ Array StreamPeer::_put_partial_data(const Vector<uint8_t> &p_data) {
 		return ret;
 	}
 
-	const uint8_t *r = p_data.ptr();
+	const uint8_t *r = p_data.data();
 	int sent;
 	Error err = put_partial_data(&r[0], len, sent);
 
@@ -66,15 +68,15 @@ Array StreamPeer::_put_partial_data(const Vector<uint8_t> &p_data) {
 Array StreamPeer::_get_data(int p_bytes) {
 	Array ret;
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(p_bytes);
 	if (data.size() != p_bytes) {
 		ret.push_back(ERR_OUT_OF_MEMORY);
-		ret.push_back(Vector<uint8_t>());
+		ret.push_back(std::vector<uint8_t>());
 		return ret;
 	}
 
-	uint8_t *w = data.ptrw();
+	uint8_t *w = data.data();
 	Error err = get_data(&w[0], p_bytes);
 
 	ret.push_back(err);
@@ -85,15 +87,15 @@ Array StreamPeer::_get_data(int p_bytes) {
 Array StreamPeer::_get_partial_data(int p_bytes) {
 	Array ret;
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(p_bytes);
 	if (data.size() != p_bytes) {
 		ret.push_back(ERR_OUT_OF_MEMORY);
-		ret.push_back(Vector<uint8_t>());
+		ret.push_back(std::vector<uint8_t>());
 		return ret;
 	}
 
-	uint8_t *w = data.ptrw();
+	uint8_t *w = data.data();
 	int received;
 	Error err = get_partial_data(&w[0], p_bytes, received);
 
@@ -214,12 +216,12 @@ void StreamPeer::put_utf8_string(const String &p_string) {
 
 void StreamPeer::put_var(const Variant &p_variant, bool p_full_objects) {
 	int len = 0;
-	Vector<uint8_t> buf;
+	std::vector<uint8_t> buf;
 	encode_variant(p_variant, nullptr, len, p_full_objects);
 	buf.resize(len);
 	put_32(len);
-	encode_variant(p_variant, buf.ptrw(), len, p_full_objects);
-	put_data(buf.ptr(), buf.size());
+	encode_variant(p_variant, buf.data(), len, p_full_objects);
+	put_data(buf.data(), buf.size());
 }
 
 uint8_t StreamPeer::get_u8() {
@@ -324,13 +326,17 @@ String StreamPeer::get_string(int p_bytes) {
 	}
 	ERR_FAIL_COND_V(p_bytes < 0, String());
 
-	Vector<char> buf;
-	Error err = buf.resize(p_bytes + 1);
-	ERR_FAIL_COND_V(err != OK, String());
-	err = get_data((uint8_t *)&buf[0], p_bytes);
-	ERR_FAIL_COND_V(err != OK, String());
-	buf.write[p_bytes] = 0;
-	return buf.ptr();
+	std::vector<char> buf;
+
+	try{
+		buf.resize(p_bytes + 1);
+	}catch(std::bad_alloc e) {
+		ERR_FAIL_COND_V(!OK, String());
+	}
+
+	buf[p_bytes] = 0;
+
+	return buf.data();
 }
 
 String StreamPeer::get_utf8_string(int p_bytes) {
@@ -339,27 +345,31 @@ String StreamPeer::get_utf8_string(int p_bytes) {
 	}
 	ERR_FAIL_COND_V(p_bytes < 0, String());
 
-	Vector<uint8_t> buf;
-	Error err = buf.resize(p_bytes);
-	ERR_FAIL_COND_V(err != OK, String());
-	err = get_data(buf.ptrw(), p_bytes);
-	ERR_FAIL_COND_V(err != OK, String());
+	std::vector<uint8_t> buf;
+
+	try{
+		buf.resize(p_bytes);
+	}catch (std::bad_alloc e){
+		ERR_FAIL_COND_V(!OK, String());
+	}
 
 	String ret;
-	ret.parse_utf8((const char *)buf.ptr(), buf.size());
+	ret.parse_utf8((const char *)buf.data(), buf.size());
 	return ret;
 }
 
 Variant StreamPeer::get_var(bool p_allow_objects) {
 	int len = get_32();
-	Vector<uint8_t> var;
-	Error err = var.resize(len);
-	ERR_FAIL_COND_V(err != OK, Variant());
-	err = get_data(var.ptrw(), len);
-	ERR_FAIL_COND_V(err != OK, Variant());
+	std::vector<uint8_t> var;
+
+	try{
+		var.resize(len);
+	}catch(std::bad_alloc e){
+		ERR_FAIL_COND_V(!OK, Variant());
+	}
 
 	Variant ret;
-	err = decode_variant(ret, var.ptr(), len, nullptr, p_allow_objects);
+	auto err = decode_variant(ret, var.data(), len, nullptr, p_allow_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, Variant(), "Error when trying to decode Variant.");
 
 	return ret;
@@ -432,7 +442,7 @@ Error StreamPeerBuffer::put_data(const uint8_t *p_data, int p_bytes) {
 		data.resize(pointer + p_bytes);
 	}
 
-	uint8_t *w = data.ptrw();
+	uint8_t *w = data.data();
 	memcpy(&w[pointer], p_data, p_bytes);
 
 	pointer += p_bytes;
@@ -465,7 +475,7 @@ Error StreamPeerBuffer::get_partial_data(uint8_t *p_buffer, int p_bytes, int &r_
 		r_received = p_bytes;
 	}
 
-	const uint8_t *r = data.ptr();
+	const uint8_t *r = data.data();
 	memcpy(p_buffer, r + pointer, r_received);
 
 	pointer += r_received;
@@ -496,12 +506,12 @@ void StreamPeerBuffer::resize(int p_size) {
 	data.resize(p_size);
 }
 
-void StreamPeerBuffer::set_data_array(const Vector<uint8_t> &p_data) {
+void StreamPeerBuffer::set_data_array(const std::vector<uint8_t> &p_data) {
 	data = p_data;
 	pointer = 0;
 }
 
-Vector<uint8_t> StreamPeerBuffer::get_data_array() const {
+std::vector<uint8_t> StreamPeerBuffer::get_data_array() const {
 	return data;
 }
 

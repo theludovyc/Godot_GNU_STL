@@ -47,10 +47,10 @@ class ResourceLoaderBinary {
 
 	uint64_t importmd_ofs = 0;
 
-	Vector<char> str_buf;
+	std::vector<char> str_buf;
 	List<RES> resource_cache;
 
-	Vector<StringName> string_map;
+	std::vector<StringName> string_map;
 
 	StringName _get_string();
 
@@ -62,14 +62,14 @@ class ResourceLoaderBinary {
 
 	bool use_sub_threads = false;
 	float *progress = nullptr;
-	Vector<ExtResource> external_resources;
+	std::vector<ExtResource> external_resources;
 
 	struct IntResource {
 		String path;
 		uint64_t offset;
 	};
 
-	Vector<IntResource> internal_resources;
+	std::vector<IntResource> internal_resources;
 	Map<String, RES> internal_index_cache;
 
 	String get_unicode_string();
@@ -133,7 +133,7 @@ class ResourceFormatSaverBinaryInstance {
 
 	Map<NonPersistentKey, RES> non_persistent_map;
 	Map<StringName, int> string_map;
-	Vector<StringName> strings;
+	std::vector<StringName> strings;
 
 	Map<RES, int> external_resources;
 	List<RES> saved_resources;

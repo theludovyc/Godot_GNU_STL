@@ -50,17 +50,17 @@ class FileAccessCompressed : public FileAccess {
 		uint64_t offset;
 	};
 
-	mutable Vector<uint8_t> comp_buffer;
+	mutable std::vector<uint8_t> comp_buffer;
 	uint8_t *read_ptr = nullptr;
 	mutable uint32_t read_block = 0;
 	uint32_t read_block_count = 0;
 	mutable uint32_t read_block_size = 0;
 	mutable uint64_t read_pos = 0;
-	Vector<ReadBlock> read_blocks;
+	std::vector<ReadBlock> read_blocks;
 	uint64_t read_total = 0;
 
 	String magic = "GCMP";
-	mutable Vector<uint8_t> buffer;
+	mutable std::vector<uint8_t> buffer;
 	FileAccess *f = nullptr;
 
 public:
