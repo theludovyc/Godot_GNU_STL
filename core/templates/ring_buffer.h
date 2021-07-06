@@ -31,11 +31,9 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 
-#include "core/templates/vector.h"
-
 template <typename T>
 class RingBuffer {
-	Vector<T> data;
+	std::vector<T> data;
 	int read_pos = 0;
 	int write_pos = 0;
 	int size_mask;

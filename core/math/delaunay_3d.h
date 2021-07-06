@@ -43,6 +43,8 @@
 
 #include "thirdparty/misc/r128.h"
 
+//todo std::vector.data()
+
 class Delaunay3D {
 	struct Simplex;
 
@@ -214,12 +216,12 @@ public:
 		uint32_t points[4];
 	};
 
-	static Vector<OutputSimplex> tetrahedralize(const Vector<Vector3> &p_points) {
+	static std::vector<OutputSimplex> tetrahedralize(const std::vector<Vector3> &p_points) {
 		uint32_t point_count = p_points.size();
 		Vector3 *points = (Vector3 *)memalloc(sizeof(Vector3) * (point_count + 4));
 
 		{
-			const Vector3 *src_points = p_points.ptr();
+			const Vector3 *src_points = p_points.data();
 			AABB rect;
 			for (uint32_t i = 0; i < point_count; i++) {
 				Vector3 point = src_points[i];
@@ -370,9 +372,9 @@ public:
 		}
 
 		//print_line("end with simplices: " + itos(simplex_list.size()));
-		Vector<OutputSimplex> ret_simplices;
+		std::vector<OutputSimplex> ret_simplices;
 		ret_simplices.resize(simplex_list.size());
-		OutputSimplex *ret_simplicesw = ret_simplices.ptrw();
+		OutputSimplex *ret_simplicesw = ret_simplices.data();
 		uint32_t simplices_written = 0;
 
 		for (List<Simplex *>::Element *E = simplex_list.front(); E; E = E->next()) {

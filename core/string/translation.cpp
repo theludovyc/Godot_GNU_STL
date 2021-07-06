@@ -34,6 +34,8 @@
 #include "core/io/resource_loader.h"
 #include "core/os/os.h"
 
+//todo std::vector.data()
+
 #ifdef TOOLS_ENABLED
 #include "editor/editor_settings.h"
 #include "main/main.h"
@@ -820,12 +822,12 @@ Dictionary Translation::_get_messages() const {
 	return d;
 }
 
-Vector<String> Translation::_get_message_list() const {
-	Vector<String> msgs;
+std::vector<String> Translation::_get_message_list() const {
+	std::vector<String> msgs;
 	msgs.resize(translation_map.size());
 	int idx = 0;
 	for (const Map<StringName, StringName>::Element *E = translation_map.front(); E; E = E->next()) {
-		msgs.set(idx, E->key());
+		msgs[idx] = E->key();
 		idx += 1;
 	}
 
@@ -862,9 +864,9 @@ void Translation::add_message(const StringName &p_src_text, const StringName &p_
 	translation_map[p_src_text] = p_xlated_text;
 }
 
-void Translation::add_plural_message(const StringName &p_src_text, const Vector<String> &p_plural_xlated_texts, const StringName &p_context) {
+void Translation::add_plural_message(const StringName &p_src_text, const std::vector<String> &p_plural_xlated_texts, const StringName &p_context) {
 	WARN_PRINT("Translation class doesn't handle plural messages. Calling add_plural_message() on a Translation instance is probably a mistake. \nUse a derived Translation class that handles plurals, such as TranslationPO class");
-	ERR_FAIL_COND_MSG(p_plural_xlated_texts.is_empty(), "Parameter vector p_plural_xlated_texts passed in is empty.");
+	ERR_FAIL_COND_MSG(p_plural_xlated_texts.empty(), "Parameter vector p_plural_xlated_texts passed in is empty.");
 	translation_map[p_src_text] = p_plural_xlated_texts[0];
 }
 
@@ -1017,8 +1019,8 @@ Array TranslationServer::get_loaded_locales() const {
 	return locales;
 }
 
-Vector<String> TranslationServer::get_all_locales() {
-	Vector<String> locales;
+std::vector<String> TranslationServer::get_all_locales() {
+	std::vector<String> locales;
 
 	const char **ptr = locale_list;
 
@@ -1030,8 +1032,8 @@ Vector<String> TranslationServer::get_all_locales() {
 	return locales;
 }
 
-Vector<String> TranslationServer::get_all_locale_names() {
-	Vector<String> locales;
+std::vector<String> TranslationServer::get_all_locale_names() {
+	std::vector<String> locales;
 
 	const char **ptr = locale_names;
 
@@ -1183,12 +1185,12 @@ TranslationServer *TranslationServer::singleton = nullptr;
 
 bool TranslationServer::_load_translations(const String &p_from) {
 	if (ProjectSettings::get_singleton()->has_setting(p_from)) {
-		Vector<String> translations = ProjectSettings::get_singleton()->get(p_from);
+		std::vector<String> translations = ProjectSettings::get_singleton()->get(p_from);
 
 		int tcount = translations.size();
 
 		if (tcount) {
-			const String *r = translations.ptr();
+			const String *r = translations.data();
 
 			for (int i = 0; i < tcount; i++) {
 				Ref<Translation> tr = ResourceLoader::load(r[i]);

@@ -212,7 +212,7 @@ uint32_t InputEventWithModifiers::get_modifiers_mask() const {
 }
 
 String InputEventWithModifiers::as_text() const {
-	Vector<String> mod_names;
+	std::vector<String> mod_names;
 
 	if (is_ctrl_pressed()) {
 		mod_names.push_back(find_keycode_name(KEY_CTRL));
@@ -227,7 +227,7 @@ String InputEventWithModifiers::as_text() const {
 		mod_names.push_back(find_keycode_name(KEY_META));
 	}
 
-	if (!mod_names.is_empty()) {
+	if (!mod_names.empty()) {
 		return String("+").join(mod_names);
 	} else {
 		return "";

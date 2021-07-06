@@ -197,10 +197,10 @@ private:
 	struct JoyDeviceMapping {
 		String uid;
 		String name;
-		Vector<JoyBinding> bindings;
+		std::vector<JoyBinding> bindings;
 	};
 
-	Vector<JoyDeviceMapping> map_db;
+	std::vector<JoyDeviceMapping> map_db;
 
 	JoyEvent _get_mapped_button_event(const JoyDeviceMapping &mapping, JoyButton p_button);
 	JoyEvent _get_mapped_axis_event(const JoyDeviceMapping &mapping, JoyAxis p_axis, float p_value);

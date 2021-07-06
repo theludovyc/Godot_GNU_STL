@@ -37,12 +37,12 @@
 class StringBuilder {
 	uint32_t string_length = 0;
 
-	Vector<String> strings;
-	Vector<const char *> c_strings;
+	std::vector<String> strings;
+	std::vector<const char *> c_strings;
 
 	// -1 means it's a Godot String
 	// a natural number means C string.
-	Vector<int32_t> appended_strings;
+	std::vector<int32_t> appended_strings;
 
 public:
 	StringBuilder &append(const String &p_string);

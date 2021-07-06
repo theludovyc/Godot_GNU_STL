@@ -66,7 +66,7 @@ public:
 		String return_enum;
 		String qualifiers;
 		String description;
-		Vector<ArgumentDoc> arguments;
+		std::vector<ArgumentDoc> arguments;
 		bool operator<(const MethodDoc &p_method) const {
 			if (name == p_method.name) {
 				// Must be a constructor since there is no overloading.
@@ -100,7 +100,7 @@ public:
 	struct EnumDoc {
 		String name = "@unnamed_enum";
 		String description;
-		Vector<DocData::ConstantDoc> values;
+		std::vector<DocData::ConstantDoc> values;
 	};
 
 	struct PropertyDoc {
@@ -127,13 +127,13 @@ public:
 		String category;
 		String brief_description;
 		String description;
-		Vector<TutorialDoc> tutorials;
-		Vector<MethodDoc> methods;
-		Vector<MethodDoc> signals;
-		Vector<ConstantDoc> constants;
+		std::vector<TutorialDoc> tutorials;
+		std::vector<MethodDoc> methods;
+		std::vector<MethodDoc> signals;
+		std::vector<ConstantDoc> constants;
 		Map<String, String> enums;
-		Vector<PropertyDoc> properties;
-		Vector<PropertyDoc> theme_properties;
+		std::vector<PropertyDoc> properties;
+		std::vector<PropertyDoc> theme_properties;
 		bool is_script_doc = false;
 		String script_path;
 		bool operator<(const ClassDoc &p_class) const {

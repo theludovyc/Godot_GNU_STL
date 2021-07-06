@@ -32,6 +32,8 @@
 
 #include "core/templates/pair.h"
 
+//todo std::vector.data()
+
 extern "C" {
 #include "thirdparty/misc/smaz.h"
 }
@@ -52,10 +54,10 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 
 	int size = Math::larger_prime(keys.size());
 
-	Vector<Vector<Pair<int, CharString>>> buckets;
-	Vector<Map<uint32_t, int>> table;
-	Vector<uint32_t> hfunc_table;
-	Vector<CompressedString> compressed;
+	std::vector<std::vector<Pair<int, CharString>>> buckets;
+	std::vector<Map<uint32_t, int>> table;
+	std::vector<uint32_t> hfunc_table;
+	std::vector<CompressedString> compressed;
 
 	table.resize(size);
 	hfunc_table.resize(size);
@@ -73,7 +75,7 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 		Pair<int, CharString> p;
 		p.first = idx;
 		p.second = cs;
-		buckets.write[h % size].push_back(p);
+		buckets[h % size].push_back(p);
 
 		//compress string
 		CharString src_s = p_from->get_message(E->get()).operator String().utf8();
@@ -100,7 +102,7 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 			ps.compressed[0] = 0;
 		}
 
-		compressed.write[idx] = ps;
+		compressed[idx] = ps;
 		total_compression_size += ps.compressed.size();
 		total_string_size += src_s.size();
 		idx++;
@@ -109,8 +111,8 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 	int bucket_table_size = 0;
 
 	for (int i = 0; i < size; i++) {
-		const Vector<Pair<int, CharString>> &b = buckets[i];
-		Map<uint32_t, int> &t = table.write[i];
+		const std::vector<Pair<int, CharString>> &b = buckets[i];
+		Map<uint32_t, int> &t = table[i];
 
 		if (b.size() == 0) {
 			continue;
@@ -131,7 +133,7 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 			}
 		}
 
-		hfunc_table.write[i] = d;
+		hfunc_table[i] = d;
 		bucket_table_size += 2 + b.size() * 4;
 	}
 
@@ -140,8 +142,8 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 	hash_table.resize(size);
 	bucket_table.resize(bucket_table_size);
 
-	int *htwb = hash_table.ptrw();
-	int *btwb = bucket_table.ptrw();
+	int *htwb = hash_table.data();
+	int *btwb = bucket_table.data();
 
 	uint32_t *htw = (uint32_t *)&htwb[0];
 	uint32_t *btw = (uint32_t *)&btwb[0];
@@ -171,7 +173,7 @@ void OptimizedTranslation::generate(const Ref<Translation> &p_from) {
 	}
 
 	strings.resize(total_compression_size);
-	uint8_t *cw = strings.ptrw();
+	uint8_t *cw = strings.data();
 
 	for (int i = 0; i < compressed.size(); i++) {
 		memcpy(&cw[compressed[i].offset], compressed[i].compressed.get_data(), compressed[i].compressed.size());
@@ -227,11 +229,11 @@ StringName OptimizedTranslation::get_message(const StringName &p_src_text, const
 	CharString str = p_src_text.operator String().utf8();
 	uint32_t h = hash(0, str.get_data());
 
-	const int *htr = hash_table.ptr();
+	const int *htr = hash_table.data();
 	const uint32_t *htptr = (const uint32_t *)&htr[0];
-	const int *btr = bucket_table.ptr();
+	const int *btr = bucket_table.data();
 	const uint32_t *btptr = (const uint32_t *)&btr[0];
-	const uint8_t *sr = strings.ptr();
+	const uint8_t *sr = strings.data();
 	const char *sptr = (const char *)&sr[0];
 
 	uint32_t p = htptr[h % htsize];

@@ -41,7 +41,7 @@ class Translation : public Resource {
 	String locale = "en";
 	Map<StringName, StringName> translation_map;
 
-	virtual Vector<String> _get_message_list() const;
+	virtual std::vector<String> _get_message_list() const;
 	virtual Dictionary _get_messages() const;
 	virtual void _set_messages(const Dictionary &p_messages);
 
@@ -53,7 +53,7 @@ public:
 	_FORCE_INLINE_ String get_locale() const { return locale; }
 
 	virtual void add_message(const StringName &p_src_text, const StringName &p_xlated_text, const StringName &p_context = "");
-	virtual void add_plural_message(const StringName &p_src_text, const Vector<String> &p_plural_xlated_texts, const StringName &p_context = "");
+	virtual void add_plural_message(const StringName &p_src_text, const std::vector<String> &p_plural_xlated_texts, const StringName &p_context = "");
 	virtual StringName get_message(const StringName &p_src_text, const StringName &p_context = "") const; //overridable for other implementations
 	virtual StringName get_plural_message(const StringName &p_src_text, const StringName &p_plural_text, int p_n, const StringName &p_context = "") const;
 	virtual void erase_message(const StringName &p_src_text, const StringName &p_context = "");
@@ -104,8 +104,8 @@ public:
 	StringName translate(const StringName &p_message, const StringName &p_context = "") const;
 	StringName translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
 
-	static Vector<String> get_all_locales();
-	static Vector<String> get_all_locale_names();
+	static std::vector<String> get_all_locales();
+	static std::vector<String> get_all_locale_names();
 	static bool is_locale_valid(const String &p_locale);
 	static String standardize_locale(const String &p_locale);
 	static String get_language_code(const String &p_locale);
