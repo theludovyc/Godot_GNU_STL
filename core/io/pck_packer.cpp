@@ -36,6 +36,8 @@
 #include "core/io/file_access_pack.h" // PACK_HEADER_MAGIC, PACK_FORMAT_VERSION
 #include "core/version.h"
 
+//todo std::vector.data()
+
 static int _get_pad(int p_alignment, int p_n) {
 	int rest = p_n % p_alignment;
 	int pad = 0;
@@ -78,7 +80,7 @@ Error PCKPacker::pck_start(const String &p_file, int p_alignment, const String &
 			}
 			v |= ct;
 		}
-		key.write[i] = v;
+		key[i] = v;
 	}
 	enc_dir = p_encrypt_directory;
 
@@ -122,13 +124,13 @@ Error PCKPacker::add_file(const String &p_file, const String &p_src, bool p_encr
 	pf.ofs = ofs;
 	pf.size = f->get_length();
 
-	Vector<uint8_t> data = FileAccess::get_file_as_array(p_src);
+	std::vector<uint8_t> data = FileAccess::get_file_as_array(p_src);
 	{
 		unsigned char hash[16];
-		CryptoCore::md5(data.ptr(), data.size(), hash);
+		CryptoCore::md5(data.data(), data.size(), hash);
 		pf.md5.resize(16);
 		for (int i = 0; i < 16; i++) {
-			pf.md5.write[i] = hash[i];
+			pf.md5[i] = hash[i];
 		}
 	}
 	pf.encrypted = p_encrypt;
@@ -192,7 +194,7 @@ Error PCKPacker::flush(bool p_verbose) {
 
 		fhead->store_64(files[i].ofs);
 		fhead->store_64(files[i].size); // pay attention here, this is where file is
-		fhead->store_buffer(files[i].md5.ptr(), 16); //also save md5 for file
+		fhead->store_buffer(files[i].md5.data(), 16); //also save md5 for file
 
 		uint32_t flags = 0;
 		if (files[i].encrypted) {

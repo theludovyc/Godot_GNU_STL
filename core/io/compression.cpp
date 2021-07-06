@@ -38,6 +38,8 @@
 #include "thirdparty/zlib/zlib.h"
 #include "thirdparty/zstd/zstd.h"
 
+//todo std::vector.data()
+
 int Compression::compress(uint8_t *p_dst, const uint8_t *p_src, int p_src_size, Mode p_mode) {
 	switch (p_mode) {
 		case MODE_FASTLZ: {
@@ -180,11 +182,11 @@ int Compression::decompress(uint8_t *p_dst, int p_dst_max_size, const uint8_t *p
 }
 
 /**
-	This will handle both Gzip and Deflate streams. It will automatically allocate the output buffer into the provided p_dst_vect Vector.
+	This will handle both Gzip and Deflate streams. It will automatically allocate the output buffer into the provided p_dst_vect std::vector.
 	This is required for compressed data whose final uncompressed size is unknown, as is the case for HTTP response bodies.
 	This is much slower however than using Compression::decompress because it may result in multiple full copies of the output buffer.
 */
-int Compression::decompress_dynamic(Vector<uint8_t> *p_dst_vect, int p_max_dst_size, const uint8_t *p_src, int p_src_size, Mode p_mode) {
+int Compression::decompress_dynamic(std::vector<uint8_t> *p_dst_vect, int p_max_dst_size, const uint8_t *p_src, int p_src_size, Mode p_mode) {
 	int ret;
 	uint8_t *dst = nullptr;
 	int out_mark = 0;
@@ -219,7 +221,7 @@ int Compression::decompress_dynamic(Vector<uint8_t> *p_dst_vect, int p_max_dst_s
 		// This forces a copy of the whole buffer
 		p_dst_vect->resize(p_dst_vect->size() + gzip_chunk);
 		// Get pointer to the actual output buffer
-		dst = p_dst_vect->ptrw();
+		dst = p_dst_vect->data();
 
 		// Set the stream to the new output stream
 		// Since it was copied, we need to reset the stream to the new buffer

@@ -248,7 +248,7 @@ void ResourceSaver::add_custom_savers() {
 }
 
 void ResourceSaver::remove_custom_savers() {
-	Vector<Ref<ResourceFormatSaver>> custom_savers;
+	std::vector<Ref<ResourceFormatSaver>> custom_savers;
 	for (int i = 0; i < saver_count; ++i) {
 		if (saver[i]->get_script_instance()) {
 			custom_savers.push_back(saver[i]);

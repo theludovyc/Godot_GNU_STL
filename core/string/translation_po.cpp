@@ -50,7 +50,7 @@ void TranslationPO::print_translation_map() {
 	for (List<StringName>::Element *E = context_l.front(); E; E = E->next()) {
 		StringName ctx = E->get();
 		file->store_line(" ===== Context: " + String::utf8(String(ctx).utf8()) + " ===== ");
-		const HashMap<StringName, Vector<StringName>> &inner_map = translation_map[ctx];
+		const HashMap<StringName, std::vector<StringName>> &inner_map = translation_map[ctx];
 
 		List<StringName> id_l;
 		inner_map.get_key_list(&id_l);
@@ -76,7 +76,7 @@ Dictionary TranslationPO::_get_messages() const {
 	translation_map.get_key_list(&context_l);
 	for (List<StringName>::Element *E = context_l.front(); E; E = E->next()) {
 		StringName ctx = E->get();
-		const HashMap<StringName, Vector<StringName>> &id_str_map = translation_map[ctx];
+		const HashMap<StringName, std::vector<StringName>> &id_str_map = translation_map[ctx];
 
 		Dictionary d2;
 		List<StringName> id_l;
@@ -102,7 +102,7 @@ void TranslationPO::_set_messages(const Dictionary &p_messages) {
 		StringName ctx = E->get();
 		const Dictionary &id_str_map = p_messages[ctx];
 
-		HashMap<StringName, Vector<StringName>> temp_map;
+		HashMap<StringName, std::vector<StringName>> temp_map;
 		List<Variant> id_l;
 		id_str_map.get_key_list(&id_l);
 		for (List<Variant>::Element *E2 = id_l.front(); E2; E2 = E2->next()) {
@@ -114,13 +114,13 @@ void TranslationPO::_set_messages(const Dictionary &p_messages) {
 	}
 }
 
-Vector<String> TranslationPO::_get_message_list() const {
+std::vector<String> TranslationPO::_get_message_list() const {
 	// Return all keys in translation_map.
 
 	List<StringName> msgs;
 	get_message_list(&msgs);
 
-	Vector<String> v;
+	std::vector<String> v;
 	for (List<StringName>::Element *E = msgs.front(); E; E = E->next()) {
 		v.push_back(E->get());
 	}
@@ -193,20 +193,20 @@ void TranslationPO::set_plural_rule(const String &p_plural_rule) {
 }
 
 void TranslationPO::add_message(const StringName &p_src_text, const StringName &p_xlated_text, const StringName &p_context) {
-	HashMap<StringName, Vector<StringName>> &map_id_str = translation_map[p_context];
+	HashMap<StringName, std::vector<StringName>> &map_id_str = translation_map[p_context];
 
 	if (map_id_str.has(p_src_text)) {
 		WARN_PRINT("Double translations for \"" + String(p_src_text) + "\" under the same context \"" + String(p_context) + "\" for locale \"" + get_locale() + "\".\nThere should only be one unique translation for a given string under the same context.");
-		map_id_str[p_src_text].set(0, p_xlated_text);
+		map_id_str[p_src_text][0] = p_xlated_text;
 	} else {
 		map_id_str[p_src_text].push_back(p_xlated_text);
 	}
 }
 
-void TranslationPO::add_plural_message(const StringName &p_src_text, const Vector<String> &p_plural_xlated_texts, const StringName &p_context) {
+void TranslationPO::add_plural_message(const StringName &p_src_text, const std::vector<String> &p_plural_xlated_texts, const StringName &p_context) {
 	ERR_FAIL_COND_MSG(p_plural_xlated_texts.size() != plural_forms, "Trying to add plural texts that don't match the required number of plural forms for locale \"" + get_locale() + "\"");
 
-	HashMap<StringName, Vector<StringName>> &map_id_str = translation_map[p_context];
+	HashMap<StringName, std::vector<StringName>> &map_id_str = translation_map[p_context];
 
 	if (map_id_str.has(p_src_text)) {
 		WARN_PRINT("Double translations for \"" + p_src_text + "\" under the same context \"" + p_context + "\" for locale " + get_locale() + ".\nThere should only be one unique translation for a given string under the same context.");
@@ -230,7 +230,7 @@ StringName TranslationPO::get_message(const StringName &p_src_text, const String
 	if (!translation_map.has(p_context) || !translation_map[p_context].has(p_src_text)) {
 		return StringName();
 	}
-	ERR_FAIL_COND_V_MSG(translation_map[p_context][p_src_text].is_empty(), StringName(), "Source text \"" + String(p_src_text) + "\" is registered but doesn't have a translation. Please report this bug.");
+	ERR_FAIL_COND_V_MSG(translation_map[p_context][p_src_text].empty(), StringName(), "Source text \"" + String(p_src_text) + "\" is registered but doesn't have a translation. Please report this bug.");
 
 	return translation_map[p_context][p_src_text][0];
 }
@@ -246,7 +246,7 @@ StringName TranslationPO::get_plural_message(const StringName &p_src_text, const
 	if (!translation_map.has(p_context) || !translation_map[p_context].has(p_src_text)) {
 		return StringName();
 	}
-	ERR_FAIL_COND_V_MSG(translation_map[p_context][p_src_text].is_empty(), StringName(), "Source text \"" + String(p_src_text) + "\" is registered but doesn't have a translation. Please report this bug.");
+	ERR_FAIL_COND_V_MSG(translation_map[p_context][p_src_text].empty(), StringName(), "Source text \"" + String(p_src_text) + "\" is registered but doesn't have a translation. Please report this bug.");
 
 	if (translation_map[p_context][p_src_text].size() == 1) {
 		WARN_PRINT("Source string \"" + String(p_src_text) + "\" doesn't have plural translations. Use singular translation API for such as tr(), TTR() to translate \"" + String(p_src_text) + "\"");

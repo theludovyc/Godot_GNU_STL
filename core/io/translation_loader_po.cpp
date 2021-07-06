@@ -48,7 +48,7 @@ RES TranslationLoaderPO::load_translation(FileAccess *f, Error *r_error) {
 	String msg_id;
 	String msg_str;
 	String msg_context;
-	Vector<String> msgs_plural;
+	std::vector<String> msgs_plural;
 	String config;
 
 	if (r_error) {
@@ -226,7 +226,7 @@ RES TranslationLoaderPO::load_translation(FileAccess *f, Error *r_error) {
 		} else if (status == STATUS_READING_CONTEXT) {
 			msg_context += l;
 		} else if (status == STATUS_READING_PLURAL && plural_index >= 0) {
-			msgs_plural.write[plural_index] = msgs_plural[plural_index] + l;
+			msgs_plural[plural_index] = msgs_plural[plural_index] + l;
 		}
 
 		line++;
@@ -255,7 +255,7 @@ RES TranslationLoaderPO::load_translation(FileAccess *f, Error *r_error) {
 
 	ERR_FAIL_COND_V_MSG(config == "", RES(), "No config found in file: " + path + ".");
 
-	Vector<String> configs = config.split("\n");
+	std::vector<String> configs = config.split("\n");
 	for (int i = 0; i < configs.size(); i++) {
 		String c = configs[i].strip_edges();
 		int p = c.find(":");

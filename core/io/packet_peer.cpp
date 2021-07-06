@@ -33,6 +33,8 @@
 #include "core/config/project_settings.h"
 #include "core/io/marshalls.h"
 
+//todo std::vector.data()
+
 /* helpers / binders */
 
 void PacketPeer::set_encode_buffer_max_size(int p_max_size) {
@@ -46,7 +48,7 @@ int PacketPeer::get_encode_buffer_max_size() const {
 	return encode_buffer_max_size;
 }
 
-Error PacketPeer::get_packet_buffer(Vector<uint8_t> &r_buffer) {
+Error PacketPeer::get_packet_buffer(std::vector<uint8_t> &r_buffer) {
 	const uint8_t *buffer;
 	int buffer_size;
 	Error err = get_packet(&buffer, buffer_size);
@@ -59,7 +61,7 @@ Error PacketPeer::get_packet_buffer(Vector<uint8_t> &r_buffer) {
 		return OK;
 	}
 
-	uint8_t *w = r_buffer.ptrw();
+	uint8_t *w = r_buffer.data();
 	for (int i = 0; i < buffer_size; i++) {
 		w[i] = buffer[i];
 	}
@@ -67,13 +69,13 @@ Error PacketPeer::get_packet_buffer(Vector<uint8_t> &r_buffer) {
 	return OK;
 }
 
-Error PacketPeer::put_packet_buffer(const Vector<uint8_t> &p_buffer) {
+Error PacketPeer::put_packet_buffer(const std::vector<uint8_t> &p_buffer) {
 	int len = p_buffer.size();
 	if (len == 0) {
 		return OK;
 	}
 
-	const uint8_t *r = p_buffer.ptr();
+	const uint8_t *r = p_buffer.data();
 	return put_packet(&r[0], len);
 }
 
@@ -106,7 +108,7 @@ Error PacketPeer::put_var(const Variant &p_packet, bool p_full_objects) {
 		encode_buffer.resize(next_power_of_2(len));
 	}
 
-	uint8_t *w = encode_buffer.ptrw();
+	uint8_t *w = encode_buffer.data();
 	err = encode_variant(p_packet, w, len, p_full_objects);
 	ERR_FAIL_COND_V_MSG(err != OK, err, "Error when trying to encode Variant.");
 
@@ -121,12 +123,12 @@ Variant PacketPeer::_bnd_get_var(bool p_allow_objects) {
 	return var;
 }
 
-Error PacketPeer::_put_packet(const Vector<uint8_t> &p_buffer) {
+Error PacketPeer::_put_packet(const std::vector<uint8_t> &p_buffer) {
 	return put_packet_buffer(p_buffer);
 }
 
-Vector<uint8_t> PacketPeer::_get_packet() {
-	Vector<uint8_t> raw;
+std::vector<uint8_t> PacketPeer::_get_packet() {
+	std::vector<uint8_t> raw;
 	last_get_error = get_packet_buffer(raw);
 	return raw;
 }
@@ -169,7 +171,7 @@ Error PacketPeerStream::_poll_buffer() const {
 
 	int read = 0;
 	ERR_FAIL_COND_V(input_buffer.size() < ring_buffer.space_left(), ERR_UNAVAILABLE);
-	Error err = peer->get_partial_data(input_buffer.ptrw(), ring_buffer.space_left(), read);
+	Error err = peer->get_partial_data(input_buffer.data(), ring_buffer.space_left(), read);
 	if (err) {
 		return err;
 	}
@@ -222,7 +224,7 @@ Error PacketPeerStream::get_packet(const uint8_t **r_buffer, int &r_buffer_size)
 
 	ERR_FAIL_COND_V(input_buffer.size() < (int)len, ERR_UNAVAILABLE);
 	ring_buffer.read(lbuf, 4); //get rid of first 4 bytes
-	ring_buffer.read(input_buffer.ptrw(), len); // read packet
+	ring_buffer.read(input_buffer.data(), len); // read packet
 
 	*r_buffer = &input_buffer[0];
 	r_buffer_size = len;
@@ -244,8 +246,8 @@ Error PacketPeerStream::put_packet(const uint8_t *p_buffer, int p_buffer_size) {
 	ERR_FAIL_COND_V(p_buffer_size < 0, ERR_INVALID_PARAMETER);
 	ERR_FAIL_COND_V(p_buffer_size + 4 > output_buffer.size(), ERR_INVALID_PARAMETER);
 
-	encode_uint32(p_buffer_size, output_buffer.ptrw());
-	uint8_t *dst = &output_buffer.write[4];
+	encode_uint32(p_buffer_size, output_buffer.data());
+	uint8_t *dst = &output_buffer[4];
 	for (int i = 0; i < p_buffer_size; i++) {
 		dst[i] = p_buffer[i];
 	}

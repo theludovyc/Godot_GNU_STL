@@ -41,7 +41,7 @@ PackedStringArray ConfigFile::_get_sections() const {
 	arr.resize(s.size());
 	int idx = 0;
 	for (const List<String>::Element *E = s.front(); E; E = E->next()) {
-		arr.set(idx++, E->get());
+		arr[idx++] = E->get();
 	}
 
 	return arr;
@@ -54,7 +54,7 @@ PackedStringArray ConfigFile::_get_section_keys(const String &p_section) const {
 	arr.resize(s.size());
 	int idx = 0;
 	for (const List<String>::Element *E = s.front(); E; E = E->next()) {
-		arr.set(idx++, E->get());
+		arr[idx++] = E->get();
 	}
 
 	return arr;
@@ -141,7 +141,7 @@ Error ConfigFile::save(const String &p_path) {
 	return _internal_save(file);
 }
 
-Error ConfigFile::save_encrypted(const String &p_path, const Vector<uint8_t> &p_key) {
+Error ConfigFile::save_encrypted(const String &p_path, const std::vector<uint8_t> &p_key) {
 	Error err;
 	FileAccess *f = FileAccess::open(p_path, FileAccess::WRITE, &err);
 
@@ -208,7 +208,7 @@ Error ConfigFile::load(const String &p_path) {
 	return _internal_load(p_path, f);
 }
 
-Error ConfigFile::load_encrypted(const String &p_path, const Vector<uint8_t> &p_key) {
+Error ConfigFile::load_encrypted(const String &p_path, const std::vector<uint8_t> &p_key) {
 	Error err;
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ, &err);
 

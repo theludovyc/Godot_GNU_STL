@@ -32,6 +32,8 @@
 
 #include "core/string/print_string.h"
 
+//todo std::vector.data()
+
 //#define DEBUG_XML
 
 VARIANT_ENUM_CAST(XMLParser::NodeType);
@@ -455,7 +457,7 @@ bool XMLParser::is_empty() const {
 	return node_empty;
 }
 
-Error XMLParser::open_buffer(const Vector<uint8_t> &p_buffer) {
+Error XMLParser::open_buffer(const std::vector<uint8_t> &p_buffer) {
 	ERR_FAIL_COND_V(p_buffer.size() == 0, ERR_INVALID_DATA);
 
 	if (data) {
@@ -464,7 +466,7 @@ Error XMLParser::open_buffer(const Vector<uint8_t> &p_buffer) {
 
 	length = p_buffer.size();
 	data = memnew_arr(char, length + 1);
-	memcpy(data, p_buffer.ptr(), length);
+	memcpy(data, p_buffer.data(), length);
 	data[length] = 0;
 	P = data;
 	return OK;
