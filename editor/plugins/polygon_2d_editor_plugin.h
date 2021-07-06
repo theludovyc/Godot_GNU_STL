@@ -87,7 +87,7 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 	Label *bone_paint_radius_label;
 	bool bone_painting;
 	int bone_painting_bone;
-	Vector<float> prev_weights;
+	std::vector<float> prev_weights;
 	Vector2 bone_paint_pos;
 	AcceptDialog *grid_settings;
 
@@ -96,10 +96,10 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 
 	Vector2 uv_draw_ofs;
 	float uv_draw_zoom;
-	Vector<Vector2> points_prev;
-	Vector<Vector2> uv_create_uv_prev;
-	Vector<Vector2> uv_create_poly_prev;
-	Vector<Color> uv_create_colors_prev;
+	std::vector<Vector2> points_prev;
+	std::vector<Vector2> uv_create_uv_prev;
+	std::vector<Vector2> uv_create_poly_prev;
+	std::vector<Color> uv_create_colors_prev;
 	int uv_create_prev_internal_vertices;
 	Array uv_create_bones_prev;
 	Array polygons_prev;
@@ -108,7 +108,7 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 	int point_drag_index;
 	bool uv_drag;
 	bool uv_create;
-	Vector<int> polygon_create;
+	std::vector<int> polygon_create;
 	UVMode uv_move_current;
 	Vector2 uv_drag_from;
 	bool updating_uv_scroll;

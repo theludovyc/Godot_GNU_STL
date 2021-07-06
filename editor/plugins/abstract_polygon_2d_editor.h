@@ -78,8 +78,8 @@ class AbstractPolygon2DEditor : public HBoxContainer {
 	Vertex selected_point; // currently selected
 	PosVertex edge_point; // adding an edge point?
 
-	Vector<Vector2> pre_move_edit;
-	Vector<Vector2> wip;
+	std::vector<Vector2> pre_move_edit;
+	std::vector<Vector2> wip;
 	bool wip_active;
 	bool wip_destructive;
 

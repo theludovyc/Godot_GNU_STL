@@ -55,7 +55,7 @@ bool AbstractPolygon2DEditor::_is_empty() const {
 	const int n = _get_polygon_count();
 
 	for (int i = 0; i < n; i++) {
-		Vector<Vector2> vertices = _get_polygon(i);
+		std::vector<Vector2> vertices = _get_polygon(i);
 
 		if (vertices.size() != 0) {
 			return false;
@@ -106,7 +106,7 @@ void AbstractPolygon2DEditor::_action_add_polygon(const Variant &p_polygon) {
 }
 
 void AbstractPolygon2DEditor::_action_remove_polygon(int p_idx) {
-	_action_set_polygon(p_idx, _get_polygon(p_idx), Vector<Vector2>());
+	_action_set_polygon(p_idx, _get_polygon(p_idx), std::vector<Vector2>());
 }
 
 void AbstractPolygon2DEditor::_action_set_polygon(int p_idx, const Variant &p_polygon) {
@@ -198,7 +198,7 @@ void AbstractPolygon2DEditor::_wip_close() {
 		undo_redo->create_action(TTR("Create Polygon"));
 		_action_add_polygon(wip);
 		if (_has_uv()) {
-			undo_redo->add_do_method(_get_node(), "set_uv", Vector<Vector2>());
+			undo_redo->add_do_method(_get_node(), "set_uv", std::vector<Vector2>());
 			undo_redo->add_undo_method(_get_node(), "set_uv", _get_node()->get("uv"));
 		}
 		_commit_action();
@@ -273,7 +273,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 					const PosVertex insert = closest_edge_point(gpoint);
 
 					if (insert.valid()) {
-						Vector<Vector2> vertices = _get_polygon(insert.polygon);
+						std::vector<Vector2> vertices = _get_polygon(insert.polygon);
 
 						if (vertices.size() < (_is_line() ? 2 : 3)) {
 							vertices.push_back(cpoint);
@@ -283,10 +283,13 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 							_commit_action();
 							return true;
 						} else {
-							Vector<Vector2> vertices2 = _get_polygon(insert.polygon);
+							std::vector<Vector2> vertices2 = _get_polygon(insert.polygon);
 							pre_move_edit = vertices2;
 							edited_point = PosVertex(insert.polygon, insert.vertex + 1, xform.affine_inverse().xform(insert.pos));
-							vertices2.insert(edited_point.vertex, edited_point.pos);
+
+							//todo
+							vertices2.insert(vertices2.begin() + edited_point.vertex, edited_point.pos);
+
 							selected_point = Vertex(edited_point.polygon, edited_point.vertex);
 							edge_point = PosVertex();
 
@@ -314,9 +317,9 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 					if (edited_point.valid()) {
 						//apply
 
-						Vector<Vector2> vertices = _get_polygon(edited_point.polygon);
+						std::vector<Vector2> vertices = _get_polygon(edited_point.polygon);
 						ERR_FAIL_INDEX_V(edited_point.vertex, vertices.size(), false);
-						vertices.write[edited_point.vertex] = edited_point.pos - _get_offset(edited_point.polygon);
+						vertices[edited_point.vertex] = edited_point.pos - _get_offset(edited_point.polygon);
 
 						undo_redo->create_action(TTR("Edit Polygon"));
 						_action_set_polygon(edited_point.polygon, pre_move_edit, vertices);
@@ -349,7 +352,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 			if (mb->get_button_index() == MOUSE_BUTTON_LEFT && mb->is_pressed()) {
 				if (_is_line()) {
 					// for lines, we don't have a wip mode, and we can undo each single add point.
-					Vector<Vector2> vertices = _get_polygon(0);
+					std::vector<Vector2> vertices = _get_polygon(0);
 					vertices.push_back(cpoint);
 					undo_redo->create_action(TTR("Insert Point"));
 					_action_set_polygon(0, vertices);
@@ -400,7 +403,7 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 
 			//Move the point in a single axis. Should only work when editing a polygon and while holding shift.
 			if (mode == MODE_EDIT && mm->is_shift_pressed()) {
-				Vector2 old_point = pre_move_edit.get(selected_point.vertex);
+				Vector2 old_point = pre_move_edit[selected_point.vertex];
 				if (ABS(cpoint.x - old_point.x) > ABS(cpoint.y - old_point.y)) {
 					cpoint.y = old_point.y;
 				} else {
@@ -411,9 +414,9 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 			edited_point = PosVertex(edited_point, cpoint);
 
 			if (!wip_active) {
-				Vector<Vector2> vertices = _get_polygon(edited_point.polygon);
+				std::vector<Vector2> vertices = _get_polygon(edited_point.polygon);
 				ERR_FAIL_INDEX_V(edited_point.vertex, vertices.size(), false);
-				vertices.write[edited_point.vertex] = cpoint - _get_offset(edited_point.polygon);
+				vertices[edited_point.vertex] = cpoint - _get_offset(edited_point.polygon);
 				_set_polygon(edited_point.polygon, vertices);
 			}
 
@@ -446,7 +449,10 @@ bool AbstractPolygon2DEditor::forward_gui_input(const Ref<InputEvent> &p_event) 
 		if (k->get_keycode() == KEY_DELETE || k->get_keycode() == KEY_BACKSPACE) {
 			if (wip_active && selected_point.polygon == -1) {
 				if (wip.size() > selected_point.vertex) {
-					wip.remove(selected_point.vertex);
+
+					//todo
+					wip.erase(wip.begin() + selected_point.vertex);
+
 					_wip_changed();
 					selected_point = wip.size() - 1;
 					canvas_item_editor->update_viewport();
@@ -488,7 +494,7 @@ void AbstractPolygon2DEditor::forward_canvas_draw_over_viewport(Control *p_overl
 			continue;
 		}
 
-		Vector<Vector2> points;
+		std::vector<Vector2> points;
 		Vector2 offset;
 
 		if (wip_active && j == edited_point.polygon) {
@@ -596,10 +602,12 @@ void AbstractPolygon2DEditor::_bind_methods() {
 }
 
 void AbstractPolygon2DEditor::remove_point(const Vertex &p_vertex) {
-	Vector<Vector2> vertices = _get_polygon(p_vertex.polygon);
+	std::vector<Vector2> vertices = _get_polygon(p_vertex.polygon);
 
 	if (vertices.size() > (_is_line() ? 2 : 3)) {
-		vertices.remove(p_vertex.vertex);
+
+		//todo
+		vertices.erase(vertices.begin() + p_vertex.vertex);
 
 		undo_redo->create_action(TTR("Edit Polygon (Remove Point)"));
 		_action_set_polygon(p_vertex.polygon, vertices);
@@ -634,7 +642,7 @@ AbstractPolygon2DEditor::PosVertex AbstractPolygon2DEditor::closest_point(const 
 	real_t closest_dist = 1e10;
 
 	for (int j = 0; j < n_polygons; j++) {
-		Vector<Vector2> points = _get_polygon(j);
+		std::vector<Vector2> points = _get_polygon(j);
 		const Vector2 offset = _get_offset(j);
 		const int n_points = points.size();
 
@@ -664,7 +672,7 @@ AbstractPolygon2DEditor::PosVertex AbstractPolygon2DEditor::closest_edge_point(c
 	real_t closest_dist = 1e10;
 
 	for (int j = 0; j < n_polygons; j++) {
-		Vector<Vector2> points = _get_polygon(j);
+		std::vector<Vector2> points = _get_polygon(j);
 		const Vector2 offset = _get_offset(j);
 		const int n_points = points.size();
 		const int n_segments = n_points - (_is_line() ? 1 : 0);

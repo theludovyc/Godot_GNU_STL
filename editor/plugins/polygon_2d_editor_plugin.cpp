@@ -39,6 +39,8 @@
 #include "editor/editor_settings.h"
 #include "scene/2d/skeleton_2d.h"
 
+//todo std::vector.data()
+
 Node2D *Polygon2DEditor::_get_node() const {
 	return node;
 }
@@ -116,12 +118,12 @@ void Polygon2DEditor::_sync_bones() {
 	} else {
 		for (int i = 0; i < skeleton->get_bone_count(); i++) {
 			NodePath path = skeleton->get_path_to(skeleton->get_bone(i));
-			Vector<float> weights;
+			std::vector<float> weights;
 			int wc = node->get_polygon().size();
 
 			for (int j = 0; j < prev_bones.size(); j += 2) {
 				NodePath pvp = prev_bones[j];
-				Vector<float> pv = prev_bones[j + 1];
+				std::vector<float> pv = prev_bones[j + 1];
 				if (pvp == path && pv.size() == wc) {
 					weights = pv;
 				}
@@ -129,7 +131,7 @@ void Polygon2DEditor::_sync_bones() {
 
 			if (weights.size() == 0) { //create them
 				weights.resize(node->get_polygon().size());
-				float *w = weights.ptrw();
+				float *w = weights.data();
 				for (int j = 0; j < wc; j++) {
 					w[j] = 0.0;
 				}
@@ -278,8 +280,8 @@ void Polygon2DEditor::_menu_option(int p_option) {
 				return;
 			}
 
-			Vector<Vector2> points = node->get_polygon();
-			Vector<Vector2> uvs = node->get_uv();
+			std::vector<Vector2> points = node->get_polygon();
+			std::vector<Vector2> uvs = node->get_uv();
 			if (uvs.size() != points.size()) {
 				undo_redo->create_action(TTR("Create UV Map"));
 				undo_redo->add_do_method(node, "set_uv", points);
@@ -297,11 +299,11 @@ void Polygon2DEditor::_menu_option(int p_option) {
 			_update_bone_list();
 		} break;
 		case UVEDIT_POLYGON_TO_UV: {
-			Vector<Vector2> points = node->get_polygon();
+			std::vector<Vector2> points = node->get_polygon();
 			if (points.size() == 0) {
 				break;
 			}
-			Vector<Vector2> uvs = node->get_uv();
+			std::vector<Vector2> uvs = node->get_uv();
 			undo_redo->create_action(TTR("Create UV Map"));
 			undo_redo->add_do_method(node, "set_uv", points);
 			undo_redo->add_undo_method(node, "set_uv", uvs);
@@ -310,8 +312,8 @@ void Polygon2DEditor::_menu_option(int p_option) {
 			undo_redo->commit_action();
 		} break;
 		case UVEDIT_UV_TO_POLYGON: {
-			Vector<Vector2> points = node->get_polygon();
-			Vector<Vector2> uvs = node->get_uv();
+			std::vector<Vector2> points = node->get_polygon();
+			std::vector<Vector2> uvs = node->get_uv();
 			if (uvs.size() == 0) {
 				break;
 			}
@@ -324,12 +326,12 @@ void Polygon2DEditor::_menu_option(int p_option) {
 			undo_redo->commit_action();
 		} break;
 		case UVEDIT_UV_CLEAR: {
-			Vector<Vector2> uvs = node->get_uv();
+			std::vector<Vector2> uvs = node->get_uv();
 			if (uvs.size() == 0) {
 				break;
 			}
 			undo_redo->create_action(TTR("Create UV Map"));
-			undo_redo->add_do_method(node, "set_uv", Vector<Vector2>());
+			undo_redo->add_do_method(node, "set_uv", std::vector<Vector2>());
 			undo_redo->add_undo_method(node, "set_uv", uvs);
 			undo_redo->add_do_method(uv_edit_draw, "update");
 			undo_redo->add_undo_method(uv_edit_draw, "update");
@@ -494,7 +496,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 							undo_redo->add_undo_method(node, "set_polygon", uv_create_poly_prev);
 							undo_redo->add_do_method(node, "set_internal_vertex_count", 0);
 							undo_redo->add_undo_method(node, "set_internal_vertex_count", uv_create_prev_internal_vertices);
-							undo_redo->add_do_method(node, "set_vertex_colors", Vector<Color>());
+							undo_redo->add_do_method(node, "set_vertex_colors", std::vector<Color>());
 							undo_redo->add_undo_method(node, "set_vertex_colors", uv_create_colors_prev);
 							undo_redo->add_do_method(node, "clear_bones");
 							undo_redo->add_undo_method(node, "_set_bones", uv_create_bones_prev);
@@ -543,7 +545,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					undo_redo->add_do_method(node, "set_vertex_colors", uv_create_colors_prev);
 					undo_redo->add_undo_method(node, "set_vertex_colors", node->get_vertex_colors());
 					for (int i = 0; i < node->get_bone_count(); i++) {
-						Vector<float> bonew = node->get_bone_weights(i);
+						std::vector<float> bonew = node->get_bone_weights(i);
 						bonew.push_back(0);
 						undo_redo->add_do_method(node, "set_bone_weights", i, bonew);
 						undo_redo->add_undo_method(node, "set_bone_weights", i, node->get_bone_weights(i));
@@ -584,10 +586,14 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 						return;
 					}
 
-					uv_create_poly_prev.remove(closest);
-					uv_create_uv_prev.remove(closest);
+					//todo
+					uv_create_poly_prev.erase(uv_create_poly_prev.begin() + closest);
+					uv_create_uv_prev.erase(uv_create_uv_prev.begin() + closest);
+
 					if (uv_create_colors_prev.size()) {
-						uv_create_colors_prev.remove(closest);
+
+						//todo
+						uv_create_colors_prev.erase(uv_create_colors_prev.begin() + closest);
 					}
 
 					undo_redo->create_action(TTR("Remove Internal Vertex"));
@@ -598,8 +604,11 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					undo_redo->add_do_method(node, "set_vertex_colors", uv_create_colors_prev);
 					undo_redo->add_undo_method(node, "set_vertex_colors", node->get_vertex_colors());
 					for (int i = 0; i < node->get_bone_count(); i++) {
-						Vector<float> bonew = node->get_bone_weights(i);
-						bonew.remove(closest);
+						std::vector<float> bonew = node->get_bone_weights(i);
+
+						//todo
+						bonew.erase(bonew.begin() + closest);
+
 						undo_redo->add_do_method(node, "set_bone_weights", i, bonew);
 						undo_redo->add_undo_method(node, "set_bone_weights", i, node->get_bone_weights(i));
 					}
@@ -651,6 +660,8 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					}
 
 					if (closest != -1) {
+						auto it = std::find(polygon_create.begin(), polygon_create.end(), closest);
+
 						if (polygon_create.size() && closest == polygon_create[0]) {
 							//close
 							if (polygon_create.size() < 3) {
@@ -671,7 +682,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 							}
 
 							polygon_create.clear();
-						} else if (polygon_create.find(closest) == -1) {
+						} else if (it == polygon_create.end()) {
 							//add temporarily if not exists
 							polygon_create.push_back(closest);
 						}
@@ -684,15 +695,15 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 
 					int erase_index = -1;
 					for (int i = polygons.size() - 1; i >= 0; i--) {
-						Vector<int> points = polygons[i];
-						Vector<Vector2> polys;
+						std::vector<int> points = polygons[i];
+						std::vector<Vector2> polys;
 						polys.resize(points.size());
 						for (int j = 0; j < polys.size(); j++) {
 							int idx = points[j];
 							if (idx < 0 || idx >= points_prev.size()) {
 								continue;
 							}
-							polys.write[j] = mtx.xform(points_prev[idx]);
+							polys[j] = mtx.xform(points_prev[idx]);
 						}
 
 						if (Geometry2D::is_point_in_polygon(Vector2(mb->get_position().x, mb->get_position().y), polys)) {
@@ -795,8 +806,8 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					}
 				} break;
 				case UV_MODE_EDIT_POINT: {
-					Vector<Vector2> uv_new = points_prev;
-					uv_new.set(point_drag_index, uv_new[point_drag_index] + drag);
+					std::vector<Vector2> uv_new = points_prev;
+					uv_new[point_drag_index] = uv_new[point_drag_index] + drag;
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
 						node->set_uv(uv_new);
@@ -805,9 +816,9 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					}
 				} break;
 				case UV_MODE_MOVE: {
-					Vector<Vector2> uv_new = points_prev;
+					std::vector<Vector2> uv_new = points_prev;
 					for (int i = 0; i < uv_new.size(); i++) {
-						uv_new.set(i, uv_new[i] + drag);
+						uv_new[i] = uv_new[i] + drag;
 					}
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
@@ -818,7 +829,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 				} break;
 				case UV_MODE_ROTATE: {
 					Vector2 center;
-					Vector<Vector2> uv_new = points_prev;
+					std::vector<Vector2> uv_new = points_prev;
 
 					for (int i = 0; i < uv_new.size(); i++) {
 						center += points_prev[i];
@@ -830,7 +841,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					for (int i = 0; i < uv_new.size(); i++) {
 						Vector2 rel = points_prev[i] - center;
 						rel = rel.rotated(angle);
-						uv_new.set(i, center + rel);
+						uv_new[i] = center + rel;
 					}
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
@@ -841,7 +852,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 				} break;
 				case UV_MODE_SCALE: {
 					Vector2 center;
-					Vector<Vector2> uv_new = points_prev;
+					std::vector<Vector2> uv_new = points_prev;
 
 					for (int i = 0; i < uv_new.size(); i++) {
 						center += points_prev[i];
@@ -859,7 +870,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 					for (int i = 0; i < uv_new.size(); i++) {
 						Vector2 rel = points_prev[i] - center;
 						rel = rel * scale;
-						uv_new.set(i, center + rel);
+						uv_new[i] = center + rel;
 					}
 
 					if (uv_edit_mode[0]->is_pressed()) { //edit uv
@@ -877,7 +888,7 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 			}
 
 			if (bone_painting) {
-				Vector<float> painted_weights = node->get_bone_weights(bone_painting_bone);
+				std::vector<float> painted_weights = node->get_bone_weights(bone_painting_bone);
 
 				{
 					int pc = painted_weights.size();
@@ -888,9 +899,9 @@ void Polygon2DEditor::_uv_input(const Ref<InputEvent> &p_input) {
 						amount = -amount;
 					}
 
-					float *w = painted_weights.ptrw();
-					const float *r = prev_weights.ptr();
-					const Vector2 *rv = points_prev.ptr();
+					float *w = painted_weights.data();
+					const float *r = prev_weights.data();
+					const Vector2 *rv = points_prev.data();
 
 					for (int i = 0; i < pc; i++) {
 						if (mtx.xform(rv[i]).distance_to(bone_paint_pos) < radius) {
@@ -990,7 +1001,7 @@ void Polygon2DEditor::_uv_draw() {
 
 	Array polygons = node->get_polygons();
 
-	Vector<Vector2> uvs;
+	std::vector<Vector2> uvs;
 	if (uv_edit_mode[0]->is_pressed()) { //edit uv
 		uvs = node->get_uv();
 	} else { //edit polygon
@@ -1010,7 +1021,7 @@ void Polygon2DEditor::_uv_draw() {
 		}
 
 		if (bone_selected != -1 && node->get_bone_weights(bone_selected).size() == uvs.size()) {
-			weight_r = node->get_bone_weights(bone_selected).ptr();
+			weight_r = node->get_bone_weights(bone_selected).data();
 		}
 	}
 
@@ -1022,7 +1033,7 @@ void Polygon2DEditor::_uv_draw() {
 		poly_line_color.a *= 0.25;
 	}
 	Color polygon_line_color = Color(0.5, 0.5, 0.9);
-	Vector<Color> polygon_fill_color;
+	std::vector<Color> polygon_fill_color;
 	{
 		Color pf = polygon_line_color;
 		pf.a *= 0.5;
@@ -1055,8 +1066,8 @@ void Polygon2DEditor::_uv_draw() {
 	}
 
 	for (int i = 0; i < polygons.size(); i++) {
-		Vector<int> points = polygons[i];
-		Vector<Vector2> polypoints;
+		std::vector<int> points = polygons[i];
+		std::vector<Vector2> polypoints;
 		for (int j = 0; j < points.size(); j++) {
 			int next = (j + 1) % points.size();
 
