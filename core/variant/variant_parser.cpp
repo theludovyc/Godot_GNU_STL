@@ -35,6 +35,8 @@
 #include "core/os/keyboard.h"
 #include "core/string/string_buffer.h"
 
+//todo std::vector.data()
+
 char32_t VariantParser::StreamFile::get_char() {
 	return f->get_8();
 }
@@ -412,7 +414,7 @@ Error VariantParser::get_token(Stream *p_stream, Token &r_token, int &line, Stri
 	return ERR_PARSE_ERROR;
 }
 
-Error VariantParser::_parse_enginecfg(Stream *p_stream, Vector<String> &strings, int &line, String &r_err_str) {
+Error VariantParser::_parse_enginecfg(Stream *p_stream, std::vector<String> &strings, int &line, String &r_err_str) {
 	Token token;
 	get_token(p_stream, token, line, r_err_str);
 	if (token.type != TK_PARENTHESIS_OPEN) {
@@ -443,7 +445,7 @@ Error VariantParser::_parse_enginecfg(Stream *p_stream, Vector<String> &strings,
 }
 
 template <class T>
-Error VariantParser::_parse_construct(Stream *p_stream, Vector<T> &r_construct, int &line, String &r_err_str) {
+Error VariantParser::_parse_construct(Stream *p_stream, std::vector<T> &r_construct, int &line, String &r_err_str) {
 	Token token;
 	get_token(p_stream, token, line, r_err_str);
 	if (token.type != TK_PARENTHESIS_OPEN) {
@@ -510,7 +512,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 		} else if (id == "nan") {
 			value = Math_NAN;
 		} else if (id == "Vector2") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -523,7 +525,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Vector2(args[0], args[1]);
 		} else if (id == "Vector2i") {
-			Vector<int32_t> args;
+			std::vector<int32_t> args;
 			Error err = _parse_construct<int32_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -536,7 +538,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Vector2i(args[0], args[1]);
 		} else if (id == "Rect2") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -549,7 +551,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Rect2(args[0], args[1], args[2], args[3]);
 		} else if (id == "Rect2i") {
-			Vector<int32_t> args;
+			std::vector<int32_t> args;
 			Error err = _parse_construct<int32_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -562,7 +564,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Rect2i(args[0], args[1], args[2], args[3]);
 		} else if (id == "Vector3") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -575,7 +577,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Vector3(args[0], args[1], args[2]);
 		} else if (id == "Vector3i") {
-			Vector<int32_t> args;
+			std::vector<int32_t> args;
 			Error err = _parse_construct<int32_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -588,7 +590,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Vector3i(args[0], args[1], args[2]);
 		} else if (id == "Transform2D" || id == "Matrix32") { //compatibility
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -605,7 +607,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 			m[2] = Vector2(args[4], args[5]);
 			value = m;
 		} else if (id == "Plane") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -618,7 +620,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Plane(args[0], args[1], args[2], args[3]);
 		} else if (id == "Quaternion" || id == "Quat") { // "Quat" kept for compatibility
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -631,7 +633,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Quaternion(args[0], args[1], args[2], args[3]);
 		} else if (id == "AABB" || id == "Rect3") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -644,7 +646,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = AABB(Vector3(args[0], args[1], args[2]), Vector3(args[3], args[4], args[5]));
 		} else if (id == "Basis" || id == "Matrix3") { //compatibility
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -657,7 +659,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Basis(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
 		} else if (id == "Transform3D" || id == "Transform") { // "Transform" kept for compatibility with Godot <4.
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -670,7 +672,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = Transform3D(Basis(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]), Vector3(args[9], args[10], args[11]));
 		} else if (id == "Color") {
-			Vector<float> args;
+			std::vector<float> args;
 			Error err = _parse_construct<float>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
@@ -872,17 +874,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 				}
 			}
 		} else if (id == "PackedByteArray" || id == "PoolByteArray" || id == "ByteArray") {
-			Vector<uint8_t> args;
+			std::vector<uint8_t> args;
 			Error err = _parse_construct<uint8_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<uint8_t> arr;
+			std::vector<uint8_t> arr;
 			{
 				int len = args.size();
 				arr.resize(len);
-				uint8_t *w = arr.ptrw();
+				uint8_t *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = args[i];
 				}
@@ -890,17 +892,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedInt32Array" || id == "PackedIntArray" || id == "PoolIntArray" || id == "IntArray") {
-			Vector<int32_t> args;
+			std::vector<int32_t> args;
 			Error err = _parse_construct<int32_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<int32_t> arr;
+			std::vector<int32_t> arr;
 			{
 				int32_t len = args.size();
 				arr.resize(len);
-				int32_t *w = arr.ptrw();
+				int32_t *w = arr.data();
 				for (int32_t i = 0; i < len; i++) {
 					w[i] = int32_t(args[i]);
 				}
@@ -908,17 +910,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedInt64Array") {
-			Vector<int64_t> args;
+			std::vector<int64_t> args;
 			Error err = _parse_construct<int64_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<int64_t> arr;
+			std::vector<int64_t> arr;
 			{
 				int64_t len = args.size();
 				arr.resize(len);
-				int64_t *w = arr.ptrw();
+				int64_t *w = arr.data();
 				for (int64_t i = 0; i < len; i++) {
 					w[i] = int64_t(args[i]);
 				}
@@ -926,17 +928,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedFloat32Array" || id == "PackedRealArray" || id == "PoolRealArray" || id == "FloatArray") {
-			Vector<float> args;
+			std::vector<float> args;
 			Error err = _parse_construct<float>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<float> arr;
+			std::vector<float> arr;
 			{
 				int len = args.size();
 				arr.resize(len);
-				float *w = arr.ptrw();
+				float *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = args[i];
 				}
@@ -944,17 +946,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedFloat64Array") {
-			Vector<double> args;
+			std::vector<double> args;
 			Error err = _parse_construct<double>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<double> arr;
+			std::vector<double> arr;
 			{
 				int len = args.size();
 				arr.resize(len);
-				double *w = arr.ptrw();
+				double *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = args[i];
 				}
@@ -968,7 +970,7 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 				return ERR_PARSE_ERROR;
 			}
 
-			Vector<String> cs;
+			std::vector<String> cs;
 
 			bool first = true;
 			while (true) {
@@ -996,11 +998,11 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 				cs.push_back(token.value);
 			}
 
-			Vector<String> arr;
+			std::vector<String> arr;
 			{
 				int len = cs.size();
 				arr.resize(len);
-				String *w = arr.ptrw();
+				String *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = cs[i];
 				}
@@ -1008,17 +1010,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedVector2Array" || id == "PoolVector2Array" || id == "Vector2Array") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<Vector2> arr;
+			std::vector<Vector2> arr;
 			{
 				int len = args.size() / 2;
 				arr.resize(len);
-				Vector2 *w = arr.ptrw();
+				Vector2 *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = Vector2(args[i * 2 + 0], args[i * 2 + 1]);
 				}
@@ -1026,17 +1028,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedVector3Array" || id == "PoolVector3Array" || id == "Vector3Array") {
-			Vector<real_t> args;
+			std::vector<real_t> args;
 			Error err = _parse_construct<real_t>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<Vector3> arr;
+			std::vector<Vector3> arr;
 			{
 				int len = args.size() / 3;
 				arr.resize(len);
-				Vector3 *w = arr.ptrw();
+				Vector3 *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = Vector3(args[i * 3 + 0], args[i * 3 + 1], args[i * 3 + 2]);
 				}
@@ -1044,17 +1046,17 @@ Error VariantParser::parse_value(Token &token, Variant &value, Stream *p_stream,
 
 			value = arr;
 		} else if (id == "PackedColorArray" || id == "PoolColorArray" || id == "ColorArray") {
-			Vector<float> args;
+			std::vector<float> args;
 			Error err = _parse_construct<float>(p_stream, args, line, r_err_str);
 			if (err) {
 				return err;
 			}
 
-			Vector<Color> arr;
+			std::vector<Color> arr;
 			{
 				int len = args.size() / 4;
 				arr.resize(len);
-				Color *w = arr.ptrw();
+				Color *w = arr.data();
 				for (int i = 0; i < len; i++) {
 					w[i] = Color(args[i * 4 + 0], args[i * 4 + 1], args[i * 4 + 2], args[i * 4 + 3]);
 				}
@@ -1632,9 +1634,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		case Variant::PACKED_BYTE_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedByteArray(");
 			String s;
-			Vector<uint8_t> data = p_variant;
+			std::vector<uint8_t> data = p_variant;
 			int len = data.size();
-			const uint8_t *ptr = data.ptr();
+			const uint8_t *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1649,9 +1651,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedInt32Array(");
-			Vector<int32_t> data = p_variant;
+			std::vector<int32_t> data = p_variant;
 			int32_t len = data.size();
-			const int32_t *ptr = data.ptr();
+			const int32_t *ptr = data.data();
 
 			for (int32_t i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1666,9 +1668,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedInt64Array(");
-			Vector<int64_t> data = p_variant;
+			std::vector<int64_t> data = p_variant;
 			int64_t len = data.size();
-			const int64_t *ptr = data.ptr();
+			const int64_t *ptr = data.data();
 
 			for (int64_t i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1683,9 +1685,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedFloat32Array(");
-			Vector<float> data = p_variant;
+			std::vector<float> data = p_variant;
 			int len = data.size();
-			const float *ptr = data.ptr();
+			const float *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1699,9 +1701,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_FLOAT64_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedFloat64Array(");
-			Vector<double> data = p_variant;
+			std::vector<double> data = p_variant;
 			int len = data.size();
-			const double *ptr = data.ptr();
+			const double *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1715,9 +1717,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_STRING_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedStringArray(");
-			Vector<String> data = p_variant;
+			std::vector<String> data = p_variant;
 			int len = data.size();
-			const String *ptr = data.ptr();
+			const String *ptr = data.data();
 
 			String s;
 			//write_string("\n");
@@ -1735,9 +1737,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedVector2Array(");
-			Vector<Vector2> data = p_variant;
+			std::vector<Vector2> data = p_variant;
 			int len = data.size();
-			const Vector2 *ptr = data.ptr();
+			const Vector2 *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1751,9 +1753,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedVector3Array(");
-			Vector<Vector3> data = p_variant;
+			std::vector<Vector3> data = p_variant;
 			int len = data.size();
-			const Vector3 *ptr = data.ptr();
+			const Vector3 *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {
@@ -1767,9 +1769,9 @@ Error VariantWriter::write(const Variant &p_variant, StoreStringFunc p_store_str
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 			p_store_string_func(p_store_string_ud, "PackedColorArray(");
-			Vector<Color> data = p_variant;
+			std::vector<Color> data = p_variant;
 			int len = data.size();
-			const Color *ptr = data.ptr();
+			const Color *ptr = data.data();
 
 			for (int i = 0; i < len; i++) {
 				if (i > 0) {

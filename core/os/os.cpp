@@ -68,7 +68,7 @@ void OS::_set_logger(CompositeLogger *p_logger) {
 
 void OS::add_logger(Logger *p_logger) {
 	if (!_logger) {
-		Vector<Logger *> loggers;
+		std::vector<Logger *> loggers;
 		loggers.push_back(p_logger);
 		_logger = memnew(CompositeLogger(loggers));
 	} else {
@@ -233,7 +233,7 @@ String OS::get_locale() const {
 
 // Helper function to ensure that a dir name/path will be valid on the OS
 String OS::get_safe_dir_name(const String &p_dir_name, bool p_allow_dir_separator) const {
-	Vector<String> invalid_chars = String(": * ? \" < > |").split(" ");
+	std::vector<String> invalid_chars = String(": * ? \" < > |").split(" ");
 	if (p_allow_dir_separator) {
 		// Dir separators are allowed, but disallow ".." to avoid going up the filesystem
 		invalid_chars.push_back("..");
@@ -511,7 +511,7 @@ void OS::add_frame_delay(bool p_can_draw) {
 OS::OS() {
 	singleton = this;
 
-	Vector<Logger *> loggers;
+	std::vector<Logger *> loggers;
 	loggers.push_back(memnew(StdLogger));
 	_set_logger(memnew(CompositeLogger(loggers)));
 }

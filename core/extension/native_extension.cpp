@@ -352,7 +352,7 @@ RES NativeExtensionResourceLoader::load(const String &p_path, const String &p_or
 	String library_path;
 
 	for (List<String>::Element *E = libraries.front(); E; E = E->next()) {
-		Vector<String> tags = E->get().split(".");
+		std::vector<String> tags = E->get().split(".");
 		bool all_tags_met = true;
 		for (int i = 0; i < tags.size(); i++) {
 			String tag = tags[i].strip_edges();

@@ -76,8 +76,8 @@ NativeExtensionManager::LoadStatus NativeExtensionManager::unload_extension(cons
 	native_extension_map.erase(p_path);
 	return LOAD_STATUS_OK;
 }
-Vector<String> NativeExtensionManager::get_loaded_extensions() const {
-	Vector<String> ret;
+std::vector<String> NativeExtensionManager::get_loaded_extensions() const {
+	std::vector<String> ret;
 	for (const Map<String, Ref<NativeExtension>>::Element *E = native_extension_map.front(); E; E = E->next()) {
 		ret.push_back(E->key());
 	}

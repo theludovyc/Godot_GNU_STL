@@ -55,7 +55,7 @@ public:
 	LoadStatus load_extension(const String &p_path);
 	LoadStatus reload_extension(const String &p_path);
 	LoadStatus unload_extension(const String &p_path);
-	Vector<String> get_loaded_extensions() const;
+	std::vector<String> get_loaded_extensions() const;
 	Ref<NativeExtension> get_extension(const String &p_path);
 
 	void initialize_extensions(NativeExtension::InitializationLevel p_level);
