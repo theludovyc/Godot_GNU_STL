@@ -34,7 +34,7 @@
 
 uint32_t QuickHull::debug_stop_after = 0xFFFFFFFF;
 
-Error QuickHull::build(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh) {
+Error QuickHull::build(const std::vector<Vector3> &p_points, Geometry3D::MeshData &r_mesh) {
 	/* CREATE AABB VOLUME */
 
 	AABB aabb;
@@ -50,16 +50,16 @@ Error QuickHull::build(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_
 		return ERR_CANT_CREATE;
 	}
 
-	Vector<bool> valid_points;
+	std::vector<bool> valid_points;
 	valid_points.resize(p_points.size());
 	Set<Vector3> valid_cache;
 
 	for (int i = 0; i < p_points.size(); i++) {
 		Vector3 sp = p_points[i].snapped(Vector3(0.0001, 0.0001, 0.0001));
 		if (valid_cache.has(sp)) {
-			valid_points.write[i] = false;
+			valid_points[i] = false;
 		} else {
-			valid_points.write[i] = true;
+			valid_points[i] = true;
 			valid_cache.insert(sp);
 		}
 	}
@@ -397,7 +397,10 @@ Error QuickHull::build(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_
 								break;
 							}
 							if (idx != a) {
-								f.indices.insert(i + 1, idx);
+
+								//TODO
+								f.indices.insert(f.indices.begin() + i + 1, idx);
+
 								i++;
 								merged++;
 							}
@@ -440,7 +443,7 @@ Error QuickHull::build(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_
 
 	int idx = 0;
 	for (List<Geometry3D::MeshData::Face>::Element *E = ret_faces.front(); E; E = E->next()) {
-		r_mesh.faces.write[idx++] = E->get();
+		r_mesh.faces[idx++] = E->get();
 	}
 	r_mesh.edges.resize(ret_edges.size());
 	idx = 0;
@@ -448,7 +451,7 @@ Error QuickHull::build(const Vector<Vector3> &p_points, Geometry3D::MeshData &r_
 		Geometry3D::MeshData::Edge e;
 		e.a = E->key().vertices[0];
 		e.b = E->key().vertices[1];
-		r_mesh.edges.write[idx++] = e;
+		r_mesh.edges[idx++] = e;
 	}
 
 	r_mesh.vertices = p_points;

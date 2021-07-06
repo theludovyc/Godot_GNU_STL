@@ -199,13 +199,13 @@ AABB MeshInstance3D::get_aabb() const {
 	return AABB();
 }
 
-Vector<Face3> MeshInstance3D::get_faces(uint32_t p_usage_flags) const {
+std::vector<Face3> MeshInstance3D::get_faces(uint32_t p_usage_flags) const {
 	if (!(p_usage_flags & (FACES_SOLID | FACES_ENCLOSING))) {
-		return Vector<Face3>();
+		return std::vector<Face3>();
 	}
 
 	if (mesh.is_null()) {
-		return Vector<Face3>();
+		return std::vector<Face3>();
 	}
 
 	return mesh->get_faces();
@@ -276,7 +276,7 @@ Node *MeshInstance3D::create_multiple_convex_collisions_node() {
 		return nullptr;
 	}
 
-	Vector<Ref<Shape3D>> shapes = mesh->convex_decompose();
+	std::vector<Ref<Shape3D>> shapes = mesh->convex_decompose();
 	if (!shapes.size()) {
 		return nullptr;
 	}
@@ -319,7 +319,7 @@ int MeshInstance3D::get_surface_override_material_count() const {
 void MeshInstance3D::set_surface_override_material(int p_surface, const Ref<Material> &p_material) {
 	ERR_FAIL_INDEX(p_surface, surface_override_materials.size());
 
-	surface_override_materials.write[p_surface] = p_material;
+	surface_override_materials[p_surface] = p_material;
 
 	if (surface_override_materials[p_surface].is_valid()) {
 		RS::get_singleton()->instance_set_surface_override_material(get_instance(), p_surface, surface_override_materials[p_surface]->get_rid());
@@ -360,8 +360,8 @@ void MeshInstance3D::_mesh_changed() {
 }
 
 void MeshInstance3D::create_debug_tangents() {
-	Vector<Vector3> lines;
-	Vector<Color> colors;
+	std::vector<Vector3> lines;
+	std::vector<Color> colors;
 
 	Ref<Mesh> mesh = get_mesh();
 	if (!mesh.is_valid()) {
@@ -370,12 +370,12 @@ void MeshInstance3D::create_debug_tangents() {
 
 	for (int i = 0; i < mesh->get_surface_count(); i++) {
 		Array arrays = mesh->surface_get_arrays(i);
-		Vector<Vector3> verts = arrays[Mesh::ARRAY_VERTEX];
-		Vector<Vector3> norms = arrays[Mesh::ARRAY_NORMAL];
+		std::vector<Vector3> verts = arrays[Mesh::ARRAY_VERTEX];
+		std::vector<Vector3> norms = arrays[Mesh::ARRAY_NORMAL];
 		if (norms.size() == 0) {
 			continue;
 		}
-		Vector<float> tangents = arrays[Mesh::ARRAY_TANGENT];
+		std::vector<float> tangents = arrays[Mesh::ARRAY_TANGENT];
 		if (tangents.size() == 0) {
 			continue;
 		}

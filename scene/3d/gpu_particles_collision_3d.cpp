@@ -35,6 +35,8 @@
 #include "scene/3d/camera_3d.h"
 #include "scene/main/viewport.h"
 
+//TODO std::vector.data()
+
 void GPUParticlesCollision3D::set_cull_mask(uint32_t p_cull_mask) {
 	cull_mask = p_cull_mask;
 	RS::get_singleton()->particles_collision_set_cull_mask(collision, p_cull_mask);
@@ -407,13 +409,13 @@ Ref<Image> GPUParticlesCollisionSDF::bake() {
 
 			Array a = pm.mesh->surface_get_arrays(i);
 
-			Vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
-			const Vector3 *vr = vertices.ptr();
-			Vector<int> index = a[Mesh::ARRAY_INDEX];
+			std::vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
+			const Vector3 *vr = vertices.data();
+			std::vector<int> index = a[Mesh::ARRAY_INDEX];
 
 			if (index.size()) {
 				int facecount = index.size() / 3;
-				const int *ir = index.ptr();
+				const int *ir = index.data();
 
 				for (int j = 0; j < facecount; j++) {
 					Face3 face;
@@ -477,7 +479,7 @@ Ref<Image> GPUParticlesCollisionSDF::bake() {
 
 	_create_bvh(bvh, face_pos.ptr(), face_pos.size(), faces.ptr(), th);
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(sdf_size.z * sdf_size.y * sdf_size.x * sizeof(float));
 
 	if (bake_step_function) {
@@ -485,7 +487,7 @@ Ref<Image> GPUParticlesCollisionSDF::bake() {
 	}
 
 	ComputeSDFParams params;
-	params.cells = (float *)data.ptrw();
+	params.cells = (float *)data.data();
 	params.size = sdf_size;
 	params.cell_size = cell_size;
 	params.cell_offset = aabb.position + Vector3(cell_size * 0.5, cell_size * 0.5, cell_size * 0.5);

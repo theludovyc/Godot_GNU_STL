@@ -52,7 +52,7 @@ protected:
 	};
 
 	Map<StringName, BlendShapeTrack> blend_shape_tracks;
-	Vector<Ref<Material>> surface_override_materials;
+	std::vector<Ref<Material>> surface_override_materials;
 
 	void _mesh_changed();
 	void _resolve_skeleton_path();
@@ -92,7 +92,7 @@ public:
 	void create_debug_tangents();
 
 	virtual AABB get_aabb() const override;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	MeshInstance3D();
 	~MeshInstance3D();
