@@ -30,6 +30,8 @@
 
 #include "resource_importer.h"
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "core/os/os.h"
 #include "core/variant/variant_parser.h"
@@ -429,9 +431,9 @@ bool ResourceFormatImporter::are_import_settings_valid(const String &p_path) con
 }
 
 String ResourceFormatImporter::get_import_settings_hash() const {
-	Vector<Ref<ResourceImporter>> sorted_importers = importers;
+	std::vector<Ref<ResourceImporter>> sorted_importers = importers;
 
-	sorted_importers.sort_custom<SortImporterByName>();
+	std::sort(sorted_importers.begin(), sorted_importers.end(), SortImporterByName());
 
 	String hash;
 	for (int i = 0; i < sorted_importers.size(); i++) {

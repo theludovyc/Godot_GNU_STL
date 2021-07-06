@@ -47,10 +47,10 @@ class PackedDataContainer : public Resource {
 		bool operator<(const DictKey &p_key) const { return hash < p_key.hash; }
 	};
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	int datalen = 0;
 
-	uint32_t _pack(const Variant &p_data, Vector<uint8_t> &tmpdata, Map<String, uint32_t> &string_cache);
+	uint32_t _pack(const Variant &p_data, std::vector<uint8_t> &tmpdata, Map<String, uint32_t> &string_cache);
 
 	Variant _iter_init_ofs(const Array &p_iter, uint32_t p_offset);
 	Variant _iter_next_ofs(const Array &p_iter, uint32_t p_offset);
@@ -67,8 +67,8 @@ class PackedDataContainer : public Resource {
 	int _size(uint32_t p_ofs) const;
 
 protected:
-	void _set_data(const Vector<uint8_t> &p_data);
-	Vector<uint8_t> _get_data() const;
+	void _set_data(const std::vector<uint8_t> &p_data);
+	std::vector<uint8_t> _get_data() const;
 	static void _bind_methods();
 
 public:

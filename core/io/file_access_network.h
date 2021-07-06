@@ -57,7 +57,7 @@ class FileAccessNetworkClient {
 	int32_t last_id = 0;
 	int32_t lockcount = 0;
 
-	Vector<uint8_t> block;
+	std::vector<uint8_t> block;
 
 	void _thread_func();
 	static void _thread_func(void *s);
@@ -101,10 +101,10 @@ class FileAccessNetwork : public FileAccess {
 	struct Page {
 		int activity = 0;
 		bool queued = false;
-		Vector<uint8_t> buffer;
+		std::vector<uint8_t> buffer;
 	};
 
-	mutable Vector<Page> pages;
+	mutable std::vector<Page> pages;
 
 	mutable Error response;
 
@@ -112,7 +112,7 @@ class FileAccessNetwork : public FileAccess {
 	friend class FileAccessNetworkClient;
 	void _queue_page(int32_t p_page) const;
 	void _respond(uint64_t p_len, Error p_status);
-	void _set_block(uint64_t p_offset, const Vector<uint8_t> &p_block);
+	void _set_block(uint64_t p_offset, const std::vector<uint8_t> &p_block);
 
 public:
 	enum Command {

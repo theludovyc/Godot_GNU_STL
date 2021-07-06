@@ -94,17 +94,17 @@ void MethodBind::set_name(const StringName &p_name) {
 }
 
 #ifdef DEBUG_METHODS_ENABLED
-void MethodBind::set_argument_names(const Vector<StringName> &p_names) {
+void MethodBind::set_argument_names(const std::vector<StringName> &p_names) {
 	arg_names = p_names;
 }
 
-Vector<StringName> MethodBind::get_argument_names() const {
+std::vector<StringName> MethodBind::get_argument_names() const {
 	return arg_names;
 }
 
 #endif
 
-void MethodBind::set_default_arguments(const Vector<Variant> &p_defargs) {
+void MethodBind::set_default_arguments(const std::vector<Variant> &p_defargs) {
 	default_arguments = p_defargs;
 	default_argument_count = default_arguments.size();
 }

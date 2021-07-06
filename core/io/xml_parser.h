@@ -78,7 +78,7 @@ private:
 		String value;
 	};
 
-	Vector<Attribute> attributes;
+	std::vector<Attribute> attributes;
 
 	bool _set_text(char *start, char *end);
 	void _parse_closing_xml_element();
@@ -109,7 +109,7 @@ public:
 	Error seek(uint64_t p_pos);
 
 	Error open(const String &p_path);
-	Error open_buffer(const Vector<uint8_t> &p_buffer);
+	Error open_buffer(const std::vector<uint8_t> &p_buffer);
 
 	void close();
 

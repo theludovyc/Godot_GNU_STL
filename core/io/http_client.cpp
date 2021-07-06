@@ -30,6 +30,8 @@
 
 #include "http_client.h"
 
+//todo std::vector.data()
+
 const char *HTTPClient::_methods[METHOD_MAX] = {
 	"GET",
 	"HEAD",
@@ -49,12 +51,12 @@ HTTPClient *HTTPClient::create() {
 	return nullptr;
 }
 
-Error HTTPClient::_request_raw(Method p_method, const String &p_url, const Vector<String> &p_headers, const Vector<uint8_t> &p_body) {
+Error HTTPClient::_request_raw(Method p_method, const String &p_url, const std::vector<String> &p_headers, const std::vector<uint8_t> &p_body) {
 	int size = p_body.size();
-	return request(p_method, p_url, p_headers, size > 0 ? p_body.ptr() : nullptr, size);
+	return request(p_method, p_url, p_headers, size > 0 ? p_body.data() : nullptr, size);
 }
 
-Error HTTPClient::_request(Method p_method, const String &p_url, const Vector<String> &p_headers, const String &p_body) {
+Error HTTPClient::_request(Method p_method, const String &p_url, const std::vector<String> &p_headers, const String &p_body) {
 	int size = p_body.length();
 	return request(p_method, p_url, p_headers, size > 0 ? (const uint8_t *)p_body.utf8().get_data() : nullptr, size);
 }
@@ -114,7 +116,7 @@ PackedStringArray HTTPClient::_get_response_headers() {
 	ret.resize(rh.size());
 	int idx = 0;
 	for (const List<String>::Element *E = rh.front(); E; E = E->next()) {
-		ret.set(idx++, E->get());
+		ret[idx++] = E->get();
 	}
 
 	return ret;

@@ -154,8 +154,8 @@ protected:
 
 	PackedStringArray _get_response_headers();
 	Dictionary _get_response_headers_as_dictionary();
-	Error _request_raw(Method p_method, const String &p_url, const Vector<String> &p_headers, const Vector<uint8_t> &p_body);
-	Error _request(Method p_method, const String &p_url, const Vector<String> &p_headers, const String &p_body = String());
+	Error _request_raw(Method p_method, const String &p_url, const std::vector<String> &p_headers, const std::vector<uint8_t> &p_body);
+	Error _request(Method p_method, const String &p_url, const std::vector<String> &p_headers, const String &p_body = String());
 
 	static HTTPClient *(*_create)();
 
@@ -166,7 +166,7 @@ public:
 
 	String query_string_from_dict(const Dictionary &p_dict);
 
-	virtual Error request(Method p_method, const String &p_url, const Vector<String> &p_headers, const uint8_t *p_body, int p_body_size) = 0;
+	virtual Error request(Method p_method, const String &p_url, const std::vector<String> &p_headers, const uint8_t *p_body, int p_body_size) = 0;
 	virtual Error connect_to_host(const String &p_host, int p_port = -1, bool p_ssl = false, bool p_verify_host = true) = 0;
 
 	virtual void set_connection(const Ref<StreamPeer> &p_connection) = 0;

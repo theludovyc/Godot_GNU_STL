@@ -38,7 +38,6 @@
 #include <string.h>
 
 template <class T>
-class Vector;
 class String;
 class Char16String;
 class CharString;
@@ -52,7 +51,6 @@ SAFE_NUMERIC_TYPE_PUN_GUARANTEES(uint32_t)
 template <class T>
 class CowData {
 	template <class TV>
-	friend class Vector;
 	friend class String;
 	friend class Char16String;
 	friend class CharString;

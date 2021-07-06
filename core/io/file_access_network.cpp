@@ -35,6 +35,8 @@
 #include "core/io/marshalls.h"
 #include "core/os/os.h"
 
+//todo std::vector.data()
+
 //#define DEBUG_PRINT(m_p) print_line(m_p)
 //#define DEBUG_TIME(m_what) printf("MS: %s - %lli\n",m_what,OS::get_singleton()->get_ticks_usec());
 #define DEBUG_PRINT(m_p)
@@ -137,9 +139,9 @@ void FileAccessNetworkClient::_thread_func() {
 				int64_t offset = get_64();
 				int32_t len = get_32();
 
-				Vector<uint8_t> block;
+				std::vector<uint8_t> block;
 				block.resize(len);
-				client->get_data(block.ptrw(), len);
+				client->get_data(block.data(), len);
 
 				if (fa) { //may have been queued
 					fa->_set_block(offset, block);
@@ -219,7 +221,7 @@ FileAccessNetworkClient::~FileAccessNetworkClient() {
 	thread.wait_to_finish();
 }
 
-void FileAccessNetwork::_set_block(uint64_t p_offset, const Vector<uint8_t> &p_block) {
+void FileAccessNetwork::_set_block(uint64_t p_offset, const std::vector<uint8_t> &p_block) {
 	int32_t page = p_offset / page_size;
 	ERR_FAIL_INDEX(page, pages.size());
 	if (page < pages.size() - 1) {
@@ -230,8 +232,8 @@ void FileAccessNetwork::_set_block(uint64_t p_offset, const Vector<uint8_t> &p_b
 
 	{
 		MutexLock lock(buffer_mutex);
-		pages.write[page].buffer = p_block;
-		pages.write[page].queued = false;
+		pages[page].buffer = p_block;
+		pages[page].queued = false;
 	}
 
 	if (waiting_on_page == page) {
@@ -348,7 +350,7 @@ void FileAccessNetwork::_queue_page(int32_t p_page) const {
 	if (p_page >= pages.size()) {
 		return;
 	}
-	if (pages[p_page].buffer.is_empty() && !pages[p_page].queued) {
+	if (pages[p_page].buffer.empty() && !pages[p_page].queued) {
 		FileAccessNetworkClient *nc = FileAccessNetworkClient::singleton;
 		{
 			MutexLock lock(nc->blockrequest_mutex);
@@ -358,7 +360,7 @@ void FileAccessNetwork::_queue_page(int32_t p_page) const {
 			br.offset = (uint64_t)p_page * page_size;
 			br.size = page_size;
 			nc->block_requests.push_back(br);
-			pages.write[p_page].queued = true;
+			pages[p_page].queued = true;
 		}
 		DEBUG_PRINT("QUEUE PAGE POST");
 		nc->sem.post();
@@ -383,7 +385,7 @@ uint64_t FileAccessNetwork::get_buffer(uint8_t *p_dst, uint64_t p_length) const 
 
 		if (page != last_page) {
 			buffer_mutex.lock();
-			if (pages[page].buffer.is_empty()) {
+			if (pages[page].buffer.empty()) {
 				waiting_on_page = page;
 				for (int32_t j = 0; j < read_ahead; j++) {
 					_queue_page(page + j);
@@ -399,7 +401,7 @@ uint64_t FileAccessNetwork::get_buffer(uint8_t *p_dst, uint64_t p_length) const 
 				buffer_mutex.unlock();
 			}
 
-			buff = pages.write[page].buffer.ptrw();
+			buff = pages[page].buffer.data();
 			last_page_buff = buff;
 			last_page = page;
 		}
