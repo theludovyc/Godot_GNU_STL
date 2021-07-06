@@ -61,7 +61,7 @@ private:
 		}
 	};
 
-	Vector<Cell> bake_cells;
+	std::vector<Cell> bake_cells;
 	int cell_subdiv = 0;
 
 	struct CellSort {
@@ -84,8 +84,8 @@ private:
 
 	struct MaterialCache {
 		//128x128 textures
-		Vector<Color> albedo;
-		Vector<Color> emission;
+		std::vector<Color> albedo;
+		std::vector<Color> emission;
 	};
 
 	Map<Ref<Material>, MaterialCache> material_cache;
@@ -102,7 +102,7 @@ private:
 	int max_original_cells = 0;
 	int leaf_voxel_count = 0;
 
-	Vector<Color> _get_bake_texture(Ref<Image> p_image, const Color &p_color_mul, const Color &p_color_add);
+	std::vector<Color> _get_bake_texture(Ref<Image> p_image, const Color &p_color_mul, const Color &p_color_add);
 	MaterialCache _get_material_cache(Ref<Material> p_material);
 
 	void _plot_face(int p_idx, int p_level, int p_x, int p_y, int p_z, const Vector3 *p_vtx, const Vector3 *p_normal, const Vector2 *p_uv, const MaterialCache &p_material, const AABB &p_aabb);
@@ -114,16 +114,16 @@ private:
 
 public:
 	void begin_bake(int p_subdiv, const AABB &p_bounds);
-	void plot_mesh(const Transform3D &p_xform, Ref<Mesh> &p_mesh, const Vector<Ref<Material>> &p_materials, const Ref<Material> &p_override_material);
+	void plot_mesh(const Transform3D &p_xform, Ref<Mesh> &p_mesh, const std::vector<Ref<Material>> &p_materials, const Ref<Material> &p_override_material);
 	void end_bake();
 
 	int get_voxel_gi_octree_depth() const;
 	Vector3i get_voxel_gi_octree_size() const;
 	int get_voxel_gi_cell_count() const;
-	Vector<uint8_t> get_voxel_gi_octree_cells() const;
-	Vector<uint8_t> get_voxel_gi_data_cells() const;
-	Vector<int> get_voxel_gi_level_cell_count() const;
-	Vector<uint8_t> get_sdf_3d_image() const;
+	std::vector<uint8_t> get_voxel_gi_octree_cells() const;
+	std::vector<uint8_t> get_voxel_gi_data_cells() const;
+	std::vector<int> get_voxel_gi_level_cell_count() const;
+	std::vector<uint8_t> get_sdf_3d_image() const;
 
 	Ref<MultiMesh> create_debug_multimesh();
 

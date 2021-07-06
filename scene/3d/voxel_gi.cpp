@@ -46,14 +46,14 @@ void VoxelGIData::_set_data(const Dictionary &p_data) {
 
 	AABB bounds = p_data["bounds"];
 	Vector3 octree_size = p_data["octree_size"];
-	Vector<uint8_t> octree_cells = p_data["octree_cells"];
-	Vector<uint8_t> octree_data = p_data["octree_data"];
+	std::vector<uint8_t> octree_cells = p_data["octree_cells"];
+	std::vector<uint8_t> octree_data = p_data["octree_data"];
 
-	Vector<uint8_t> octree_df;
+	std::vector<uint8_t> octree_df;
 	if (p_data.has("octree_df")) {
 		octree_df = p_data["octree_df"];
 	} else if (p_data.has("octree_df_png")) {
-		Vector<uint8_t> octree_df_png = p_data["octree_df_png"];
+		std::vector<uint8_t> octree_df_png = p_data["octree_df_png"];
 		Ref<Image> img;
 		img.instantiate();
 		Error err = img->load_png_from_buffer(octree_df_png);
@@ -61,7 +61,7 @@ void VoxelGIData::_set_data(const Dictionary &p_data) {
 		ERR_FAIL_COND(img->get_format() != Image::FORMAT_L8);
 		octree_df = img->get_data();
 	}
-	Vector<int> octree_levels = p_data["level_counts"];
+	std::vector<int> octree_levels = p_data["level_counts"];
 	Transform3D to_cell_xform = p_data["to_cell_xform"];
 
 	allocate(to_cell_xform, bounds, octree_size, octree_cells, octree_data, octree_df, octree_levels);
@@ -78,11 +78,11 @@ Dictionary VoxelGIData::_get_data() const {
 		Ref<Image> img;
 		img.instantiate();
 		img->create(otsize.x * otsize.y, otsize.z, false, Image::FORMAT_L8, get_distance_field());
-		Vector<uint8_t> df_png = img->save_png_to_buffer();
+		std::vector<uint8_t> df_png = img->save_png_to_buffer();
 		ERR_FAIL_COND_V(df_png.size() == 0, Dictionary());
 		d["octree_df_png"] = df_png;
 	} else {
-		d["octree_df"] = Vector<uint8_t>();
+		d["octree_df"] = std::vector<uint8_t>();
 	}
 
 	d["level_counts"] = get_level_counts();
@@ -90,7 +90,7 @@ Dictionary VoxelGIData::_get_data() const {
 	return d;
 }
 
-void VoxelGIData::allocate(const Transform3D &p_to_cell_xform, const AABB &p_aabb, const Vector3 &p_octree_size, const Vector<uint8_t> &p_octree_cells, const Vector<uint8_t> &p_data_cells, const Vector<uint8_t> &p_distance_field, const Vector<int> &p_level_counts) {
+void VoxelGIData::allocate(const Transform3D &p_to_cell_xform, const AABB &p_aabb, const Vector3 &p_octree_size, const std::vector<uint8_t> &p_octree_cells, const std::vector<uint8_t> &p_data_cells, const std::vector<uint8_t> &p_distance_field, const std::vector<int> &p_level_counts) {
 	RS::get_singleton()->voxel_gi_allocate_data(probe, p_to_cell_xform, p_aabb, p_octree_size, p_octree_cells, p_data_cells, p_distance_field, p_level_counts);
 	bounds = p_aabb;
 	to_cell_xform = p_to_cell_xform;
@@ -105,19 +105,19 @@ Vector3 VoxelGIData::get_octree_size() const {
 	return octree_size;
 }
 
-Vector<uint8_t> VoxelGIData::get_octree_cells() const {
+std::vector<uint8_t> VoxelGIData::get_octree_cells() const {
 	return RS::get_singleton()->voxel_gi_get_octree_cells(probe);
 }
 
-Vector<uint8_t> VoxelGIData::get_data_cells() const {
+std::vector<uint8_t> VoxelGIData::get_data_cells() const {
 	return RS::get_singleton()->voxel_gi_get_data_cells(probe);
 }
 
-Vector<uint8_t> VoxelGIData::get_distance_field() const {
+std::vector<uint8_t> VoxelGIData::get_distance_field() const {
 	return RS::get_singleton()->voxel_gi_get_distance_field(probe);
 }
 
-Vector<int> VoxelGIData::get_level_counts() const {
+std::vector<int> VoxelGIData::get_level_counts() const {
 	return RS::get_singleton()->voxel_gi_get_level_counts(probe);
 }
 
@@ -474,7 +474,7 @@ void VoxelGI::bake(Node *p_from_node, bool p_create_visual_debug) {
 			bake_step_function(pmc++, RTR("Generating Distance Field"));
 		}
 
-		Vector<uint8_t> df = baker.get_sdf_3d_image();
+		std::vector<uint8_t> df = baker.get_sdf_3d_image();
 
 		probe_data->allocate(baker.get_to_cell_space_xform(), AABB(-extents, extents * 2.0), baker.get_voxel_gi_octree_size(), baker.get_voxel_gi_octree_cells(), baker.get_voxel_gi_data_cells(), df, baker.get_voxel_gi_level_cell_count());
 
@@ -499,8 +499,8 @@ AABB VoxelGI::get_aabb() const {
 	return AABB(-extents, extents * 2);
 }
 
-Vector<Face3> VoxelGI::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> VoxelGI::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 TypedArray<String> VoxelGI::get_configuration_warnings() const {

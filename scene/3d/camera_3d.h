@@ -144,7 +144,7 @@ public:
 	virtual Vector3 project_position(const Point2 &p_point,
 			float p_z_depth) const;
 
-	Vector<Vector3> get_near_plane_points() const;
+	std::vector<Vector3> get_near_plane_points() const;
 
 	void set_cull_mask(uint32_t p_layers);
 	uint32_t get_cull_mask() const;
@@ -152,7 +152,7 @@ public:
 	void set_cull_mask_bit(int p_layer, bool p_enable);
 	bool get_cull_mask_bit(int p_layer) const;
 
-	virtual Vector<Plane> get_frustum() const;
+	virtual std::vector<Plane> get_frustum() const;
 	bool is_position_in_frustum(const Vector3 &p_position) const;
 
 	void set_environment(const Ref<Environment> &p_environment);
@@ -203,7 +203,7 @@ private:
 
 	Set<RID> exclude;
 
-	Vector<Vector3> points;
+	std::vector<Vector3> points;
 
 protected:
 	void _notification(int p_what);

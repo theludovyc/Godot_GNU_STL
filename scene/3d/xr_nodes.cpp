@@ -154,10 +154,10 @@ Vector3 XRCamera3D::project_position(const Point2 &p_point, float p_z_depth) con
 	return get_camera_transform().xform(p);
 };
 
-Vector<Plane> XRCamera3D::get_frustum() const {
+std::vector<Plane> XRCamera3D::get_frustum() const {
 	// get our XRServer
 	XRServer *xr_server = XRServer::get_singleton();
-	ERR_FAIL_NULL_V(xr_server, Vector<Plane>());
+	ERR_FAIL_NULL_V(xr_server, std::vector<Plane>());
 
 	Ref<XRInterface> xr_interface = xr_server->get_primary_interface();
 	if (xr_interface.is_null()) {
@@ -165,7 +165,7 @@ Vector<Plane> XRCamera3D::get_frustum() const {
 		return Camera3D::get_frustum();
 	}
 
-	ERR_FAIL_COND_V(!is_inside_world(), Vector<Plane>());
+	ERR_FAIL_COND_V(!is_inside_world(), std::vector<Plane>());
 
 	Size2 viewport_size = get_viewport()->get_visible_rect().size;
 	// TODO Just use the first view for now, this is mostly for debugging so we may look into using our combined projection here.

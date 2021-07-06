@@ -55,7 +55,7 @@ public:
 	virtual Vector3 project_local_ray_normal(const Point2 &p_pos) const override;
 	virtual Point2 unproject_position(const Vector3 &p_pos) const override;
 	virtual Vector3 project_position(const Point2 &p_point, float p_z_depth) const override;
-	virtual Vector<Plane> get_frustum() const override;
+	virtual std::vector<Plane> get_frustum() const override;
 
 	XRCamera3D() {}
 	~XRCamera3D() {}

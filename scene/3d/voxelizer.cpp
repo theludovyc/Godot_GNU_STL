@@ -29,11 +29,16 @@
 /*************************************************************************/
 
 #include "voxelizer.h"
+
+#include <algorithm>
+
 #include "core/math/geometry_3d.h"
 #include "core/os/os.h"
 #include "core/os/threaded_array_processor.h"
 
 #include <stdlib.h>
+
+//todo std::vector.data()
 
 static _FORCE_INLINE_ void get_uv_and_normal(const Vector3 &p_pos, const Vector3 *p_vtx, const Vector2 *p_uv, const Vector3 *p_normal, Vector2 &r_uv, Vector3 &r_normal) {
 	if (p_pos.distance_squared_to(p_vtx[0]) < CMP_EPSILON2) {
@@ -222,16 +227,16 @@ void Voxelizer::_plot_face(int p_idx, int p_level, int p_x, int p_y, int p_z, co
 		}
 
 		//put this temporarily here, corrected in a later step
-		bake_cells.write[p_idx].albedo[0] += albedo_accum.r;
-		bake_cells.write[p_idx].albedo[1] += albedo_accum.g;
-		bake_cells.write[p_idx].albedo[2] += albedo_accum.b;
-		bake_cells.write[p_idx].emission[0] += emission_accum.r;
-		bake_cells.write[p_idx].emission[1] += emission_accum.g;
-		bake_cells.write[p_idx].emission[2] += emission_accum.b;
-		bake_cells.write[p_idx].normal[0] += normal_accum.x;
-		bake_cells.write[p_idx].normal[1] += normal_accum.y;
-		bake_cells.write[p_idx].normal[2] += normal_accum.z;
-		bake_cells.write[p_idx].alpha += alpha;
+		bake_cells[p_idx].albedo[0] += albedo_accum.r;
+		bake_cells[p_idx].albedo[1] += albedo_accum.g;
+		bake_cells[p_idx].albedo[2] += albedo_accum.b;
+		bake_cells[p_idx].emission[0] += emission_accum.r;
+		bake_cells[p_idx].emission[1] += emission_accum.g;
+		bake_cells[p_idx].emission[2] += emission_accum.b;
+		bake_cells[p_idx].normal[0] += normal_accum.x;
+		bake_cells[p_idx].normal[1] += normal_accum.y;
+		bake_cells[p_idx].normal[2] += normal_accum.z;
+		bake_cells[p_idx].alpha += alpha;
 
 	} else {
 		//go down
@@ -278,12 +283,12 @@ void Voxelizer::_plot_face(int p_idx, int p_level, int p_x, int p_y, int p_z, co
 				//sub cell must be created
 
 				uint32_t child_idx = bake_cells.size();
-				bake_cells.write[p_idx].children[i] = child_idx;
+				bake_cells[p_idx].children[i] = child_idx;
 				bake_cells.resize(bake_cells.size() + 1);
-				bake_cells.write[child_idx].level = p_level + 1;
-				bake_cells.write[child_idx].x = nx / half;
-				bake_cells.write[child_idx].y = ny / half;
-				bake_cells.write[child_idx].z = nz / half;
+				bake_cells[child_idx].level = p_level + 1;
+				bake_cells[child_idx].x = nx / half;
+				bake_cells[child_idx].y = ny / half;
+				bake_cells[child_idx].z = nz / half;
 			}
 
 			_plot_face(bake_cells[p_idx].children[i], p_level + 1, nx, ny, nz, p_vtx, p_normal, p_uv, p_material, aabb);
@@ -291,13 +296,13 @@ void Voxelizer::_plot_face(int p_idx, int p_level, int p_x, int p_y, int p_z, co
 	}
 }
 
-Vector<Color> Voxelizer::_get_bake_texture(Ref<Image> p_image, const Color &p_color_mul, const Color &p_color_add) {
-	Vector<Color> ret;
+std::vector<Color> Voxelizer::_get_bake_texture(Ref<Image> p_image, const Color &p_color_mul, const Color &p_color_add) {
+	std::vector<Color> ret;
 
 	if (p_image.is_null() || p_image->is_empty()) {
 		ret.resize(bake_texture_size * bake_texture_size);
 		for (int i = 0; i < bake_texture_size * bake_texture_size; i++) {
-			ret.write[i] = p_color_add;
+			ret[i] = p_color_add;
 		}
 
 		return ret;
@@ -310,7 +315,7 @@ Vector<Color> Voxelizer::_get_bake_texture(Ref<Image> p_image, const Color &p_co
 	p_image->convert(Image::FORMAT_RGBA8);
 	p_image->resize(bake_texture_size, bake_texture_size, Image::INTERPOLATE_CUBIC);
 
-	const uint8_t *r = p_image->get_data().ptr();
+	const uint8_t *r = p_image->get_data().data();
 	ret.resize(bake_texture_size * bake_texture_size);
 
 	for (int i = 0; i < bake_texture_size * bake_texture_size; i++) {
@@ -321,7 +326,7 @@ Vector<Color> Voxelizer::_get_bake_texture(Ref<Image> p_image, const Color &p_co
 
 		c.a = r[i * 4 + 3] / 255.0;
 
-		ret.write[i] = c;
+		ret[i] = c;
 	}
 
 	return ret;
@@ -378,7 +383,7 @@ Voxelizer::MaterialCache Voxelizer::_get_material_cache(Ref<Material> p_material
 	return mc;
 }
 
-void Voxelizer::plot_mesh(const Transform3D &p_xform, Ref<Mesh> &p_mesh, const Vector<Ref<Material>> &p_materials, const Ref<Material> &p_override_material) {
+void Voxelizer::plot_mesh(const Transform3D &p_xform, Ref<Mesh> &p_mesh, const std::vector<Ref<Material>> &p_materials, const Ref<Material> &p_override_material) {
 	for (int i = 0; i < p_mesh->get_surface_count(); i++) {
 		if (p_mesh->surface_get_primitive_type(i) != Mesh::PRIMITIVE_TRIANGLES) {
 			continue; //only triangles
@@ -397,25 +402,25 @@ void Voxelizer::plot_mesh(const Transform3D &p_xform, Ref<Mesh> &p_mesh, const V
 
 		Array a = p_mesh->surface_get_arrays(i);
 
-		Vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
-		const Vector3 *vr = vertices.ptr();
-		Vector<Vector2> uv = a[Mesh::ARRAY_TEX_UV];
+		std::vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
+		const Vector3 *vr = vertices.data();
+		std::vector<Vector2> uv = a[Mesh::ARRAY_TEX_UV];
 		const Vector2 *uvr = nullptr;
-		Vector<Vector3> normals = a[Mesh::ARRAY_NORMAL];
+		std::vector<Vector3> normals = a[Mesh::ARRAY_NORMAL];
 		const Vector3 *nr = nullptr;
-		Vector<int> index = a[Mesh::ARRAY_INDEX];
+		std::vector<int> index = a[Mesh::ARRAY_INDEX];
 
 		if (uv.size()) {
-			uvr = uv.ptr();
+			uvr = uv.data();
 		}
 
 		if (normals.size()) {
-			nr = normals.ptr();
+			nr = normals.data();
 		}
 
 		if (index.size()) {
 			int facecount = index.size() / 3;
-			const int *ir = index.ptr();
+			const int *ir = index.data();
 
 			for (int j = 0; j < facecount; j++) {
 				Vector3 vtxs[3];
@@ -488,12 +493,12 @@ void Voxelizer::_sort() {
 	// it is important that level has more priority (for compute), and that Z has the least,
 	// given it may aid older implementations plot using GPU
 
-	Vector<CellSort> sorted_cells;
+	std::vector<CellSort> sorted_cells;
 	uint32_t cell_count = bake_cells.size();
 	sorted_cells.resize(cell_count);
 	{
-		CellSort *sort_cellsp = sorted_cells.ptrw();
-		const Cell *bake_cellsp = bake_cells.ptr();
+		CellSort *sort_cellsp = sorted_cells.data();
+		const Cell *bake_cellsp = bake_cells.data();
 
 		for (uint32_t i = 0; i < cell_count; i++) {
 			sort_cellsp[i].x = bake_cellsp[i].x;
@@ -504,19 +509,19 @@ void Voxelizer::_sort() {
 		}
 	}
 
-	sorted_cells.sort();
+	std::sort(sorted_cells.begin(),  sorted_cells.end());
 
 	//verify just in case, index 0 must be level 0
 	ERR_FAIL_COND(sorted_cells[0].level != 0);
 
-	Vector<Cell> new_bake_cells;
+	std::vector<Cell> new_bake_cells;
 	new_bake_cells.resize(cell_count);
-	Vector<uint32_t> reverse_map;
+	std::vector<uint32_t> reverse_map;
 
 	{
 		reverse_map.resize(cell_count);
-		const CellSort *sort_cellsp = sorted_cells.ptr();
-		uint32_t *reverse_mapp = reverse_map.ptrw();
+		const CellSort *sort_cellsp = sorted_cells.data();
+		uint32_t *reverse_mapp = reverse_map.data();
 
 		for (uint32_t i = 0; i < cell_count; i++) {
 			reverse_mapp[sort_cellsp[i].index] = i;
@@ -524,10 +529,10 @@ void Voxelizer::_sort() {
 	}
 
 	{
-		const CellSort *sort_cellsp = sorted_cells.ptr();
-		const Cell *bake_cellsp = bake_cells.ptr();
-		const uint32_t *reverse_mapp = reverse_map.ptr();
-		Cell *new_bake_cellsp = new_bake_cells.ptrw();
+		const CellSort *sort_cellsp = sorted_cells.data();
+		const Cell *bake_cellsp = bake_cells.data();
+		const uint32_t *reverse_mapp = reverse_map.data();
+		Cell *new_bake_cellsp = new_bake_cells.data();
 
 		for (uint32_t i = 0; i < cell_count; i++) {
 			//copy to new cell
@@ -550,33 +555,33 @@ void Voxelizer::_fixup_plot(int p_idx, int p_level) {
 		leaf_voxel_count++;
 		float alpha = bake_cells[p_idx].alpha;
 
-		bake_cells.write[p_idx].albedo[0] /= alpha;
-		bake_cells.write[p_idx].albedo[1] /= alpha;
-		bake_cells.write[p_idx].albedo[2] /= alpha;
+		bake_cells[p_idx].albedo[0] /= alpha;
+		bake_cells[p_idx].albedo[1] /= alpha;
+		bake_cells[p_idx].albedo[2] /= alpha;
 
 		//transfer emission to light
-		bake_cells.write[p_idx].emission[0] /= alpha;
-		bake_cells.write[p_idx].emission[1] /= alpha;
-		bake_cells.write[p_idx].emission[2] /= alpha;
+		bake_cells[p_idx].emission[0] /= alpha;
+		bake_cells[p_idx].emission[1] /= alpha;
+		bake_cells[p_idx].emission[2] /= alpha;
 
-		bake_cells.write[p_idx].normal[0] /= alpha;
-		bake_cells.write[p_idx].normal[1] /= alpha;
-		bake_cells.write[p_idx].normal[2] /= alpha;
+		bake_cells[p_idx].normal[0] /= alpha;
+		bake_cells[p_idx].normal[1] /= alpha;
+		bake_cells[p_idx].normal[2] /= alpha;
 
 		Vector3 n(bake_cells[p_idx].normal[0], bake_cells[p_idx].normal[1], bake_cells[p_idx].normal[2]);
 		if (n.length() < 0.01) {
 			//too much fight over normal, zero it
-			bake_cells.write[p_idx].normal[0] = 0;
-			bake_cells.write[p_idx].normal[1] = 0;
-			bake_cells.write[p_idx].normal[2] = 0;
+			bake_cells[p_idx].normal[0] = 0;
+			bake_cells[p_idx].normal[1] = 0;
+			bake_cells[p_idx].normal[2] = 0;
 		} else {
 			n.normalize();
-			bake_cells.write[p_idx].normal[0] = n.x;
-			bake_cells.write[p_idx].normal[1] = n.y;
-			bake_cells.write[p_idx].normal[2] = n.z;
+			bake_cells[p_idx].normal[0] = n.x;
+			bake_cells[p_idx].normal[1] = n.y;
+			bake_cells[p_idx].normal[2] = n.z;
 		}
 
-		bake_cells.write[p_idx].alpha = 1.0;
+		bake_cells[p_idx].alpha = 1.0;
 
 		/*if (bake_light.size()) {
 			for(int i=0;i<6;i++) {
@@ -586,15 +591,15 @@ void Voxelizer::_fixup_plot(int p_idx, int p_level) {
 	} else {
 		//go down
 
-		bake_cells.write[p_idx].emission[0] = 0;
-		bake_cells.write[p_idx].emission[1] = 0;
-		bake_cells.write[p_idx].emission[2] = 0;
-		bake_cells.write[p_idx].normal[0] = 0;
-		bake_cells.write[p_idx].normal[1] = 0;
-		bake_cells.write[p_idx].normal[2] = 0;
-		bake_cells.write[p_idx].albedo[0] = 0;
-		bake_cells.write[p_idx].albedo[1] = 0;
-		bake_cells.write[p_idx].albedo[2] = 0;
+		bake_cells[p_idx].emission[0] = 0;
+		bake_cells[p_idx].emission[1] = 0;
+		bake_cells[p_idx].emission[2] = 0;
+		bake_cells[p_idx].normal[0] = 0;
+		bake_cells[p_idx].normal[1] = 0;
+		bake_cells[p_idx].normal[2] = 0;
+		bake_cells[p_idx].albedo[0] = 0;
+		bake_cells[p_idx].albedo[1] = 0;
+		bake_cells[p_idx].albedo[2] = 0;
 
 		float alpha_average = 0;
 		int children_found = 0;
@@ -612,7 +617,7 @@ void Voxelizer::_fixup_plot(int p_idx, int p_level) {
 			children_found++;
 		}
 
-		bake_cells.write[p_idx].alpha = alpha_average / 8.0;
+		bake_cells[p_idx].alpha = alpha_average / 8.0;
 	}
 }
 
@@ -680,13 +685,13 @@ int Voxelizer::get_voxel_gi_cell_count() const {
 	return bake_cells.size();
 }
 
-Vector<uint8_t> Voxelizer::get_voxel_gi_octree_cells() const {
-	Vector<uint8_t> data;
+std::vector<uint8_t> Voxelizer::get_voxel_gi_octree_cells() const {
+	std::vector<uint8_t> data;
 	data.resize((8 * 4) * bake_cells.size()); //8 uint32t values
 	{
-		uint8_t *w = data.ptrw();
+		uint8_t *w = data.data();
 		uint32_t *children_cells = (uint32_t *)w;
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 
 		uint32_t cell_count = bake_cells.size();
 
@@ -700,13 +705,13 @@ Vector<uint8_t> Voxelizer::get_voxel_gi_octree_cells() const {
 	return data;
 }
 
-Vector<uint8_t> Voxelizer::get_voxel_gi_data_cells() const {
-	Vector<uint8_t> data;
+std::vector<uint8_t> Voxelizer::get_voxel_gi_data_cells() const {
+	std::vector<uint8_t> data;
 	data.resize((4 * 4) * bake_cells.size()); //8 uint32t values
 	{
-		uint8_t *w = data.ptrw();
+		uint8_t *w = data.data();
 		uint32_t *dataptr = (uint32_t *)w;
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 
 		uint32_t cell_count = bake_cells.size();
 
@@ -755,13 +760,13 @@ Vector<uint8_t> Voxelizer::get_voxel_gi_data_cells() const {
 	return data;
 }
 
-Vector<int> Voxelizer::get_voxel_gi_level_cell_count() const {
+std::vector<int> Voxelizer::get_voxel_gi_level_cell_count() const {
 	uint32_t cell_count = bake_cells.size();
-	const Cell *cells = bake_cells.ptr();
-	Vector<int> level_count;
+	const Cell *cells = bake_cells.data();
+	std::vector<int> level_count;
 	level_count.resize(cell_subdiv + 1); //remember, always x+1 levels for x subdivisions
 	{
-		int *w = level_count.ptrw();
+		int *w = level_count.data();
 		for (int i = 0; i < cell_subdiv + 1; i++) {
 			w[i] = 0;
 		}
@@ -818,7 +823,7 @@ static void edt(float *f, int stride, int n) {
 
 #undef square
 
-Vector<uint8_t> Voxelizer::get_sdf_3d_image() const {
+std::vector<uint8_t> Voxelizer::get_sdf_3d_image() const {
 	Vector3i octree_size = get_voxel_gi_octree_size();
 
 	uint32_t float_count = octree_size.x * octree_size.y * octree_size.z;
@@ -832,7 +837,7 @@ Vector<uint8_t> Voxelizer::get_sdf_3d_image() const {
 
 	//plot solid cells
 	{
-		const Cell *cells = bake_cells.ptr();
+		const Cell *cells = bake_cells.data();
 		uint32_t cell_count = bake_cells.size();
 
 		for (uint32_t i = 0; i < cell_count; i++) {
@@ -869,10 +874,10 @@ Vector<uint8_t> Voxelizer::get_sdf_3d_image() const {
 		}
 	}
 
-	Vector<uint8_t> image3d;
+	std::vector<uint8_t> image3d;
 	image3d.resize(float_count);
 	{
-		uint8_t *w = image3d.ptrw();
+		uint8_t *w = image3d.data();
 		for (uint32_t i = 0; i < float_count; i++) {
 			uint32_t d = uint32_t(Math::sqrt(work_memory[i]));
 			if (d == 0) {
@@ -944,8 +949,8 @@ Ref<MultiMesh> Voxelizer::create_debug_multimesh() {
 		Array arr;
 		arr.resize(Mesh::ARRAY_MAX);
 
-		Vector<Vector3> vertices;
-		Vector<Color> colors;
+		std::vector<Vector3> vertices;
+		std::vector<Color> colors;
 #define ADD_VTX(m_idx)                      \
 	vertices.push_back(face_points[m_idx]); \
 	colors.push_back(Color(1, 1, 1, 1));

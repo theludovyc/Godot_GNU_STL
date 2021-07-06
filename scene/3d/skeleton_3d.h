@@ -49,7 +49,7 @@ class SkinReference : public RefCounted {
 	Ref<Skin> skin;
 	uint32_t bind_count = 0;
 	uint64_t skeleton_version = 0;
-	Vector<uint32_t> skin_bone_indices;
+	std::vector<uint32_t> skin_bone_indices;
 	uint32_t *skin_bone_indices_ptrs;
 	void _skin_changed();
 
@@ -100,8 +100,8 @@ private:
 	void _skin_changed();
 
 	bool animate_physical_bones = true;
-	Vector<Bone> bones;
-	Vector<int> process_order;
+	std::vector<Bone> bones;
+	std::vector<int> process_order;
 	bool process_order_dirty = true;
 
 	void _make_dirty();
@@ -168,7 +168,7 @@ public:
 
 	void localize_rests(); // used for loaders and tools
 	int get_process_order(int p_idx);
-	Vector<int> get_bone_process_orders();
+	std::vector<int> get_bone_process_orders();
 
 	Ref<SkinReference> register_skin(const Ref<Skin> &p_skin);
 

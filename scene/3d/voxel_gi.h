@@ -62,13 +62,13 @@ protected:
 	void _validate_property(PropertyInfo &property) const override;
 
 public:
-	void allocate(const Transform3D &p_to_cell_xform, const AABB &p_aabb, const Vector3 &p_octree_size, const Vector<uint8_t> &p_octree_cells, const Vector<uint8_t> &p_data_cells, const Vector<uint8_t> &p_distance_field, const Vector<int> &p_level_counts);
+	void allocate(const Transform3D &p_to_cell_xform, const AABB &p_aabb, const Vector3 &p_octree_size, const std::vector<uint8_t> &p_octree_cells, const std::vector<uint8_t> &p_data_cells, const std::vector<uint8_t> &p_distance_field, const std::vector<int> &p_level_counts);
 	AABB get_bounds() const;
 	Vector3 get_octree_size() const;
-	Vector<uint8_t> get_octree_cells() const;
-	Vector<uint8_t> get_data_cells() const;
-	Vector<uint8_t> get_distance_field() const;
-	Vector<int> get_level_counts() const;
+	std::vector<uint8_t> get_octree_cells() const;
+	std::vector<uint8_t> get_data_cells() const;
+	std::vector<uint8_t> get_distance_field() const;
+	std::vector<int> get_level_counts() const;
 	Transform3D get_to_cell_xform() const;
 
 	void set_dynamic_range(float p_range);
@@ -134,7 +134,7 @@ private:
 
 	struct PlotMesh {
 		Ref<Material> override_material;
-		Vector<Ref<Material>> instance_materials;
+		std::vector<Ref<Material>> instance_materials;
 		Ref<Mesh> mesh;
 		Transform3D local_xform;
 	};
@@ -163,7 +163,7 @@ public:
 	void bake(Node *p_from_node = nullptr, bool p_create_visual_debug = false);
 
 	virtual AABB get_aabb() const override;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	TypedArray<String> get_configuration_warnings() const override;
 
