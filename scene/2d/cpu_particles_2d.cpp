@@ -36,6 +36,8 @@
 #include "scene/resources/particles_material.h"
 #include "servers/rendering_server.h"
 
+//todo std::vector.data()
+
 void CPUParticles2D::set_emitting(bool p_emitting) {
 	if (emitting == p_emitting) {
 		return;
@@ -52,7 +54,7 @@ void CPUParticles2D::set_amount(int p_amount) {
 
 	particles.resize(p_amount);
 	{
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < p_amount; i++) {
 			w[i].active = false;
@@ -154,12 +156,12 @@ void CPUParticles2D::_update_mesh_texture() {
 	} else {
 		tex_size = Size2(1, 1);
 	}
-	Vector<Vector2> vertices;
+	std::vector<Vector2> vertices;
 	vertices.push_back(-tex_size * 0.5);
 	vertices.push_back(-tex_size * 0.5 + Vector2(tex_size.x, 0));
 	vertices.push_back(-tex_size * 0.5 + Vector2(tex_size.x, tex_size.y));
 	vertices.push_back(-tex_size * 0.5 + Vector2(0, tex_size.y));
-	Vector<Vector2> uvs;
+	std::vector<Vector2> uvs;
 	AtlasTexture *atlas_texure = Object::cast_to<AtlasTexture>(*texture);
 	if (atlas_texure && atlas_texure->get_atlas().is_valid()) {
 		Rect2 region_rect = atlas_texure->get_region();
@@ -174,12 +176,12 @@ void CPUParticles2D::_update_mesh_texture() {
 		uvs.push_back(Vector2(1, 1));
 		uvs.push_back(Vector2(0, 1));
 	}
-	Vector<Color> colors;
+	std::vector<Color> colors;
 	colors.push_back(Color(1, 1, 1, 1));
 	colors.push_back(Color(1, 1, 1, 1));
 	colors.push_back(Color(1, 1, 1, 1));
 	colors.push_back(Color(1, 1, 1, 1));
-	Vector<int> indices;
+	std::vector<int> indices;
 	indices.push_back(0);
 	indices.push_back(1);
 	indices.push_back(2);
@@ -268,7 +270,7 @@ void CPUParticles2D::restart() {
 
 	{
 		int pc = particles.size();
-		Particle *w = particles.ptrw();
+		Particle *w = particles.data();
 
 		for (int i = 0; i < pc; i++) {
 			w[i].active = false;
@@ -418,15 +420,15 @@ void CPUParticles2D::set_emission_rect_extents(Vector2 p_extents) {
 	emission_rect_extents = p_extents;
 }
 
-void CPUParticles2D::set_emission_points(const Vector<Vector2> &p_points) {
+void CPUParticles2D::set_emission_points(const std::vector<Vector2> &p_points) {
 	emission_points = p_points;
 }
 
-void CPUParticles2D::set_emission_normals(const Vector<Vector2> &p_normals) {
+void CPUParticles2D::set_emission_normals(const std::vector<Vector2> &p_normals) {
 	emission_normals = p_normals;
 }
 
-void CPUParticles2D::set_emission_colors(const Vector<Color> &p_colors) {
+void CPUParticles2D::set_emission_colors(const std::vector<Color> &p_colors) {
 	emission_colors = p_colors;
 }
 
@@ -438,15 +440,15 @@ Vector2 CPUParticles2D::get_emission_rect_extents() const {
 	return emission_rect_extents;
 }
 
-Vector<Vector2> CPUParticles2D::get_emission_points() const {
+std::vector<Vector2> CPUParticles2D::get_emission_points() const {
 	return emission_points;
 }
 
-Vector<Vector2> CPUParticles2D::get_emission_normals() const {
+std::vector<Vector2> CPUParticles2D::get_emission_normals() const {
 	return emission_normals;
 }
 
-Vector<Color> CPUParticles2D::get_emission_colors() const {
+std::vector<Color> CPUParticles2D::get_emission_colors() const {
 	return emission_colors;
 }
 
@@ -585,7 +587,7 @@ void CPUParticles2D::_particles_process(float p_delta) {
 	p_delta *= speed_scale;
 
 	int pcount = particles.size();
-	Particle *w = particles.ptrw();
+	Particle *w = particles.data();
 
 	Particle *parray = w;
 
@@ -736,10 +738,10 @@ void CPUParticles2D::_particles_process(float p_delta) {
 
 					int random_idx = Math::rand() % pc;
 
-					p.transform[2] = emission_points.get(random_idx);
+					p.transform[2] = emission_points[random_idx];
 
 					if (emission_shape == EMISSION_SHAPE_DIRECTED_POINTS && emission_normals.size() == pc) {
-						Vector2 normal = emission_normals.get(random_idx);
+						Vector2 normal = emission_normals[random_idx];
 						Transform2D m2;
 						m2.set_axis(0, normal);
 						m2.set_axis(1, normal.orthogonal());
@@ -747,7 +749,7 @@ void CPUParticles2D::_particles_process(float p_delta) {
 					}
 
 					if (emission_colors.size() == pc) {
-						p.base_color = emission_colors.get(random_idx);
+						p.base_color = emission_colors[random_idx];
 					}
 				} break;
 				case EMISSION_SHAPE_MAX: { // Max value for validity check.
@@ -938,12 +940,12 @@ void CPUParticles2D::_update_particle_data_buffer() {
 	int *ow;
 	int *order = nullptr;
 
-	float *w = particle_data.ptrw();
-	const Particle *r = particles.ptr();
+	float *w = particle_data.data();
+	const Particle *r = particles.data();
 	float *ptr = w;
 
 	if (draw_order != DRAW_ORDER_INDEX) {
-		ow = particle_order.ptrw();
+		ow = particle_order.data();
 		order = ow;
 
 		for (int i = 0; i < pc; i++) {
@@ -1062,8 +1064,8 @@ void CPUParticles2D::_notification(int p_what) {
 			if (!local_coords) {
 				int pc = particles.size();
 
-				float *w = particle_data.ptrw();
-				const Particle *r = particles.ptr();
+				float *w = particle_data.data();
+				const Particle *r = particles.data();
 				float *ptr = w;
 
 				for (int i = 0; i < pc; i++) {

@@ -68,10 +68,10 @@ public:
 				int calls = 0;
 			};
 
-			Vector<Item> items;
+			std::vector<Item> items;
 		};
 
-		Vector<Category> categories;
+		std::vector<Category> categories;
 
 		Map<StringName, Category *> category_ptrs;
 		Map<StringName, Category::Item *> item_ptrs;
@@ -94,7 +94,7 @@ private:
 	Button *clear_button;
 	TextureRect *graph;
 	Ref<ImageTexture> graph_texture;
-	Vector<uint8_t> graph_image;
+	std::vector<uint8_t> graph_image;
 	Tree *variables;
 	HSplitContainer *h_split;
 
@@ -105,7 +105,7 @@ private:
 
 	SpinBox *cursor_metric_edit;
 
-	Vector<Metric> frame_metrics;
+	std::vector<Metric> frame_metrics;
 	int total_metrics;
 	int last_metric;
 
@@ -160,7 +160,7 @@ public:
 
 	void clear();
 
-	Vector<Vector<String>> get_data_as_csv() const;
+	std::vector<std::vector<String>> get_data_as_csv() const;
 
 	EditorProfiler();
 };

@@ -34,11 +34,13 @@
 #include "editor/editor_scale.h"
 #include "editor/editor_settings.h"
 
+//todo std::vector.data()
+
 void EditorProfiler::_make_metric_ptrs(Metric &m) {
 	for (int i = 0; i < m.categories.size(); i++) {
-		m.category_ptrs[m.categories[i].signature] = &m.categories.write[i];
+		m.category_ptrs[m.categories[i].signature] = &m.categories[i];
 		for (int j = 0; j < m.categories[i].items.size(); j++) {
-			m.item_ptrs[m.categories[i].items[j].signature] = &m.categories.write[i].items.write[j];
+			m.item_ptrs[m.categories[i].items[j].signature] = &m.categories[i].items[j];
 		}
 	}
 }
@@ -58,8 +60,8 @@ void EditorProfiler::add_frame_metric(const Metric &p_metric, bool p_final) {
 		total_metrics = frame_metrics.size();
 	}
 
-	frame_metrics.write[last_metric] = p_metric;
-	_make_metric_ptrs(frame_metrics.write[last_metric]);
+	frame_metrics[last_metric] = p_metric;
+	_make_metric_ptrs(frame_metrics[last_metric]);
 
 	updating_frame = true;
 	clear_button->set_disabled(false);
@@ -179,7 +181,7 @@ void EditorProfiler::_update_plot() {
 		graph_image.resize(desired_len);
 	}
 
-	uint8_t *wr = graph_image.ptrw();
+	uint8_t *wr = graph_image.data();
 	const Color background_color = get_theme_color("dark_color_2", "Editor");
 
 	// Clear the previous frame and set the background color.
@@ -220,10 +222,10 @@ void EditorProfiler::_update_plot() {
 		highest *= 1.2; //leave some upper room
 		graph_height = highest;
 
-		Vector<int> columnv;
+		std::vector<int> columnv;
 		columnv.resize(h * 4);
 
-		int *column = columnv.ptrw();
+		int *column = columnv.data();
 
 		Map<StringName, int> prev_plots;
 
@@ -501,10 +503,10 @@ bool EditorProfiler::is_profiling() {
 	return activate->is_pressed();
 }
 
-Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
-	Vector<Vector<String>> res;
+std::vector<std::vector<String>> EditorProfiler::get_data_as_csv() const {
+	std::vector<std::vector<String>> res;
 
-	if (frame_metrics.is_empty()) {
+	if (frame_metrics.empty()) {
 		return res;
 	}
 
@@ -525,18 +527,18 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 
 	// Generate CSV header and cache indices.
 	Map<StringName, int> sig_map;
-	Vector<String> signatures;
+	std::vector<String> signatures;
 	signatures.resize(possible_signatures.size());
 	int sig_index = 0;
 	for (const Set<StringName>::Element *E = possible_signatures.front(); E; E = E->next()) {
-		signatures.write[sig_index] = E->get();
+		signatures[sig_index] = E->get();
 		sig_map[E->get()] = sig_index;
 		sig_index++;
 	}
 	res.push_back(signatures);
 
 	// values
-	Vector<String> values;
+	std::vector<String> values;
 
 	int index = last_metric;
 
@@ -558,10 +560,10 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 		values.resize(possible_signatures.size());
 
 		for (Map<StringName, Metric::Category *>::Element *E = m.category_ptrs.front(); E; E = E->next()) {
-			values.write[sig_map[E->key()]] = String::num_real(E->value()->total_time);
+			values[sig_map[E->key()]] = String::num_real(E->value()->total_time);
 		}
 		for (Map<StringName, Metric::Category::Item *>::Element *E = m.item_ptrs.front(); E; E = E->next()) {
-			values.write[sig_map[E->key()]] = String::num_real(E->value()->total);
+			values[sig_map[E->key()]] = String::num_real(E->value()->total);
 		}
 
 		res.push_back(values);
