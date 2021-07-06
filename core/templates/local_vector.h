@@ -34,7 +34,6 @@
 #include "core/error/error_macros.h"
 #include "core/os/memory.h"
 #include "core/templates/sort_array.h"
-#include "core/templates/vector.h"
 
 template <class T, class U = uint32_t, bool force_trivial = false>
 class LocalVector {
@@ -212,18 +211,18 @@ public:
 		insert(i, p_val);
 	}
 
-	operator Vector<T>() const {
-		Vector<T> ret;
+	operator std::vector<T>() const {
+		std::vector<T> ret;
 		ret.resize(size());
 		T *w = ret.ptrw();
 		memcpy(w, data, sizeof(T) * count);
 		return ret;
 	}
 
-	Vector<uint8_t> to_byte_array() const { //useful to pass stuff to gpu or variant
-		Vector<uint8_t> ret;
+	std::vector<uint8_t> to_byte_array() const { //useful to pass stuff to gpu or variant
+		std::vector<uint8_t> ret;
 		ret.resize(count * sizeof(T));
-		uint8_t *w = ret.ptrw();
+		uint8_t *w = ret.data();
 		memcpy(w, data, sizeof(T) * count);
 		return ret;
 	}
@@ -242,7 +241,7 @@ public:
 		}
 		return *this;
 	}
-	inline LocalVector &operator=(const Vector<T> &p_from) {
+	inline LocalVector &operator=(const std::vector<T> &p_from) {
 		resize(p_from.size());
 		for (U i = 0; i < count; i++) {
 			data[i] = p_from[i];
