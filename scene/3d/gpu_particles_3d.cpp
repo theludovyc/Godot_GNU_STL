@@ -39,8 +39,8 @@ AABB GPUParticles3D::get_aabb() const {
 	return AABB();
 }
 
-Vector<Face3> GPUParticles3D::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> GPUParticles3D::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 void GPUParticles3D::set_emitting(bool p_emitting) {
@@ -220,14 +220,14 @@ int GPUParticles3D::get_draw_passes() const {
 void GPUParticles3D::set_draw_pass_mesh(int p_pass, const Ref<Mesh> &p_mesh) {
 	ERR_FAIL_INDEX(p_pass, draw_passes.size());
 
-	if (Engine::get_singleton()->is_editor_hint() && draw_passes.write[p_pass].is_valid()) {
-		draw_passes.write[p_pass]->disconnect("changed", callable_mp((Node *)this, &Node::update_configuration_warnings));
+	if (Engine::get_singleton()->is_editor_hint() && draw_passes[p_pass].is_valid()) {
+		draw_passes[p_pass]->disconnect("changed", callable_mp((Node *)this, &Node::update_configuration_warnings));
 	}
 
-	draw_passes.write[p_pass] = p_mesh;
+	draw_passes[p_pass] = p_mesh;
 
-	if (Engine::get_singleton()->is_editor_hint() && draw_passes.write[p_pass].is_valid()) {
-		draw_passes.write[p_pass]->connect("changed", callable_mp((Node *)this, &Node::update_configuration_warnings), varray(), CONNECT_DEFERRED);
+	if (Engine::get_singleton()->is_editor_hint() && draw_passes[p_pass].is_valid()) {
+		draw_passes[p_pass]->connect("changed", callable_mp((Node *)this, &Node::update_configuration_warnings), varray(), CONNECT_DEFERRED);
 	}
 
 	RID mesh_rid;
@@ -458,11 +458,11 @@ void GPUParticles3D::_notification(int p_what) {
 }
 
 void GPUParticles3D::_skinning_changed() {
-	Vector<Transform3D> xforms;
+	std::vector<Transform3D> xforms;
 	if (skin.is_valid()) {
 		xforms.resize(skin->get_bind_count());
 		for (int i = 0; i < skin->get_bind_count(); i++) {
-			xforms.write[i] = skin->get_bind_pose(i);
+			xforms[i] = skin->get_bind_pose(i);
 		}
 	} else {
 		for (int i = 0; i < draw_passes.size(); i++) {
@@ -470,7 +470,7 @@ void GPUParticles3D::_skinning_changed() {
 			if (draw_pass.is_valid() && draw_pass->get_builtin_bind_pose_count() > 0) {
 				xforms.resize(draw_pass->get_builtin_bind_pose_count());
 				for (int j = 0; j < draw_pass->get_builtin_bind_pose_count(); j++) {
-					xforms.write[i] = draw_pass->get_builtin_bind_pose(j);
+					xforms[i] = draw_pass->get_builtin_bind_pose(j);
 				}
 				break;
 			}

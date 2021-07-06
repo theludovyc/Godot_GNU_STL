@@ -150,8 +150,8 @@ AABB Decal::get_aabb() const {
 	return aabb;
 }
 
-Vector<Face3> Decal::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> Decal::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 void Decal::_validate_property(PropertyInfo &property) const {

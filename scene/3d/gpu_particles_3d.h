@@ -86,7 +86,7 @@ private:
 
 	DrawOrder draw_order;
 
-	Vector<Ref<Mesh>> draw_passes;
+	std::vector<Ref<Mesh>> draw_passes;
 	Ref<Skin> skin;
 
 	void _attach_sub_emitter();
@@ -100,7 +100,7 @@ protected:
 
 public:
 	AABB get_aabb() const override;
-	Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	void set_emitting(bool p_emitting);
 	void set_amount(int p_amount);
