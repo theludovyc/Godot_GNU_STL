@@ -53,7 +53,7 @@ public:
 };
 
 class ImageLoader {
-	static Vector<ImageFormatLoader *> loader;
+	static std::vector<ImageFormatLoader *> loader;
 	friend class ResourceFormatLoaderImage;
 
 protected:
@@ -65,7 +65,7 @@ public:
 	static void add_image_format_loader(ImageFormatLoader *p_loader);
 	static void remove_image_format_loader(ImageFormatLoader *p_loader);
 
-	static const Vector<ImageFormatLoader *> &get_image_format_loaders();
+	static const std::vector<ImageFormatLoader *> &get_image_format_loaders();
 
 	static void cleanup();
 };

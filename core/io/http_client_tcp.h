@@ -45,10 +45,10 @@ private:
 	bool handshaking = false;
 	bool head_request = false;
 
-	Vector<uint8_t> response_str;
+	std::vector<uint8_t> response_str;
 
 	bool chunked = false;
-	Vector<uint8_t> chunk;
+	std::vector<uint8_t> chunk;
 	int chunk_left = 0;
 	bool chunk_trailer_part = false;
 	int body_size = -1;
@@ -59,7 +59,7 @@ private:
 	Ref<StreamPeer> connection;
 
 	int response_num = 0;
-	Vector<String> response_headers;
+	std::vector<String> response_headers;
 	// 64 KiB by default (favors fast download speeds at the cost of memory usage).
 	int read_chunk_size = 65536;
 
@@ -68,7 +68,7 @@ private:
 public:
 	static HTTPClient *_create_func();
 
-	Error request(Method p_method, const String &p_url, const Vector<String> &p_headers, const uint8_t *p_body, int p_body_size) override;
+	Error request(Method p_method, const String &p_url, const std::vector<String> &p_headers, const uint8_t *p_body, int p_body_size) override;
 
 	Error connect_to_host(const String &p_host, int p_port = -1, bool p_ssl = false, bool p_verify_host = true) override;
 	void set_connection(const Ref<StreamPeer> &p_connection) override;

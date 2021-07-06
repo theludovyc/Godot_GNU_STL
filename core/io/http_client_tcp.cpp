@@ -35,6 +35,8 @@
 #include "core/io/stream_peer_ssl.h"
 #include "core/version.h"
 
+//todo std::vector.data()
+
 HTTPClient *HTTPClientTCP::_create_func() {
 	return memnew(HTTPClientTCP);
 }
@@ -126,7 +128,7 @@ static bool _check_request_url(HTTPClientTCP::Method p_method, const String &p_u
 	}
 }
 
-Error HTTPClientTCP::request(Method p_method, const String &p_url, const Vector<String> &p_headers, const uint8_t *p_body, int p_body_size) {
+Error HTTPClientTCP::request(Method p_method, const String &p_url, const std::vector<String> &p_headers, const uint8_t *p_body, int p_body_size) {
 	ERR_FAIL_INDEX_V(p_method, METHOD_MAX, ERR_INVALID_PARAMETER);
 	ERR_FAIL_COND_V(!_check_request_url(p_method, p_url), ERR_INVALID_PARAMETER);
 	ERR_FAIL_COND_V(status != STATUS_CONNECTED, ERR_INVALID_PARAMETER);
@@ -173,15 +175,15 @@ Error HTTPClientTCP::request(Method p_method, const String &p_url, const Vector<
 	request += "\r\n";
 	CharString cs = request.utf8();
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(cs.length() + p_body_size);
-	memcpy(data.ptrw(), cs.get_data(), cs.length());
+	memcpy(data.data(), cs.get_data(), cs.length());
 	if (p_body_size > 0) {
-		memcpy(data.ptrw() + cs.length(), p_body, p_body_size);
+		memcpy(data.data() + cs.length(), p_body, p_body_size);
 	}
 
 	// TODO Implement non-blocking requests.
-	Error err = connection->put_data(data.ptr(), data.size());
+	Error err = connection->put_data(data.data(), data.size());
 
 	if (err) {
 		close();
@@ -375,8 +377,8 @@ Error HTTPClientTCP::poll() {
 					// End of response, parse.
 					response_str.push_back(0);
 					String response;
-					response.parse_utf8((const char *)response_str.ptr());
-					Vector<String> responses = response.split("\n");
+					response.parse_utf8((const char *)response_str.data());
+					std::vector<String> responses = response.split("\n");
 					body_size = -1;
 					chunked = false;
 					body_left = 0;
@@ -546,7 +548,7 @@ PackedByteArray HTTPClientTCP::read_response_body_chunk() {
 				}
 			} else {
 				int rec = 0;
-				err = _get_http_data(&chunk.write[chunk.size() - chunk_left], chunk_left, rec);
+				err = _get_http_data(&chunk[chunk.size() - chunk_left], chunk_left, rec);
 				if (rec == 0) {
 					break;
 				}
@@ -560,8 +562,8 @@ PackedByteArray HTTPClientTCP::read_response_body_chunk() {
 					}
 
 					ret.resize(chunk.size() - 2);
-					uint8_t *w = ret.ptrw();
-					memcpy(w, chunk.ptr(), chunk.size() - 2);
+					uint8_t *w = ret.data();
+					memcpy(w, chunk.data(), chunk.size() - 2);
 					chunk.clear();
 				}
 
@@ -576,7 +578,7 @@ PackedByteArray HTTPClientTCP::read_response_body_chunk() {
 		while (to_read > 0) {
 			int rec = 0;
 			{
-				uint8_t *w = ret.ptrw();
+				uint8_t *w = ret.data();
 				err = _get_http_data(w + _offset, to_read, rec);
 			}
 			if (rec <= 0) { // Ended up reading less

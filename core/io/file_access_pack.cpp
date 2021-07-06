@@ -72,7 +72,7 @@ void PackedData::add_path(const String &p_pkg_path, const String &p_path, uint64
 
 		if (p.find("/") != -1) { //in a subdir
 
-			Vector<String> ds = p.get_base_dir().split("/");
+			std::vector<String> ds = p.get_base_dir().split("/");
 
 			for (int j = 0; j < ds.size(); j++) {
 				if (!cd->subdirs.has(ds[j])) {
@@ -201,10 +201,10 @@ bool PackedSourcePCK::try_open_pack(const String &p_path, bool p_replace_files, 
 			ERR_FAIL_V_MSG(false, "Can't open encrypted pack directory.");
 		}
 
-		Vector<uint8_t> key;
+		std::vector<uint8_t> key;
 		key.resize(32);
 		for (int i = 0; i < key.size(); i++) {
-			key.write[i] = script_encryption_key[i];
+			key[i] = script_encryption_key[i];
 		}
 
 		Error err = fae->open_and_parse(f, key, FileAccessEncrypted::MODE_READ, false);
@@ -362,10 +362,10 @@ FileAccessPack::FileAccessPack(const String &p_path, const PackedData::PackedFil
 			ERR_FAIL_MSG("Can't open encrypted pack-referenced file '" + String(pf.pack) + "'.");
 		}
 
-		Vector<uint8_t> key;
+		std::vector<uint8_t> key;
 		key.resize(32);
 		for (int i = 0; i < key.size(); i++) {
-			key.write[i] = script_encryption_key[i];
+			key[i] = script_encryption_key[i];
 		}
 
 		Error err = fae->open_and_parse(f, key, FileAccessEncrypted::MODE_READ, false);
@@ -468,7 +468,7 @@ PackedData::PackedDir *DirAccessPack::_find_dir(String p_dir) {
 		absolute = true;
 	}
 
-	Vector<String> paths = nd.split("/");
+	std::vector<String> paths = nd.split("/");
 
 	PackedData::PackedDir *pd;
 

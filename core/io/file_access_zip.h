@@ -53,7 +53,7 @@ private:
 		String filename;
 		unzFile zfile = nullptr;
 	};
-	Vector<Package> packages;
+	std::vector<Package> packages;
 
 	Map<String, File> files;
 
