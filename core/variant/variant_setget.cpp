@@ -30,6 +30,8 @@
 
 #include "variant_setget.h"
 
+//todo std::vector.data()
+
 struct VariantSetterGetterInfo {
 	void (*setter)(Variant *base, const Variant *value, bool &valid);
 	void (*getter)(const Variant *base, Variant *value);
@@ -348,7 +350,7 @@ Variant Variant::get_named(const StringName &p_member, bool &r_valid) const {
 				*valid = false;                                                                                                      \
 				return;                                                                                                              \
 			}                                                                                                                        \
-			(*VariantGetInternalPtr<m_base_type>::get_ptr(base)).write[index] = *VariantGetInternalPtr<m_elem_type>::get_ptr(value); \
+			(*VariantGetInternalPtr<m_base_type>::get_ptr(base))[index] = *VariantGetInternalPtr<m_elem_type>::get_ptr(value); \
 			*oob = false;                                                                                                            \
 			*valid = true;                                                                                                           \
 		}                                                                                                                            \
@@ -361,7 +363,7 @@ Variant Variant::get_named(const StringName &p_member, bool &r_valid) const {
 				*oob = true;                                                                                                         \
 				return;                                                                                                              \
 			}                                                                                                                        \
-			(*VariantGetInternalPtr<m_base_type>::get_ptr(base)).write[index] = *VariantGetInternalPtr<m_elem_type>::get_ptr(value); \
+			(*VariantGetInternalPtr<m_base_type>::get_ptr(base))[index] = *VariantGetInternalPtr<m_elem_type>::get_ptr(value); \
 			*oob = false;                                                                                                            \
 		}                                                                                                                            \
 		static void ptr_set(void *base, int64_t index, const void *member) {                                                         \
@@ -370,7 +372,7 @@ Variant Variant::get_named(const StringName &p_member, bool &r_valid) const {
 			if (index < 0)                                                                                                           \
 				index += v.size();                                                                                                   \
 			OOB_TEST(index, v.size());                                                                                               \
-			v.write[index] = PtrToArg<m_elem_type>::convert(member);                                                                 \
+			v[index] = PtrToArg<m_elem_type>::convert(member);                                                                 \
 		}                                                                                                                            \
 		static Variant::Type get_index_type() { return GetTypeInfo<m_elem_type>::VARIANT_TYPE; }                                     \
 		static uint64_t get_indexed_size(const Variant *base) { return VariantGetInternalPtr<m_base_type>::get_ptr(base)->size(); }  \
@@ -441,7 +443,7 @@ Variant Variant::get_named(const StringName &p_member, bool &r_valid) const {
 			if (index < 0)                                                                                                           \
 				index += v.size();                                                                                                   \
 			OOB_TEST(index, v.size());                                                                                               \
-			v.write[index] = PtrToArg<m_elem_type>::convert(member);                                                                 \
+			v[index] = PtrToArg<m_elem_type>::convert(member);                                                                 \
 		}                                                                                                                            \
 		static Variant::Type get_index_type() { return GetTypeInfo<m_elem_type>::VARIANT_TYPE; }                                     \
 		static uint64_t get_indexed_size(const Variant *base) { return VariantGetInternalPtr<m_base_type>::get_ptr(base)->size(); }  \
@@ -1639,7 +1641,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_INT32_ARRAY: {
 			const std::vector<int32_t> *arr = &PackedArrayRef<int32_t>::get_array(_data.packed_array);
@@ -1650,7 +1652,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_INT64_ARRAY: {
 			const std::vector<int64_t> *arr = &PackedArrayRef<int64_t>::get_array(_data.packed_array);
@@ -1661,7 +1663,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_FLOAT32_ARRAY: {
 			const std::vector<float> *arr = &PackedArrayRef<float>::get_array(_data.packed_array);
@@ -1672,7 +1674,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_FLOAT64_ARRAY: {
 			const std::vector<double> *arr = &PackedArrayRef<double>::get_array(_data.packed_array);
@@ -1683,7 +1685,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_STRING_ARRAY: {
 			const std::vector<String> *arr = &PackedArrayRef<String>::get_array(_data.packed_array);
@@ -1694,7 +1696,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_VECTOR2_ARRAY: {
 			const std::vector<Vector2> *arr = &PackedArrayRef<Vector2>::get_array(_data.packed_array);
@@ -1705,7 +1707,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_VECTOR3_ARRAY: {
 			const std::vector<Vector3> *arr = &PackedArrayRef<Vector3>::get_array(_data.packed_array);
@@ -1716,7 +1718,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		case PACKED_COLOR_ARRAY: {
 			const std::vector<Color> *arr = &PackedArrayRef<Color>::get_array(_data.packed_array);
@@ -1727,7 +1729,7 @@ Variant Variant::iter_get(const Variant &r_iter, bool &r_valid) const {
 				return Variant();
 			}
 #endif
-			return arr->get(idx);
+			return arr[idx];
 		} break;
 		default: {
 		}
@@ -1754,7 +1756,7 @@ Variant Variant::duplicate(bool deep) const {
 			return operator Dictionary().duplicate(deep);
 		case ARRAY:
 			return operator Array().duplicate(deep);
-		case PACKED_BYTE_ARRAY:
+		/*case PACKED_BYTE_ARRAY:
 			return operator std::vector<uint8_t>().duplicate();
 		case PACKED_INT32_ARRAY:
 			return operator std::vector<int32_t>().duplicate();
@@ -1771,7 +1773,7 @@ Variant Variant::duplicate(bool deep) const {
 		case PACKED_VECTOR3_ARRAY:
 			return operator std::vector<Vector3>().duplicate();
 		case PACKED_COLOR_ARRAY:
-			return operator std::vector<Color>().duplicate();
+			return operator std::vector<Color>().duplicate();*/
 		default:
 			return *this;
 	}
@@ -2077,9 +2079,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<int32_t> v;
 				v.resize(sz);
 				{
-					int32_t *vw = v.ptrw();
-					const int32_t *ar = arr_a->ptr();
-					const int32_t *br = arr_b->ptr();
+					int32_t *vw = v.data();
+					const int32_t *ar = arr_a->data();
+					const int32_t *br = arr_b->data();
 
 					Variant va;
 					for (int32_t i = 0; i < sz; i++) {
@@ -2101,9 +2103,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<int64_t> v;
 				v.resize(sz);
 				{
-					int64_t *vw = v.ptrw();
-					const int64_t *ar = arr_a->ptr();
-					const int64_t *br = arr_b->ptr();
+					int64_t *vw = v.data();
+					const int64_t *ar = arr_a->data();
+					const int64_t *br = arr_b->data();
 
 					Variant va;
 					for (int64_t i = 0; i < sz; i++) {
@@ -2125,9 +2127,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<float> v;
 				v.resize(sz);
 				{
-					float *vw = v.ptrw();
-					const float *ar = arr_a->ptr();
-					const float *br = arr_b->ptr();
+					float *vw = v.data();
+					const float *ar = arr_a->data();
+					const float *br = arr_b->data();
 
 					Variant va;
 					for (int i = 0; i < sz; i++) {
@@ -2149,9 +2151,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<double> v;
 				v.resize(sz);
 				{
-					double *vw = v.ptrw();
-					const double *ar = arr_a->ptr();
-					const double *br = arr_b->ptr();
+					double *vw = v.data();
+					const double *ar = arr_a->data();
+					const double *br = arr_b->data();
 
 					Variant va;
 					for (int i = 0; i < sz; i++) {
@@ -2177,9 +2179,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<Vector2> v;
 				v.resize(sz);
 				{
-					Vector2 *vw = v.ptrw();
-					const Vector2 *ar = arr_a->ptr();
-					const Vector2 *br = arr_b->ptr();
+					Vector2 *vw = v.data();
+					const Vector2 *ar = arr_a->data();
+					const Vector2 *br = arr_b->data();
 
 					for (int i = 0; i < sz; i++) {
 						vw[i] = ar[i].lerp(br[i], c);
@@ -2199,9 +2201,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<Vector3> v;
 				v.resize(sz);
 				{
-					Vector3 *vw = v.ptrw();
-					const Vector3 *ar = arr_a->ptr();
-					const Vector3 *br = arr_b->ptr();
+					Vector3 *vw = v.data();
+					const Vector3 *ar = arr_a->data();
+					const Vector3 *br = arr_b->data();
 
 					for (int i = 0; i < sz; i++) {
 						vw[i] = ar[i].lerp(br[i], c);
@@ -2221,9 +2223,9 @@ void Variant::interpolate(const Variant &a, const Variant &b, float c, Variant &
 				std::vector<Color> v;
 				v.resize(sz);
 				{
-					Color *vw = v.ptrw();
-					const Color *ar = arr_a->ptr();
-					const Color *br = arr_b->ptr();
+					Color *vw = v.data();
+					const Color *ar = arr_a->data();
+					const Color *br = arr_b->data();
 
 					for (int i = 0; i < sz; i++) {
 						vw[i] = ar[i].lerp(br[i], c);

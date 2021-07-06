@@ -693,23 +693,23 @@ template <class T>
 class OperatorEvaluatorAppendArray {
 public:
 	static void evaluate(const Variant &p_left, const Variant &p_right, Variant *r_ret, bool &r_valid) {
-		const Vector<T> &array_a = *VariantGetInternalPtr<Vector<T>>::get_ptr(&p_left);
-		const Vector<T> &array_b = *VariantGetInternalPtr<Vector<T>>::get_ptr(&p_right);
-		Vector<T> sum = array_a;
+		const std::vector<T> &array_a = *VariantGetInternalPtr<std::vector<T>>::get_ptr(&p_left);
+		const std::vector<T> &array_b = *VariantGetInternalPtr<std::vector<T>>::get_ptr(&p_right);
+		std::vector<T> sum = array_a;
 		sum.append_array(array_b);
 		*r_ret = sum;
 		r_valid = true;
 	}
 	static inline void validated_evaluate(const Variant *left, const Variant *right, Variant *r_ret) {
-		*VariantGetInternalPtr<Vector<T>>::get_ptr(r_ret) = *VariantGetInternalPtr<Vector<T>>::get_ptr(left);
-		VariantGetInternalPtr<Vector<T>>::get_ptr(r_ret)->append_array(*VariantGetInternalPtr<Vector<T>>::get_ptr(right));
+		*VariantGetInternalPtr<std::vector<T>>::get_ptr(r_ret) = *VariantGetInternalPtr<std::vector<T>>::get_ptr(left);
+		VariantGetInternalPtr<std::vector<T>>::get_ptr(r_ret)->append_array(*VariantGetInternalPtr<std::vector<T>>::get_ptr(right));
 	}
 	static void ptr_evaluate(const void *left, const void *right, void *r_ret) {
-		Vector<T> sum = PtrToArg<Vector<T>>::convert(left);
-		sum.append_array(PtrToArg<Vector<T>>::convert(right));
-		PtrToArg<Vector<T>>::encode(sum, r_ret);
+		std::vector<T> sum = PtrToArg<std::vector<T>>::convert(left);
+		sum.append_array(PtrToArg<std::vector<T>>::convert(right));
+		PtrToArg<std::vector<T>>::encode(sum, r_ret);
 	}
-	static Variant::Type get_return_type() { return GetTypeInfo<Vector<T>>::VARIANT_TYPE; }
+	static Variant::Type get_return_type() { return GetTypeInfo<std::vector<T>>::VARIANT_TYPE; }
 };
 
 class OperatorEvaluatorStringModNil {

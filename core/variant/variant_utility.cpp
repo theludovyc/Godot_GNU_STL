@@ -38,6 +38,8 @@
 #include "core/variant/binder_common.h"
 #include "core/variant/variant_parser.h"
 
+//todo std::vector.data()
+
 struct VariantUtilityFunctions {
 	// Math
 
@@ -425,8 +427,8 @@ struct VariantUtilityFunctions {
 		uint64_t s = seed;
 		PackedInt64Array arr;
 		arr.resize(2);
-		arr.write[0] = Math::rand_from_seed(&s);
-		arr.write[1] = s;
+		arr[0] = Math::rand_from_seed(&s);
+		arr[1] = s;
 		return arr;
 	}
 
@@ -650,7 +652,7 @@ struct VariantUtilityFunctions {
 		PackedByteArray barr;
 		barr.resize(len);
 		{
-			uint8_t *w = barr.ptrw();
+			uint8_t *w = barr.data();
 			err = encode_variant(p_var, w, len, false);
 			if (err != OK) {
 				return PackedByteArray();
@@ -670,7 +672,7 @@ struct VariantUtilityFunctions {
 		PackedByteArray barr;
 		barr.resize(len);
 		{
-			uint8_t *w = barr.ptrw();
+			uint8_t *w = barr.data();
 			err = encode_variant(p_var, w, len, true);
 			if (err != OK) {
 				return PackedByteArray();
@@ -683,7 +685,7 @@ struct VariantUtilityFunctions {
 	static inline Variant bytes2var(const PackedByteArray &p_arr) {
 		Variant ret;
 		{
-			const uint8_t *r = p_arr.ptr();
+			const uint8_t *r = p_arr.data();
 			Error err = decode_variant(ret, r, p_arr.size(), nullptr, false);
 			if (err != OK) {
 				return Variant();
@@ -695,7 +697,7 @@ struct VariantUtilityFunctions {
 	static inline Variant bytes2var_with_objects(const PackedByteArray &p_arr) {
 		Variant ret;
 		{
-			const uint8_t *r = p_arr.ptr();
+			const uint8_t *r = p_arr.data();
 			Error err = decode_variant(ret, r, p_arr.size(), nullptr, true);
 			if (err != OK) {
 				return Variant();
@@ -943,16 +945,16 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			*r_ret = VariantUtilityFunctions::m_func(p_args, p_argcount, c);                                     \
 		}                                                                                                        \
 		static void ptrcall(void *ret, const void **p_args, int p_argcount) {                                    \
-			Vector<Variant> args;                                                                                \
+			std::vector<Variant> args;                                                                                \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				args.push_back(PtrToArg<Variant>::convert(p_args[i]));                                           \
 			}                                                                                                    \
-			Vector<const Variant *> argsp;                                                                       \
+			std::vector<const Variant *> argsp;                                                                       \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				argsp.push_back(&args[i]);                                                                       \
 			}                                                                                                    \
 			Variant r;                                                                                           \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount);                                       \
+			validated_call(&r, (const Variant **)argsp.data(), p_argcount);                                      \
 			PtrToArg<Variant>::encode(r, ret);                                                                   \
 		}                                                                                                        \
 		static int get_argument_count() {                                                                        \
@@ -988,16 +990,16 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			*r_ret = VariantUtilityFunctions::m_func(p_args, p_argcount, c);                                     \
 		}                                                                                                        \
 		static void ptrcall(void *ret, const void **p_args, int p_argcount) {                                    \
-			Vector<Variant> args;                                                                                \
+			std::vector<Variant> args;                                                                                \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				args.push_back(PtrToArg<Variant>::convert(p_args[i]));                                           \
 			}                                                                                                    \
-			Vector<const Variant *> argsp;                                                                       \
+			std::vector<const Variant *> argsp;                                                                       \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				argsp.push_back(&args[i]);                                                                       \
 			}                                                                                                    \
 			Variant r;                                                                                           \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount);                                       \
+			validated_call(&r, (const Variant **)argsp.data(), p_argcount);                                      \
 			PtrToArg<String>::encode(r.operator String(), ret);                                                  \
 		}                                                                                                        \
 		static int get_argument_count() {                                                                        \
@@ -1033,16 +1035,16 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			VariantUtilityFunctions::m_func(p_args, p_argcount, c);                                              \
 		}                                                                                                        \
 		static void ptrcall(void *ret, const void **p_args, int p_argcount) {                                    \
-			Vector<Variant> args;                                                                                \
+			std::vector<Variant> args;                                                                                \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				args.push_back(PtrToArg<Variant>::convert(p_args[i]));                                           \
 			}                                                                                                    \
-			Vector<const Variant *> argsp;                                                                       \
+			std::vector<const Variant *> argsp;                                                                       \
 			for (int i = 0; i < p_argcount; i++) {                                                               \
 				argsp.push_back(&args[i]);                                                                       \
 			}                                                                                                    \
 			Variant r;                                                                                           \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount);                                       \
+			validated_call(&r, (const Variant **)argsp.data(), p_argcount);                                      \
 		}                                                                                                        \
 		static int get_argument_count() {                                                                        \
 			return 1;                                                                                            \
@@ -1098,7 +1100,7 @@ struct VariantUtilityFunctionInfo {
 	void (*call_utility)(Variant *r_ret, const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 	Variant::ValidatedUtilityFunction validated_call_utility;
 	Variant::PTRUtilityFunction ptr_call_utility;
-	Vector<String> argnames;
+	std::vector<String> argnames;
 	bool is_vararg;
 	bool returns_value;
 	int argcount;
@@ -1111,7 +1113,7 @@ static OAHashMap<StringName, VariantUtilityFunctionInfo> utility_function_table;
 static List<StringName> utility_function_name_table;
 
 template <class T>
-static void register_utility_function(const String &p_name, const Vector<String> &argnames) {
+static void register_utility_function(const String &p_name, const std::vector<String> &argnames) {
 	String name = p_name;
 	if (name.begins_with("_")) {
 		name = name.substr(1, name.length() - 1);
