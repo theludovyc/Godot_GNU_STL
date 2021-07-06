@@ -433,7 +433,7 @@ Dictionary NativeExtensionAPIDump::generate_extension_api() {
 					d2["is_static"] = Variant::is_builtin_method_static(type, method_name);
 					d2["hash"] = Variant::get_builtin_method_hash(type, method_name);
 
-					Vector<Variant> default_args = Variant::get_builtin_method_default_arguments(type, method_name);
+					std::vector<Variant> default_args = Variant::get_builtin_method_default_arguments(type, method_name);
 
 					Array arguments;
 					int argcount = Variant::get_builtin_method_argument_count(type, method_name);
@@ -636,7 +636,7 @@ Dictionary NativeExtensionAPIDump::generate_extension_api() {
 						d2["is_virtual"] = false;
 						d2["hash"] = method->get_hash();
 
-						Vector<Variant> default_args = method->get_default_arguments();
+						std::vector<Variant> default_args = method->get_default_arguments();
 
 						Array arguments;
 						for (int i = (method->has_return() ? -1 : 0); i < method->get_argument_count(); i++) {

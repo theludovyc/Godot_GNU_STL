@@ -42,9 +42,9 @@ class OptimizedTranslation : public Translation {
 	//of catching untranslated strings
 
 	//load/store friendly types
-	Vector<int> hash_table;
-	Vector<int> bucket_table;
-	Vector<uint8_t> strings;
+	std::vector<int> hash_table;
+	std::vector<int> bucket_table;
+	std::vector<uint8_t> strings;
 
 	struct Bucket {
 		int size;

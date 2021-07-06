@@ -92,7 +92,7 @@ void CallableCustomBind::call(const Variant **p_arguments, int p_argcount, Varia
 	callable.call(args, p_argcount + binds.size(), r_return_value, r_call_error);
 }
 
-CallableCustomBind::CallableCustomBind(const Callable &p_callable, const Vector<Variant> &p_binds) {
+CallableCustomBind::CallableCustomBind(const Callable &p_callable, const std::vector<Variant> &p_binds) {
 	callable = p_callable;
 	binds = p_binds;
 }

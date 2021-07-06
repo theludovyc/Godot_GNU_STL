@@ -129,8 +129,8 @@ void Variant::_register_variant_operators() {
 	register_op<OperatorEvaluatorXFormInv<Vector2, Vector2, Transform2D>>(Variant::OP_MULTIPLY, Variant::VECTOR2, Variant::TRANSFORM2D);
 	register_op<OperatorEvaluatorXForm<Rect2, Transform2D, Rect2>>(Variant::OP_MULTIPLY, Variant::TRANSFORM2D, Variant::RECT2);
 	register_op<OperatorEvaluatorXFormInv<Rect2, Rect2, Transform2D>>(Variant::OP_MULTIPLY, Variant::RECT2, Variant::TRANSFORM2D);
-	register_op<OperatorEvaluatorXForm<Vector<Vector2>, Transform2D, Vector<Vector2>>>(Variant::OP_MULTIPLY, Variant::TRANSFORM2D, Variant::PACKED_VECTOR2_ARRAY);
-	register_op<OperatorEvaluatorXFormInv<Vector<Vector2>, Vector<Vector2>, Transform2D>>(Variant::OP_MULTIPLY, Variant::PACKED_VECTOR2_ARRAY, Variant::TRANSFORM2D);
+	register_op<OperatorEvaluatorXForm<std::vector<Vector2>, Transform2D, std::vector<Vector2>>>(Variant::OP_MULTIPLY, Variant::TRANSFORM2D, Variant::PACKED_VECTOR2_ARRAY);
+	register_op<OperatorEvaluatorXFormInv<std::vector<Vector2>, std::vector<Vector2>, Transform2D>>(Variant::OP_MULTIPLY, Variant::PACKED_VECTOR2_ARRAY, Variant::TRANSFORM2D);
 
 	register_op<OperatorEvaluatorMul<Transform3D, Transform3D, Transform3D>>(Variant::OP_MULTIPLY, Variant::TRANSFORM3D, Variant::TRANSFORM3D);
 	register_op<OperatorEvaluatorMul<Transform3D, Transform3D, int64_t>>(Variant::OP_MULTIPLY, Variant::TRANSFORM3D, Variant::INT);
@@ -139,8 +139,8 @@ void Variant::_register_variant_operators() {
 	register_op<OperatorEvaluatorXFormInv<Vector3, Vector3, Transform3D>>(Variant::OP_MULTIPLY, Variant::VECTOR3, Variant::TRANSFORM3D);
 	register_op<OperatorEvaluatorXForm<::AABB, Transform3D, ::AABB>>(Variant::OP_MULTIPLY, Variant::TRANSFORM3D, Variant::AABB);
 	register_op<OperatorEvaluatorXFormInv<::AABB, ::AABB, Transform3D>>(Variant::OP_MULTIPLY, Variant::AABB, Variant::TRANSFORM3D);
-	register_op<OperatorEvaluatorXForm<Vector<Vector3>, Transform3D, Vector<Vector3>>>(Variant::OP_MULTIPLY, Variant::TRANSFORM3D, Variant::PACKED_VECTOR3_ARRAY);
-	register_op<OperatorEvaluatorXFormInv<Vector<Vector3>, Vector<Vector3>, Transform3D>>(Variant::OP_MULTIPLY, Variant::PACKED_VECTOR3_ARRAY, Variant::TRANSFORM3D);
+	register_op<OperatorEvaluatorXForm<std::vector<Vector3>, Transform3D, std::vector<Vector3>>>(Variant::OP_MULTIPLY, Variant::TRANSFORM3D, Variant::PACKED_VECTOR3_ARRAY);
+	register_op<OperatorEvaluatorXFormInv<std::vector<Vector3>, std::vector<Vector3>, Transform3D>>(Variant::OP_MULTIPLY, Variant::PACKED_VECTOR3_ARRAY, Variant::TRANSFORM3D);
 
 	register_op<OperatorEvaluatorMul<Basis, Basis, Basis>>(Variant::OP_MULTIPLY, Variant::BASIS, Variant::BASIS);
 	register_op<OperatorEvaluatorMul<Basis, Basis, int64_t>>(Variant::OP_MULTIPLY, Variant::BASIS, Variant::INT);

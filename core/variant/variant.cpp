@@ -30,6 +30,8 @@
 
 #include "variant.h"
 
+#include <algorithm>
+
 #include "core/core_string_names.h"
 #include "core/debugger/engine_debugger.h"
 #include "core/io/json.h"
@@ -40,6 +42,8 @@
 #include "core/variant/variant_parser.h"
 #include "scene/gui/control.h"
 #include "scene/main/node.h"
+
+//todo std::vector.data()
 
 String Variant::get_type_name(Variant::Type p_type) {
 	switch (p_type) {
@@ -1679,7 +1683,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			List<Variant> keys;
 			d.get_key_list(&keys);
 
-			Vector<_VariantStrPair> pairs;
+			std::vector<_VariantStrPair> pairs;
 
 			for (List<Variant>::Element *E = keys.front(); E; E = E->next()) {
 				_VariantStrPair sp;
@@ -1689,7 +1693,7 @@ String Variant::stringify(List<const void *> &stack) const {
 				pairs.push_back(sp);
 			}
 
-			pairs.sort();
+			std::sort(pairs.begin(),  pairs.end());
 
 			for (int i = 0; i < pairs.size(); i++) {
 				if (i > 0) {
@@ -1703,7 +1707,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_VECTOR2_ARRAY: {
-			Vector<Vector2> vec = operator Vector<Vector2>();
+			std::vector<Vector2> vec = operator std::vector<Vector2>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1715,7 +1719,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_VECTOR3_ARRAY: {
-			Vector<Vector3> vec = operator Vector<Vector3>();
+			std::vector<Vector3> vec = operator std::vector<Vector3>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1727,7 +1731,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_STRING_ARRAY: {
-			Vector<String> vec = operator Vector<String>();
+			std::vector<String> vec = operator std::vector<String>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1739,7 +1743,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_INT32_ARRAY: {
-			Vector<int32_t> vec = operator Vector<int32_t>();
+			std::vector<int32_t> vec = operator std::vector<int32_t>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1751,7 +1755,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_INT64_ARRAY: {
-			Vector<int64_t> vec = operator Vector<int64_t>();
+			std::vector<int64_t> vec = operator std::vector<int64_t>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1763,7 +1767,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_FLOAT32_ARRAY: {
-			Vector<float> vec = operator Vector<float>();
+			std::vector<float> vec = operator std::vector<float>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -1775,7 +1779,7 @@ String Variant::stringify(List<const void *> &stack) const {
 			return str;
 		} break;
 		case PACKED_FLOAT64_ARRAY: {
-			Vector<double> vec = operator Vector<double>();
+			std::vector<double> vec = operator std::vector<double>();
 			String str("[");
 			for (int i = 0; i < vec.size(); i++) {
 				if (i > 0) {
@@ -2119,7 +2123,7 @@ inline DA _convert_array(const SA &p_array) {
 	da.resize(p_array.size());
 
 	for (int i = 0; i < p_array.size(); i++) {
-		da.set(i, Variant(p_array.get(i)));
+		da[i] = Variant(p_array[i]);
 	}
 
 	return da;
@@ -2132,31 +2136,31 @@ inline DA _convert_array_from_variant(const Variant &p_variant) {
 			return _convert_array<DA, Array>(p_variant.operator Array());
 		}
 		case Variant::PACKED_BYTE_ARRAY: {
-			return _convert_array<DA, Vector<uint8_t>>(p_variant.operator Vector<uint8_t>());
+			return _convert_array<DA, std::vector<uint8_t>>(p_variant.operator std::vector<uint8_t>());
 		}
 		case Variant::PACKED_INT32_ARRAY: {
-			return _convert_array<DA, Vector<int32_t>>(p_variant.operator Vector<int32_t>());
+			return _convert_array<DA, std::vector<int32_t>>(p_variant.operator std::vector<int32_t>());
 		}
 		case Variant::PACKED_INT64_ARRAY: {
-			return _convert_array<DA, Vector<int64_t>>(p_variant.operator Vector<int64_t>());
+			return _convert_array<DA, std::vector<int64_t>>(p_variant.operator std::vector<int64_t>());
 		}
 		case Variant::PACKED_FLOAT32_ARRAY: {
-			return _convert_array<DA, Vector<float>>(p_variant.operator Vector<float>());
+			return _convert_array<DA, std::vector<float>>(p_variant.operator std::vector<float>());
 		}
 		case Variant::PACKED_FLOAT64_ARRAY: {
-			return _convert_array<DA, Vector<double>>(p_variant.operator Vector<double>());
+			return _convert_array<DA, std::vector<double>>(p_variant.operator std::vector<double>());
 		}
 		case Variant::PACKED_STRING_ARRAY: {
-			return _convert_array<DA, Vector<String>>(p_variant.operator Vector<String>());
+			return _convert_array<DA, std::vector<String>>(p_variant.operator std::vector<String>());
 		}
 		case Variant::PACKED_VECTOR2_ARRAY: {
-			return _convert_array<DA, Vector<Vector2>>(p_variant.operator Vector<Vector2>());
+			return _convert_array<DA, std::vector<Vector2>>(p_variant.operator std::vector<Vector2>());
 		}
 		case Variant::PACKED_VECTOR3_ARRAY: {
-			return _convert_array<DA, Vector<Vector3>>(p_variant.operator Vector<Vector3>());
+			return _convert_array<DA, std::vector<Vector3>>(p_variant.operator std::vector<Vector3>());
 		}
 		case Variant::PACKED_COLOR_ARRAY: {
-			return _convert_array<DA, Vector<Color>>(p_variant.operator Vector<Color>());
+			return _convert_array<DA, std::vector<Color>>(p_variant.operator std::vector<Color>());
 		}
 		default: {
 			return DA();
@@ -2172,100 +2176,100 @@ Variant::operator Array() const {
 	}
 }
 
-Variant::operator Vector<uint8_t>() const {
+Variant::operator std::vector<uint8_t>() const {
 	if (type == PACKED_BYTE_ARRAY) {
 		return static_cast<PackedArrayRef<uint8_t> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<uint8_t>>(*this);
+		return _convert_array_from_variant<std::vector<uint8_t>>(*this);
 	}
 }
 
-Variant::operator Vector<int32_t>() const {
+Variant::operator std::vector<int32_t>() const {
 	if (type == PACKED_INT32_ARRAY) {
 		return static_cast<PackedArrayRef<int32_t> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<int>>(*this);
+		return _convert_array_from_variant<std::vector<int>>(*this);
 	}
 }
 
-Variant::operator Vector<int64_t>() const {
+Variant::operator std::vector<int64_t>() const {
 	if (type == PACKED_INT64_ARRAY) {
 		return static_cast<PackedArrayRef<int64_t> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<int64_t>>(*this);
+		return _convert_array_from_variant<std::vector<int64_t>>(*this);
 	}
 }
 
-Variant::operator Vector<float>() const {
+Variant::operator std::vector<float>() const {
 	if (type == PACKED_FLOAT32_ARRAY) {
 		return static_cast<PackedArrayRef<float> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<float>>(*this);
+		return _convert_array_from_variant<std::vector<float>>(*this);
 	}
 }
 
-Variant::operator Vector<double>() const {
+Variant::operator std::vector<double>() const {
 	if (type == PACKED_FLOAT64_ARRAY) {
 		return static_cast<PackedArrayRef<double> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<double>>(*this);
+		return _convert_array_from_variant<std::vector<double>>(*this);
 	}
 }
 
-Variant::operator Vector<String>() const {
+Variant::operator std::vector<String>() const {
 	if (type == PACKED_STRING_ARRAY) {
 		return static_cast<PackedArrayRef<String> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<String>>(*this);
+		return _convert_array_from_variant<std::vector<String>>(*this);
 	}
 }
 
-Variant::operator Vector<Vector3>() const {
+Variant::operator std::vector<Vector3>() const {
 	if (type == PACKED_VECTOR3_ARRAY) {
 		return static_cast<PackedArrayRef<Vector3> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<Vector3>>(*this);
+		return _convert_array_from_variant<std::vector<Vector3>>(*this);
 	}
 }
 
-Variant::operator Vector<Vector2>() const {
+Variant::operator std::vector<Vector2>() const {
 	if (type == PACKED_VECTOR2_ARRAY) {
 		return static_cast<PackedArrayRef<Vector2> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<Vector2>>(*this);
+		return _convert_array_from_variant<std::vector<Vector2>>(*this);
 	}
 }
 
-Variant::operator Vector<Color>() const {
+Variant::operator std::vector<Color>() const {
 	if (type == PACKED_COLOR_ARRAY) {
 		return static_cast<PackedArrayRef<Color> *>(_data.packed_array)->array;
 	} else {
-		return _convert_array_from_variant<Vector<Color>>(*this);
+		return _convert_array_from_variant<std::vector<Color>>(*this);
 	}
 }
 
 /* helpers */
 
-Variant::operator Vector<::RID>() const {
+Variant::operator std::vector<::RID>() const {
 	Array va = operator Array();
-	Vector<::RID> rids;
+	std::vector<::RID> rids;
 	rids.resize(va.size());
 	for (int i = 0; i < rids.size(); i++) {
-		rids.write[i] = va[i];
+		rids[i] = va[i];
 	}
 	return rids;
 }
 
-Variant::operator Vector<Plane>() const {
+Variant::operator std::vector<Plane>() const {
 	Array va = operator Array();
-	Vector<Plane> planes;
+	std::vector<Plane> planes;
 	int va_size = va.size();
 	if (va_size == 0) {
 		return planes;
 	}
 
 	planes.resize(va_size);
-	Plane *w = planes.ptrw();
+	Plane *w = planes.data();
 
 	for (int i = 0; i < va_size; i++) {
 		w[i] = va[i];
@@ -2274,17 +2278,17 @@ Variant::operator Vector<Plane>() const {
 	return planes;
 }
 
-Variant::operator Vector<Face3>() const {
-	Vector<Vector3> va = operator Vector<Vector3>();
-	Vector<Face3> faces;
+Variant::operator std::vector<Face3>() const {
+	std::vector<Vector3> va = operator std::vector<Vector3>();
+	std::vector<Face3> faces;
 	int va_size = va.size();
 	if (va_size == 0) {
 		return faces;
 	}
 
 	faces.resize(va_size / 3);
-	Face3 *w = faces.ptrw();
-	const Vector3 *r = va.ptr();
+	Face3 *w = faces.data();
+	const Vector3 *r = va.data();
 
 	for (int i = 0; i < va_size; i++) {
 		w[i / 3].vertex[i % 3] = r[i];
@@ -2293,16 +2297,16 @@ Variant::operator Vector<Face3>() const {
 	return faces;
 }
 
-Variant::operator Vector<Variant>() const {
+Variant::operator std::vector<Variant>() const {
 	Array va = operator Array();
-	Vector<Variant> variants;
+	std::vector<Variant> variants;
 	int va_size = va.size();
 	if (va_size == 0) {
 		return variants;
 	}
 
 	variants.resize(va_size);
-	Variant *w = variants.ptrw();
+	Variant *w = variants.data();
 	for (int i = 0; i < va_size; i++) {
 		w[i] = va[i];
 	}
@@ -2310,13 +2314,13 @@ Variant::operator Vector<Variant>() const {
 	return variants;
 }
 
-Variant::operator Vector<StringName>() const {
-	Vector<String> from = operator Vector<String>();
-	Vector<StringName> to;
+Variant::operator std::vector<StringName>() const {
+	std::vector<String> from = operator std::vector<String>();
+	std::vector<StringName> to;
 	int len = from.size();
 	to.resize(len);
 	for (int i = 0; i < len; i++) {
-		to.write[i] = from[i];
+		to[i] = from[i];
 	}
 	return to;
 }
@@ -2331,9 +2335,9 @@ Variant::operator Orientation() const {
 
 Variant::operator IPAddress() const {
 	if (type == PACKED_FLOAT32_ARRAY || type == PACKED_INT32_ARRAY || type == PACKED_FLOAT64_ARRAY || type == PACKED_INT64_ARRAY || type == PACKED_BYTE_ARRAY) {
-		Vector<int> addr = operator Vector<int>();
+		std::vector<int> addr = operator std::vector<int>();
 		if (addr.size() == 4) {
-			return IPAddress(addr.get(0), addr.get(1), addr.get(2), addr.get(3));
+			return IPAddress(addr[0], addr[1], addr[2], addr[3]);
 		}
 	}
 
@@ -2551,7 +2555,7 @@ Variant::Variant(const Array &p_array) {
 	memnew_placement(_data._mem, Array(p_array));
 }
 
-Variant::Variant(const Vector<Plane> &p_array) {
+Variant::Variant(const std::vector<Plane> &p_array) {
 	type = ARRAY;
 
 	Array *plane_array = memnew_placement(_data._mem, Array);
@@ -2563,7 +2567,7 @@ Variant::Variant(const Vector<Plane> &p_array) {
 	}
 }
 
-Variant::Variant(const Vector<::RID> &p_array) {
+Variant::Variant(const std::vector<::RID> &p_array) {
 	type = ARRAY;
 
 	Array *rid_array = memnew_placement(_data._mem, Array);
@@ -2575,60 +2579,60 @@ Variant::Variant(const Vector<::RID> &p_array) {
 	}
 }
 
-Variant::Variant(const Vector<uint8_t> &p_byte_array) {
+Variant::Variant(const std::vector<uint8_t> &p_byte_array) {
 	type = PACKED_BYTE_ARRAY;
 
 	_data.packed_array = PackedArrayRef<uint8_t>::create(p_byte_array);
 }
 
-Variant::Variant(const Vector<int32_t> &p_int32_array) {
+Variant::Variant(const std::vector<int32_t> &p_int32_array) {
 	type = PACKED_INT32_ARRAY;
 	_data.packed_array = PackedArrayRef<int32_t>::create(p_int32_array);
 }
 
-Variant::Variant(const Vector<int64_t> &p_int64_array) {
+Variant::Variant(const std::vector<int64_t> &p_int64_array) {
 	type = PACKED_INT64_ARRAY;
 	_data.packed_array = PackedArrayRef<int64_t>::create(p_int64_array);
 }
 
-Variant::Variant(const Vector<float> &p_float32_array) {
+Variant::Variant(const std::vector<float> &p_float32_array) {
 	type = PACKED_FLOAT32_ARRAY;
 	_data.packed_array = PackedArrayRef<float>::create(p_float32_array);
 }
 
-Variant::Variant(const Vector<double> &p_float64_array) {
+Variant::Variant(const std::vector<double> &p_float64_array) {
 	type = PACKED_FLOAT64_ARRAY;
 	_data.packed_array = PackedArrayRef<double>::create(p_float64_array);
 }
 
-Variant::Variant(const Vector<String> &p_string_array) {
+Variant::Variant(const std::vector<String> &p_string_array) {
 	type = PACKED_STRING_ARRAY;
 	_data.packed_array = PackedArrayRef<String>::create(p_string_array);
 }
 
-Variant::Variant(const Vector<Vector3> &p_vector3_array) {
+Variant::Variant(const std::vector<Vector3> &p_vector3_array) {
 	type = PACKED_VECTOR3_ARRAY;
 	_data.packed_array = PackedArrayRef<Vector3>::create(p_vector3_array);
 }
 
-Variant::Variant(const Vector<Vector2> &p_vector2_array) {
+Variant::Variant(const std::vector<Vector2> &p_vector2_array) {
 	type = PACKED_VECTOR2_ARRAY;
 	_data.packed_array = PackedArrayRef<Vector2>::create(p_vector2_array);
 }
 
-Variant::Variant(const Vector<Color> &p_color_array) {
+Variant::Variant(const std::vector<Color> &p_color_array) {
 	type = PACKED_COLOR_ARRAY;
 	_data.packed_array = PackedArrayRef<Color>::create(p_color_array);
 }
 
-Variant::Variant(const Vector<Face3> &p_face_array) {
-	Vector<Vector3> vertices;
+Variant::Variant(const std::vector<Face3> &p_face_array) {
+	std::vector<Vector3> vertices;
 	int face_count = p_face_array.size();
 	vertices.resize(face_count * 3);
 
 	if (face_count) {
-		const Face3 *r = p_face_array.ptr();
-		Vector3 *w = vertices.ptrw();
+		const Face3 *r = p_face_array.data();
+		Vector3 *w = vertices.data();
 
 		for (int i = 0; i < face_count; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -2643,7 +2647,7 @@ Variant::Variant(const Vector<Face3> &p_face_array) {
 }
 
 /* helpers */
-Variant::Variant(const Vector<Variant> &p_array) {
+Variant::Variant(const std::vector<Variant> &p_array) {
 	type = NIL;
 	Array arr;
 	arr.resize(p_array.size());
@@ -2653,13 +2657,13 @@ Variant::Variant(const Vector<Variant> &p_array) {
 	*this = arr;
 }
 
-Variant::Variant(const Vector<StringName> &p_array) {
+Variant::Variant(const std::vector<StringName> &p_array) {
 	type = NIL;
-	Vector<String> v;
+	std::vector<String> v;
 	int len = p_array.size();
 	v.resize(len);
 	for (int i = 0; i < len; i++) {
-		v.set(i, p_array[i]);
+		v[i] = p_array[i];
 	}
 	*this = v;
 }
@@ -2969,10 +2973,10 @@ uint32_t Variant::hash() const {
 
 		} break;
 		case PACKED_BYTE_ARRAY: {
-			const Vector<uint8_t> &arr = PackedArrayRef<uint8_t>::get_array(_data.packed_array);
+			const std::vector<uint8_t> &arr = PackedArrayRef<uint8_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const uint8_t *r = arr.ptr();
+				const uint8_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len);
 			} else {
 				return hash_djb2_one_64(0);
@@ -2980,10 +2984,10 @@ uint32_t Variant::hash() const {
 
 		} break;
 		case PACKED_INT32_ARRAY: {
-			const Vector<int32_t> &arr = PackedArrayRef<int32_t>::get_array(_data.packed_array);
+			const std::vector<int32_t> &arr = PackedArrayRef<int32_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const int32_t *r = arr.ptr();
+				const int32_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(int32_t));
 			} else {
 				return hash_djb2_one_64(0);
@@ -2991,10 +2995,10 @@ uint32_t Variant::hash() const {
 
 		} break;
 		case PACKED_INT64_ARRAY: {
-			const Vector<int64_t> &arr = PackedArrayRef<int64_t>::get_array(_data.packed_array);
+			const std::vector<int64_t> &arr = PackedArrayRef<int64_t>::get_array(_data.packed_array);
 			int len = arr.size();
 			if (likely(len)) {
-				const int64_t *r = arr.ptr();
+				const int64_t *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(int64_t));
 			} else {
 				return hash_djb2_one_64(0);
@@ -3002,11 +3006,11 @@ uint32_t Variant::hash() const {
 
 		} break;
 		case PACKED_FLOAT32_ARRAY: {
-			const Vector<float> &arr = PackedArrayRef<float>::get_array(_data.packed_array);
+			const std::vector<float> &arr = PackedArrayRef<float>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const float *r = arr.ptr();
+				const float *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(float));
 			} else {
 				return hash_djb2_one_float(0.0);
@@ -3014,11 +3018,11 @@ uint32_t Variant::hash() const {
 
 		} break;
 		case PACKED_FLOAT64_ARRAY: {
-			const Vector<double> &arr = PackedArrayRef<double>::get_array(_data.packed_array);
+			const std::vector<double> &arr = PackedArrayRef<double>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const double *r = arr.ptr();
+				const double *r = arr.data();
 				return hash_djb2_buffer((uint8_t *)&r[0], len * sizeof(double));
 			} else {
 				return hash_djb2_one_float(0.0);
@@ -3027,11 +3031,11 @@ uint32_t Variant::hash() const {
 		} break;
 		case PACKED_STRING_ARRAY: {
 			uint32_t hash = 5831;
-			const Vector<String> &arr = PackedArrayRef<String>::get_array(_data.packed_array);
+			const std::vector<String> &arr = PackedArrayRef<String>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const String *r = arr.ptr();
+				const String *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_32(r[i].hash(), hash);
@@ -3042,11 +3046,11 @@ uint32_t Variant::hash() const {
 		} break;
 		case PACKED_VECTOR2_ARRAY: {
 			uint32_t hash = 5831;
-			const Vector<Vector2> &arr = PackedArrayRef<Vector2>::get_array(_data.packed_array);
+			const std::vector<Vector2> &arr = PackedArrayRef<Vector2>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Vector2 *r = arr.ptr();
+				const Vector2 *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].x, hash);
@@ -3058,11 +3062,11 @@ uint32_t Variant::hash() const {
 		} break;
 		case PACKED_VECTOR3_ARRAY: {
 			uint32_t hash = 5831;
-			const Vector<Vector3> &arr = PackedArrayRef<Vector3>::get_array(_data.packed_array);
+			const std::vector<Vector3> &arr = PackedArrayRef<Vector3>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Vector3 *r = arr.ptr();
+				const Vector3 *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].x, hash);
@@ -3075,11 +3079,11 @@ uint32_t Variant::hash() const {
 		} break;
 		case PACKED_COLOR_ARRAY: {
 			uint32_t hash = 5831;
-			const Vector<Color> &arr = PackedArrayRef<Color>::get_array(_data.packed_array);
+			const std::vector<Color> &arr = PackedArrayRef<Color>::get_array(_data.packed_array);
 			int len = arr.size();
 
 			if (likely(len)) {
-				const Color *r = arr.ptr();
+				const Color *r = arr.data();
 
 				for (int i = 0; i < len; i++) {
 					hash = hash_djb2_one_float(r[i].r, hash);
@@ -3123,14 +3127,14 @@ uint32_t Variant::hash() const {
 			(hash_compare_scalar((p_lhs).a, (p_rhs).a))
 
 #define hash_compare_packed_array(p_lhs, p_rhs, p_type, p_compare_func) \
-	const Vector<p_type> &l = PackedArrayRef<p_type>::get_array(p_lhs); \
-	const Vector<p_type> &r = PackedArrayRef<p_type>::get_array(p_rhs); \
+	const std::vector<p_type> &l = PackedArrayRef<p_type>::get_array(p_lhs); \
+	const std::vector<p_type> &r = PackedArrayRef<p_type>::get_array(p_rhs); \
                                                                         \
 	if (l.size() != r.size())                                           \
 		return false;                                                   \
                                                                         \
-	const p_type *lr = l.ptr();                                         \
-	const p_type *rr = r.ptr();                                         \
+	const p_type *lr = l.data();                                        \
+	const p_type *rr = r.data();                                        \
                                                                         \
 	for (int i = 0; i < l.size(); ++i) {                                \
 		if (!p_compare_func((lr[i]), (rr[i])))                          \
@@ -3310,33 +3314,33 @@ bool Variant::is_ref() const {
 	return type == OBJECT && _get_obj().id.is_ref_counted();
 }
 
-Vector<Variant> varray() {
-	return Vector<Variant>();
+std::vector<Variant> varray() {
+	return std::vector<Variant>();
 }
 
-Vector<Variant> varray(const Variant &p_arg1) {
-	Vector<Variant> v;
+std::vector<Variant> varray(const Variant &p_arg1) {
+	std::vector<Variant> v;
 	v.push_back(p_arg1);
 	return v;
 }
 
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2) {
-	Vector<Variant> v;
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2) {
+	std::vector<Variant> v;
 	v.push_back(p_arg1);
 	v.push_back(p_arg2);
 	return v;
 }
 
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
-	Vector<Variant> v;
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
+	std::vector<Variant> v;
 	v.push_back(p_arg1);
 	v.push_back(p_arg2);
 	v.push_back(p_arg3);
 	return v;
 }
 
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4) {
-	Vector<Variant> v;
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4) {
+	std::vector<Variant> v;
 	v.push_back(p_arg1);
 	v.push_back(p_arg2);
 	v.push_back(p_arg3);
@@ -3344,8 +3348,8 @@ Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Varia
 	return v;
 }
 
-Vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4, const Variant &p_arg5) {
-	Vector<Variant> v;
+std::vector<Variant> varray(const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4, const Variant &p_arg5) {
+	std::vector<Variant> v;
 	v.push_back(p_arg1);
 	v.push_back(p_arg2);
 	v.push_back(p_arg3);
