@@ -36,13 +36,13 @@ struct VariantConstructData {
 	Variant::PTRConstructor ptr_construct;
 	Variant::Type (*get_argument_type)(int);
 	int argument_count;
-	Vector<String> arg_names;
+	std::vector<String> arg_names;
 };
 
 static LocalVector<VariantConstructData> construct_data[Variant::VARIANT_MAX];
 
 template <class T>
-static void add_constructor(const Vector<String> &arg_names) {
+static void add_constructor(const std::vector<String> &arg_names) {
 	ERR_FAIL_COND_MSG(arg_names.size() != T::get_argument_count(), "Argument names size mismatch for " + Variant::get_type_name(T::get_base_type()) + ".");
 
 	VariantConstructData cd;

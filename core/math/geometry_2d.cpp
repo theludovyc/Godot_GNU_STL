@@ -32,13 +32,16 @@
 
 #include "thirdparty/misc/clipper.hpp"
 #include "thirdparty/misc/polypartition.h"
+
+//todo std::vector.data()
+
 #define STB_RECT_PACK_IMPLEMENTATION
 #include "thirdparty/misc/stb_rect_pack.h"
 
 #define SCALE_FACTOR 100000.0 // Based on CMP_EPSILON.
 
-Vector<Vector<Vector2>> Geometry2D::decompose_polygon_in_convex(Vector<Point2> polygon) {
-	Vector<Vector<Vector2>> decomp;
+std::vector<std::vector<Vector2>> Geometry2D::decompose_polygon_in_convex(std::vector<Point2> polygon) {
+	std::vector<std::vector<Vector2>> decomp;
 	List<TPPLPoly> in_poly, out_poly;
 
 	TPPLPoly inp;
@@ -59,10 +62,10 @@ Vector<Vector<Vector2>> Geometry2D::decompose_polygon_in_convex(Vector<Point2> p
 	for (List<TPPLPoly>::Element *I = out_poly.front(); I; I = I->next()) {
 		TPPLPoly &tp = I->get();
 
-		decomp.write[idx].resize(tp.GetNumPoints());
+		decomp[idx].resize(tp.GetNumPoints());
 
 		for (int64_t i = 0; i < tp.GetNumPoints(); i++) {
-			decomp.write[idx].write[i] = tp.GetPoint(i);
+			decomp[idx][i] = tp.GetPoint(i);
 		}
 
 		idx++;
@@ -79,12 +82,12 @@ struct _AtlasWorkRect {
 };
 
 struct _AtlasWorkRectResult {
-	Vector<_AtlasWorkRect> result;
+	std::vector<_AtlasWorkRect> result;
 	int max_w;
 	int max_h;
 };
 
-void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_result, Size2i &r_size) {
+void Geometry2D::make_atlas(const std::vector<Size2i> &p_rects, std::vector<Point2i> &r_result, Size2i &r_size) {
 	// Super simple, almost brute force scanline stacking fitter.
 	// It's pretty basic for now, but it tries to make sure that the aspect ratio of the
 	// resulting atlas is somehow square. This is necessary because video cards have limits
@@ -99,16 +102,18 @@ void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_re
 		ERR_FAIL_COND(p_rects[i].height <= 0);
 	}
 
-	Vector<_AtlasWorkRect> wrects;
+	std::vector<_AtlasWorkRect> wrects;
 	wrects.resize(p_rects.size());
 	for (int i = 0; i < p_rects.size(); i++) {
-		wrects.write[i].s = p_rects[i];
-		wrects.write[i].idx = i;
+		wrects[i].s = p_rects[i];
+		wrects[i].idx = i;
 	}
-	wrects.sort();
+
+	std::sort(wrects.begin(), wrects.end());
+
 	int widest = wrects[0].s.width;
 
-	Vector<_AtlasWorkRectResult> results;
+	std::vector<_AtlasWorkRectResult> results;
 
 	for (int i = 0; i <= 12; i++) {
 		int w = 1 << i;
@@ -118,10 +123,10 @@ void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_re
 			continue;
 		}
 
-		Vector<int> hmax;
+		std::vector<int> hmax;
 		hmax.resize(w);
 		for (int j = 0; j < w; j++) {
-			hmax.write[j] = 0;
+			hmax[j] = 0;
 		}
 
 		// Place them.
@@ -139,8 +144,8 @@ void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_re
 				}
 			}
 
-			wrects.write[j].p.x = ofs;
-			wrects.write[j].p.y = from_y;
+			wrects[j].p.x = ofs;
+			wrects[j].p.y = from_y;
 			int end_h = from_y + wrects[j].s.height;
 			int end_w = ofs + wrects[j].s.width;
 			if (ofs == 0) {
@@ -148,7 +153,7 @@ void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_re
 			}
 
 			for (int k = 0; k < wrects[j].s.width; k++) {
-				hmax.write[ofs + k] = end_h;
+				hmax[ofs + k] = end_h;
 			}
 
 			if (end_h > max_h) {
@@ -189,13 +194,13 @@ void Geometry2D::make_atlas(const Vector<Size2i> &p_rects, Vector<Point2i> &r_re
 	r_result.resize(p_rects.size());
 
 	for (int i = 0; i < p_rects.size(); i++) {
-		r_result.write[results[best].result[i].idx] = results[best].result[i].p;
+		r_result[results[best].result[i].idx] = results[best].result[i].p;
 	}
 
 	r_size = Size2(results[best].max_w, results[best].max_h);
 }
 
-Vector<Vector<Point2>> Geometry2D::_polypaths_do_operation(PolyBooleanOperation p_op, const Vector<Point2> &p_polypath_a, const Vector<Point2> &p_polypath_b, bool is_a_open) {
+std::vector<std::vector<Point2>> Geometry2D::_polypaths_do_operation(PolyBooleanOperation p_op, const std::vector<Point2> &p_polypath_a, const std::vector<Point2> &p_polypath_b, bool is_a_open) {
 	using namespace ClipperLib;
 
 	ClipType op = ctUnion;
@@ -237,10 +242,10 @@ Vector<Vector<Point2>> Geometry2D::_polypaths_do_operation(PolyBooleanOperation 
 		clp.Execute(op, paths); // Works on closed polygons only.
 	}
 	// Have to scale points down now.
-	Vector<Vector<Point2>> polypaths;
+	std::vector<std::vector<Point2>> polypaths;
 
 	for (Paths::size_type i = 0; i < paths.size(); ++i) {
-		Vector<Vector2> polypath;
+		std::vector<Vector2> polypath;
 
 		const Path &scaled_path = paths[i];
 
@@ -254,7 +259,7 @@ Vector<Vector<Point2>> Geometry2D::_polypaths_do_operation(PolyBooleanOperation 
 	return polypaths;
 }
 
-Vector<Vector<Point2>> Geometry2D::_polypath_offset(const Vector<Point2> &p_polypath, real_t p_delta, PolyJoinType p_join_type, PolyEndType p_end_type) {
+std::vector<std::vector<Point2>> Geometry2D::_polypath_offset(const std::vector<Point2> &p_polypath, real_t p_delta, PolyJoinType p_join_type, PolyEndType p_end_type) {
 	using namespace ClipperLib;
 
 	JoinType jt = jtSquare;
@@ -303,10 +308,10 @@ Vector<Vector<Point2>> Geometry2D::_polypath_offset(const Vector<Point2> &p_poly
 	co.Execute(paths, p_delta * SCALE_FACTOR); // Inflate/deflate.
 
 	// Have to scale points down now.
-	Vector<Vector<Point2>> polypaths;
+	std::vector<std::vector<Point2>> polypaths;
 
 	for (Paths::size_type i = 0; i < paths.size(); ++i) {
-		Vector<Vector2> polypath;
+		std::vector<Vector2> polypath;
 
 		const Path &scaled_path = paths[i];
 
@@ -320,68 +325,68 @@ Vector<Vector<Point2>> Geometry2D::_polypath_offset(const Vector<Point2> &p_poly
 	return polypaths;
 }
 
-Vector<Point2i> Geometry2D::pack_rects(const Vector<Size2i> &p_sizes, const Size2i &p_atlas_size) {
-	Vector<stbrp_node> nodes;
+std::vector<Point2i> Geometry2D::pack_rects(const std::vector<Size2i> &p_sizes, const Size2i &p_atlas_size) {
+	std::vector<stbrp_node> nodes;
 	nodes.resize(p_atlas_size.width);
 
 	stbrp_context context;
-	stbrp_init_target(&context, p_atlas_size.width, p_atlas_size.height, nodes.ptrw(), p_atlas_size.width);
+	stbrp_init_target(&context, p_atlas_size.width, p_atlas_size.height, nodes.data(), p_atlas_size.width);
 
-	Vector<stbrp_rect> rects;
+	std::vector<stbrp_rect> rects;
 	rects.resize(p_sizes.size());
 
 	for (int i = 0; i < p_sizes.size(); i++) {
-		rects.write[i].id = 0;
-		rects.write[i].w = p_sizes[i].width;
-		rects.write[i].h = p_sizes[i].height;
-		rects.write[i].x = 0;
-		rects.write[i].y = 0;
-		rects.write[i].was_packed = 0;
+		rects[i].id = 0;
+		rects[i].w = p_sizes[i].width;
+		rects[i].h = p_sizes[i].height;
+		rects[i].x = 0;
+		rects[i].y = 0;
+		rects[i].was_packed = 0;
 	}
 
-	int res = stbrp_pack_rects(&context, rects.ptrw(), rects.size());
+	int res = stbrp_pack_rects(&context, rects.data(), rects.size());
 	if (res == 0) { //pack failed
-		return Vector<Point2i>();
+		return std::vector<Point2i>();
 	}
 
-	Vector<Point2i> ret;
+	std::vector<Point2i> ret;
 	ret.resize(p_sizes.size());
 
 	for (int i = 0; i < p_sizes.size(); i++) {
 		Point2i r(rects[i].x, rects[i].y);
-		ret.write[i] = r;
+		ret[i] = r;
 	}
 
 	return ret;
 }
 
-Vector<Vector3i> Geometry2D::partial_pack_rects(const Vector<Vector2i> &p_sizes, const Size2i &p_atlas_size) {
-	Vector<stbrp_node> nodes;
+std::vector<Vector3i> Geometry2D::partial_pack_rects(const std::vector<Vector2i> &p_sizes, const Size2i &p_atlas_size) {
+	std::vector<stbrp_node> nodes;
 	nodes.resize(p_atlas_size.width);
-	memset(nodes.ptrw(), 0, sizeof(stbrp_node) * nodes.size());
+	memset(nodes.data(), 0, sizeof(stbrp_node) * nodes.size());
 
 	stbrp_context context;
-	stbrp_init_target(&context, p_atlas_size.width, p_atlas_size.height, nodes.ptrw(), p_atlas_size.width);
+	stbrp_init_target(&context, p_atlas_size.width, p_atlas_size.height, nodes.data(), p_atlas_size.width);
 
-	Vector<stbrp_rect> rects;
+	std::vector<stbrp_rect> rects;
 	rects.resize(p_sizes.size());
 
 	for (int i = 0; i < p_sizes.size(); i++) {
-		rects.write[i].id = i;
-		rects.write[i].w = p_sizes[i].width;
-		rects.write[i].h = p_sizes[i].height;
-		rects.write[i].x = 0;
-		rects.write[i].y = 0;
-		rects.write[i].was_packed = 0;
+		rects[i].id = i;
+		rects[i].w = p_sizes[i].width;
+		rects[i].h = p_sizes[i].height;
+		rects[i].x = 0;
+		rects[i].y = 0;
+		rects[i].was_packed = 0;
 	}
 
-	stbrp_pack_rects(&context, rects.ptrw(), rects.size());
+	stbrp_pack_rects(&context, rects.data(), rects.size());
 
-	Vector<Vector3i> ret;
+	std::vector<Vector3i> ret;
 	ret.resize(p_sizes.size());
 
 	for (int i = 0; i < p_sizes.size(); i++) {
-		ret.write[rects[i].id] = Vector3i(rects[i].x, rects[i].y, rects[i].was_packed != 0 ? 1 : 0);
+		ret[rects[i].id] = Vector3i(rects[i].x, rects[i].y, rects[i].was_packed != 0 ? 1 : 0);
 	}
 
 	return ret;
