@@ -55,8 +55,8 @@ class LocalizationEditor : public VBoxContainer {
 	Tree *translation_filter;
 	bool translation_locales_list_created;
 	OptionButton *translation_locale_filter_mode;
-	Vector<TreeItem *> translation_filter_treeitems;
-	Vector<int> translation_locales_idxs_remap;
+	std::vector<TreeItem *> translation_filter_treeitems;
+	std::vector<int> translation_locales_idxs_remap;
 
 	Tree *translation_pot_list;
 	EditorFileDialog *pot_file_open_dialog;

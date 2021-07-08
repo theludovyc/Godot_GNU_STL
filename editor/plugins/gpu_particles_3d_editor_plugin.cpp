@@ -35,7 +35,9 @@
 #include "scene/3d/cpu_particles_3d.h"
 #include "scene/resources/particles_material.h"
 
-bool GPUParticles3DEditorBase::_generate(Vector<Vector3> &points, Vector<Vector3> &normals) {
+//todo std::vector.data()
+
+bool GPUParticles3DEditorBase::_generate(std::vector<Vector3> &points, std::vector<Vector3> &normals) {
 	bool use_normals = emission_fill->get_selected() == 1;
 
 	if (emission_fill->get_selected() < 2) {
@@ -87,7 +89,7 @@ bool GPUParticles3DEditorBase::_generate(Vector<Vector3> &points, Vector<Vector3
 			return false;
 		}
 
-		const Face3 *r = geometry.ptr();
+		const Face3 *r = geometry.data();
 
 		AABB aabb;
 
@@ -180,7 +182,7 @@ void GPUParticles3DEditorBase::_node_selected(const NodePath &p_path) {
 	Transform3D geom_xform = base_node->get_global_transform().affine_inverse() * vi->get_global_transform();
 
 	int gc = geometry.size();
-	Face3 *w = geometry.ptrw();
+	Face3 *w = geometry.data();
 
 	for (int i = 0; i < gc; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -329,8 +331,8 @@ void GPUParticles3DEditor::edit(GPUParticles3D *p_particles) {
 
 void GPUParticles3DEditor::_generate_emission_points() {
 	/// hacer codigo aca
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
 
 	if (!_generate(points, normals)) {
 		return;
@@ -341,13 +343,13 @@ void GPUParticles3DEditor::_generate_emission_points() {
 	int w = 2048;
 	int h = (point_count / 2048) + 1;
 
-	Vector<uint8_t> point_img;
+	std::vector<uint8_t> point_img;
 	point_img.resize(w * h * 3 * sizeof(float));
 
 	{
-		uint8_t *iw = point_img.ptrw();
+		uint8_t *iw = point_img.data();
 		memset(iw, 0, w * h * 3 * sizeof(float));
-		const Vector3 *r = points.ptr();
+		const Vector3 *r = points.data();
 		float *wf = (float *)iw;
 		for (int i = 0; i < point_count; i++) {
 			wf[i * 3 + 0] = r[i].x;
@@ -369,13 +371,13 @@ void GPUParticles3DEditor::_generate_emission_points() {
 		material->set_emission_point_count(point_count);
 		material->set_emission_point_texture(tex);
 
-		Vector<uint8_t> point_img2;
+		std::vector<uint8_t> point_img2;
 		point_img2.resize(w * h * 3 * sizeof(float));
 
 		{
-			uint8_t *iw = point_img2.ptrw();
+			uint8_t *iw = point_img2.data();
 			memset(iw, 0, w * h * 3 * sizeof(float));
-			const Vector3 *r = normals.ptr();
+			const Vector3 *r = normals.data();
 			float *wf = (float *)iw;
 			for (int i = 0; i < point_count; i++) {
 				wf[i * 3 + 0] = r[i].x;

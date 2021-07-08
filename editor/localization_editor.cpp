@@ -68,7 +68,11 @@ void LocalizationEditor::add_translation(const String &p_translation) {
 void LocalizationEditor::_translation_add(const PackedStringArray &p_paths) {
 	PackedStringArray translations = ProjectSettings::get_singleton()->get("internationalization/locale/translations");
 	for (int i = 0; i < p_paths.size(); i++) {
-		if (!translations.has(p_paths[i])) {
+
+		//todo
+		auto it = std::find(translations.begin(), translations.end(), p_paths[i]);
+
+		if (it == translations.end()) {
 			// Don't add duplicate translation paths.
 			translations.push_back(p_paths[i]);
 		}
@@ -98,7 +102,8 @@ void LocalizationEditor::_translation_delete(Object *p_item, int p_column, int p
 
 	ERR_FAIL_INDEX(idx, translations.size());
 
-	translations.remove(idx);
+	//todo
+	translations.erase(translations.begin() + idx);
 
 	undo_redo->create_action(TTR("Remove Translation"));
 	undo_redo->add_do_property(ProjectSettings::get_singleton(), "internationalization/locale/translations", translations);
@@ -200,7 +205,7 @@ void LocalizationEditor::_translation_res_option_changed() {
 	String path = ed->get_metadata(1);
 	int which = ed->get_range(1);
 
-	Vector<String> langs = TranslationServer::get_all_locales();
+	std::vector<String> langs = TranslationServer::get_all_locales();
 
 	ERR_FAIL_INDEX(which, langs.size());
 
@@ -208,9 +213,9 @@ void LocalizationEditor::_translation_res_option_changed() {
 	PackedStringArray r = remaps[key];
 	ERR_FAIL_INDEX(idx, r.size());
 	if (translation_locales_idxs_remap.size() > which) {
-		r.set(idx, path + ":" + langs[translation_locales_idxs_remap[which]]);
+		r[idx] = path + ":" + langs[translation_locales_idxs_remap[which]];
 	} else {
-		r.set(idx, path + ":" + langs[which]);
+		r[idx] = path + ":" + langs[which];
 	}
 	remaps[key] = r;
 
@@ -276,7 +281,10 @@ void LocalizationEditor::_translation_res_option_delete(Object *p_item, int p_co
 	ERR_FAIL_COND(!remaps.has(key));
 	PackedStringArray r = remaps[key];
 	ERR_FAIL_INDEX(idx, r.size());
-	r.remove(idx);
+
+	//todo
+	r.erase(r.begin() + idx);
+
 	remaps[key] = r;
 
 	undo_redo->create_action(TTR("Remove Resource Remap Option"));
@@ -402,7 +410,8 @@ void LocalizationEditor::_pot_delete(Object *p_item, int p_column, int p_button)
 
 	ERR_FAIL_INDEX(idx, pot_translations.size());
 
-	pot_translations.remove(idx);
+	//todo
+	pot_translations.erase(pot_translations.begin() + idx);
 
 	undo_redo->create_action(TTR("Remove file from POT generation"));
 	undo_redo->add_do_property(ProjectSettings::get_singleton(), "internationalization/locale/translations_pot_files", pot_translations);
@@ -457,8 +466,8 @@ void LocalizationEditor::update_translations() {
 		}
 	}
 
-	Vector<String> langs = TranslationServer::get_all_locales();
-	Vector<String> names = TranslationServer::get_all_locale_names();
+	std::vector<String> langs = TranslationServer::get_all_locales();
+	std::vector<String> names = TranslationServer::get_all_locale_names();
 
 	// Update filter tab
 	Array l_filter_all;
@@ -543,7 +552,7 @@ void LocalizationEditor::update_translations() {
 						langnames += ",";
 					}
 					langnames += names[i];
-					translation_locales_idxs_remap.write[l_idx] = i;
+					translation_locales_idxs_remap[l_idx] = i;
 					l_idx++;
 				}
 			}
@@ -559,11 +568,12 @@ void LocalizationEditor::update_translations() {
 		Dictionary remaps = ProjectSettings::get_singleton()->get("internationalization/locale/translation_remaps");
 		List<Variant> rk;
 		remaps.get_key_list(&rk);
-		Vector<String> keys;
+		std::vector<String> keys;
 		for (List<Variant>::Element *E = rk.front(); E; E = E->next()) {
 			keys.push_back(E->get());
 		}
-		keys.sort();
+
+		std::sort(keys.begin(), keys.end());
 
 		for (int i = 0; i < keys.size(); i++) {
 			TreeItem *t = translation_remap->create_item(root);
@@ -593,12 +603,25 @@ void LocalizationEditor::update_translations() {
 					t2->set_text(1, langnames);
 					t2->set_editable(1, true);
 					t2->set_metadata(1, path);
-					int idx = langs.find(locale);
-					if (idx < 0) {
-						idx = 0;
+
+					//todo
+					auto it = std::find(langs.begin(), langs.end(), locale);
+
+					int idx = 0;
+
+					if(it != langs.end()){
+						idx = std::distance(langs.begin(), it);
 					}
 
-					int f_idx = translation_locales_idxs_remap.find(idx);
+					//todo
+					auto it1 = std::find(translation_locales_idxs_remap.begin(), translation_locales_idxs_remap.end(), idx);
+
+					int f_idx = -1;
+
+					if(it1 != translation_locales_idxs_remap.end()){
+						f_idx = std::distance(translation_locales_idxs_remap.begin(), it1);
+					}
+
 					if (f_idx != -1 && fl_idx_count > 0 && filter_mode == SHOW_ONLY_SELECTED_LOCALES) {
 						t2->set_range(1, f_idx);
 					} else {
@@ -642,7 +665,7 @@ LocalizationEditor::LocalizationEditor() {
 	updating_translations = false;
 	localization_changed = "localization_changed";
 
-	translation_locales_idxs_remap = Vector<int>();
+	translation_locales_idxs_remap = std::vector<int>();
 	translation_locales_list_created = false;
 
 	TabContainer *translations = memnew(TabContainer);
