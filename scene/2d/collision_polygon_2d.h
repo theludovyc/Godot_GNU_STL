@@ -48,14 +48,14 @@ public:
 protected:
 	Rect2 aabb = Rect2(-10, -10, 20, 20);
 	BuildMode build_mode = BUILD_SOLIDS;
-	Vector<Point2> polygon;
+	std::vector<Point2> polygon;
 	uint32_t owner_id = 0;
 	CollisionObject2D *parent = nullptr;
 	bool disabled = false;
 	bool one_way_collision = false;
 	real_t one_way_collision_margin = 1.0;
 
-	Vector<Vector<Vector2>> _decompose_in_convex();
+	std::vector<std::vector<Vector2>> _decompose_in_convex();
 
 	void _build_polygon();
 
@@ -75,8 +75,8 @@ public:
 	void set_build_mode(BuildMode p_mode);
 	BuildMode get_build_mode() const;
 
-	void set_polygon(const Vector<Point2> &p_polygon);
-	Vector<Point2> get_polygon() const;
+	void set_polygon(const std::vector<Point2> &p_polygon);
+	std::vector<Point2> get_polygon() const;
 
 	TypedArray<String> get_configuration_warnings() const override;
 

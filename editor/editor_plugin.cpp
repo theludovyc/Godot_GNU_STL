@@ -32,8 +32,6 @@
 
 #include "editor/editor_export.h"
 #include "editor/editor_node.h"
-#include "editor/editor_paths.h"
-#include "editor/editor_settings.h"
 #include "editor/filesystem_dock.h"
 #include "editor/project_settings_editor.h"
 #include "editor_resource_preview.h"
@@ -41,17 +39,17 @@
 #include "plugins/canvas_item_editor_plugin.h"
 #include "plugins/node_3d_editor_plugin.h"
 #include "scene/3d/camera_3d.h"
-#include "scene/gui/popup_menu.h"
-#include "servers/rendering_server.h"
+
+//todo std::vector.data()
 
 Array EditorInterface::_make_mesh_previews(const Array &p_meshes, int p_preview_size) {
-	Vector<Ref<Mesh>> meshes;
+	std::vector<Ref<Mesh>> meshes;
 
 	for (int i = 0; i < p_meshes.size(); i++) {
 		meshes.push_back(p_meshes[i]);
 	}
 
-	Vector<Ref<Texture2D>> textures = make_mesh_previews(meshes, nullptr, p_preview_size);
+	std::vector<Ref<Texture2D>> textures = make_mesh_previews(meshes, nullptr, p_preview_size);
 	Array ret;
 	for (int i = 0; i < textures.size(); i++) {
 		ret.push_back(textures[i]);
@@ -60,7 +58,7 @@ Array EditorInterface::_make_mesh_previews(const Array &p_meshes, int p_preview_
 	return ret;
 }
 
-Vector<Ref<Texture2D>> EditorInterface::make_mesh_previews(const Vector<Ref<Mesh>> &p_meshes, Vector<Transform3D> *p_transforms, int p_preview_size) {
+std::vector<Ref<Texture2D>> EditorInterface::make_mesh_previews(const std::vector<Ref<Mesh>> &p_meshes, std::vector<Transform3D> *p_transforms, int p_preview_size) {
 	int size = p_preview_size;
 
 	RID scenario = RS::get_singleton()->scenario_create();
@@ -85,7 +83,7 @@ Vector<Ref<Texture2D>> EditorInterface::make_mesh_previews(const Vector<Ref<Mesh
 
 	EditorProgress ep("mlib", TTR("Creating Mesh Previews"), p_meshes.size());
 
-	Vector<Ref<Texture2D>> textures;
+	std::vector<Ref<Texture2D>> textures;
 
 	for (int i = 0; i < p_meshes.size(); i++) {
 		Ref<Mesh> mesh = p_meshes[i];
@@ -211,7 +209,7 @@ Node *EditorInterface::get_edited_scene_root() {
 
 Array EditorInterface::get_open_scenes() const {
 	Array ret;
-	Vector<EditorData::EditedScene> scenes = EditorNode::get_editor_data().get_edited_scenes();
+	std::vector<EditorData::EditedScene> scenes = EditorNode::get_editor_data().get_edited_scenes();
 
 	int scns_amount = scenes.size();
 	for (int idx_scn = 0; idx_scn < scns_amount; idx_scn++) {
@@ -779,7 +777,7 @@ void EditorPlugin::remove_scene_import_plugin(const Ref<EditorSceneImporter> &p_
 }
 
 int find(const PackedStringArray &a, const String &v) {
-	const String *r = a.ptr();
+	const String *r = a.data();
 	for (int j = 0; j < a.size(); ++j) {
 		if (r[j] == v) {
 			return j;

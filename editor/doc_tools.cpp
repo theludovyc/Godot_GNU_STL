@@ -30,6 +30,8 @@
 
 #include "doc_tools.h"
 
+#include <algorithm>
+
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/core_constants.h"
@@ -42,6 +44,8 @@
 
 // Used for a hack preserving Mono properties on non-Mono builds.
 #include "modules/modules_enabled.gen.h"
+
+//todo std::vector.data()
 
 void DocTools::merge_from(const DocTools &p_data) {
 	for (Map<String, DocData::ClassDoc>::Element *E = class_list.front(); E; E = E->next()) {
@@ -58,7 +62,7 @@ void DocTools::merge_from(const DocTools &p_data) {
 		c.tutorials = cf.tutorials;
 
 		for (int i = 0; i < c.methods.size(); i++) {
-			DocData::MethodDoc &m = c.methods.write[i];
+			DocData::MethodDoc &m = c.methods[i];
 
 			for (int j = 0; j < cf.methods.size(); j++) {
 				if (cf.methods[j].name != m.name) {
@@ -70,17 +74,17 @@ void DocTools::merge_from(const DocTools &p_data) {
 				// since polymorphic functions are allowed we need to check the type of
 				// the arguments so we make sure they are different.
 				int arg_count = cf.methods[j].arguments.size();
-				Vector<bool> arg_used;
+				std::vector<bool> arg_used;
 				arg_used.resize(arg_count);
 				for (int l = 0; l < arg_count; ++l) {
-					arg_used.write[l] = false;
+					arg_used[l] = false;
 				}
 				// also there is no guarantee that argument ordering will match, so we
 				// have to check one by one so we make sure we have an exact match
 				for (int k = 0; k < arg_count; ++k) {
 					for (int l = 0; l < arg_count; ++l) {
 						if (cf.methods[j].arguments[k].type == m.arguments[l].type && !arg_used[l]) {
-							arg_used.write[l] = true;
+							arg_used[l] = true;
 							break;
 						}
 					}
@@ -103,7 +107,7 @@ void DocTools::merge_from(const DocTools &p_data) {
 		}
 
 		for (int i = 0; i < c.signals.size(); i++) {
-			DocData::MethodDoc &m = c.signals.write[i];
+			DocData::MethodDoc &m = c.signals[i];
 
 			for (int j = 0; j < cf.signals.size(); j++) {
 				if (cf.signals[j].name != m.name) {
@@ -117,7 +121,7 @@ void DocTools::merge_from(const DocTools &p_data) {
 		}
 
 		for (int i = 0; i < c.constants.size(); i++) {
-			DocData::ConstantDoc &m = c.constants.write[i];
+			DocData::ConstantDoc &m = c.constants[i];
 
 			for (int j = 0; j < cf.constants.size(); j++) {
 				if (cf.constants[j].name != m.name) {
@@ -131,7 +135,7 @@ void DocTools::merge_from(const DocTools &p_data) {
 		}
 
 		for (int i = 0; i < c.properties.size(); i++) {
-			DocData::PropertyDoc &p = c.properties.write[i];
+			DocData::PropertyDoc &p = c.properties[i];
 
 			for (int j = 0; j < cf.properties.size(); j++) {
 				if (cf.properties[j].name != p.name) {
@@ -145,7 +149,7 @@ void DocTools::merge_from(const DocTools &p_data) {
 		}
 
 		for (int i = 0; i < c.theme_properties.size(); i++) {
-			DocData::PropertyDoc &p = c.theme_properties.write[i];
+			DocData::PropertyDoc &p = c.theme_properties[i];
 
 			for (int j = 0; j < cf.theme_properties.size(); j++) {
 				if (cf.theme_properties[j].name != p.name) {
@@ -836,7 +840,7 @@ void DocTools::generate(bool p_basic_types) {
 			}
 
 			// Skip adding the lang if it doesn't expose anything (e.g. C#).
-			if (c.methods.is_empty() && c.constants.is_empty()) {
+			if (c.methods.empty() && c.constants.empty()) {
 				continue;
 			}
 
@@ -845,7 +849,7 @@ void DocTools::generate(bool p_basic_types) {
 	}
 }
 
-static Error _parse_methods(Ref<XMLParser> &parser, Vector<DocData::MethodDoc> &methods) {
+static Error _parse_methods(Ref<XMLParser> &parser, std::vector<DocData::MethodDoc> &methods) {
 	String section = parser->get_node_name();
 	String element = section.substr(0, section.length() - 1);
 
@@ -1187,7 +1191,7 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 
 		_write_string(f, 1, "<tutorials>");
 		for (int i = 0; i < c.tutorials.size(); i++) {
-			DocData::TutorialDoc tutorial = c.tutorials.get(i);
+			DocData::TutorialDoc tutorial = c.tutorials[i];
 			String title_attribute = (!tutorial.title.is_empty()) ? " title=\"" + tutorial.title.xml_escape() + "\"" : "";
 			_write_string(f, 2, "<link" + title_attribute + ">" + tutorial.link.xml_escape() + "</link>");
 		}
@@ -1195,7 +1199,7 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 
 		_write_string(f, 1, "<methods>");
 
-		c.methods.sort();
+		std::sort(c.methods.begin(), c.methods.end());
 
 		for (int i = 0; i < c.methods.size(); i++) {
 			const DocData::MethodDoc &m = c.methods[i];
@@ -1245,7 +1249,7 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 		if (c.properties.size()) {
 			_write_string(f, 1, "<members>");
 
-			c.properties.sort();
+			std::sort(c.properties.begin(), c.properties.end());
 
 			for (int i = 0; i < c.properties.size(); i++) {
 				String additional_attributes;
@@ -1270,7 +1274,7 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 		}
 
 		if (c.signals.size()) {
-			c.signals.sort();
+			std::sort(c.signals.begin(), c.signals.end());
 
 			_write_string(f, 1, "<signals>");
 			for (int i = 0; i < c.signals.size(); i++) {
@@ -1316,7 +1320,7 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 		_write_string(f, 1, "</constants>");
 
 		if (c.theme_properties.size()) {
-			c.theme_properties.sort();
+			std::sort(c.theme_properties.begin(), c.theme_properties.end());
 
 			_write_string(f, 1, "<theme_items>");
 			for (int i = 0; i < c.theme_properties.size(); i++) {
@@ -1342,9 +1346,9 @@ Error DocTools::save_classes(const String &p_default_path, const Map<String, Str
 }
 
 Error DocTools::load_compressed(const uint8_t *p_data, int p_compressed_size, int p_uncompressed_size) {
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(p_uncompressed_size);
-	Compression::decompress(data.ptrw(), p_uncompressed_size, p_data, p_compressed_size, Compression::MODE_DEFLATE);
+	Compression::decompress(data.data(), p_uncompressed_size, p_data, p_compressed_size, Compression::MODE_DEFLATE);
 	class_list.clear();
 
 	Ref<XMLParser> parser = memnew(XMLParser);

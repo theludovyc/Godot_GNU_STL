@@ -110,7 +110,7 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 		p_library->set_item_mesh(id, mesh);
 		mesh_instances[id] = mi;
 
-		Vector<MeshLibrary::ShapeData> collisions;
+		std::vector<MeshLibrary::ShapeData> collisions;
 
 		for (int j = 0; j < mi->get_child_count(); j++) {
 			Node *child2 = mi->get_child(j);
@@ -169,9 +169,9 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 	//generate previews!
 
 	if (true) {
-		Vector<Ref<Mesh>> meshes;
-		Vector<Transform3D> transforms;
-		Vector<int> ids = p_library->get_item_list();
+		std::vector<Ref<Mesh>> meshes;
+		std::vector<Transform3D> transforms;
+		std::vector<int> ids = p_library->get_item_list();
 		for (int i = 0; i < ids.size(); i++) {
 			if (mesh_instances.find(ids[i])) {
 				meshes.push_back(p_library->get_item_mesh(ids[i]));
@@ -179,7 +179,7 @@ void MeshLibraryEditor::_import_scene(Node *p_scene, Ref<MeshLibrary> p_library,
 			}
 		}
 
-		Vector<Ref<Texture2D>> textures = EditorInterface::get_singleton()->make_mesh_previews(meshes, &transforms, EditorSettings::get_singleton()->get("editors/grid_map/preview_size"));
+		std::vector<Ref<Texture2D>> textures = EditorInterface::get_singleton()->make_mesh_previews(meshes, &transforms, EditorSettings::get_singleton()->get("editors/grid_map/preview_size"));
 		int j = 0;
 		for (int i = 0; i < ids.size(); i++) {
 			if (mesh_instances.find(ids[i])) {

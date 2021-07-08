@@ -53,7 +53,6 @@ class EditorExportPlugin;
 class EditorNode3DGizmoPlugin;
 class EditorResourcePreview;
 class EditorFileSystem;
-class EditorToolAddons;
 class EditorPaths;
 class FileSystemDock;
 class ScriptEditor;
@@ -113,7 +112,7 @@ public:
 	Error save_scene();
 	void save_scene_as(const String &p_scene, bool p_with_preview = true);
 
-	Vector<Ref<Texture2D>> make_mesh_previews(const Vector<Ref<Mesh>> &p_meshes, Vector<Transform3D> *p_transforms, int p_preview_size);
+	std::vector<Ref<Texture2D>> make_mesh_previews(const std::vector<Ref<Mesh>> &p_meshes, std::vector<Transform3D> *p_transforms, int p_preview_size);
 
 	void set_main_screen_editor(const String &p_name);
 	void set_distraction_free_mode(bool p_enter);

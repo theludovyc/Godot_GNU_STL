@@ -264,7 +264,7 @@ void EditorSettingsDialog::_update_shortcuts() {
 		InputMap::Action action = E.get();
 
 		Array events; // Need to get the list of events into an array so it can be set as metadata on the item.
-		Vector<String> event_strings;
+		std::vector<String> event_strings;
 
 		List<Ref<InputEvent>> all_default_events = InputMap::get_singleton()->get_builtins().find(action_name).value();
 		List<Ref<InputEventKey>> key_default_events;
@@ -292,7 +292,7 @@ void EditorSettingsDialog::_update_shortcuts() {
 		}
 
 		// Join the text of the events with a delimiter so they can all be displayed in one cell.
-		String events_display_string = event_strings.is_empty() ? "None" : String("; ").join(event_strings);
+		String events_display_string = event_strings.empty() ? "None" : String("; ").join(event_strings);
 
 		if (!shortcut_filter.is_subsequence_ofi(action_name) && (events_display_string == "None" || !shortcut_filter.is_subsequence_ofi(events_display_string))) {
 			continue;

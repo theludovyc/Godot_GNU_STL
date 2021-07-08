@@ -43,7 +43,7 @@ class EditorSceneImporterMeshNode3D : public Node3D {
 	Ref<EditorSceneImporterMesh> mesh;
 	Ref<Skin> skin;
 	NodePath skeleton_path;
-	Vector<Ref<Material>> surface_materials;
+	std::vector<Ref<Material>> surface_materials;
 
 protected:
 	static void _bind_methods();

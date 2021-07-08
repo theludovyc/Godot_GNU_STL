@@ -65,6 +65,8 @@
 #include "scene/resources/packed_scene.h"
 #include "servers/display_server.h"
 
+//todo std::vector.data()
+
 using CameraOverride = EditorDebuggerNode::CameraOverride;
 
 void ScriptEditorDebugger::_put_msg(String p_message, Array p_data) {
@@ -166,31 +168,31 @@ void ScriptEditorDebugger::_file_selected(const String &p_file) {
 				ERR_PRINT("Failed to open " + p_file);
 				return;
 			}
-			Vector<String> line;
+			std::vector<String> line;
 			line.resize(Performance::MONITOR_MAX);
 
 			// signatures
 			for (int i = 0; i < Performance::MONITOR_MAX; i++) {
-				line.write[i] = Performance::get_singleton()->get_monitor_name(Performance::Monitor(i));
+				line[i] = Performance::get_singleton()->get_monitor_name(Performance::Monitor(i));
 			}
 			file->store_csv_line(line);
 
 			// values
-			Vector<List<float>::Element *> iterators;
+			std::vector<List<float>::Element *> iterators;
 			iterators.resize(Performance::MONITOR_MAX);
 			bool continue_iteration = false;
 			for (int i = 0; i < Performance::MONITOR_MAX; i++) {
-				iterators.write[i] = performance_profiler->get_monitor_data(Performance::get_singleton()->get_monitor_name(Performance::Monitor(i)))->back();
+				iterators[i] = performance_profiler->get_monitor_data(Performance::get_singleton()->get_monitor_name(Performance::Monitor(i)))->back();
 				continue_iteration = continue_iteration || iterators[i];
 			}
 			while (continue_iteration) {
 				continue_iteration = false;
 				for (int i = 0; i < Performance::MONITOR_MAX; i++) {
 					if (iterators[i]) {
-						line.write[i] = String::num_real(iterators[i]->get());
-						iterators.write[i] = iterators[i]->prev();
+						line[i] = String::num_real(iterators[i]->get());
+						iterators[i] = iterators[i]->prev();
 					} else {
-						line.write[i] = "";
+						line[i] = "";
 					}
 					continue_iteration = continue_iteration || iterators[i];
 				}
@@ -198,7 +200,7 @@ void ScriptEditorDebugger::_file_selected(const String &p_file) {
 			}
 			file->store_string("\n");
 
-			Vector<Vector<String>> profiler_data = profiler->get_data_as_csv();
+			std::vector<std::vector<String>> profiler_data = profiler->get_data_as_csv();
 			for (int i = 0; i < profiler_data.size(); i++) {
 				file->store_csv_line(profiler_data[i]);
 			}
@@ -212,20 +214,20 @@ void ScriptEditorDebugger::_file_selected(const String &p_file) {
 				return;
 			}
 
-			Vector<String> headers;
+			std::vector<String> headers;
 			headers.resize(vmem_tree->get_columns());
 			for (int i = 0; i < vmem_tree->get_columns(); ++i) {
-				headers.write[i] = vmem_tree->get_column_title(i);
+				headers[i] = vmem_tree->get_column_title(i);
 			}
 			file->store_csv_line(headers);
 
 			if (vmem_tree->get_root()) {
 				TreeItem *ti = vmem_tree->get_root()->get_first_child();
 				while (ti) {
-					Vector<String> values;
+					std::vector<String> values;
 					values.resize(vmem_tree->get_columns());
 					for (int i = 0; i < vmem_tree->get_columns(); ++i) {
-						values.write[i] = ti->get_text(i);
+						values[i] = ti->get_text(i);
 					}
 					file->store_csv_line(values);
 
@@ -399,10 +401,10 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		ERR_FAIL_COND(p_data.size() != 2);
 
 		ERR_FAIL_COND(p_data[0].get_type() != Variant::PACKED_STRING_ARRAY);
-		Vector<String> output_strings = p_data[0];
+		std::vector<String> output_strings = p_data[0];
 
 		ERR_FAIL_COND(p_data[1].get_type() != Variant::PACKED_INT32_ARRAY);
-		Vector<int> output_types = p_data[1];
+		std::vector<int> output_types = p_data[1];
 
 		ERR_FAIL_COND(output_strings.size() != output_types.size());
 
@@ -424,10 +426,10 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 			EditorNode::get_log()->add_message(output_strings[i], msg_type);
 		}
 	} else if (p_msg == "performance:profile_frame") {
-		Vector<float> frame_data;
+		std::vector<float> frame_data;
 		frame_data.resize(p_data.size());
 		for (int i = 0; i < p_data.size(); i++) {
-			frame_data.write[i] = p_data[i];
+			frame_data[i] = p_data[i];
 		}
 		performance_profiler->add_profile_frame(frame_data);
 
@@ -441,7 +443,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		metric.valid = true;
 
 		{
-			EditorVisualProfiler::Metric::Area *areas_ptr = metric.areas.ptrw();
+			EditorVisualProfiler::Metric::Area *areas_ptr = metric.areas.data();
 			for (int i = 0; i < frame.areas.size(); i++) {
 				areas_ptr[i].name = frame.areas[i].name;
 				areas_ptr[i].cpu_time = frame.areas[i].cpu_msec;
@@ -513,7 +515,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 				cpp_cond->set_metadata(0, source_meta);
 			}
 		}
-		Vector<uint8_t> v;
+		std::vector<uint8_t> v;
 		v.resize(100);
 
 		// Source of the error.
@@ -537,7 +539,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		// Format stack trace.
 		// stack_items_count is the number of elements to parse, with 3 items per frame
 		// of the stack trace (script, method, line).
-		const ScriptLanguage::StackInfo *infos = oe.callstack.ptr();
+		const ScriptLanguage::StackInfo *infos = oe.callstack.data();
 		for (unsigned int i = 0; i < (unsigned int)oe.callstack.size(); i++) {
 			TreeItem *stack_trace = error_tree->create_item(error);
 
@@ -636,7 +638,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 				item.signature = "categ::" + name + "::" + item.name;
 				item.name = item.name.capitalize();
 				c.total_time += item.total;
-				c.items.write[j] = item;
+				c.items[j] = item;
 			}
 			metric.categories.push_back(c);
 		}
@@ -657,7 +659,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 				item.signature = profiler_signature[signature];
 
 				String name = profiler_signature[signature];
-				Vector<String> strings = name.split("::");
+				std::vector<String> strings = name.split("::");
 				if (strings.size() == 3) {
 					item.name = strings[2];
 					item.script = strings[0];
@@ -675,7 +677,7 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 			item.calls = calls;
 			item.self = self;
 			item.total = total;
-			funcs.items.write[i] = item;
+			funcs.items[i] = item;
 		}
 
 		metric.categories.push_back(funcs);
@@ -702,11 +704,11 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		_stop_and_notify();
 
 	} else if (p_msg == "performance:profile_names") {
-		Vector<StringName> monitors;
+		std::vector<StringName> monitors;
 		monitors.resize(p_data.size());
 		for (int i = 0; i < p_data.size(); i++) {
 			ERR_FAIL_COND(p_data[i].get_type() != Variant::STRING_NAME);
-			monitors.set(i, p_data[i]);
+			monitors[i] = p_data[i];
 		}
 		performance_profiler->update_monitors(monitors);
 
@@ -1421,7 +1423,7 @@ void ScriptEditorDebugger::_item_menu_id_pressed(int p_option) {
 			// We only need the first child here (C++ source stack trace).
 			TreeItem *ci = ti->get_first_child();
 			// Parse back the `file:line @ method()` string.
-			const Vector<String> file_line_number = ci->get_text(1).split("@")[0].strip_edges().split(":");
+			const std::vector<String> file_line_number = ci->get_text(1).split("@")[0].strip_edges().split(":");
 			ERR_FAIL_COND_MSG(file_line_number.size() < 2, "Incorrect C++ source stack trace file:line format (please report).");
 			const String file = file_line_number[0];
 			const int line_number = file_line_number[1].to_int();

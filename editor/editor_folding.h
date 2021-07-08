@@ -34,8 +34,8 @@
 #include "scene/main/node.h"
 
 class EditorFolding {
-	Vector<String> _get_unfolds(const Object *p_object);
-	void _set_unfolds(Object *p_object, const Vector<String> &p_unfolds);
+	std::vector<String> _get_unfolds(const Object *p_object);
+	void _set_unfolds(Object *p_object, const std::vector<String> &p_unfolds);
 
 	void _fill_folds(const Node *p_root, const Node *p_node, Array &p_folds, Array &resource_folds, Array &nodes_folded, Set<RES> &resources);
 

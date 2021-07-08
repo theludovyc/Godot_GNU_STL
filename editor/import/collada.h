@@ -31,6 +31,8 @@
 #ifndef COLLADA_H
 #define COLLADA_H
 
+#include <algorithm>
+
 #include "core/config/project_settings.h"
 #include "core/io/xml_parser.h"
 #include "core/templates/map.h"
@@ -127,7 +129,7 @@ public:
 	struct MeshData {
 		String name;
 		struct Source {
-			Vector<float> array;
+			std::vector<float> array;
 			int stride = 0;
 		};
 
@@ -147,13 +149,13 @@ public:
 
 			String material;
 			Map<String, SourceRef> sources;
-			Vector<float> polygons;
-			Vector<float> indices;
+			std::vector<float> polygons;
+			std::vector<float> indices;
 			int count = 0;
 			int vertex_size = 0;
 		};
 
-		Vector<Primitives> primitives;
+		std::vector<Primitives> primitives;
 
 		bool found_double_sided = false;
 		bool double_sided = true;
@@ -166,8 +168,8 @@ public:
 		bool closed = false;
 
 		struct Source {
-			Vector<String> sarray;
-			Vector<float> array;
+			std::vector<String> sarray;
+			std::vector<float> array;
 			int stride = 0;
 		};
 
@@ -185,8 +187,8 @@ public:
 		Transform3D bind_shape;
 
 		struct Source {
-			Vector<String> sarray; //maybe for names
-			Vector<float> array;
+			std::vector<String> sarray; //maybe for names
+			std::vector<float> array;
 			int stride = 1;
 			Source() {}
 		};
@@ -205,8 +207,8 @@ public:
 
 			String material;
 			Map<String, SourceRef> sources;
-			Vector<float> sets;
-			Vector<float> indices;
+			std::vector<float> sets;
+			std::vector<float> indices;
 			int count = 0;
 		} weights;
 
@@ -221,8 +223,8 @@ public:
 
 		struct Source {
 			int stride = 1;
-			Vector<String> sarray; //maybe for names
-			Vector<float> array;
+			std::vector<String> sarray; //maybe for names
+			std::vector<float> array;
 			Source() {}
 		};
 
@@ -247,10 +249,11 @@ public:
 			bool operator<(const Weight w) const { return weight > w.weight; } //heaviest first
 		};
 
-		Vector<Weight> weights;
+		std::vector<Weight> weights;
 
 		void fix_weights() {
-			weights.sort();
+			std::sort(weights.begin(), weights.end());
+
 			if (weights.size() > 4) {
 				//cap to 4 and make weights add up 1
 				weights.resize(4);
@@ -260,7 +263,7 @@ public:
 				}
 				if (total) {
 					for (int i = 0; i < 4; i++) {
-						weights.write[i].weight /= total;
+						weights[i].weight /= total;
 					}
 				}
 			}
@@ -274,7 +277,7 @@ public:
 					if (normal == p_vert.normal) {
 						if (uv == p_vert.uv) {
 							if (uv2 == p_vert.uv2) {
-								if (!weights.is_empty() || !p_vert.weights.is_empty()) {
+								if (!weights.empty() || !p_vert.weights.empty()) {
 									if (weights.size() == p_vert.weights.size()) {
 										for (int i = 0; i < weights.size(); i++) {
 											if (weights[i].bone_idx != p_vert.weights[i].bone_idx) {
@@ -332,7 +335,7 @@ public:
 
 			String id;
 			Op op = OP_ROTATE;
-			Vector<float> data;
+			std::vector<float> data;
 		};
 
 		Type type = TYPE_NODE;
@@ -341,10 +344,10 @@ public:
 		String id;
 		String empty_draw_type;
 		bool noname = false;
-		Vector<XForm> xform_list;
+		std::vector<XForm> xform_list;
 		Transform3D default_transform;
 		Transform3D post_transform;
-		Vector<Node *> children;
+		std::vector<Node *> children;
 
 		Node *parent = nullptr;
 
@@ -383,7 +386,7 @@ public:
 		};
 
 		Map<String, Material> material_map;
-		Vector<String> skeletons;
+		std::vector<String> skeletons;
 
 		NodeGeometry() { type = TYPE_GEOMETRY; }
 	};
@@ -402,7 +405,7 @@ public:
 
 	struct VisualScene {
 		String name;
-		Vector<Node *> root_nodes;
+		std::vector<Node *> root_nodes;
 
 		~VisualScene() {
 			for (int i = 0; i < root_nodes.size(); i++) {
@@ -415,7 +418,7 @@ public:
 		String name;
 		float begin = 0;
 		float end = 1;
-		Vector<String> tracks;
+		std::vector<String> tracks;
 
 		AnimationClip() {}
 	};
@@ -439,7 +442,7 @@ public:
 			};
 
 			float time = 0;
-			Vector<float> data;
+			std::vector<float> data;
 			Point2 in_tangent;
 			Point2 out_tangent;
 			InterpolationType interp_type = INTERP_LINEAR;
@@ -447,9 +450,9 @@ public:
 			Key() {}
 		};
 
-		Vector<float> get_value_at_time(float p_time) const;
+		std::vector<float> get_value_at_time(float p_time) const;
 
-		Vector<Key> keys;
+		std::vector<Key> keys;
 
 		AnimationTrack() {}
 	};
@@ -503,10 +506,10 @@ public:
 		String root_visual_scene;
 		String root_physics_scene;
 
-		Vector<AnimationClip> animation_clips;
-		Vector<AnimationTrack> animation_tracks;
-		Map<String, Vector<int>> referenced_tracks;
-		Map<String, Vector<int>> by_id_tracks;
+		std::vector<AnimationClip> animation_clips;
+		std::vector<AnimationTrack> animation_tracks;
+		Map<String, std::vector<int>> referenced_tracks;
+		Map<String, std::vector<int>> by_id_tracks;
 
 		float animation_length = 0;
 
@@ -555,8 +558,8 @@ private: // private stuff
 	void _parse_library(XMLParser &parser);
 
 	Variant _parse_param(XMLParser &parser);
-	Vector<float> _read_float_array(XMLParser &parser);
-	Vector<String> _read_string_array(XMLParser &parser);
+	std::vector<float> _read_float_array(XMLParser &parser);
+	std::vector<String> _read_string_array(XMLParser &parser);
 	Transform3D _read_transform(XMLParser &parser);
 	String _read_empty_draw_type(XMLParser &parser);
 

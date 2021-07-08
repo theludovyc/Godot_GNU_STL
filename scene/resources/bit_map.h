@@ -39,11 +39,11 @@ class BitMap : public Resource {
 	GDCLASS(BitMap, Resource);
 	OBJ_SAVE_TYPE(BitMap);
 
-	Vector<uint8_t> bitmask;
+	std::vector<uint8_t> bitmask;
 	int width = 0;
 	int height = 0;
 
-	Vector<Vector2> _march_square(const Rect2i &rect, const Point2i &start) const;
+	std::vector<Vector2> _march_square(const Rect2i &rect, const Point2i &start) const;
 
 	Array _opaque_to_polygons_bind(const Rect2 &p_rect, float p_epsilon) const;
 
@@ -71,7 +71,7 @@ public:
 	void blit(const Vector2 &p_pos, const Ref<BitMap> &p_bitmap);
 	Ref<Image> convert_to_image() const;
 
-	Vector<Vector<Vector2>> clip_opaque_to_polygons(const Rect2 &p_rect, float p_epsilon = 2.0) const;
+	std::vector<std::vector<Vector2>> clip_opaque_to_polygons(const Rect2 &p_rect, float p_epsilon = 2.0) const;
 
 	BitMap();
 };

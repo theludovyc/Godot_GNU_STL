@@ -58,12 +58,12 @@ class Sprite2DEditor : public Control {
 
 	ConfirmationDialog *debug_uv_dialog;
 	Control *debug_uv;
-	Vector<Vector2> uv_lines;
-	Vector<Vector<Vector2>> outline_lines;
-	Vector<Vector<Vector2>> computed_outline_lines;
-	Vector<Vector2> computed_vertices;
-	Vector<Vector2> computed_uv;
-	Vector<int> computed_indices;
+	std::vector<Vector2> uv_lines;
+	std::vector<std::vector<Vector2>> outline_lines;
+	std::vector<std::vector<Vector2>> computed_outline_lines;
+	std::vector<Vector2> computed_vertices;
+	std::vector<Vector2> computed_uv;
+	std::vector<int> computed_indices;
 
 	SpinBox *simplification;
 	SpinBox *grow_pixels;

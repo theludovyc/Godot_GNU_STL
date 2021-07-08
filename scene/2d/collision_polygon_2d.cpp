@@ -31,12 +31,11 @@
 #include "collision_polygon_2d.h"
 
 #include "collision_object_2d.h"
-#include "core/config/engine.h"
 #include "core/math/geometry_2d.h"
 #include "scene/resources/concave_polygon_shape_2d.h"
 #include "scene/resources/convex_polygon_shape_2d.h"
 
-#include "thirdparty/misc/polypartition.h"
+//todo std::vector.data()
 
 void CollisionPolygon2D::_build_polygon() {
 	parent->shape_owner_clear_shapes(owner_id);
@@ -50,7 +49,7 @@ void CollisionPolygon2D::_build_polygon() {
 
 		//here comes the sun, lalalala
 		//decompose concave into multiple convex polygons and add them
-		Vector<Vector<Vector2>> decomp = _decompose_in_convex();
+		std::vector<std::vector<Vector2>> decomp = _decompose_in_convex();
 		for (int i = 0; i < decomp.size(); i++) {
 			Ref<ConvexPolygonShape2D> convex = memnew(ConvexPolygonShape2D);
 			convex->set_points(decomp[i]);
@@ -64,9 +63,9 @@ void CollisionPolygon2D::_build_polygon() {
 
 		Ref<ConcavePolygonShape2D> concave = memnew(ConcavePolygonShape2D);
 
-		Vector<Vector2> segments;
+		std::vector<Vector2> segments;
 		segments.resize(polygon.size() * 2);
-		Vector2 *w = segments.ptrw();
+		Vector2 *w = segments.data();
 
 		for (int i = 0; i < polygon.size(); i++) {
 			w[(i << 1) + 0] = polygon[i];
@@ -79,8 +78,8 @@ void CollisionPolygon2D::_build_polygon() {
 	}
 }
 
-Vector<Vector<Vector2>> CollisionPolygon2D::_decompose_in_convex() {
-	Vector<Vector<Vector2>> decomp = Geometry2D::decompose_polygon_in_convex(polygon);
+std::vector<std::vector<Vector2>> CollisionPolygon2D::_decompose_in_convex() {
+	std::vector<std::vector<Vector2>> decomp = Geometry2D::decompose_polygon_in_convex(polygon);
 	return decomp;
 }
 
@@ -147,7 +146,7 @@ void CollisionPolygon2D::_notification(int p_what) {
 			if (polygon_count > 2) {
 #define DEBUG_DECOMPOSE
 #if defined(TOOLS_ENABLED) && defined(DEBUG_DECOMPOSE)
-				Vector<Vector<Vector2>> decomp = _decompose_in_convex();
+				std::vector<std::vector<Vector2>> decomp = _decompose_in_convex();
 
 				Color c(0.4, 0.9, 0.1);
 				for (int i = 0; i < decomp.size(); i++) {
@@ -164,23 +163,23 @@ void CollisionPolygon2D::_notification(int p_what) {
 				dcol.a = 1.0;
 				Vector2 line_to(0, 20);
 				draw_line(Vector2(), line_to, dcol, 3);
-				Vector<Vector2> pts;
+				std::vector<Vector2> pts;
 				real_t tsize = 8;
 				pts.push_back(line_to + (Vector2(0, tsize)));
 				pts.push_back(line_to + (Vector2(Math_SQRT12 * tsize, 0)));
 				pts.push_back(line_to + (Vector2(-Math_SQRT12 * tsize, 0)));
-				Vector<Color> cols;
+				std::vector<Color> cols;
 				for (int i = 0; i < 3; i++) {
 					cols.push_back(dcol);
 				}
 
-				draw_primitive(pts, cols, Vector<Vector2>()); //small arrow
+				draw_primitive(pts, cols, std::vector<Vector2>()); //small arrow
 			}
 		} break;
 	}
 }
 
-void CollisionPolygon2D::set_polygon(const Vector<Point2> &p_polygon) {
+void CollisionPolygon2D::set_polygon(const std::vector<Point2> &p_polygon) {
 	polygon = p_polygon;
 
 	{
@@ -207,7 +206,7 @@ void CollisionPolygon2D::set_polygon(const Vector<Point2> &p_polygon) {
 	update_configuration_warnings();
 }
 
-Vector<Point2> CollisionPolygon2D::get_polygon() const {
+std::vector<Point2> CollisionPolygon2D::get_polygon() const {
 	return polygon;
 }
 
