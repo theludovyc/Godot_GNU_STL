@@ -157,21 +157,21 @@ void InputEventConfigurationDialog::_set_event(const Ref<InputEvent> &p_event) {
 	} else {
 		// Event is not valid, reset dialog
 		event = p_event;
-		Vector<String> strings;
+		std::vector<String> strings;
 
 		// Reset message, promp for input according to which input types are allowed.
 		String text = TTR("Perform an Input (%s).");
 
 		if (allowed_input_types & INPUT_KEY) {
-			strings.append(TTR("Key"));
+			strings.push_back(TTR("Key"));
 		}
 		// We don't check for INPUT_MOUSE_BUTTON since it is ignored in the "Listen Window Input" method.
 
 		if (allowed_input_types & INPUT_JOY_BUTTON) {
-			strings.append(TTR("Joypad Button"));
+			strings.push_back(TTR("Joypad Button"));
 		}
 		if (allowed_input_types & INPUT_JOY_MOTION) {
-			strings.append(TTR("Joypad Axis"));
+			strings.push_back(TTR("Joypad Axis"));
 		}
 
 		if (strings.size() == 0) {
@@ -841,7 +841,7 @@ void ActionMapEditor::set_show_builtin_actions(bool p_show) {
 	show_builtin_actions_checkbutton->set_pressed(p_show);
 
 	// Prevent unnecessary updates of action list when cache is empty.
-	if (!actions_cache.is_empty()) {
+	if (!actions_cache.empty()) {
 		update_action_list();
 	}
 }
@@ -988,8 +988,8 @@ InputEventConfigurationDialog *ActionMapEditor::get_configuration_dialog() {
 	return event_config_dialog;
 }
 
-void ActionMapEditor::update_action_list(const Vector<ActionInfo> &p_action_infos) {
-	if (!p_action_infos.is_empty()) {
+void ActionMapEditor::update_action_list(const std::vector<ActionInfo> &p_action_infos) {
+	if (!p_action_infos.empty()) {
 		actions_cache = p_action_infos;
 	}
 

@@ -140,7 +140,7 @@ private:
 		BUTTON_REMOVE_EVENT,
 	};
 
-	Vector<ActionInfo> actions_cache;
+	std::vector<ActionInfo> actions_cache;
 	Tree *action_tree;
 
 	// Storing which action/event is currently being edited in the InputEventConfigurationDialog.
@@ -186,7 +186,7 @@ public:
 	InputEventConfigurationDialog *get_configuration_dialog();
 
 	// Dictionary represents an Action with "events" (Array) and "deadzone" (float) items. Pass with no param to update list from cached action map.
-	void update_action_list(const Vector<ActionInfo> &p_action_infos = Vector<ActionInfo>());
+	void update_action_list(const std::vector<ActionInfo> &p_action_infos = std::vector<ActionInfo>());
 	void show_message(const String &p_message);
 
 	void set_show_builtin_actions(bool p_show);

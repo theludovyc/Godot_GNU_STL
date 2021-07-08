@@ -136,8 +136,8 @@ public:
 
 	virtual float get_length() const override; //if supported, otherwise return 0
 
-	void set_data(const Vector<uint8_t> &p_data);
-	Vector<uint8_t> get_data() const;
+	void set_data(const std::vector<uint8_t> &p_data);
+	std::vector<uint8_t> get_data() const;
 
 	Error save_to_wav(const String &p_path);
 

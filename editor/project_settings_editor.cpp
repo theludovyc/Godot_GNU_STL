@@ -136,7 +136,7 @@ void ProjectSettingsEditor::_property_box_changed(const String &p_text) {
 }
 
 void ProjectSettingsEditor::_feature_selected(int p_index) {
-	Vector<String> t = property_box->get_text().strip_edges().split(".", true, 1);
+	std::vector<String> t = property_box->get_text().strip_edges().split(".", true, 1);
 	const String feature = p_index ? "." + feature_box->get_item_text(p_index) : "";
 	property_box->set_text(t[0] + feature);
 	_update_property_box();
@@ -144,7 +144,7 @@ void ProjectSettingsEditor::_feature_selected(int p_index) {
 
 void ProjectSettingsEditor::_update_property_box() {
 	const String setting = _get_setting_name();
-	const Vector<String> t = setting.split(".", true, 1);
+	const std::vector<String> t = setting.split(".", true, 1);
 	const String name = t[0];
 	const String feature = (t.size() == 2) ? t[1] : "";
 	bool feature_invalid = (t.size() == 2) && (t[1] == "");
@@ -185,7 +185,7 @@ void ProjectSettingsEditor::_update_property_box() {
 			return;
 		}
 
-		const Vector<String> names = name.split("/");
+		const std::vector<String> names = name.split("/");
 		for (int i = 0; i < names.size(); i++) {
 			if (!names[i].is_valid_identifier()) {
 				return;
@@ -242,7 +242,7 @@ void ProjectSettingsEditor::_add_feature_overrides() {
 		}
 
 		String custom = ee->get_export_preset(i)->get_custom_features();
-		Vector<String> custom_list = custom.split(",");
+		std::vector<String> custom_list = custom.split(",");
 		for (int j = 0; j < custom_list.size(); j++) {
 			String f = custom_list[j].strip_edges();
 			if (f != String()) {
@@ -439,7 +439,7 @@ void ProjectSettingsEditor::_action_reordered(const String &p_action_name, const
 }
 
 void ProjectSettingsEditor::_update_action_map_editor() {
-	Vector<ActionMapEditor::ActionInfo> actions;
+	std::vector<ActionMapEditor::ActionInfo> actions;
 
 	List<PropertyInfo> props;
 	ProjectSettings::get_singleton()->get_property_list(&props);

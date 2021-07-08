@@ -33,6 +33,8 @@
 #include "core/io/file_access.h"
 #include "core/io/marshalls.h"
 
+//todo std::vector.data()
+
 void AudioStreamPlaybackSample::start(float p_from_pos) {
 	if (base->format == AudioStreamSample::FORMAT_IMA_ADPCM) {
 		//no seeking in IMA_ADPCM
@@ -477,7 +479,7 @@ float AudioStreamSample::get_length() const {
 	return float(len) / mix_rate;
 }
 
-void AudioStreamSample::set_data(const Vector<uint8_t> &p_data) {
+void AudioStreamSample::set_data(const std::vector<uint8_t> &p_data) {
 	AudioServer::get_singleton()->lock();
 	if (data) {
 		memfree(data);
@@ -487,7 +489,7 @@ void AudioStreamSample::set_data(const Vector<uint8_t> &p_data) {
 
 	int datalen = p_data.size();
 	if (datalen) {
-		const uint8_t *r = p_data.ptr();
+		const uint8_t *r = p_data.data();
 		int alloc_len = datalen + DATA_PAD * 2;
 		data = memalloc(alloc_len); //alloc with some padding for interpolation
 		memset(data, 0, alloc_len);
@@ -499,13 +501,13 @@ void AudioStreamSample::set_data(const Vector<uint8_t> &p_data) {
 	AudioServer::get_singleton()->unlock();
 }
 
-Vector<uint8_t> AudioStreamSample::get_data() const {
-	Vector<uint8_t> pv;
+std::vector<uint8_t> AudioStreamSample::get_data() const {
+	std::vector<uint8_t> pv;
 
 	if (data) {
 		pv.resize(data_bytes);
 		{
-			uint8_t *w = pv.ptrw();
+			uint8_t *w = pv.data();
 			uint8_t *dataptr = (uint8_t *)data;
 			memcpy(w, dataptr + DATA_PAD, data_bytes);
 		}
@@ -569,8 +571,8 @@ Error AudioStreamSample::save_to_wav(const String &p_path) {
 	file->store_32(sub_chunk_2_size); //Subchunk2Size
 
 	// Add data
-	Vector<uint8_t> data = get_data();
-	const uint8_t *read_data = data.ptr();
+	std::vector<uint8_t> data = get_data();
+	const uint8_t *read_data = data.data();
 	switch (format) {
 		case AudioStreamSample::FORMAT_8_BITS:
 			for (unsigned int i = 0; i < data_bytes; i++) {
