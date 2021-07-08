@@ -39,11 +39,11 @@
 class EditorAtlasPacker {
 public:
 	struct Chart {
-		Vector<Vector2> vertices;
+		std::vector<Vector2> vertices;
 		struct Face {
 			int vertex[3] = { 0 };
 		};
-		Vector<Face> faces;
+		std::vector<Face> faces;
 		bool can_transpose = false;
 
 		Vector2 final_offset;
@@ -55,8 +55,8 @@ private:
 		int chart_index = 0;
 		Vector2i offset;
 		int area = 0;
-		Vector<int> top_heights;
-		Vector<int> bottom_heights;
+		std::vector<int> top_heights;
+		std::vector<int> bottom_heights;
 		bool transposed = false;
 
 		Vector2 final_pos;
@@ -69,7 +69,7 @@ private:
 	static void _plot_triangle(Ref<BitMap> p_bitmap, Vector2i *vertices);
 
 public:
-	static void chart_pack(Vector<Chart> &charts, int &r_width, int &r_height, int p_atlas_max_size = 2048, int p_cell_resolution = 4);
+	static void chart_pack(std::vector<Chart> &charts, int &r_width, int &r_height, int p_atlas_max_size = 2048, int p_cell_resolution = 4);
 };
 
 #endif // EDITOR_ATLAS_PACKER_H

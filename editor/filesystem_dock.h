@@ -130,7 +130,7 @@ private:
 	MenuButton *file_list_button_sort;
 
 	String searched_string;
-	Vector<String> uncollapsed_paths_before_search;
+	std::vector<String> uncollapsed_paths_before_search;
 
 	TextureRect *search_icon;
 	HBoxContainer *path_hb;
@@ -173,10 +173,10 @@ private:
 	};
 	FileOrFolder to_rename;
 	FileOrFolder to_duplicate;
-	Vector<FileOrFolder> to_move;
+	std::vector<FileOrFolder> to_move;
 	String to_move_path;
 
-	Vector<String> history;
+	std::vector<String> history;
 	int history_pos;
 	int history_max_size;
 
@@ -191,9 +191,9 @@ private:
 	bool import_dock_needs_update;
 
 	Ref<Texture2D> _get_tree_item_icon(bool p_is_valid, String p_file_type);
-	bool _create_tree(TreeItem *p_parent, EditorFileSystemDirectory *p_dir, Vector<String> &uncollapsed_paths, bool p_select_in_favorites, bool p_unfold_path = false);
-	Vector<String> _compute_uncollapsed_paths();
-	void _update_tree(const Vector<String> &p_uncollapsed_paths = Vector<String>(), bool p_uncollapse_root = false, bool p_select_in_favorites = false, bool p_unfold_path = false);
+	bool _create_tree(TreeItem *p_parent, EditorFileSystemDirectory *p_dir, std::vector<String> &uncollapsed_paths, bool p_select_in_favorites, bool p_unfold_path = false);
+	std::vector<String> _compute_uncollapsed_paths();
+	void _update_tree(const std::vector<String> &p_uncollapsed_paths = std::vector<String>(), bool p_uncollapse_root = false, bool p_select_in_favorites = false, bool p_unfold_path = false);
 	void _navigate_to_path(const String &p_path, bool p_select_in_favorites = false);
 
 	void _file_list_gui_input(Ref<InputEvent> p_event);
@@ -212,11 +212,11 @@ private:
 	void _file_multi_selected(int p_index, bool p_selected);
 	void _tree_multi_selected(Object *p_item, int p_column, bool p_selected);
 
-	void _get_imported_files(const String &p_path, Vector<String> &files) const;
+	void _get_imported_files(const String &p_path, std::vector<String> &files) const;
 	void _update_import_dock();
 
-	void _get_all_items_in_dir(EditorFileSystemDirectory *efsd, Vector<String> &files, Vector<String> &folders) const;
-	void _find_remaps(EditorFileSystemDirectory *efsd, const Map<String, String> &renames, Vector<String> &to_remaps) const;
+	void _get_all_items_in_dir(EditorFileSystemDirectory *efsd, std::vector<String> &files, std::vector<String> &folders) const;
+	void _find_remaps(EditorFileSystemDirectory *efsd, const Map<String, String> &renames, std::vector<String> &to_remaps) const;
 	void _try_move_item(const FileOrFolder &p_item, const String &p_new_path, Map<String, String> &p_file_renames, Map<String, String> &p_folder_renames);
 	void _try_duplicate_item(const FileOrFolder &p_item, const String &p_new_path) const;
 	void _update_dependencies_after_move(const Map<String, String> &p_renames) const;
@@ -236,12 +236,12 @@ private:
 	void _rename_operation_confirm();
 	void _duplicate_operation_confirm();
 	void _move_with_overwrite();
-	Vector<String> _check_existing();
+	std::vector<String> _check_existing();
 	void _move_operation_confirm(const String &p_to_path, bool p_overwrite = false);
 
 	void _tree_rmb_option(int p_option);
 	void _file_list_rmb_option(int p_option);
-	void _file_option(int p_option, const Vector<String> &p_selected);
+	void _file_option(int p_option, const std::vector<String> &p_selected);
 
 	void _fw_history();
 	void _bw_history();
@@ -258,7 +258,7 @@ private:
 	MenuButton *_create_file_menu_button();
 	void _file_sort_popup(int p_id);
 
-	void _file_and_folders_fill_popup(PopupMenu *p_popup, Vector<String> p_paths, bool p_display_path_dependent_options = true);
+	void _file_and_folders_fill_popup(PopupMenu *p_popup, std::vector<String> p_paths, bool p_display_path_dependent_options = true);
 	void _tree_rmb_select(const Vector2 &p_pos);
 	void _tree_rmb_empty(const Vector2 &p_pos);
 	void _file_list_rmb_select(int p_item, const Vector2 &p_pos);
@@ -269,7 +269,7 @@ private:
 		String name;
 		String path;
 		StringName type;
-		Vector<String> sources;
+		std::vector<String> sources;
 		bool import_broken = false;
 		uint64_t modified_time = 0;
 
@@ -298,12 +298,12 @@ private:
 
 	void _update_display_mode(bool p_force = false);
 
-	Vector<String> _tree_get_selected(bool remove_self_inclusion = true);
+	std::vector<String> _tree_get_selected(bool remove_self_inclusion = true);
 
 	bool _is_file_type_disabled_by_feature_profile(const StringName &p_class);
 
 	void _feature_profile_changed();
-	Vector<String> _remove_self_included_paths(Vector<String> selected_strings);
+	std::vector<String> _remove_self_included_paths(std::vector<String> selected_strings);
 
 protected:
 	void _notification(int p_what);

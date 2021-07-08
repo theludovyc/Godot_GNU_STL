@@ -114,8 +114,8 @@ void AnimationTrackEditColor::draw_key_link(int p_index, float p_pixels_sec, int
 		return;
 	}
 
-	Vector<Color> color_samples;
-	color_samples.append(get_animation()->track_get_key_value(get_track(), p_index));
+	std::vector<Color> color_samples;
+	color_samples.push_back(get_animation()->track_get_key_value(get_track(), p_index));
 
 	if (get_animation()->track_get_type(get_track()) == Animation::TYPE_VALUE) {
 		if (get_animation()->track_get_interpolation_type(get_track()) != Animation::INTERPOLATION_NEAREST &&
@@ -131,22 +131,22 @@ void AnimationTrackEditColor::draw_key_link(int p_index, float p_pixels_sec, int
 				color_samples.resize(1 + (x_to - x_from) / 64); // Make a color sample every 64 px.
 				for (int i = 1; i < color_samples.size(); i++) {
 					float j = i;
-					color_samples.write[i] = get_animation()->value_track_interpolate(
+					color_samples[i] = get_animation()->value_track_interpolate(
 							get_track(),
 							Math::lerp(start_time, end_time, j / color_samples.size()));
 				}
 			}
-			color_samples.append(color_next);
+			color_samples.push_back(color_next);
 		} else {
-			color_samples.append(color_samples[0]);
+			color_samples.push_back(color_samples[0]);
 		}
 	} else {
-		color_samples.append(get_animation()->track_get_key_value(get_track(), p_index + 1));
+		color_samples.push_back(get_animation()->track_get_key_value(get_track(), p_index + 1));
 	}
 
 	for (int i = 0; i < color_samples.size() - 1; i++) {
-		Vector<Vector2> points;
-		Vector<Color> colors;
+		std::vector<Vector2> points;
+		std::vector<Color> colors;
 
 		points.push_back(Vector2(Math::lerp(x_from, x_to, float(i) / (color_samples.size() - 1)), y_from));
 		colors.push_back(color_samples[i]);
@@ -160,7 +160,7 @@ void AnimationTrackEditColor::draw_key_link(int p_index, float p_pixels_sec, int
 		points.push_back(Vector2(Math::lerp(x_from, x_to, float(i) / (color_samples.size() - 1)), y_from + fh));
 		colors.push_back(color_samples[i]);
 
-		draw_primitive(points, colors, Vector<Vector2>());
+		draw_primitive(points, colors, std::vector<Vector2>());
 	}
 }
 
@@ -309,7 +309,7 @@ void AnimationTrackEditAudio::draw_key(int p_index, float p_pixels_sec, int p_x,
 		Rect2 rect = Rect2(from_x, (get_size().height - fh) / 2, to_x - from_x, fh);
 		draw_rect(rect, Color(0.25, 0.25, 0.25));
 
-		Vector<Vector2> lines;
+		std::vector<Vector2> lines;
 		lines.resize((to_x - from_x + 1) * 2);
 		preview_len = preview->get_length();
 
@@ -320,11 +320,11 @@ void AnimationTrackEditAudio::draw_key(int p_index, float p_pixels_sec, int p_x,
 			float min = preview->get_min(ofs, ofs_n) * 0.5 + 0.5;
 
 			int idx = i - from_x;
-			lines.write[idx * 2 + 0] = Vector2(i, rect.position.y + min * rect.size.y);
-			lines.write[idx * 2 + 1] = Vector2(i, rect.position.y + max * rect.size.y);
+			lines[idx * 2 + 0] = Vector2(i, rect.position.y + min * rect.size.y);
+			lines[idx * 2 + 1] = Vector2(i, rect.position.y + max * rect.size.y);
 		}
 
-		Vector<Color> color;
+		std::vector<Color> color;
 		color.push_back(Color(0.75, 0.75, 0.75));
 
 		RS::get_singleton()->canvas_item_add_multiline(get_canvas_item(), lines, color);
@@ -667,8 +667,8 @@ void AnimationTrackEditSubAnim::draw_key(int p_index, float p_pixels_sec, int p_
 		bg.b = 1 - color.b;
 		draw_rect(rect, bg);
 
-		Vector<Vector2> lines;
-		Vector<Color> colorv;
+		std::vector<Vector2> lines;
+		std::vector<Color> colorv;
 		{
 			Ref<Animation> animation = ap->get_animation(anim);
 
@@ -924,7 +924,7 @@ void AnimationTrackEditTypeAudio::draw_key(int p_index, float p_pixels_sec, int 
 	Rect2 rect = Rect2(from_x, (h - fh) / 2, to_x - from_x, fh);
 	draw_rect(rect, Color(0.25, 0.25, 0.25));
 
-	Vector<Vector2> lines;
+	std::vector<Vector2> lines;
 	lines.resize((to_x - from_x + 1) * 2);
 	preview_len = preview->get_length();
 
@@ -938,11 +938,11 @@ void AnimationTrackEditTypeAudio::draw_key(int p_index, float p_pixels_sec, int 
 		float min = preview->get_min(ofs, ofs_n) * 0.5 + 0.5;
 
 		int idx = i - from_x;
-		lines.write[idx * 2 + 0] = Vector2(i, rect.position.y + min * rect.size.y);
-		lines.write[idx * 2 + 1] = Vector2(i, rect.position.y + max * rect.size.y);
+		lines[idx * 2 + 0] = Vector2(i, rect.position.y + min * rect.size.y);
+		lines[idx * 2 + 1] = Vector2(i, rect.position.y + max * rect.size.y);
 	}
 
-	Vector<Color> color;
+	std::vector<Color> color;
 	color.push_back(Color(0.75, 0.75, 0.75));
 
 	RS::get_singleton()->canvas_item_add_multiline(get_canvas_item(), lines, color);
@@ -981,7 +981,7 @@ bool AnimationTrackEditTypeAudio::can_drop_data(const Point2 &p_point, const Var
 		}
 
 		if (drag_data.has("type") && String(drag_data["type"]) == "files") {
-			Vector<String> files = drag_data["files"];
+			std::vector<String> files = drag_data["files"];
 
 			if (files.size() == 1) {
 				String file = files[0];
@@ -1003,7 +1003,7 @@ void AnimationTrackEditTypeAudio::drop_data(const Point2 &p_point, const Variant
 		if (drag_data.has("type") && String(drag_data["type"]) == "resource") {
 			stream = drag_data["resource"];
 		} else if (drag_data.has("type") && String(drag_data["type"]) == "files") {
-			Vector<String> files = drag_data["files"];
+			std::vector<String> files = drag_data["files"];
 
 			if (files.size() == 1) {
 				String file = files[0];
@@ -1240,8 +1240,8 @@ void AnimationTrackEditTypeAnimation::draw_key(int p_index, float p_pixels_sec, 
 		bg.b = 1 - color.b;
 		draw_rect(rect, bg);
 
-		Vector<Vector2> lines;
-		Vector<Color> colorv;
+		std::vector<Vector2> lines;
+		std::vector<Color> colorv;
 		{
 			Ref<Animation> animation = ap->get_animation(anim);
 

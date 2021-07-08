@@ -58,7 +58,10 @@ void AnimationNodeBlendTreeEditor::add_custom_type(const String &p_name, const R
 void AnimationNodeBlendTreeEditor::remove_custom_type(const Ref<Script> &p_script) {
 	for (int i = 0; i < add_options.size(); i++) {
 		if (add_options[i].script == p_script) {
-			add_options.remove(i);
+
+			//todo
+			add_options.erase(add_options.begin() + i);
+
 			return;
 		}
 	}

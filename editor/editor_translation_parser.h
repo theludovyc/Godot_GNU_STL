@@ -41,7 +41,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	virtual Error parse_file(const String &p_path, Vector<String> *r_ids, Vector<Vector<String>> *r_ids_ctx_plural);
+	virtual Error parse_file(const String &p_path, std::vector<String> *r_ids, std::vector<std::vector<String>> *r_ids_ctx_plural);
 	virtual void get_recognized_extensions(List<String> *r_extensions) const;
 };
 
@@ -56,8 +56,8 @@ public:
 
 	static EditorTranslationParser *get_singleton();
 
-	Vector<Ref<EditorTranslationParserPlugin>> standard_parsers;
-	Vector<Ref<EditorTranslationParserPlugin>> custom_parsers;
+	std::vector<Ref<EditorTranslationParserPlugin>> standard_parsers;
+	std::vector<Ref<EditorTranslationParserPlugin>> custom_parsers;
 
 	void get_recognized_extensions(List<String> *r_extensions) const;
 	bool can_parse(const String &p_extension) const;

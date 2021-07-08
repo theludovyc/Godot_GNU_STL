@@ -42,10 +42,10 @@ class _MockCrypto : public Crypto {
 	virtual Ref<CryptoKey> generate_rsa(int p_bytes) { return nullptr; }
 	virtual Ref<X509Certificate> generate_self_signed_certificate(Ref<CryptoKey> p_key, String p_issuer_name, String p_not_before, String p_not_after) { return nullptr; }
 
-	virtual Vector<uint8_t> sign(HashingContext::HashType p_hash_type, Vector<uint8_t> p_hash, Ref<CryptoKey> p_key) { return Vector<uint8_t>(); }
-	virtual bool verify(HashingContext::HashType p_hash_type, Vector<uint8_t> p_hash, Vector<uint8_t> p_signature, Ref<CryptoKey> p_key) { return false; }
-	virtual Vector<uint8_t> encrypt(Ref<CryptoKey> p_key, Vector<uint8_t> p_plaintext) { return Vector<uint8_t>(); }
-	virtual Vector<uint8_t> decrypt(Ref<CryptoKey> p_key, Vector<uint8_t> p_ciphertext) { return Vector<uint8_t>(); }
+	virtual std::vector<uint8_t> sign(HashingContext::HashType p_hash_type, std::vector<uint8_t> p_hash, Ref<CryptoKey> p_key) { return std::vector<uint8_t>(); }
+	virtual bool verify(HashingContext::HashType p_hash_type, std::vector<uint8_t> p_hash, std::vector<uint8_t> p_signature, Ref<CryptoKey> p_key) { return false; }
+	virtual std::vector<uint8_t> encrypt(Ref<CryptoKey> p_key, std::vector<uint8_t> p_plaintext) { return std::vector<uint8_t>(); }
+	virtual std::vector<uint8_t> decrypt(Ref<CryptoKey> p_key, std::vector<uint8_t> p_ciphertext) { return std::vector<uint8_t>(); }
 	virtual PackedByteArray hmac_digest(HashingContext::HashType p_hash_type, PackedByteArray p_key, PackedByteArray p_msg) { return PackedByteArray(); }
 };
 

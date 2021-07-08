@@ -30,6 +30,10 @@
 
 #include "editor_atlas_packer.h"
 
+#include <algorithm>
+
+//todo std::vector.data()
+
 void EditorAtlasPacker::_plot_triangle(Ref<BitMap> p_bitmap, Vector2i *vertices) {
 	int width = p_bitmap->get_size().width;
 	int height = p_bitmap->get_size().height;
@@ -81,9 +85,9 @@ void EditorAtlasPacker::_plot_triangle(Ref<BitMap> p_bitmap, Vector2i *vertices)
 	}
 }
 
-void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_height, int p_atlas_max_size, int p_cell_resolution) {
+void EditorAtlasPacker::chart_pack(std::vector<Chart> &charts, int &r_width, int &r_height, int p_atlas_max_size, int p_cell_resolution) {
 	int divide_by = MIN(64, p_cell_resolution);
-	Vector<PlottedBitmap> bitmaps;
+	std::vector<PlottedBitmap> bitmaps;
 
 	int max_w = 0;
 
@@ -94,7 +98,7 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 
 		Rect2i aabb;
 		int vertex_count = chart.vertices.size();
-		const Vector2 *vertices = chart.vertices.ptr();
+		const Vector2 *vertices = chart.vertices.data();
 
 		for (int j = 0; j < vertex_count; j++) {
 			if (j == 0) {
@@ -143,14 +147,14 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 
 		max_w = MAX(max_w, heights_size);
 
-		Vector<int> top_heights;
-		Vector<int> bottom_heights;
+		std::vector<int> top_heights;
+		std::vector<int> bottom_heights;
 		top_heights.resize(heights_size);
 		bottom_heights.resize(heights_size);
 
 		for (int x = 0; x < heights_size; x++) {
-			top_heights.write[x] = -1;
-			bottom_heights.write[x] = 0x7FFFFFFF;
+			top_heights[x] = -1;
+			bottom_heights[x] = 0x7FFFFFFF;
 		}
 
 		for (int x = 0; x < bmw; x++) {
@@ -175,17 +179,17 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 				if (found_pixel) {
 					if (transpose) {
 						if (x > top_heights[y]) {
-							top_heights.write[y] = x;
+							top_heights[y] = x;
 						}
 						if (x < bottom_heights[y]) {
-							bottom_heights.write[y] = x;
+							bottom_heights[y] = x;
 						}
 					} else {
 						if (y > top_heights[x]) {
-							top_heights.write[x] = y;
+							top_heights[x] = y;
 						}
 						if (y < bottom_heights[x]) {
-							bottom_heights.write[x] = y;
+							bottom_heights[x] = y;
 						}
 					}
 				}
@@ -208,7 +212,7 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 		bitmaps.push_back(plotted_bitmap);
 	}
 
-	bitmaps.sort();
+	std::sort(bitmaps.begin(), bitmaps.end());
 
 	int atlas_max_width = nearest_power_of_2_templated(p_atlas_max_size) / divide_by;
 	int atlas_w = nearest_power_of_2_templated(max_w);
@@ -217,21 +221,21 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 		atlas_h = 0;
 
 		//do a tetris
-		Vector<int> heights;
+		std::vector<int> heights;
 		heights.resize(atlas_w);
 		for (int i = 0; i < atlas_w; i++) {
-			heights.write[i] = 0;
+			heights[i] = 0;
 		}
 
-		int *atlas_ptr = heights.ptrw();
+		int *atlas_ptr = heights.data();
 
 		for (int i = 0; i < bitmaps.size(); i++) {
 			int best_height = 0x7FFFFFFF;
 			int best_height_offset = -1;
 			int w = bitmaps[i].top_heights.size();
 
-			const int *top_heights = bitmaps[i].top_heights.ptr();
-			const int *bottom_heights = bitmaps[i].bottom_heights.ptr();
+			const int *top_heights = bitmaps[i].top_heights.data();
+			const int *bottom_heights = bitmaps[i].bottom_heights.data();
 
 			for (int j = 0; j < atlas_w - w; j++) {
 				int height = 0;
@@ -270,8 +274,8 @@ void EditorAtlasPacker::chart_pack(Vector<Chart> &charts, int &r_width, int &r_h
 			}
 
 			Vector2 final_pos = Vector2(best_height_offset * divide_by, best_height * divide_by) + Vector2(divide_by, divide_by) - offset;
-			charts.write[bitmaps[i].chart_index].final_offset = final_pos;
-			charts.write[bitmaps[i].chart_index].transposed = bitmaps[i].transposed;
+			charts[bitmaps[i].chart_index].final_offset = final_pos;
+			charts[bitmaps[i].chart_index].transposed = bitmaps[i].transposed;
 		}
 
 		if (atlas_h <= atlas_w * 2 || atlas_w >= atlas_max_width) {

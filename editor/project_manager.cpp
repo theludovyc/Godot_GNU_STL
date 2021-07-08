@@ -53,6 +53,8 @@
 #include "scene/main/window.h"
 #include "servers/display_server.h"
 
+//todo std::vector.data()
+
 static inline String get_project_key_from_path(const String &dir) {
 	return dir.replace("/", "::");
 }
@@ -442,7 +444,7 @@ private:
 				ProjectSettings::CustomMap edited_settings;
 				edited_settings["application/config/name"] = project_name->get_text().strip_edges();
 
-				if (current->save_custom(dir2.plus_file("project.godot"), edited_settings, Vector<String>(), true) != OK) {
+				if (current->save_custom(dir2.plus_file("project.godot"), edited_settings, std::vector<String>(), true) != OK) {
 					set_message(TTR("Couldn't edit project.godot in project path."), MESSAGE_ERROR);
 				}
 			}
@@ -485,7 +487,7 @@ private:
 					initial_settings["application/config/icon"] = "res://icon.png";
 					initial_settings["rendering/environment/defaults/default_environment"] = "res://default_env.tres";
 
-					if (ProjectSettings::get_singleton()->save_custom(dir.plus_file("project.godot"), initial_settings, Vector<String>(), false) != OK) {
+					if (ProjectSettings::get_singleton()->save_custom(dir.plus_file("project.godot"), initial_settings, std::vector<String>(), false) != OK) {
 						set_message(TTR("Couldn't create project.godot in project path."), MESSAGE_ERROR);
 					} else {
 						ResourceSaver::save(dir.plus_file("icon.png"), create_unscaled_default_project_icon());
@@ -540,7 +542,7 @@ private:
 
 					ret = unzGoToFirstFile(pkg);
 
-					Vector<String> failed_files;
+					std::vector<String> failed_files;
 
 					int idx = 0;
 					while (ret == UNZ_OK) {
@@ -563,19 +565,19 @@ private:
 							memdelete(da);
 
 						} else {
-							Vector<uint8_t> data;
+							std::vector<uint8_t> data;
 							data.resize(info.uncompressed_size);
 							String rel_path = path.substr(zip_root.length());
 
 							//read
 							unzOpenCurrentFile(pkg);
-							unzReadCurrentFile(pkg, data.ptrw(), data.size());
+							unzReadCurrentFile(pkg, data.data(), data.size());
 							unzCloseCurrentFile(pkg);
 
 							FileAccess *f = FileAccess::open(dir.plus_file(rel_path), FileAccess::WRITE);
 
 							if (f) {
-								f->store_buffer(data.ptr(), data.size());
+								f->store_buffer(data.data(), data.size());
 								memdelete(f);
 							} else {
 								failed_files.push_back(rel_path);
@@ -1047,7 +1049,7 @@ public:
 	void select_project(int p_index);
 	void select_first_visible_project();
 	void erase_selected_projects(bool p_delete_project_contents);
-	Vector<Item> get_selected_projects() const;
+	std::vector<Item> get_selected_projects() const;
 	const Set<String> &get_selected_project_keys() const;
 	void ensure_project_visible(int p_index);
 	int get_single_selected_index() const;
@@ -1080,7 +1082,7 @@ private:
 	VBoxContainer *_scroll_children;
 	int _icon_load_index;
 
-	Vector<Item> _projects;
+	std::vector<Item> _projects;
 };
 
 struct ProjectListComparator {
@@ -1126,7 +1128,7 @@ void ProjectList::_notification(int p_what) {
 	if (p_what == NOTIFICATION_PROCESS) {
 		// Load icons as a coroutine to speed up launch when you have hundreds of projects
 		if (_icon_load_index < _projects.size()) {
-			Item &item = _projects.write[_icon_load_index];
+			Item &item = _projects[_icon_load_index];
 			if (item.control->icon_needs_reload) {
 				load_project_icon(_icon_load_index);
 			}
@@ -1139,7 +1141,7 @@ void ProjectList::_notification(int p_what) {
 }
 
 void ProjectList::load_project_icon(int p_index) {
-	Item &item = _projects.write[p_index];
+	Item &item = _projects[p_index];
 
 	Ref<Texture2D> default_icon = get_theme_icon("DefaultProjectIcon", "EditorIcons");
 	Ref<Texture2D> icon;
@@ -1221,7 +1223,7 @@ void ProjectList::load_projects() {
 
 	// Clear whole list
 	for (int i = 0; i < _projects.size(); ++i) {
-		Item &project = _projects.write[i];
+		Item &project = _projects[i];
 		CRASH_COND(project.control == nullptr);
 		memdelete(project.control); // Why not queue_free()?
 	}
@@ -1324,7 +1326,7 @@ void ProjectList::create_project_item_control(int p_index) {
 	// Will be added last in the list, so make sure indexes match
 	ERR_FAIL_COND(p_index != _scroll_children->get_child_count());
 
-	Item &item = _projects.write[p_index];
+	Item &item = _projects[p_index];
 	ERR_FAIL_COND(item.control != nullptr); // Already created
 
 	Ref<Texture2D> favorite_icon = get_theme_icon("Favorites", "EditorIcons");
@@ -1426,10 +1428,10 @@ void ProjectList::set_order_option(int p_option) {
 void ProjectList::sort_projects() {
 	SortArray<Item, ProjectListComparator> sorter;
 	sorter.compare.order_option = _order_option;
-	sorter.sort(_projects.ptrw(), _projects.size());
+	sorter.sort(_projects.data(), _projects.size());
 
 	for (int i = 0; i < _projects.size(); ++i) {
-		Item &item = _projects.write[i];
+		Item &item = _projects[i];
 
 		bool visible = true;
 		if (_search_term != "") {
@@ -1450,7 +1452,7 @@ void ProjectList::sort_projects() {
 	}
 
 	for (int i = 0; i < _projects.size(); ++i) {
-		Item &item = _projects.write[i];
+		Item &item = _projects[i];
 		item.control->get_parent()->move_child(item.control, i);
 	}
 
@@ -1465,8 +1467,8 @@ const Set<String> &ProjectList::get_selected_project_keys() const {
 	return _selected_project_keys;
 }
 
-Vector<ProjectList::Item> ProjectList::get_selected_projects() const {
-	Vector<Item> items;
+std::vector<ProjectList::Item> ProjectList::get_selected_projects() const {
+	std::vector<Item> items;
 	if (_selected_project_keys.size() == 0) {
 		return items;
 	}
@@ -1475,7 +1477,7 @@ Vector<ProjectList::Item> ProjectList::get_selected_projects() const {
 	for (int i = 0; i < _projects.size(); ++i) {
 		const Item &item = _projects[i];
 		if (_selected_project_keys.has(item.project_key)) {
-			items.write[j++] = item;
+			items[j++] = item;
 		}
 	}
 	ERR_FAIL_COND_V(j != items.size(), items);
@@ -1518,7 +1520,9 @@ void ProjectList::remove_project(int p_index, bool p_update_settings) {
 	}
 
 	memdelete(item.control);
-	_projects.remove(p_index);
+
+	//todo
+	_projects.erase(_projects.begin() + p_index);
 
 	if (p_update_settings) {
 		EditorSettings::get_singleton()->erase("projects/" + item.project_key);
@@ -1539,7 +1543,7 @@ bool ProjectList::is_any_project_missing() const {
 }
 
 void ProjectList::erase_missing_projects() {
-	if (_projects.is_empty()) {
+	if (_projects.empty()) {
 		return;
 	}
 
@@ -1639,7 +1643,7 @@ int ProjectList::get_project_count() const {
 }
 
 void ProjectList::select_project(int p_index) {
-	Vector<Item> previous_selected_items = get_selected_projects();
+	std::vector<Item> previous_selected_items = get_selected_projects();
 	_selected_project_keys.clear();
 
 	for (int i = 0; i < previous_selected_items.size(); ++i) {
@@ -1683,7 +1687,7 @@ void ProjectList::select_range(int p_begin, int p_end) {
 }
 
 void ProjectList::toggle_select(int p_index) {
-	Item &item = _projects.write[p_index];
+	Item &item = _projects[p_index];
 	if (_selected_project_keys.has(item.project_key)) {
 		_selected_project_keys.erase(item.project_key);
 	} else {
@@ -1698,7 +1702,7 @@ void ProjectList::erase_selected_projects(bool p_delete_project_contents) {
 	}
 
 	for (int i = 0; i < _projects.size(); ++i) {
-		Item &item = _projects.write[i];
+		Item &item = _projects[i];
 		if (_selected_project_keys.has(item.project_key) && item.control->is_visible()) {
 			EditorSettings::get_singleton()->erase("projects/" + item.project_key);
 			EditorSettings::get_singleton()->erase("favorite_projects/" + item.project_key);
@@ -1708,7 +1712,10 @@ void ProjectList::erase_selected_projects(bool p_delete_project_contents) {
 			}
 
 			memdelete(item.control);
-			_projects.remove(i);
+
+			//todo
+			_projects.erase(_projects.begin() + i);
+
 			--i;
 		}
 	}
@@ -1777,7 +1784,7 @@ void ProjectList::_favorite_pressed(Node *p_hb) {
 	ProjectListItemControl *control = Object::cast_to<ProjectListItemControl>(p_hb);
 
 	int index = control->get_index();
-	Item item = _projects.write[index]; // Take copy
+	Item item = _projects[index]; // Take copy
 
 	item.favorite = !item.favorite;
 
@@ -1788,7 +1795,7 @@ void ProjectList::_favorite_pressed(Node *p_hb) {
 	}
 	EditorSettings::get_singleton()->save();
 
-	_projects.write[index] = item;
+	_projects[index] = item;
 
 	control->set_is_favorite(item.favorite);
 
@@ -1875,8 +1882,8 @@ void ProjectManager::_dim_window() {
 }
 
 void ProjectManager::_update_project_buttons() {
-	Vector<ProjectList::Item> selected_projects = _project_list->get_selected_projects();
-	bool empty_selection = selected_projects.is_empty();
+	std::vector<ProjectList::Item> selected_projects = _project_list->get_selected_projects();
+	bool empty_selection = selected_projects.empty();
 
 	bool is_missing_project_selected = false;
 	for (int i = 0; i < selected_projects.size(); ++i) {
@@ -1993,7 +2000,7 @@ void ProjectManager::_load_recent_projects() {
 }
 
 void ProjectManager::_on_projects_updated() {
-	Vector<ProjectList::Item> selected_projects = _project_list->get_selected_projects();
+	std::vector<ProjectList::Item> selected_projects = _project_list->get_selected_projects();
 	int index = 0;
 	for (int i = 0; i < selected_projects.size(); ++i) {
 		index = _project_list->refresh_project(selected_projects[i].path);
@@ -2113,7 +2120,7 @@ void ProjectManager::_open_selected_projects_ask() {
 }
 
 void ProjectManager::_run_project_confirm() {
-	Vector<ProjectList::Item> selected_list = _project_list->get_selected_projects();
+	std::vector<ProjectList::Item> selected_list = _project_list->get_selected_projects();
 
 	for (int i = 0; i < selected_list.size(); ++i) {
 		const String &selected_main = selected_list[i].main_scene;
@@ -2338,7 +2345,7 @@ void ProjectManager::_files_dropped(PackedStringArray p_files, int p_screen) {
 
 void ProjectManager::_scan_multiple_folders(PackedStringArray p_files) {
 	for (int i = 0; i < p_files.size(); i++) {
-		_scan_begin(p_files.get(i));
+		_scan_begin(p_files[i]);
 	}
 }
 
@@ -2500,7 +2507,7 @@ ProjectManager::ProjectManager() {
 		filter_option->connect("item_selected", callable_mp(this, &ProjectManager::_on_order_option_changed));
 		hb->add_child(filter_option);
 
-		Vector<String> sort_filter_titles;
+		std::vector<String> sort_filter_titles;
 		sort_filter_titles.push_back(TTR("Name"));
 		sort_filter_titles.push_back(TTR("Path"));
 		sort_filter_titles.push_back(TTR("Last Edited"));
@@ -2622,7 +2629,7 @@ ProjectManager::ProjectManager() {
 		language_btn->set_focus_mode(Control::FOCUS_NONE);
 		language_btn->connect("item_selected", callable_mp(this, &ProjectManager::_language_selected));
 
-		Vector<String> editor_languages;
+		std::vector<String> editor_languages;
 		List<PropertyInfo> editor_settings_properties;
 		EditorSettings::get_singleton()->get_property_list(&editor_settings_properties);
 		for (List<PropertyInfo>::Element *E = editor_settings_properties.front(); E; E = E->next()) {

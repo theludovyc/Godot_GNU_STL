@@ -36,6 +36,8 @@
 #include "editor_settings.h"
 #include "filesystem_dock.h"
 
+//todo std::vector.data()
+
 void EditorResourcePicker::_update_resource() {
 	preview_rect->set_texture(Ref<Texture2D>());
 	assign_button->set_custom_minimum_size(Size2(1, 1));
@@ -192,7 +194,7 @@ void EditorResourcePicker::_update_menu_items() {
 
 	// Add options to convert existing resource to another type of resource.
 	if (edited_resource.is_valid()) {
-		Vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(edited_resource);
+		std::vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(edited_resource);
 		if (conversions.size()) {
 			edit_menu->add_separator();
 		}
@@ -319,7 +321,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 
 			if (p_which >= CONVERT_BASE_ID) {
 				int to_type = p_which - CONVERT_BASE_ID;
-				Vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(edited_resource);
+				std::vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(edited_resource);
 				ERR_FAIL_INDEX(to_type, conversions.size());
 
 				edited_resource = conversions[to_type]->convert(edited_resource);
@@ -328,7 +330,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 				break;
 			}
 
-			ERR_FAIL_COND(inheritors_array.is_empty());
+			ERR_FAIL_COND(inheritors_array.empty());
 
 			String intype = inheritors_array[p_which - TYPE_BASE_ID];
 			Variant obj;
@@ -373,7 +375,7 @@ void EditorResourcePicker::set_create_options(Object *p_menu_node) {
 		Set<String> allowed_types;
 		_get_allowed_types(false, &allowed_types);
 
-		Vector<EditorData::CustomType> custom_resources;
+		std::vector<EditorData::CustomType> custom_resources;
 		if (EditorNode::get_editor_data().get_custom_types().has("Resource")) {
 			custom_resources = EditorNode::get_editor_data().get_custom_types()["Resource"];
 		}
@@ -383,7 +385,7 @@ void EditorResourcePicker::set_create_options(Object *p_menu_node) {
 
 			bool is_custom_resource = false;
 			Ref<Texture2D> icon;
-			if (!custom_resources.is_empty()) {
+			if (!custom_resources.empty()) {
 				for (int j = 0; j < custom_resources.size(); j++) {
 					if (custom_resources[j].name == t) {
 						is_custom_resource = true;
@@ -452,7 +454,7 @@ void EditorResourcePicker::_button_input(const Ref<InputEvent> &p_event) {
 }
 
 void EditorResourcePicker::_get_allowed_types(bool p_with_convert, Set<String> *p_vector) const {
-	Vector<String> allowed_types = base_type.split(",");
+	std::vector<String> allowed_types = base_type.split(",");
 	int size = allowed_types.size();
 
 	List<StringName> global_classes;
@@ -487,7 +489,7 @@ void EditorResourcePicker::_get_allowed_types(bool p_with_convert, Set<String> *
 	}
 
 	if (EditorNode::get_editor_data().get_custom_types().has("Resource")) {
-		Vector<EditorData::CustomType> custom_resources = EditorNode::get_editor_data().get_custom_types()["Resource"];
+		std::vector<EditorData::CustomType> custom_resources = EditorNode::get_editor_data().get_custom_types()["Resource"];
 
 		for (int i = 0; i < custom_resources.size(); i++) {
 			p_vector->insert(custom_resources[i].name);
@@ -525,7 +527,7 @@ bool EditorResourcePicker::_is_drop_valid(const Dictionary &p_drag_data) const {
 	}
 
 	if (drag_data.has("type") && String(drag_data["type"]) == "files") {
-		Vector<String> files = drag_data["files"];
+		std::vector<String> files = drag_data["files"];
 
 		if (files.size() == 1) {
 			String file = files[0];
@@ -577,7 +579,7 @@ void EditorResourcePicker::drop_data_fw(const Point2 &p_point, const Variant &p_
 	}
 
 	if (!dropped_resource.is_valid() && drag_data.has("type") && String(drag_data["type"]) == "files") {
-		Vector<String> files = drag_data["files"];
+		std::vector<String> files = drag_data["files"];
 
 		if (files.size() == 1) {
 			String file = files[0];
@@ -709,15 +711,15 @@ String EditorResourcePicker::get_base_type() const {
 	return base_type;
 }
 
-Vector<String> EditorResourcePicker::get_allowed_types() const {
+std::vector<String> EditorResourcePicker::get_allowed_types() const {
 	Set<String> allowed_types;
 	_get_allowed_types(false, &allowed_types);
 
-	Vector<String> types;
+	std::vector<String> types;
 	types.resize(allowed_types.size());
 
 	int i = 0;
-	String *w = types.ptrw();
+	String *w = types.data();
 	for (Set<String>::Element *E = allowed_types.front(); E; E = E->next(), i++) {
 		w[i] = E->get();
 	}
