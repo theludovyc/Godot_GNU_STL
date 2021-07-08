@@ -46,7 +46,7 @@ class EditorResourcePicker : public HBoxContainer {
 	bool editable = true;
 	bool dropping = false;
 
-	Vector<String> inheritors_array;
+	std::vector<String> inheritors_array;
 
 	Button *assign_button;
 	TextureRect *preview_rect;
@@ -97,7 +97,7 @@ protected:
 public:
 	void set_base_type(const String &p_base_type);
 	String get_base_type() const;
-	Vector<String> get_allowed_types() const;
+	std::vector<String> get_allowed_types() const;
 
 	void set_edited_resource(RES p_resource);
 	RES get_edited_resource();

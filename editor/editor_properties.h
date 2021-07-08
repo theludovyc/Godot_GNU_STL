@@ -100,14 +100,14 @@ protected:
 	static void _bind_methods();
 
 public:
-	void setup(const Vector<String> &p_options, bool p_string_name = false);
+	void setup(const std::vector<String> &p_options, bool p_string_name = false);
 	virtual void update_property() override;
 	EditorPropertyTextEnum();
 };
 
 class EditorPropertyPath : public EditorProperty {
 	GDCLASS(EditorPropertyPath, EditorProperty);
-	Vector<String> extensions;
+	std::vector<String> extensions;
 	bool folder;
 	bool global;
 	bool save_mode;
@@ -124,7 +124,7 @@ protected:
 	void _notification(int p_what);
 
 public:
-	void setup(const Vector<String> &p_extensions, bool p_folder, bool p_global);
+	void setup(const std::vector<String> &p_extensions, bool p_folder, bool p_global);
 	void set_save_mode();
 	virtual void update_property() override;
 	EditorPropertyPath();
@@ -208,7 +208,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void setup(const Vector<String> &p_options);
+	void setup(const std::vector<String> &p_options);
 	virtual void update_property() override;
 	void set_option_button_clip(bool p_enable);
 	EditorPropertyEnum();
@@ -217,8 +217,8 @@ public:
 class EditorPropertyFlags : public EditorProperty {
 	GDCLASS(EditorPropertyFlags, EditorProperty);
 	VBoxContainer *vbox;
-	Vector<CheckBox *> flags;
-	Vector<int> flag_indices;
+	std::vector<CheckBox *> flags;
+	std::vector<int> flag_indices;
 
 	void _flag_toggled();
 
@@ -226,7 +226,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void setup(const Vector<String> &p_options);
+	void setup(const std::vector<String> &p_options);
 	virtual void update_property() override;
 	EditorPropertyFlags();
 };
@@ -575,7 +575,7 @@ class EditorPropertyNodePath : public EditorProperty {
 	NodePath base_hint;
 	bool use_path_from_scene_root;
 
-	Vector<StringName> valid_types;
+	std::vector<StringName> valid_types;
 	void _node_selected(const NodePath &p_path);
 	void _node_assign();
 	void _node_clear();
@@ -586,7 +586,7 @@ protected:
 
 public:
 	virtual void update_property() override;
-	void setup(const NodePath &p_base_hint, Vector<StringName> p_valid_types, bool p_use_path_from_scene_root = true);
+	void setup(const NodePath &p_base_hint, std::vector<StringName> p_valid_types, bool p_use_path_from_scene_root = true);
 	EditorPropertyNodePath();
 };
 

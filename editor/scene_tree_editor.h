@@ -131,7 +131,7 @@ class SceneTreeEditor : public Control {
 	List<StringName> *script_types;
 	bool _is_script_type(const StringName &p_type) const;
 
-	Vector<StringName> valid_types;
+	std::vector<StringName> valid_types;
 
 public:
 	void set_filter(const String &p_filter);
@@ -148,7 +148,7 @@ public:
 	void set_editor_selection(EditorSelection *p_selection);
 
 	void set_show_enabled_subscene(bool p_show) { show_enabled_subscene = p_show; }
-	void set_valid_types(const Vector<StringName> &p_valid);
+	void set_valid_types(const std::vector<StringName> &p_valid);
 
 	void update_tree() { _update_tree(); }
 

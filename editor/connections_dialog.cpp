@@ -61,7 +61,7 @@ class ConnectDialogBinds : public Object {
 	GDCLASS(ConnectDialogBinds, Object);
 
 public:
-	Vector<Variant> params;
+	std::vector<Variant> params;
 
 	bool _set(const StringName &p_name, const Variant &p_value) {
 		String name = p_name;
@@ -69,7 +69,7 @@ public:
 		if (name.begins_with("bind/argument_")) {
 			int which = name.get_slice("_", 1).to_int() - 1;
 			ERR_FAIL_INDEX_V(which, params.size(), false);
-			params.write[which] = p_value;
+			params[which] = p_value;
 		} else {
 			return false;
 		}
@@ -240,7 +240,10 @@ void ConnectDialog::_remove_bind() {
 	int idx = st.get_slice("/", 1).to_int() - 1;
 
 	ERR_FAIL_INDEX(idx, cdbinds->params.size());
-	cdbinds->params.remove(idx);
+
+	//todo
+	cdbinds->params.erase(cdbinds->params.begin() + idx);
+
 	cdbinds->notify_changed();
 }
 
@@ -305,7 +308,7 @@ void ConnectDialog::set_dst_method(const StringName &p_method) {
 	dst_method->set_text(p_method);
 }
 
-Vector<Variant> ConnectDialog::get_binds() const {
+std::vector<Variant> ConnectDialog::get_binds() const {
 	return cdbinds->params;
 }
 

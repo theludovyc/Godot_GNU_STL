@@ -851,7 +851,7 @@ void SceneTreeEditor::set_display_foreign_nodes(bool p_display) {
 	_update_tree();
 }
 
-void SceneTreeEditor::set_valid_types(const Vector<StringName> &p_valid) {
+void SceneTreeEditor::set_valid_types(const std::vector<StringName> &p_valid) {
 	valid_types = p_valid;
 }
 
@@ -936,8 +936,8 @@ Variant SceneTreeEditor::get_drag_data_fw(const Point2 &p_point, Control *p_from
 		return Variant(); //dragging from button
 	}
 
-	Vector<Node *> selected;
-	Vector<Ref<Texture2D>> icons;
+	std::vector<Node *> selected;
+	std::vector<Ref<Texture2D>> icons;
 	TreeItem *next = tree->get_next_selected(nullptr);
 	while (next) {
 		NodePath np = next->get_metadata(0);
@@ -953,7 +953,7 @@ Variant SceneTreeEditor::get_drag_data_fw(const Point2 &p_point, Control *p_from
 		next = tree->get_next_selected(next);
 	}
 
-	if (selected.is_empty()) {
+	if (selected.empty()) {
 		return Variant();
 	}
 
@@ -1015,7 +1015,7 @@ bool SceneTreeEditor::can_drop_data_fw(const Point2 &p_point, const Variant &p_d
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		if (files.size() == 0) {
 			return false; //weird
@@ -1081,7 +1081,7 @@ void SceneTreeEditor::drop_data_fw(const Point2 &p_point, const Variant &p_data,
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		String ftype = EditorFileSystem::get_singleton()->get_file_type(files[0]);
 		if (_is_script_type(ftype)) {
@@ -1193,7 +1193,7 @@ SceneTreeEditor::SceneTreeEditor(bool p_label, bool p_can_rename, bool p_can_ope
 	tree->connect("multi_selected", callable_mp(this, &SceneTreeEditor::_cell_multi_selected));
 	tree->connect("button_pressed", callable_mp(this, &SceneTreeEditor::_cell_button_pressed));
 	tree->connect("nothing_selected", callable_mp(this, &SceneTreeEditor::_deselect_items));
-	//tree->connect("item_edited", this,"_renamed",Vector<Variant>(),true);
+	//tree->connect("item_edited", this,"_renamed",std::vector<Variant>(),true);
 
 	error = memnew(AcceptDialog);
 	add_child(error);

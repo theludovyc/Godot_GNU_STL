@@ -59,7 +59,7 @@ public:
 		StringName signal;
 		StringName method;
 		uint32_t flags = 0;
-		Vector<Variant> binds;
+		std::vector<Variant> binds;
 
 		ConnectionData() {
 		}
@@ -123,7 +123,7 @@ public:
 	void set_dst_node(Node *p_node);
 	StringName get_dst_method_name() const;
 	void set_dst_method(const StringName &p_method);
-	Vector<Variant> get_binds() const;
+	std::vector<Variant> get_binds() const;
 
 	bool get_deferred() const;
 	bool get_oneshot() const;
