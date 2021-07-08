@@ -85,14 +85,14 @@ bool OccluderPolygon2D::_edit_is_selected_on_click(const Point2 &p_point, double
 }
 #endif
 
-void OccluderPolygon2D::set_polygon(const Vector<Vector2> &p_polygon) {
+void OccluderPolygon2D::set_polygon(const std::vector<Vector2> &p_polygon) {
 	polygon = p_polygon;
 	rect_cache_dirty = true;
 	RS::get_singleton()->canvas_occluder_polygon_set_shape(occ_polygon, p_polygon, closed);
 	emit_changed();
 }
 
-Vector<Vector2> OccluderPolygon2D::get_polygon() const {
+std::vector<Vector2> OccluderPolygon2D::get_polygon() const {
 	return polygon;
 }
 
@@ -173,11 +173,11 @@ void LightOccluder2D::_notification(int p_what) {
 	if (p_what == NOTIFICATION_DRAW) {
 		if (Engine::get_singleton()->is_editor_hint()) {
 			if (occluder_polygon.is_valid()) {
-				Vector<Vector2> poly = occluder_polygon->get_polygon();
+				std::vector<Vector2> poly = occluder_polygon->get_polygon();
 
 				if (poly.size()) {
 					if (occluder_polygon->is_closed()) {
-						Vector<Color> color;
+						std::vector<Color> color;
 						color.push_back(Color(0, 0, 0, 0.6));
 						draw_polygon(Variant(poly), color);
 					} else {

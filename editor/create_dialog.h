@@ -49,7 +49,7 @@ class CreateDialog : public ConfirmationDialog {
 	String preferred_search_result_type;
 
 	Button *favorite;
-	Vector<String> favorite_list;
+	std::vector<String> favorite_list;
 	Tree *favorites;
 	ItemList *recent;
 	EditorHelpBit *help_bit;
@@ -64,7 +64,7 @@ class CreateDialog : public ConfirmationDialog {
 	bool _should_hide_type(const String &p_type) const;
 	void _add_type(const String &p_current, bool p_cpp_type);
 	void _configure_search_option_item(TreeItem *r_item, const String &p_type, const bool p_cpp_type);
-	String _top_result(const Vector<String> p_candidates, const String &p_search_text) const;
+	String _top_result(const std::vector<String> p_candidates, const String &p_search_text) const;
 	float _score_type(const String &p_type, const String &p_search) const;
 	bool _is_type_preferred(const String &p_type) const;
 

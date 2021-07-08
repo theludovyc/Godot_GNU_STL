@@ -93,7 +93,7 @@ class EditorResourcePreview : public Node {
 	static void _thread_func(void *ud);
 	void _thread();
 
-	Vector<Ref<EditorResourcePreviewGenerator>> preview_generators;
+	std::vector<Ref<EditorResourcePreviewGenerator>> preview_generators;
 
 protected:
 	static void _bind_methods();

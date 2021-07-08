@@ -91,7 +91,7 @@ void CreateDialog::_fill_type_list() {
 				continue;
 			}
 
-			const Vector<EditorData::CustomType> &ct = ed.get_custom_types()[type];
+			const std::vector<EditorData::CustomType> &ct = ed.get_custom_types()[type];
 			for (int i = 0; i < ct.size(); i++) {
 				custom_type_parents[ct[i].name] = type;
 				custom_type_indices[ct[i].name] = i;
@@ -176,7 +176,7 @@ void CreateDialog::_update_search() {
 	bool empty_search = search_text == "";
 
 	// Filter all candidate results.
-	Vector<String> candidates;
+	std::vector<String> candidates;
 	for (List<StringName>::Element *I = type_list.front(); I; I = I->next()) {
 		if (empty_search || search_text.is_subsequence_ofi(I->get())) {
 			candidates.push_back(I->get());
@@ -266,7 +266,7 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const String 
 	}
 }
 
-String CreateDialog::_top_result(const Vector<String> p_candidates, const String &p_search_text) const {
+String CreateDialog::_top_result(const std::vector<String> p_candidates, const String &p_search_text) const {
 	float highest_score = 0;
 	int highest_index = 0;
 	for (int i = 0; i < p_candidates.size(); i++) {
@@ -295,7 +295,10 @@ float CreateDialog::_score_type(const String &p_type, const String &p_search) co
 	score *= _is_type_preferred(p_type) ? 1.0f : 0.8f;
 
 	// Add score for being a favorite type.
-	score *= (favorite_list.find(p_type) > -1) ? 1.0f : 0.7f;
+	//todo
+	auto it = std::find(favorite_list.begin(), favorite_list.end(), p_type);
+
+	score *= (it != favorite_list.end()) ? 1.0f : 0.7f;
 
 	// Look through at most 5 recent items
 	bool in_recent = false;
@@ -398,7 +401,12 @@ void CreateDialog::select_type(const String &p_type) {
 	}
 
 	favorite->set_disabled(false);
-	favorite->set_pressed(favorite_list.find(p_type) != -1);
+
+	//todo
+	auto it = std::find(favorite_list.begin(), favorite_list.end(), p_type);
+
+	favorite->set_pressed(it != favorite_list.end());
+
 	get_ok_button()->set_disabled(false);
 }
 
@@ -471,11 +479,15 @@ void CreateDialog::_favorite_toggled() {
 
 	String name = item->get_text(0);
 
-	if (favorite_list.find(name) == -1) {
+	//todo
+	auto it = std::find(favorite_list.begin(), favorite_list.end(), name);
+
+	if (it == favorite_list.end()) {
 		favorite_list.push_back(name);
 		favorite->set_pressed(true);
 	} else {
-		favorite_list.erase(name);
+		std::remove(favorite_list.begin(),  favorite_list.end(), name);
+
 		favorite->set_pressed(false);
 	}
 
@@ -549,14 +561,30 @@ void CreateDialog::drop_data_fw(const Point2 &p_point, const Variant &p_data, Co
 	String drop_at = ti->get_text(0);
 	int ds = favorites->get_drop_section_at_position(p_point);
 
-	int drop_idx = favorite_list.find(drop_at);
-	if (drop_idx < 0) {
+	//todo
+	auto it = std::find(favorite_list.begin(), favorite_list.end(), drop_at);
+
+	int drop_idx = -1;
+
+	if(it != favorite_list.end()){
+		drop_idx = std::distance(favorite_list.begin(), it);
+	}
+
+	if (it != favorite_list.end()) {
 		return;
 	}
 
 	String type = d["class"];
 
-	int from_idx = favorite_list.find(type);
+	//todo
+	it = std::find(favorite_list.begin(), favorite_list.end(), type);
+
+	int from_idx = -1;
+
+	if(it != favorite_list.end()){
+		from_idx = std::distance(favorite_list.begin(), it);
+	}
+
 	if (from_idx < 0) {
 		return;
 	}
@@ -567,15 +595,20 @@ void CreateDialog::drop_data_fw(const Point2 &p_point, const Variant &p_data, Co
 		drop_idx--;
 	}
 
-	favorite_list.remove(from_idx);
+	//todo
+	favorite_list.erase(favorite_list.begin() + from_idx);
 
 	if (ds < 0) {
-		favorite_list.insert(drop_idx, type);
+
+		//todo
+		favorite_list.insert(favorite_list.begin() + drop_idx, type);
 	} else {
 		if (drop_idx >= favorite_list.size() - 1) {
 			favorite_list.push_back(type);
 		} else {
-			favorite_list.insert(drop_idx + 1, type);
+
+			//todo
+			favorite_list.insert(favorite_list.begin() + drop_idx + 1, type);
 		}
 	}
 

@@ -34,19 +34,21 @@
 #include "editor/editor_scale.h"
 #include "editor/editor_settings.h"
 
+//todo std::vector.data()
+
 void EditorVisualProfiler::add_frame_metric(const Metric &p_metric) {
 	++last_metric;
 	if (last_metric >= frame_metrics.size()) {
 		last_metric = 0;
 	}
 
-	frame_metrics.write[last_metric] = p_metric;
+	frame_metrics[last_metric] = p_metric;
 	//	_make_metric_ptrs(frame_metrics.write[last_metric]);
 
 	List<String> stack;
 	for (int i = 0; i < frame_metrics[last_metric].areas.size(); i++) {
 		String name = frame_metrics[last_metric].areas[i].name;
-		frame_metrics.write[last_metric].areas.write[i].color_cache = _get_color_from_signature(name);
+		frame_metrics[last_metric].areas[i].color_cache = _get_color_from_signature(name);
 		String full_name;
 
 		if (name[0] == '<') {
@@ -63,7 +65,7 @@ void EditorVisualProfiler::add_frame_metric(const Metric &p_metric) {
 			stack.push_back(full_name + "/");
 		}
 
-		frame_metrics.write[last_metric].areas.write[i].fullpath_cache = full_name;
+		frame_metrics[last_metric].areas[i].fullpath_cache = full_name;
 	}
 
 	updating_frame = true;
@@ -156,7 +158,7 @@ void EditorVisualProfiler::_update_plot() {
 		graph_image.resize(desired_len);
 	}
 
-	uint8_t *wr = graph_image.ptrw();
+	uint8_t *wr = graph_image.data();
 
 	//clear
 	for (int i = 0; i < desired_len; i += 4) {
@@ -200,13 +202,13 @@ void EditorVisualProfiler::_update_plot() {
 		graph_height_cpu = highest_cpu;
 		graph_height_gpu = highest_gpu;
 
-		Vector<Color> columnv_cpu;
+		std::vector<Color> columnv_cpu;
 		columnv_cpu.resize(h);
-		Color *column_cpu = columnv_cpu.ptrw();
+		Color *column_cpu = columnv_cpu.data();
 
-		Vector<Color> columnv_gpu;
+		std::vector<Color> columnv_gpu;
 		columnv_gpu.resize(h);
-		Color *column_gpu = columnv_gpu.ptrw();
+		Color *column_gpu = columnv_gpu.data();
 
 		int half_w = w / 2;
 		for (int i = 0; i < half_w; i++) {
@@ -232,7 +234,7 @@ void EditorVisualProfiler::_update_plot() {
 				}
 
 				int area_count = frame_metrics[idx].areas.size();
-				const Metric::Area *areas = frame_metrics[idx].areas.ptr();
+				const Metric::Area *areas = frame_metrics[idx].areas.data();
 				int prev_cpu = 0;
 				int prev_gpu = 0;
 				for (int k = 1; k < area_count; k++) {
@@ -590,7 +592,7 @@ void EditorVisualProfiler::_graph_tex_input(const Ref<InputEvent> &p_ev) {
 
 			bool touched_cpu = me->get_position().x < graph->get_size().width * 0.5;
 
-			const Metric::Area *areas = frame_metrics[metric].areas.ptr();
+			const Metric::Area *areas = frame_metrics[metric].areas.data();
 			int area_count = frame_metrics[metric].areas.size();
 			float posy = (1.0 - (me->get_position().y / graph->get_size().height)) * (touched_cpu ? graph_height_cpu : graph_height_gpu);
 			int last_valid = -1;
@@ -663,16 +665,16 @@ bool EditorVisualProfiler::is_profiling() {
 	return activate->is_pressed();
 }
 
-Vector<Vector<String>> EditorVisualProfiler::get_data_as_csv() const {
-	Vector<Vector<String>> res;
+std::vector<std::vector<String>> EditorVisualProfiler::get_data_as_csv() const {
+	std::vector<std::vector<String>> res;
 #if 0
 	if (frame_metrics.is_empty()) {
 		return res;
 	}
 
 	// signatures
-	Vector<String> signatures;
-	const Vector<EditorFrameProfiler::Metric::Category> &categories = frame_metrics[0].categories;
+	std::vector<String> signatures;
+	const std::vector<EditorFrameProfiler::Metric::Category> &categories = frame_metrics[0].categories;
 
 	for (int j = 0; j < categories.size(); j++) {
 		const EditorFrameProfiler::Metric::Category &c = categories[j];
@@ -685,7 +687,7 @@ Vector<Vector<String>> EditorVisualProfiler::get_data_as_csv() const {
 	res.push_back(signatures);
 
 	// values
-	Vector<String> values;
+	std::vector<String> values;
 	values.resize(signatures.size());
 
 	int index = last_metric;
@@ -701,7 +703,7 @@ Vector<Vector<String>> EditorVisualProfiler::get_data_as_csv() const {
 			continue;
 		}
 		int it = 0;
-		const Vector<EditorFrameProfiler::Metric::Category> &frame_cat = frame_metrics[index].categories;
+		const std::vector<EditorFrameProfiler::Metric::Category> &frame_cat = frame_metrics[index].categories;
 
 		for (int j = 0; j < frame_cat.size(); j++) {
 			const EditorFrameProfiler::Metric::Category &c = frame_cat[j];

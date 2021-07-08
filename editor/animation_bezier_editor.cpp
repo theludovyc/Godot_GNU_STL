@@ -125,7 +125,7 @@ void AnimationBezierTrackEdit::_draw_track(int p_track, const Color &p_color) {
 		from_x = MAX(from_x, limit);
 		to_x = MIN(to_x, right_limit);
 
-		Vector<Vector2> lines;
+		std::vector<Vector2> lines;
 
 		Vector2 prev_pos;
 
