@@ -120,7 +120,7 @@ struct TileMapQuadrant {
 	List<RID> bodies;
 
 	// Navigation.
-	Map<Vector2i, Vector<RID>> navigation_regions;
+	Map<Vector2i, std::vector<RID>> navigation_regions;
 
 	// Scenes.
 	Map<Vector2i, String> scenes;
@@ -228,8 +228,8 @@ private:
 	void _recompute_rect_cache();
 
 	// Set and get tiles from data arrays.
-	void _set_tile_data(const Vector<int> &p_data);
-	Vector<int> _get_tile_data() const;
+	void _set_tile_data(const std::vector<int> &p_data);
+	std::vector<int> _get_tile_data() const;
 
 	void _tile_set_changed();
 

@@ -37,12 +37,12 @@
 class NavigationPolygon : public Resource {
 	GDCLASS(NavigationPolygon, Resource);
 
-	Vector<Vector2> vertices;
+	std::vector<Vector2> vertices;
 	struct Polygon {
-		Vector<int> indices;
+		std::vector<int> indices;
 	};
-	Vector<Polygon> polygons;
-	Vector<Vector<Vector2>> outlines;
+	std::vector<Polygon> polygons;
+	std::vector<std::vector<Vector2>> outlines;
 
 	mutable Rect2 item_rect;
 	mutable bool rect_cache_dirty = true;
@@ -54,10 +54,10 @@ class NavigationPolygon : public Resource {
 protected:
 	static void _bind_methods();
 
-	void _set_polygons(const TypedArray<Vector<int32_t>> &p_array);
+	void _set_polygons(const TypedArray<std::vector<int32_t>> &p_array);
 	Array _get_polygons() const;
 
-	void _set_outlines(const TypedArray<Vector<Vector2>> &p_array);
+	void _set_outlines(const TypedArray<std::vector<Vector2>> &p_array);
 	Array _get_outlines() const;
 
 public:
@@ -66,23 +66,23 @@ public:
 	bool _edit_is_selected_on_click(const Point2 &p_point, double p_tolerance) const;
 #endif
 
-	void set_vertices(const Vector<Vector2> &p_vertices);
-	Vector<Vector2> get_vertices() const;
+	void set_vertices(const std::vector<Vector2> &p_vertices);
+	std::vector<Vector2> get_vertices() const;
 
-	void add_polygon(const Vector<int> &p_polygon);
+	void add_polygon(const std::vector<int> &p_polygon);
 	int get_polygon_count() const;
 
-	void add_outline(const Vector<Vector2> &p_outline);
-	void add_outline_at_index(const Vector<Vector2> &p_outline, int p_index);
-	void set_outline(int p_idx, const Vector<Vector2> &p_outline);
-	Vector<Vector2> get_outline(int p_idx) const;
+	void add_outline(const std::vector<Vector2> &p_outline);
+	void add_outline_at_index(const std::vector<Vector2> &p_outline, int p_index);
+	void set_outline(int p_idx, const std::vector<Vector2> &p_outline);
+	std::vector<Vector2> get_outline(int p_idx) const;
 	void remove_outline(int p_idx);
 	int get_outline_count() const;
 
 	void clear_outlines();
 	void make_polygons_from_outlines();
 
-	Vector<int> get_polygon(int p_idx);
+	std::vector<int> get_polygon(int p_idx);
 	void clear_polygons();
 
 	Ref<NavigationMesh> get_mesh();

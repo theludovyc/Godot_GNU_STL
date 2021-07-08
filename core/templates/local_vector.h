@@ -35,6 +35,8 @@
 #include "core/os/memory.h"
 #include "core/templates/sort_array.h"
 
+//todo std::vector.data()
+
 template <class T, class U = uint32_t, bool force_trivial = false>
 class LocalVector {
 private:
@@ -214,7 +216,7 @@ public:
 	operator std::vector<T>() const {
 		std::vector<T> ret;
 		ret.resize(size());
-		T *w = ret.ptrw();
+		T *w = ret.data();
 		memcpy(w, data, sizeof(T) * count);
 		return ret;
 	}

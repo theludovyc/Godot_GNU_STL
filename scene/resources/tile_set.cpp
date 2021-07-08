@@ -61,7 +61,7 @@ const char *TileSet::CELL_NEIGHBOR_ENUM_TO_TEXT[] = {
 };
 
 // --- Plugins ---
-Vector<TileSetPlugin *> TileSet::get_tile_set_atlas_plugins() const {
+std::vector<TileSetPlugin *> TileSet::get_tile_set_atlas_plugins() const {
 	return tile_set_plugins_vector;
 }
 
@@ -132,8 +132,10 @@ int TileSet::add_source(Ref<TileSetSource> p_tile_set_source, int p_atlas_source
 
 	int new_source_id = p_atlas_source_id_override >= 0 ? p_atlas_source_id_override : next_source_id;
 	sources[new_source_id] = p_tile_set_source;
-	source_ids.append(new_source_id);
-	source_ids.sort();
+	source_ids.push_back(new_source_id);
+
+	std::sort(source_ids.begin(),  source_ids.end());
+
 	p_tile_set_source->set_tile_set(this);
 	_compute_next_source_id();
 
@@ -151,8 +153,11 @@ void TileSet::remove_source(int p_source_id) {
 
 	sources[p_source_id]->set_tile_set(nullptr);
 	sources.erase(p_source_id);
-	source_ids.erase(p_source_id);
-	source_ids.sort();
+
+	//todo
+	source_ids.erase(source_ids.begin() + p_source_id);
+
+	std::sort(source_ids.begin(),  source_ids.end());
 
 	emit_changed();
 }
@@ -169,9 +174,12 @@ void TileSet::set_source_id(int p_source_id, int p_new_source_id) {
 	sources[p_new_source_id] = sources[p_source_id];
 	sources.erase(p_source_id);
 
-	source_ids.erase(p_source_id);
-	source_ids.append(p_new_source_id);
-	source_ids.sort();
+	//todo
+	source_ids.erase(source_ids.begin() + p_source_id);
+
+	source_ids.push_back(p_new_source_id);
+
+	std::sort(source_ids.begin(),  source_ids.end());
 
 	emit_changed();
 }
@@ -240,7 +248,7 @@ int TileSet::get_occlusion_layers_count() const {
 
 void TileSet::set_occlusion_layer_light_mask(int p_layer_index, int p_light_mask) {
 	ERR_FAIL_INDEX(p_layer_index, occlusion_layers.size());
-	occlusion_layers.write[p_layer_index].light_mask = p_light_mask;
+	occlusion_layers[p_layer_index].light_mask = p_light_mask;
 	emit_changed();
 }
 
@@ -251,7 +259,7 @@ int TileSet::get_occlusion_layer_light_mask(int p_layer_index) const {
 
 void TileSet::set_occlusion_layer_sdf_collision(int p_layer_index, int p_sdf_collision) {
 	ERR_FAIL_INDEX(p_layer_index, occlusion_layers.size());
-	occlusion_layers.write[p_layer_index].sdf_collision = p_sdf_collision;
+	occlusion_layers[p_layer_index].sdf_collision = p_sdf_collision;
 	emit_changed();
 }
 
@@ -283,7 +291,7 @@ int TileSet::get_physics_layers_count() const {
 
 void TileSet::set_physics_layer_collision_layer(int p_layer_index, uint32_t p_layer) {
 	ERR_FAIL_INDEX(p_layer_index, physics_layers.size());
-	physics_layers.write[p_layer_index].collision_layer = p_layer;
+	physics_layers[p_layer_index].collision_layer = p_layer;
 	emit_changed();
 }
 
@@ -294,7 +302,7 @@ uint32_t TileSet::get_physics_layer_collision_layer(int p_layer_index) const {
 
 void TileSet::set_physics_layer_collision_mask(int p_layer_index, uint32_t p_mask) {
 	ERR_FAIL_INDEX(p_layer_index, physics_layers.size());
-	physics_layers.write[p_layer_index].collision_mask = p_mask;
+	physics_layers[p_layer_index].collision_mask = p_mask;
 	emit_changed();
 }
 
@@ -305,7 +313,7 @@ uint32_t TileSet::get_physics_layer_collision_mask(int p_layer_index) const {
 
 void TileSet::set_physics_layer_physics_material(int p_layer_index, Ref<PhysicsMaterial> p_physics_material) {
 	ERR_FAIL_INDEX(p_layer_index, physics_layers.size());
-	physics_layers.write[p_layer_index].physics_material = p_physics_material;
+	physics_layers[p_layer_index].physics_material = p_physics_material;
 }
 
 Ref<PhysicsMaterial> TileSet::get_physics_layer_physics_material(int p_layer_index) const {
@@ -329,7 +337,7 @@ int TileSet::get_terrain_sets_count() const {
 
 void TileSet::set_terrain_set_mode(int p_terrain_set, TerrainMode p_terrain_mode) {
 	ERR_FAIL_INDEX(p_terrain_set, terrain_sets.size());
-	terrain_sets.write[p_terrain_set].mode = p_terrain_mode;
+	terrain_sets[p_terrain_set].mode = p_terrain_mode;
 	for (Map<int, Ref<TileSetSource>>::Element *E_source = sources.front(); E_source; E_source = E_source->next()) {
 		E_source->get()->notify_tile_data_properties_should_change();
 	}
@@ -351,15 +359,15 @@ void TileSet::set_terrains_count(int p_terrain_set, int p_terrains_layers_count)
 	}
 
 	int old_size = terrain_sets[p_terrain_set].terrains.size();
-	terrain_sets.write[p_terrain_set].terrains.resize(p_terrains_layers_count);
+	terrain_sets[p_terrain_set].terrains.resize(p_terrains_layers_count);
 
 	// Default name and color
-	for (int i = old_size; i < terrain_sets.write[p_terrain_set].terrains.size(); i++) {
+	for (int i = old_size; i < terrain_sets[p_terrain_set].terrains.size(); i++) {
 		float hue_rotate = (i * 2 % 16) / 16.0;
 		Color c;
 		c.set_hsv(Math::fmod(float(hue_rotate), float(1.0)), 0.5, 0.5);
-		terrain_sets.write[p_terrain_set].terrains.write[i].color = c;
-		terrain_sets.write[p_terrain_set].terrains.write[i].name = String(vformat("Terrain %d", i));
+		terrain_sets[p_terrain_set].terrains[i].color = c;
+		terrain_sets[p_terrain_set].terrains[i].name = String(vformat("Terrain %d", i));
 	}
 
 	for (Map<int, Ref<TileSetSource>>::Element *E_source = sources.front(); E_source; E_source = E_source->next()) {
@@ -378,7 +386,7 @@ int TileSet::get_terrains_count(int p_terrain_set) const {
 void TileSet::set_terrain_name(int p_terrain_set, int p_terrain_index, String p_name) {
 	ERR_FAIL_INDEX(p_terrain_set, terrain_sets.size());
 	ERR_FAIL_INDEX(p_terrain_index, terrain_sets[p_terrain_set].terrains.size());
-	terrain_sets.write[p_terrain_set].terrains.write[p_terrain_index].name = p_name;
+	terrain_sets[p_terrain_set].terrains[p_terrain_index].name = p_name;
 	emit_changed();
 }
 
@@ -395,7 +403,7 @@ void TileSet::set_terrain_color(int p_terrain_set, int p_terrain_index, Color p_
 		WARN_PRINT("Terrain color should have alpha == 1.0");
 		p_color.a = 1.0;
 	}
-	terrain_sets.write[p_terrain_set].terrains.write[p_terrain_index].color = p_color;
+	terrain_sets[p_terrain_set].terrains[p_terrain_index].color = p_color;
 	emit_changed();
 }
 
@@ -520,7 +528,7 @@ int TileSet::get_navigation_layers_count() const {
 
 void TileSet::set_navigation_layer_layers(int p_layer_index, uint32_t p_layers) {
 	ERR_FAIL_INDEX(p_layer_index, navigation_layers.size());
-	navigation_layers.write[p_layer_index].layers = p_layers;
+	navigation_layers[p_layer_index].layers = p_layers;
 	emit_changed();
 }
 
@@ -582,7 +590,7 @@ void TileSet::set_custom_data_name(int p_layer_id, String p_value) {
 		custom_data_layers_by_name[p_value] = p_layer_id;
 	}
 
-	custom_data_layers.write[p_layer_id].name = p_value;
+	custom_data_layers[p_layer_id].name = p_value;
 	emit_changed();
 }
 
@@ -593,7 +601,7 @@ String TileSet::get_custom_data_name(int p_layer_id) const {
 
 void TileSet::set_custom_data_type(int p_layer_id, Variant::Type p_value) {
 	ERR_FAIL_INDEX(p_layer_id, custom_data_layers.size());
-	custom_data_layers.write[p_layer_id].type = p_value;
+	custom_data_layers[p_layer_id].type = p_value;
 
 	for (Map<int, Ref<TileSetSource>>::Element *E_source = sources.front(); E_source; E_source = E_source->next()) {
 		E_source->get()->notify_tile_data_properties_should_change();
@@ -607,13 +615,13 @@ Variant::Type TileSet::get_custom_data_type(int p_layer_id) const {
 	return custom_data_layers[p_layer_id].type;
 }
 
-Vector<Vector2> TileSet::get_tile_shape_polygon() {
-	Vector<Vector2> points;
+std::vector<Vector2> TileSet::get_tile_shape_polygon() {
+	std::vector<Vector2> points;
 	if (tile_shape == TileSet::TILE_SHAPE_SQUARE) {
-		points.append(Vector2(0.0, 0.0));
-		points.append(Vector2(1.0, 0.0));
-		points.append(Vector2(1.0, 1.0));
-		points.append(Vector2(0.0, 1.0));
+		points.push_back(Vector2(0.0, 0.0));
+		points.push_back(Vector2(1.0, 0.0));
+		points.push_back(Vector2(1.0, 1.0));
+		points.push_back(Vector2(0.0, 1.0));
 	} else {
 		float overlap = 0.0;
 		switch (tile_shape) {
@@ -630,35 +638,36 @@ Vector<Vector2> TileSet::get_tile_shape_polygon() {
 				break;
 		}
 
-		points.append(Vector2(0.5, 0.0));
-		points.append(Vector2(0.0, overlap));
-		points.append(Vector2(0.0, 1.0 - overlap));
-		points.append(Vector2(0.5, 1.0));
-		points.append(Vector2(1.0, 1.0 - overlap));
-		points.append(Vector2(1.0, overlap));
-		points.append(Vector2(0.5, 0.0));
+		points.push_back(Vector2(0.5, 0.0));
+		points.push_back(Vector2(0.0, overlap));
+		points.push_back(Vector2(0.0, 1.0 - overlap));
+		points.push_back(Vector2(0.5, 1.0));
+		points.push_back(Vector2(1.0, 1.0 - overlap));
+		points.push_back(Vector2(1.0, overlap));
+		points.push_back(Vector2(0.5, 0.0));
 		if (get_tile_offset_axis() == TileSet::TILE_OFFSET_AXIS_VERTICAL) {
 			for (int i = 0; i < points.size(); i++) {
-				points.write[i] = Vector2(points[i].y, points[i].x);
+				points[i] = Vector2(points[i].y, points[i].x);
 			}
 		}
 	}
 	for (int i = 0; i < points.size(); i++) {
-		points.write[i] = points[i] * tile_size - tile_size / 2;
+		points[i] = points[i] * tile_size - tile_size / 2;
 	}
 	return points;
 }
 
 void TileSet::draw_tile_shape(CanvasItem *p_canvas_item, Rect2 p_region, Color p_color, bool p_filled, Ref<Texture2D> p_texture) {
 	if (tile_meshes_dirty) {
-		Vector<Vector2> uvs = get_tile_shape_polygon();
+		std::vector<Vector2> uvs = get_tile_shape_polygon();
 		for (int i = 0; i < uvs.size(); i++) {
-			uvs.write[i] = (uvs[i] + tile_size / 2) / tile_size;
+			uvs[i] = (uvs[i] + tile_size / 2) / tile_size;
 		}
 
-		Vector<Color> colors;
+		std::vector<Color> colors;
 		colors.resize(uvs.size());
-		colors.fill(Color(1.0, 1.0, 1.0, 1.0));
+
+		std::fill(colors.begin(), colors.end(), Color(1.0, 1.0, 1.0, 1.0));
 
 		// Filled mesh.
 		tile_filled_mesh->clear_surfaces();
@@ -694,8 +703,8 @@ void TileSet::draw_tile_shape(CanvasItem *p_canvas_item, Rect2 p_region, Color p
 	}
 }
 
-Vector<Point2> TileSet::get_terrain_bit_polygon(int p_terrain_set, TileSet::CellNeighbor p_bit) {
-	ERR_FAIL_COND_V(p_terrain_set < 0 || p_terrain_set >= get_terrain_sets_count(), Vector<Point2>());
+std::vector<Point2> TileSet::get_terrain_bit_polygon(int p_terrain_set, TileSet::CellNeighbor p_bit) {
+	ERR_FAIL_COND_V(p_terrain_set < 0 || p_terrain_set >= get_terrain_sets_count(), std::vector<Point2>());
 
 	TileSet::TerrainMode terrain_mode = get_terrain_set_mode(p_terrain_set);
 
@@ -752,7 +761,7 @@ void TileSet::draw_terrains(CanvasItem *p_canvas_item, Transform2D p_transform, 
 				CellNeighbor bit = CellNeighbor(i);
 
 				if (is_valid_peering_bit_for_mode(terrain_mode, bit)) {
-					Vector<Vector2> polygon;
+					std::vector<Vector2> polygon;
 					if (tile_shape == TileSet::TILE_SHAPE_SQUARE) {
 						if (terrain_mode == TileSet::TERRAIN_MODE_MATCH_CORNERS_AND_SIDES) {
 							polygon = _get_square_corner_or_side_terrain_bit_polygon(tile_size, bit);
@@ -792,11 +801,13 @@ void TileSet::draw_terrains(CanvasItem *p_canvas_item, Transform2D p_transform, 
 
 					Ref<ArrayMesh> mesh;
 					mesh.instantiate();
-					Vector<Vector2> uvs;
+					std::vector<Vector2> uvs;
 					uvs.resize(polygon.size());
-					Vector<Color> colors;
+					std::vector<Color> colors;
 					colors.resize(polygon.size());
-					colors.fill(Color(1.0, 1.0, 1.0, 1.0));
+
+					std::fill(colors.begin(),  colors.end(), Color(1.0, 1.0, 1.0, 1.0));
+
 					Array a;
 					a.resize(Mesh::ARRAY_MAX);
 					a[Mesh::ARRAY_VERTEX] = polygon;
@@ -832,7 +843,7 @@ void TileSet::draw_terrains(CanvasItem *p_canvas_item, Transform2D p_transform, 
 	RenderingServer::get_singleton()->canvas_item_add_set_transform(p_canvas_item->get_canvas_item(), Transform2D());
 }
 
-Vector<Vector<Ref<Texture2D>>> TileSet::generate_terrains_icons(Size2i p_size) {
+std::vector<std::vector<Ref<Texture2D>>> TileSet::generate_terrains_icons(Size2i p_size) {
 	// Counts the number of matching terrain tiles and find the best matching icon.
 	struct Count {
 		int count = 0;
@@ -840,12 +851,12 @@ Vector<Vector<Ref<Texture2D>>> TileSet::generate_terrains_icons(Size2i p_size) {
 		Ref<Texture2D> texture;
 		Rect2i region;
 	};
-	Vector<Vector<Ref<Texture2D>>> output;
+	std::vector<std::vector<Ref<Texture2D>>> output;
 	LocalVector<LocalVector<Count>> counts;
 	output.resize(get_terrain_sets_count());
 	counts.resize(get_terrain_sets_count());
 	for (int terrain_set = 0; terrain_set < get_terrain_sets_count(); terrain_set++) {
-		output.write[terrain_set].resize(get_terrains_count(terrain_set));
+		output[terrain_set].resize(get_terrains_count(terrain_set));
 		counts[terrain_set].resize(get_terrains_count(terrain_set));
 	}
 
@@ -863,7 +874,7 @@ Vector<Vector<Ref<Texture2D>>> TileSet::generate_terrains_icons(Size2i p_size) {
 					TileData *tile_data = Object::cast_to<TileData>(atlas_source->get_tile_data(tile_id, alternative_id));
 					int terrain_set = tile_data->get_terrain_set();
 					if (terrain_set >= 0) {
-						ERR_FAIL_INDEX_V(terrain_set, get_terrain_sets_count(), Vector<Vector<Ref<Texture2D>>>());
+						ERR_FAIL_INDEX_V(terrain_set, get_terrain_sets_count(), std::vector<std::vector<Ref<Texture2D>>>());
 
 						LocalVector<int> bit_counts;
 						bit_counts.resize(get_terrains_count(terrain_set));
@@ -915,7 +926,7 @@ Vector<Vector<Ref<Texture2D>>> TileSet::generate_terrains_icons(Size2i p_size) {
 			icon->create_from_image(image);
 			icon->set_size_override(p_size);
 
-			output.write[terrain_set].write[terrain] = icon;
+			output[terrain_set][terrain] = icon;
 		}
 	}
 	return output;
@@ -925,7 +936,7 @@ void TileSet::_source_changed() {
 	emit_changed();
 }
 
-Vector<Point2> TileSet::_get_square_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_square_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Rect2 bit_rect;
 	bit_rect.size = Vector2(p_size) / 3;
 	switch (p_bit) {
@@ -957,7 +968,7 @@ Vector<Point2> TileSet::_get_square_corner_or_side_terrain_bit_polygon(Vector2i 
 			break;
 	}
 	bit_rect.position *= Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	polygon.push_back(bit_rect.position);
 	polygon.push_back(Vector2(bit_rect.get_end().x, bit_rect.position.y));
 	polygon.push_back(bit_rect.get_end());
@@ -965,9 +976,9 @@ Vector<Point2> TileSet::_get_square_corner_or_side_terrain_bit_polygon(Vector2i 
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_square_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_square_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Vector2 unit = Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	switch (p_bit) {
 		case TileSet::CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER:
 			polygon.push_back(Vector2(0, 3) * unit);
@@ -1007,9 +1018,9 @@ Vector<Point2> TileSet::_get_square_corner_terrain_bit_polygon(Vector2i p_size, 
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_square_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_square_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Vector2 unit = Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	switch (p_bit) {
 		case TileSet::CELL_NEIGHBOR_RIGHT_SIDE:
 			polygon.push_back(Vector2(1, -1) * unit);
@@ -1041,9 +1052,9 @@ Vector<Point2> TileSet::_get_square_side_terrain_bit_polygon(Vector2i p_size, Ti
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_isometric_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_isometric_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Vector2 unit = Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	switch (p_bit) {
 		case TileSet::CELL_NEIGHBOR_RIGHT_CORNER:
 			polygon.push_back(Vector2(1, 0) * unit);
@@ -1099,9 +1110,9 @@ Vector<Point2> TileSet::_get_isometric_corner_or_side_terrain_bit_polygon(Vector
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_isometric_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_isometric_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Vector2 unit = Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	switch (p_bit) {
 		case TileSet::CELL_NEIGHBOR_RIGHT_CORNER:
 			polygon.push_back(Vector2(0.5, -0.5) * unit);
@@ -1141,9 +1152,9 @@ Vector<Point2> TileSet::_get_isometric_corner_terrain_bit_polygon(Vector2i p_siz
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_isometric_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
+std::vector<Point2> TileSet::_get_isometric_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit) {
 	Vector2 unit = Vector2(p_size) / 6.0;
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	switch (p_bit) {
 		case TileSet::CELL_NEIGHBOR_BOTTOM_RIGHT_SIDE:
 			polygon.push_back(Vector2(1, 0) * unit);
@@ -1175,8 +1186,8 @@ Vector<Point2> TileSet::_get_isometric_side_terrain_bit_polygon(Vector2i p_size,
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_half_offset_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
-	Vector<Vector2> point_list;
+std::vector<Point2> TileSet::_get_half_offset_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
+	std::vector<Vector2> point_list;
 	point_list.push_back(Vector2(3, (3.0 * (1.0 - p_overlap * 2.0)) / 2.0));
 	point_list.push_back(Vector2(3, 3.0 * (1.0 - p_overlap * 2.0)));
 	point_list.push_back(Vector2(2, 3.0 * (1.0 - (p_overlap * 2.0) * 2.0 / 3.0)));
@@ -1198,10 +1209,10 @@ Vector<Point2> TileSet::_get_half_offset_corner_or_side_terrain_bit_polygon(Vect
 
 	Vector2 unit = Vector2(p_size) / 6.0;
 	for (int i = 0; i < point_list.size(); i++) {
-		point_list.write[i] = point_list[i] * unit;
+		point_list[i] = point_list[i] * unit;
 	}
 
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_HORIZONTAL) {
 		switch (p_bit) {
 			case TileSet::CELL_NEIGHBOR_RIGHT_SIDE:
@@ -1264,7 +1275,7 @@ Vector<Point2> TileSet::_get_half_offset_corner_or_side_terrain_bit_polygon(Vect
 	} else {
 		if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_VERTICAL) {
 			for (int i = 0; i < point_list.size(); i++) {
-				point_list.write[i] = Vector2(point_list[i].y, point_list[i].x);
+				point_list[i] = Vector2(point_list[i].y, point_list[i].x);
 			}
 		}
 		switch (p_bit) {
@@ -1335,8 +1346,8 @@ Vector<Point2> TileSet::_get_half_offset_corner_or_side_terrain_bit_polygon(Vect
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_half_offset_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
-	Vector<Vector2> point_list;
+std::vector<Point2> TileSet::_get_half_offset_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
+	std::vector<Vector2> point_list;
 	point_list.push_back(Vector2(3, 0));
 	point_list.push_back(Vector2(3, 3.0 * (1.0 - p_overlap * 2.0)));
 	point_list.push_back(Vector2(1.5, (3.0 * (1.0 - p_overlap * 2.0) + 3.0) / 2.0));
@@ -1352,10 +1363,10 @@ Vector<Point2> TileSet::_get_half_offset_corner_terrain_bit_polygon(Vector2i p_s
 
 	Vector2 unit = Vector2(p_size) / 6.0;
 	for (int i = 0; i < point_list.size(); i++) {
-		point_list.write[i] = point_list[i] * unit;
+		point_list[i] = point_list[i] * unit;
 	}
 
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_HORIZONTAL) {
 		switch (p_bit) {
 			case TileSet::CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER:
@@ -1394,7 +1405,7 @@ Vector<Point2> TileSet::_get_half_offset_corner_terrain_bit_polygon(Vector2i p_s
 	} else {
 		if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_VERTICAL) {
 			for (int i = 0; i < point_list.size(); i++) {
-				point_list.write[i] = Vector2(point_list[i].y, point_list[i].x);
+				point_list[i] = Vector2(point_list[i].y, point_list[i].x);
 			}
 		}
 		switch (p_bit) {
@@ -1441,8 +1452,8 @@ Vector<Point2> TileSet::_get_half_offset_corner_terrain_bit_polygon(Vector2i p_s
 	return polygon;
 }
 
-Vector<Point2> TileSet::_get_half_offset_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
-	Vector<Vector2> point_list;
+std::vector<Point2> TileSet::_get_half_offset_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis) {
+	std::vector<Vector2> point_list;
 	point_list.push_back(Vector2(3, 3.0 * (1.0 - p_overlap * 2.0)));
 	point_list.push_back(Vector2(0, 3));
 	point_list.push_back(Vector2(-3, 3.0 * (1.0 - p_overlap * 2.0)));
@@ -1452,10 +1463,10 @@ Vector<Point2> TileSet::_get_half_offset_side_terrain_bit_polygon(Vector2i p_siz
 
 	Vector2 unit = Vector2(p_size) / 6.0;
 	for (int i = 0; i < point_list.size(); i++) {
-		point_list.write[i] = point_list[i] * unit;
+		point_list[i] = point_list[i] * unit;
 	}
 
-	Vector<Vector2> polygon;
+	std::vector<Vector2> polygon;
 	if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_HORIZONTAL) {
 		switch (p_bit) {
 			case TileSet::CELL_NEIGHBOR_RIGHT_SIDE:
@@ -1488,7 +1499,7 @@ Vector<Point2> TileSet::_get_half_offset_side_terrain_bit_polygon(Vector2i p_siz
 	} else {
 		if (p_offset_axis == TileSet::TILE_OFFSET_AXIS_VERTICAL) {
 			for (int i = 0; i < point_list.size(); i++) {
-				point_list.write[i] = Vector2(point_list[i].y, point_list[i].x);
+				point_list[i] = Vector2(point_list[i].y, point_list[i].x);
 			}
 		}
 		switch (p_bit) {
@@ -1616,9 +1627,9 @@ void TileSet::compatibility_conversion() {
 								if (csd.autotile_coords == coords) {
 									Ref<ConvexPolygonShape2D> convex_shape = csd.shape; // Only ConvexPolygonShape2D are supported, which is the default type used by the 3.x editor
 									if (convex_shape.is_valid()) {
-										Vector<Vector2> polygon = convex_shape->get_points();
+										std::vector<Vector2> polygon = convex_shape->get_points();
 										for (int point_index = 0; point_index < polygon.size(); point_index++) {
-											polygon.write[point_index] = csd.transform.xform(polygon[point_index]);
+											polygon[point_index] = csd.transform.xform(polygon[point_index]);
 										}
 										tile_data->set_collision_polygons_count(0, tile_data->get_collision_polygons_count(0) + 1);
 										int index = tile_data->get_collision_polygons_count(0) - 1;
@@ -1648,9 +1659,9 @@ void TileSet::compatibility_conversion() {
 		for (int k = 0; k < ctd->shapes.size(); k++) {
 			Ref<ConvexPolygonShape2D> convex = ctd->shapes[k].shape;
 			if (convex.is_valid()) {
-				Vector<Vector2> points = convex->get_points();
+				std::vector<Vector2> points = convex->get_points();
 				for (int i_point = 0; i_point < points.size(); i_point++) {
-					points.write[i_point] = points[i_point] - get_tile_size() / 2;
+					points[i_point] = points[i_point] - get_tile_size() / 2;
 				}
 				convex->set_points(points);
 			}
@@ -1669,7 +1680,7 @@ void TileSet::compatibility_conversion() {
 #endif // DISABLE_DEPRECATED
 
 bool TileSet::_set(const StringName &p_name, const Variant &p_value) {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 #ifndef DISABLE_DEPRECATED
 	// TODO: THIS IS HOW WE CHECK IF WE HAVE A DEPRECATED RESOURCE
@@ -1976,7 +1987,7 @@ bool TileSet::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool TileSet::_get(const StringName &p_name, Variant &r_ret) const {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	if (components.size() == 2 && components[0].begins_with("occlusion_layer_") && components[0].trim_prefix("occlusion_layer_").is_valid_int()) {
 		// Occlusion layers.
@@ -2273,10 +2284,10 @@ TileSet::TileSet() {
 	tile_filled_mesh.instantiate();
 
 	// Instanciate and list all plugins.
-	tile_set_plugins_vector.append(memnew(TileSetPluginAtlasRendering));
-	tile_set_plugins_vector.append(memnew(TileSetPluginAtlasPhysics));
-	tile_set_plugins_vector.append(memnew(TileSetPluginAtlasNavigation));
-	tile_set_plugins_vector.append(memnew(TileSetPluginScenesCollections));
+	tile_set_plugins_vector.push_back(memnew(TileSetPluginAtlasRendering));
+	tile_set_plugins_vector.push_back(memnew(TileSetPluginAtlasPhysics));
+	tile_set_plugins_vector.push_back(memnew(TileSetPluginAtlasNavigation));
+	tile_set_plugins_vector.push_back(memnew(TileSetPluginScenesCollections));
 }
 
 TileSet::~TileSet() {
@@ -2285,7 +2296,7 @@ TileSet::~TileSet() {
 		memdelete(E->get());
 	}
 #endif // DISABLE_DEPRECATED
-	while (!source_ids.is_empty()) {
+	while (!source_ids.empty()) {
 		remove_source(source_ids[0]);
 	}
 	for (int i = 0; i < tile_set_plugins_vector.size(); i++) {
@@ -2402,10 +2413,10 @@ Vector2i TileSetAtlasSource::get_atlas_grid_size() const {
 }
 
 bool TileSetAtlasSource::_set(const StringName &p_name, const Variant &p_value) {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	// Compute the vector2i if we have coordinates.
-	Vector<String> coords_split = components[0].split(":");
+	std::vector<String> coords_split = components[0].split(":");
 	Vector2i coords = TileSetSource::INVALID_ATLAS_COORDS;
 	if (coords_split.size() == 2 && coords_split[0].is_valid_int() && coords_split[1].is_valid_int()) {
 		coords = Vector2i(coords_split[0].to_int(), coords_split[1].to_int());
@@ -2434,7 +2445,7 @@ bool TileSetAtlasSource::_set(const StringName &p_name, const Variant &p_value) 
 						tiles[coords].alternatives[alternative_id] = memnew(TileData);
 						tiles[coords].alternatives[alternative_id]->set_tile_set(tile_set);
 						tiles[coords].alternatives[alternative_id]->set_allow_transform(alternative_id > 0);
-						tiles[coords].alternatives_ids.append(alternative_id);
+						tiles[coords].alternatives_ids.push_back(alternative_id);
 					}
 					if (components.size() >= 3) {
 						bool valid;
@@ -2453,10 +2464,10 @@ bool TileSetAtlasSource::_set(const StringName &p_name, const Variant &p_value) 
 }
 
 bool TileSetAtlasSource::_get(const StringName &p_name, Variant &r_ret) const {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	// Properties.
-	Vector<String> coords_split = components[0].split(":");
+	std::vector<String> coords_split = components[0].split(":");
 	if (coords_split.size() == 2 && coords_split[0].is_valid_int() && coords_split[1].is_valid_int()) {
 		Vector2i coords = Vector2i(coords_split[0].to_int(), coords_split[1].to_int());
 		if (tiles.has(coords)) {
@@ -2550,8 +2561,9 @@ void TileSetAtlasSource::create_tile(const Vector2i p_atlas_coords, const Vector
 
 	// Create and resize the tile.
 	tiles.insert(p_atlas_coords, TileSetAtlasSource::TileAlternativesData());
-	tiles_ids.append(p_atlas_coords);
-	tiles_ids.sort();
+	tiles_ids.push_back(p_atlas_coords);
+
+	std::sort(tiles_ids.begin(),  tiles_ids.end());
 
 	tiles[p_atlas_coords].size_in_atlas = p_size;
 	tiles[p_atlas_coords].alternatives[0] = memnew(TileData);
@@ -2559,7 +2571,7 @@ void TileSetAtlasSource::create_tile(const Vector2i p_atlas_coords, const Vector
 	tiles[p_atlas_coords].alternatives[0]->set_allow_transform(false);
 	tiles[p_atlas_coords].alternatives[0]->connect("changed", callable_mp((Resource *)this, &TileSetAtlasSource::emit_changed));
 	tiles[p_atlas_coords].alternatives[0]->notify_property_list_changed();
-	tiles[p_atlas_coords].alternatives_ids.append(0);
+	tiles[p_atlas_coords].alternatives_ids.push_back(0);
 
 	// Add all covered positions to the mapping cache
 	for (int x = 0; x < p_size.x; x++) {
@@ -2592,8 +2604,10 @@ void TileSetAtlasSource::remove_tile(Vector2i p_atlas_coords) {
 
 	// Delete the tile
 	tiles.erase(p_atlas_coords);
-	tiles_ids.erase(p_atlas_coords);
-	tiles_ids.sort();
+
+	std::remove(tiles_ids.begin(),  tiles_ids.end(), p_atlas_coords);
+
+	std::sort(tiles_ids.begin(),  tiles_ids.end());
 
 	emit_signal("changed");
 }
@@ -2709,9 +2723,11 @@ void TileSetAtlasSource::move_tile_in_atlas(Vector2i p_atlas_coords, Vector2i p_
 		tiles[new_atlas_coords] = tiles[p_atlas_coords];
 		tiles.erase(p_atlas_coords);
 
-		tiles_ids.erase(p_atlas_coords);
-		tiles_ids.append(new_atlas_coords);
-		tiles_ids.sort();
+		std::remove(tiles_ids.begin(), tiles_ids.end(), p_atlas_coords);
+
+		tiles_ids.push_back(new_atlas_coords);
+
+		std::sort(tiles_ids.begin(),  tiles_ids.end());
 	}
 	tiles[new_atlas_coords].size_in_atlas = size;
 
@@ -2728,7 +2744,7 @@ void TileSetAtlasSource::move_tile_in_atlas(Vector2i p_atlas_coords, Vector2i p_
 
 bool TileSetAtlasSource::has_tiles_outside_texture() {
 	Vector2i grid_size = get_atlas_grid_size();
-	Vector<Vector2i> to_remove;
+	std::vector<Vector2i> to_remove;
 
 	for (Map<Vector2i, TileSetAtlasSource::TileAlternativesData>::Element *E = tiles.front(); E; E = E->next()) {
 		if (E->key().x >= grid_size.x || E->key().y >= grid_size.y) {
@@ -2741,11 +2757,11 @@ bool TileSetAtlasSource::has_tiles_outside_texture() {
 
 void TileSetAtlasSource::clear_tiles_outside_texture() {
 	Vector2i grid_size = get_atlas_grid_size();
-	Vector<Vector2i> to_remove;
+	std::vector<Vector2i> to_remove;
 
 	for (Map<Vector2i, TileSetAtlasSource::TileAlternativesData>::Element *E = tiles.front(); E; E = E->next()) {
 		if (E->key().x >= grid_size.x || E->key().y >= grid_size.y) {
-			to_remove.append(E->key());
+			to_remove.push_back(E->key());
 		}
 	}
 
@@ -2764,8 +2780,10 @@ int TileSetAtlasSource::create_alternative_tile(const Vector2i p_atlas_coords, i
 	tiles[p_atlas_coords].alternatives[new_alternative_id]->set_tile_set(tile_set);
 	tiles[p_atlas_coords].alternatives[new_alternative_id]->set_allow_transform(true);
 	tiles[p_atlas_coords].alternatives[new_alternative_id]->notify_property_list_changed();
-	tiles[p_atlas_coords].alternatives_ids.append(new_alternative_id);
-	tiles[p_atlas_coords].alternatives_ids.sort();
+	tiles[p_atlas_coords].alternatives_ids.push_back(new_alternative_id);
+
+	std::sort(tiles[p_atlas_coords].alternatives_ids.begin(),  tiles[p_atlas_coords].alternatives_ids.end());
+
 	_compute_next_alternative_id(p_atlas_coords);
 
 	emit_signal("changed");
@@ -2780,8 +2798,11 @@ void TileSetAtlasSource::remove_alternative_tile(const Vector2i p_atlas_coords, 
 
 	memdelete(tiles[p_atlas_coords].alternatives[p_alternative_tile]);
 	tiles[p_atlas_coords].alternatives.erase(p_alternative_tile);
-	tiles[p_atlas_coords].alternatives_ids.erase(p_alternative_tile);
-	tiles[p_atlas_coords].alternatives_ids.sort();
+
+	//todo
+	tiles[p_atlas_coords].alternatives_ids.erase(tiles[p_atlas_coords].alternatives_ids.begin() + p_alternative_tile);
+
+	std::sort(tiles[p_atlas_coords].alternatives_ids.begin(),  tiles[p_atlas_coords].alternatives_ids.end());
 
 	emit_signal("changed");
 }
@@ -2794,11 +2815,14 @@ void TileSetAtlasSource::set_alternative_tile_id(const Vector2i p_atlas_coords, 
 	ERR_FAIL_COND_MSG(tiles[p_atlas_coords].alternatives.has(p_new_id), vformat("TileSetAtlasSource has already an alternative with id %d at %s.", p_new_id, String(p_atlas_coords)));
 
 	tiles[p_atlas_coords].alternatives[p_new_id] = tiles[p_atlas_coords].alternatives[p_alternative_tile];
-	tiles[p_atlas_coords].alternatives_ids.append(p_new_id);
+	tiles[p_atlas_coords].alternatives_ids.push_back(p_new_id);
 
 	tiles[p_atlas_coords].alternatives.erase(p_alternative_tile);
-	tiles[p_atlas_coords].alternatives_ids.erase(p_alternative_tile);
-	tiles[p_atlas_coords].alternatives_ids.sort();
+
+	//todo
+	tiles[p_atlas_coords].alternatives_ids.erase(tiles[p_atlas_coords].alternatives_ids.begin() + p_alternative_tile);
+
+	std::sort(tiles[p_atlas_coords].alternatives_ids.begin(),  tiles[p_atlas_coords].alternatives_ids.end());
 
 	emit_signal("changed");
 }
@@ -2953,8 +2977,10 @@ int TileSetScenesCollectionSource::create_scene_tile(Ref<PackedScene> p_packed_s
 	int new_scene_id = p_id_override >= 0 ? p_id_override : next_scene_id;
 
 	scenes[new_scene_id] = SceneData();
-	scenes_ids.append(new_scene_id);
-	scenes_ids.sort();
+	scenes_ids.push_back(new_scene_id);
+
+	std::sort(scenes_ids.begin(),  scenes_ids.end());
+
 	set_scene_tile_scene(new_scene_id, p_packed_scene);
 	_compute_next_alternative_id();
 
@@ -2970,13 +2996,16 @@ void TileSetScenesCollectionSource::set_scene_tile_id(int p_id, int p_new_id) {
 
 	scenes[p_new_id] = SceneData();
 	scenes[p_new_id] = scenes[p_id];
-	scenes_ids.append(p_new_id);
-	scenes_ids.sort();
+	scenes_ids.push_back(p_new_id);
+
+	std::sort(scenes_ids.begin(),  scenes_ids.end());
 
 	_compute_next_alternative_id();
 
 	scenes.erase(p_id);
-	scenes_ids.erase(p_id);
+
+	//todo
+	scenes_ids.erase(scenes_ids.begin() + p_id);
 
 	emit_signal("changed");
 }
@@ -3022,7 +3051,10 @@ void TileSetScenesCollectionSource::remove_scene_tile(int p_id) {
 	ERR_FAIL_COND(!scenes.has(p_id));
 
 	scenes.erase(p_id);
-	scenes_ids.erase(p_id);
+
+	//todo
+	scenes_ids.erase(scenes_ids.begin() + p_id);
+
 	emit_signal("changed");
 }
 
@@ -3031,7 +3063,7 @@ int TileSetScenesCollectionSource::get_next_scene_tile_id() const {
 }
 
 bool TileSetScenesCollectionSource::_set(const StringName &p_name, const Variant &p_value) {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	if (components.size() >= 2 && components[0] == "scenes" && components[1].is_valid_int()) {
 		int scene_id = components[1].to_int();
@@ -3055,7 +3087,7 @@ bool TileSetScenesCollectionSource::_set(const StringName &p_name, const Variant
 }
 
 bool TileSetScenesCollectionSource::_get(const StringName &p_name, Variant &r_ret) const {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	if (components.size() >= 2 && components[0] == "scenes" && components[1].is_valid_int() && scenes.has(components[1].to_int())) {
 		if (components.size() >= 3 && components[2] == "scene") {
@@ -3139,7 +3171,7 @@ void TileData::notify_tile_data_properties_should_change() {
 			} else {
 				Variant::construct(tile_set->get_custom_data_type(i), new_val, nullptr, 0, error);
 			}
-			custom_data.write[i] = new_val;
+			custom_data[i] = new_val;
 		}
 	}
 
@@ -3234,7 +3266,7 @@ int TileData::get_y_sort_origin() const {
 
 void TileData::set_occluder(int p_layer_id, Ref<OccluderPolygon2D> p_occluder_polygon) {
 	ERR_FAIL_INDEX(p_layer_id, occluders.size());
-	occluders.write[p_layer_id] = p_occluder_polygon;
+	occluders[p_layer_id] = p_occluder_polygon;
 	emit_signal("changed");
 }
 
@@ -3252,58 +3284,61 @@ int TileData::get_collision_polygons_count(int p_layer_id) const {
 void TileData::set_collision_polygons_count(int p_layer_id, int p_polygons_count) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
 	ERR_FAIL_COND(p_polygons_count < 0);
-	physics.write[p_layer_id].polygons.resize(p_polygons_count);
+	physics[p_layer_id].polygons.resize(p_polygons_count);
 	notify_property_list_changed();
 	emit_signal("changed");
 }
 
 void TileData::add_collision_polygon(int p_layer_id) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
-	physics.write[p_layer_id].polygons.push_back(PhysicsLayerTileData::PolygonShapeTileData());
+	physics[p_layer_id].polygons.push_back(PhysicsLayerTileData::PolygonShapeTileData());
 	emit_signal("changed");
 }
 
 void TileData::remove_collision_polygon(int p_layer_id, int p_polygon_index) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
 	ERR_FAIL_INDEX(p_polygon_index, physics[p_layer_id].polygons.size());
-	physics.write[p_layer_id].polygons.remove(p_polygon_index);
+
+	//todo
+	physics[p_layer_id].polygons.erase(physics[p_layer_id].polygons.begin() + p_polygon_index);
+
 	emit_signal("changed");
 }
 
-void TileData::set_collision_polygon_points(int p_layer_id, int p_polygon_index, Vector<Vector2> p_polygon) {
+void TileData::set_collision_polygon_points(int p_layer_id, int p_polygon_index, std::vector<Vector2> p_polygon) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
 	ERR_FAIL_INDEX(p_polygon_index, physics[p_layer_id].polygons.size());
 	ERR_FAIL_COND_MSG(p_polygon.size() != 0 && p_polygon.size() < 3, "Invalid polygon. Needs either 0 or more than 3 points.");
 
-	if (p_polygon.is_empty()) {
-		physics.write[p_layer_id].polygons.write[p_polygon_index].shapes.clear();
+	if (p_polygon.empty()) {
+		physics[p_layer_id].polygons[p_polygon_index].shapes.clear();
 	} else {
 		// Decompose into convex shapes.
-		Vector<Vector<Vector2>> decomp = Geometry2D::decompose_polygon_in_convex(p_polygon);
-		ERR_FAIL_COND_MSG(decomp.is_empty(), "Could not decompose the polygon into convex shapes.");
+		std::vector<std::vector<Vector2>> decomp = Geometry2D::decompose_polygon_in_convex(p_polygon);
+		ERR_FAIL_COND_MSG(decomp.empty(), "Could not decompose the polygon into convex shapes.");
 
-		physics.write[p_layer_id].polygons.write[p_polygon_index].shapes.resize(decomp.size());
+		physics[p_layer_id].polygons[p_polygon_index].shapes.resize(decomp.size());
 		for (int i = 0; i < decomp.size(); i++) {
 			Ref<ConvexPolygonShape2D> shape;
 			shape.instantiate();
 			shape->set_points(decomp[i]);
-			physics.write[p_layer_id].polygons.write[p_polygon_index].shapes[i] = shape;
+			physics[p_layer_id].polygons[p_polygon_index].shapes[i] = shape;
 		}
 	}
-	physics.write[p_layer_id].polygons.write[p_polygon_index].polygon = p_polygon;
+	physics[p_layer_id].polygons[p_polygon_index].polygon = p_polygon;
 	emit_signal("changed");
 }
 
-Vector<Vector2> TileData::get_collision_polygon_points(int p_layer_id, int p_polygon_index) const {
-	ERR_FAIL_INDEX_V(p_layer_id, physics.size(), Vector<Vector2>());
-	ERR_FAIL_INDEX_V(p_polygon_index, physics[p_layer_id].polygons.size(), Vector<Vector2>());
+std::vector<Vector2> TileData::get_collision_polygon_points(int p_layer_id, int p_polygon_index) const {
+	ERR_FAIL_INDEX_V(p_layer_id, physics.size(), std::vector<Vector2>());
+	ERR_FAIL_INDEX_V(p_polygon_index, physics[p_layer_id].polygons.size(), std::vector<Vector2>());
 	return physics[p_layer_id].polygons[p_polygon_index].polygon;
 }
 
 void TileData::set_collision_polygon_one_way(int p_layer_id, int p_polygon_index, bool p_one_way) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
 	ERR_FAIL_INDEX(p_polygon_index, physics[p_layer_id].polygons.size());
-	physics.write[p_layer_id].polygons.write[p_polygon_index].one_way = p_one_way;
+	physics[p_layer_id].polygons[p_polygon_index].one_way = p_one_way;
 	emit_signal("changed");
 }
 
@@ -3316,7 +3351,7 @@ bool TileData::is_collision_polygon_one_way(int p_layer_id, int p_polygon_index)
 void TileData::set_collision_polygon_one_way_margin(int p_layer_id, int p_polygon_index, float p_one_way_margin) {
 	ERR_FAIL_INDEX(p_layer_id, physics.size());
 	ERR_FAIL_INDEX(p_polygon_index, physics[p_layer_id].polygons.size());
-	physics.write[p_layer_id].polygons.write[p_polygon_index].one_way_margin = p_one_way_margin;
+	physics[p_layer_id].polygons[p_polygon_index].one_way_margin = p_one_way_margin;
 	emit_signal("changed");
 }
 
@@ -3385,7 +3420,7 @@ bool TileData::is_valid_peering_bit_terrain(TileSet::CellNeighbor p_peering_bit)
 // Navigation
 void TileData::set_navigation_polygon(int p_layer_id, Ref<NavigationPolygon> p_navigation_polygon) {
 	ERR_FAIL_INDEX(p_layer_id, navigation.size());
-	navigation.write[p_layer_id] = p_navigation_polygon;
+	navigation[p_layer_id] = p_navigation_polygon;
 	emit_signal("changed");
 }
 
@@ -3421,7 +3456,7 @@ Variant TileData::get_custom_data(String p_layer_name) const {
 
 void TileData::set_custom_data_by_layer_id(int p_layer_id, Variant p_value) {
 	ERR_FAIL_INDEX(p_layer_id, custom_data.size());
-	custom_data.write[p_layer_id] = p_value;
+	custom_data[p_layer_id] = p_value;
 	emit_signal("changed");
 }
 
@@ -3431,7 +3466,7 @@ Variant TileData::get_custom_data_by_layer_id(int p_layer_id) const {
 }
 
 bool TileData::_set(const StringName &p_name, const Variant &p_value) {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	if (components.size() == 2 && components[0].begins_with("occlusion_layer_") && components[0].trim_prefix("occlusion_layer_").is_valid_int()) {
 		// Occlusion layers.
@@ -3485,11 +3520,11 @@ bool TileData::_set(const StringName &p_name, const Variant &p_value) {
 				}
 
 				if (polygon_index >= physics[layer_index].polygons.size()) {
-					physics.write[layer_index].polygons.resize(polygon_index + 1);
+					physics[layer_index].polygons.resize(polygon_index + 1);
 				}
 			}
 			if (components[2] == "points") {
-				Vector<Vector2> polygon = p_value;
+				std::vector<Vector2> polygon = p_value;
 				set_collision_polygon_points(layer_index, polygon_index, polygon);
 				return true;
 			} else if (components[2] == "one_way") {
@@ -3551,7 +3586,7 @@ bool TileData::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool TileData::_get(const StringName &p_name, Variant &r_ret) const {
-	Vector<String> components = String(p_name).split("/", true, 2);
+	std::vector<String> components = String(p_name).split("/", true, 2);
 
 	if (tile_set) {
 		if (components.size() == 2 && components[0].begins_with("occlusion_layer") && components[0].trim_prefix("occlusion_layer_").is_valid_int()) {
@@ -4296,9 +4331,9 @@ void TileSetPluginAtlasPhysics::draw_quadrant_debug(TileMap *p_tile_map, TileMap
 				for (int body_index = 0; body_index < p_quadrant->bodies.size(); body_index++) {
 					for (int polygon_index = 0; polygon_index < tile_data->get_collision_polygons_count(body_index); polygon_index++) {
 						// Draw the debug polygon.
-						Vector<Vector2> polygon = tile_data->get_collision_polygon_points(body_index, polygon_index);
+						std::vector<Vector2> polygon = tile_data->get_collision_polygon_points(body_index, polygon_index);
 						if (polygon.size() >= 3) {
-							Vector<Color> color;
+							std::vector<Color> color;
 							color.push_back(debug_collision_color);
 							rs->canvas_item_add_polygon(p_quadrant->debug_canvas_item, polygon, color);
 						}
@@ -4320,7 +4355,7 @@ void TileSetPluginAtlasNavigation::tilemap_notification(TileMap *p_tile_map, int
 				Transform2D tilemap_xform = p_tile_map->get_global_transform();
 				for (Map<Vector2i, TileMapQuadrant>::Element *E_quadrant = quadrant_map.front(); E_quadrant; E_quadrant = E_quadrant->next()) {
 					TileMapQuadrant &q = E_quadrant->get();
-					for (Map<Vector2i, Vector<RID>>::Element *E_region = q.navigation_regions.front(); E_region; E_region = E_region->next()) {
+					for (Map<Vector2i, std::vector<RID>>::Element *E_region = q.navigation_regions.front(); E_region; E_region = E_region->next()) {
 						for (int layer_index = 0; layer_index < E_region->get().size(); layer_index++) {
 							RID region = E_region->get()[layer_index];
 							if (!region.is_valid()) {
@@ -4357,7 +4392,7 @@ void TileSetPluginAtlasNavigation::update_dirty_quadrants(TileMap *p_tile_map, S
 		TileMapQuadrant &q = *q_list_element->self();
 
 		// Clear navigation shapes in the quadrant.
-		for (Map<Vector2i, Vector<RID>>::Element *E = q.navigation_regions.front(); E; E = E->next()) {
+		for (Map<Vector2i, std::vector<RID>>::Element *E = q.navigation_regions.front(); E; E = E->next()) {
 			for (int i = 0; i < E->get().size(); i++) {
 				RID region = E->get()[i];
 				if (!region.is_valid()) {
@@ -4397,7 +4432,7 @@ void TileSetPluginAtlasNavigation::update_dirty_quadrants(TileMap *p_tile_map, S
 							NavigationServer2D::get_singleton()->region_set_map(region, p_tile_map->get_world_2d()->get_navigation_map());
 							NavigationServer2D::get_singleton()->region_set_transform(region, tilemap_xform * tile_transform);
 							NavigationServer2D::get_singleton()->region_set_navpoly(region, navpoly);
-							q.navigation_regions[E_cell->get()].write[layer_index] = region;
+							q.navigation_regions[E_cell->get()][layer_index] = region;
 						}
 					}
 				}
@@ -4410,7 +4445,7 @@ void TileSetPluginAtlasNavigation::update_dirty_quadrants(TileMap *p_tile_map, S
 
 void TileSetPluginAtlasNavigation::cleanup_quadrant(TileMap *p_tile_map, TileMapQuadrant *p_quadrant) {
 	// Clear navigation shapes in the quadrant.
-	for (Map<Vector2i, Vector<RID>>::Element *E = p_quadrant->navigation_regions.front(); E; E = E->next()) {
+	for (Map<Vector2i, std::vector<RID>>::Element *E = p_quadrant->navigation_regions.front(); E; E = E->next()) {
 		for (int i = 0; i < E->get().size(); i++) {
 			RID region = E->get()[i];
 			if (!region.is_valid()) {
@@ -4480,19 +4515,19 @@ void TileSetPluginAtlasNavigation::draw_quadrant_debug(TileMap *p_tile_map, Tile
 
 						for (int i = 0; i < navpoly->get_polygon_count(); i++) {
 							// An array of vertices for this polygon.
-							Vector<int> polygon = navpoly->get_polygon(i);
-							Vector<Vector2> vertices;
+							std::vector<int> polygon = navpoly->get_polygon(i);
+							std::vector<Vector2> vertices;
 							vertices.resize(polygon.size());
 							for (int j = 0; j < polygon.size(); j++) {
 								ERR_FAIL_INDEX(polygon[j], navigation_polygon_vertices.size());
-								vertices.write[j] = navigation_polygon_vertices[polygon[j]];
+								vertices[j] = navigation_polygon_vertices[polygon[j]];
 							}
 
 							// Generate the polygon color, slightly randomly modified from the settings one.
 							Color random_variation_color;
 							random_variation_color.set_hsv(color.get_h() + rand.random(-1.0, 1.0) * 0.05, color.get_s(), color.get_v() + rand.random(-1.0, 1.0) * 0.1);
 							random_variation_color.a = color.a;
-							Vector<Color> colors;
+							std::vector<Color> colors;
 							colors.push_back(random_variation_color);
 
 							rs->canvas_item_add_polygon(p_quadrant->debug_canvas_item, vertices, colors);

@@ -94,7 +94,7 @@ private:
 		Map<Vector2i, int> autotile_priority_map;
 		Map<Vector2i, int> autotile_z_index_map;
 
-		Vector<CompatibilityShapeData> shapes;
+		std::vector<CompatibilityShapeData> shapes;
 		Ref<OccluderPolygon2D> occluder;
 		Vector2 occluder_offset;
 		Ref<NavigationPolygon> navigation;
@@ -192,7 +192,7 @@ private:
 		uint32_t light_mask = 1;
 		bool sdf_collision = false;
 	};
-	Vector<OcclusionLayer> occlusion_layers;
+	std::vector<OcclusionLayer> occlusion_layers;
 
 	Ref<ArrayMesh> tile_lines_mesh;
 	Ref<ArrayMesh> tile_filled_mesh;
@@ -204,7 +204,7 @@ private:
 		uint32_t collision_mask = 1;
 		Ref<PhysicsMaterial> physics_material;
 	};
-	Vector<PhysicsLayer> physics_layers;
+	std::vector<PhysicsLayer> physics_layers;
 
 	// Terrains
 	struct Terrain {
@@ -213,9 +213,9 @@ private:
 	};
 	struct TerrainSet {
 		TerrainMode mode = TERRAIN_MODE_MATCH_CORNERS_AND_SIDES;
-		Vector<Terrain> terrains;
+		std::vector<Terrain> terrains;
 	};
-	Vector<TerrainSet> terrain_sets;
+	std::vector<TerrainSet> terrain_sets;
 
 	Map<TerrainMode, Map<CellNeighbor, Ref<ArrayMesh>>> terrain_bits_meshes;
 	bool terrain_bits_meshes_dirty = true;
@@ -224,47 +224,47 @@ private:
 	struct Navigationlayer {
 		uint32_t layers = 1;
 	};
-	Vector<Navigationlayer> navigation_layers;
+	std::vector<Navigationlayer> navigation_layers;
 
 	// CustomData
 	struct CustomDataLayer {
 		String name;
 		Variant::Type type = Variant::NIL;
 	};
-	Vector<CustomDataLayer> custom_data_layers;
+	std::vector<CustomDataLayer> custom_data_layers;
 	Map<String, int> custom_data_layers_by_name;
 
 	// Per Atlas source data.
 	Map<int, Ref<TileSetSource>> sources;
-	Vector<int> source_ids;
+	std::vector<int> source_ids;
 	int next_source_id = 0;
 	// ---------------------
 
 	// Plugins themselves.
-	Vector<TileSetPlugin *> tile_set_plugins_vector;
+	std::vector<TileSetPlugin *> tile_set_plugins_vector;
 
 	void _compute_next_source_id();
 	void _source_changed();
 
 	// Helpers
-	Vector<Point2> _get_square_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
-	Vector<Point2> _get_square_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
-	Vector<Point2> _get_square_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_square_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_square_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_square_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
 
-	Vector<Point2> _get_isometric_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
-	Vector<Point2> _get_isometric_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
-	Vector<Point2> _get_isometric_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_isometric_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_isometric_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> _get_isometric_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit);
 
-	Vector<Point2> _get_half_offset_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
-	Vector<Point2> _get_half_offset_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
-	Vector<Point2> _get_half_offset_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
+	std::vector<Point2> _get_half_offset_corner_or_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
+	std::vector<Point2> _get_half_offset_corner_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
+	std::vector<Point2> _get_half_offset_side_terrain_bit_polygon(Vector2i p_size, TileSet::CellNeighbor p_bit, float p_overlap, TileSet::TileOffsetAxis p_offset_axis);
 
 protected:
 	static void _bind_methods();
 
 public:
 	// --- Plugins ---
-	Vector<TileSetPlugin *> get_tile_set_atlas_plugins() const;
+	std::vector<TileSetPlugin *> get_tile_set_atlas_plugins() const;
 
 	// --- Accessors for TileSet data ---
 
@@ -342,12 +342,12 @@ public:
 	Variant::Type get_custom_data_type(int p_layer_id) const;
 
 	// Helpers
-	Vector<Vector2> get_tile_shape_polygon();
+	std::vector<Vector2> get_tile_shape_polygon();
 	void draw_tile_shape(CanvasItem *p_canvas_item, Rect2 p_region, Color p_color, bool p_filled = false, Ref<Texture2D> p_texture = Ref<Texture2D>());
 
-	Vector<Point2> get_terrain_bit_polygon(int p_terrain_set, TileSet::CellNeighbor p_bit);
+	std::vector<Point2> get_terrain_bit_polygon(int p_terrain_set, TileSet::CellNeighbor p_bit);
 	void draw_terrains(CanvasItem *p_canvas_item, Transform2D p_transform, const TileData *p_tile_data);
-	Vector<Vector<Ref<Texture2D>>> generate_terrains_icons(Size2i p_size);
+	std::vector<std::vector<Ref<Texture2D>>> generate_terrains_icons(Size2i p_size);
 
 	// Resource management
 	virtual void reset_state() override;
@@ -390,7 +390,7 @@ public:
 		Vector2i size_in_atlas = Vector2i(1, 1);
 		Vector2i texture_offset;
 		Map<int, TileData *> alternatives;
-		Vector<int> alternatives_ids;
+		std::vector<int> alternatives_ids;
 		int next_alternative_id = 1;
 	};
 
@@ -401,7 +401,7 @@ private:
 	Size2i texture_region_size = Size2i(16, 16);
 
 	Map<Vector2i, TileAlternativesData> tiles;
-	Vector<Vector2i> tiles_ids;
+	std::vector<Vector2i> tiles_ids;
 	Map<Vector2i, Vector2i> _coords_mapping_cache; // Maps any coordinate to the including tile
 
 	TileData *_get_atlas_tile_data(Vector2i p_atlas_coords, int p_alternative_tile);
@@ -476,7 +476,7 @@ private:
 		Ref<PackedScene> scene;
 		bool display_placeholder = false;
 	};
-	Vector<int> scenes_ids;
+	std::vector<int> scenes_ids;
 	Map<int, SceneData> scenes;
 	int next_scene_id = 1;
 
@@ -530,7 +530,7 @@ private:
 	Color modulate = Color(1.0, 1.0, 1.0, 1.0);
 	int z_index = 0;
 	int y_sort_origin = 0;
-	Vector<Ref<OccluderPolygon2D>> occluders;
+	std::vector<Ref<OccluderPolygon2D>> occluders;
 
 	// Physics
 	struct PhysicsLayerTileData {
@@ -541,9 +541,9 @@ private:
 			float one_way_margin = 1.0;
 		};
 
-		Vector<PolygonShapeTileData> polygons;
+		std::vector<PolygonShapeTileData> polygons;
 	};
-	Vector<PhysicsLayerTileData> physics;
+	std::vector<PhysicsLayerTileData> physics;
 	// TODO add support for areas.
 
 	// Terrain
@@ -551,13 +551,13 @@ private:
 	int terrain_peering_bits[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 	// Navigation
-	Vector<Ref<NavigationPolygon>> navigation;
+	std::vector<Ref<NavigationPolygon>> navigation;
 
 	// Misc
 	double probability = 1.0;
 
 	// Custom data
-	Vector<Variant> custom_data;
+	std::vector<Variant> custom_data;
 
 protected:
 	bool _set(const StringName &p_name, const Variant &p_value);
@@ -600,8 +600,8 @@ public:
 	void set_collision_polygons_count(int p_layer_id, int p_shapes_count);
 	void add_collision_polygon(int p_layer_id);
 	void remove_collision_polygon(int p_layer_id, int p_polygon_index);
-	void set_collision_polygon_points(int p_layer_id, int p_polygon_index, Vector<Vector2> p_polygon);
-	Vector<Vector2> get_collision_polygon_points(int p_layer_id, int p_polygon_index) const;
+	void set_collision_polygon_points(int p_layer_id, int p_polygon_index, std::vector<Vector2> p_polygon);
+	std::vector<Vector2> get_collision_polygon_points(int p_layer_id, int p_polygon_index) const;
 	void set_collision_polygon_one_way(int p_layer_id, int p_polygon_index, bool p_one_way);
 	bool is_collision_polygon_one_way(int p_layer_id, int p_polygon_index) const;
 	void set_collision_polygon_one_way_margin(int p_layer_id, int p_polygon_index, float p_one_way_margin);

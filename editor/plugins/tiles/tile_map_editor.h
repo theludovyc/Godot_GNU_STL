@@ -303,8 +303,8 @@ private:
 	bool tileset_changed_needs_update = false;
 	ObjectID tile_map_id;
 
-	// Vector to keep plugins.
-	Vector<TileMapEditorPlugin *> tile_map_editor_plugins;
+	// std::vector to keep plugins.
+	std::vector<TileMapEditorPlugin *> tile_map_editor_plugins;
 
 	// Toolbar.
 	HBoxContainer *tilemap_toolbar;
@@ -337,7 +337,7 @@ public:
 	~TileMapEditor();
 
 	// Static functions.
-	static Vector<Vector2i> get_line(TileMap *p_tile_map, Vector2i p_from_cell, Vector2i p_to_cell);
+	static std::vector<Vector2i> get_line(TileMap *p_tile_map, Vector2i p_from_cell, Vector2i p_to_cell);
 };
 
 #endif // TILE_MAP_EDITOR_PLUGIN_H
