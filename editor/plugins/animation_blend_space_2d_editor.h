@@ -97,16 +97,16 @@ class AnimationNodeBlendSpace2DEditor : public AnimationTreeNodeEditorPlugin {
 
 	PopupMenu *menu;
 	PopupMenu *animations_menu;
-	Vector<String> animations_to_add;
+	std::vector<String> animations_to_add;
 	Vector2 add_point_pos;
-	Vector<Vector2> points;
+	std::vector<Vector2> points;
 
 	bool dragging_selected_attempt;
 	bool dragging_selected;
 	Vector2 drag_from;
 	Vector2 drag_ofs;
 
-	Vector<int> making_triangle;
+	std::vector<int> making_triangle;
 
 	void _add_menu_type(int p_index);
 	void _add_animation_type(int p_index);

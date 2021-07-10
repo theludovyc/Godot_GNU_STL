@@ -33,6 +33,8 @@
 
 #include "servers/rendering/rendering_device.h"
 
+#include <algorithm>
+
 #define RD_SETGET(m_type, m_member)                                            \
 	void set_##m_member(m_type p_##m_member) { base.m_member = p_##m_member; } \
 	m_type get_##m_member() const { return base.m_member; }
@@ -266,17 +268,17 @@ protected:
 class RDShaderBytecode : public Resource {
 	GDCLASS(RDShaderBytecode, Resource)
 
-	Vector<uint8_t> bytecode[RD::SHADER_STAGE_MAX];
+	std::vector<uint8_t> bytecode[RD::SHADER_STAGE_MAX];
 	String compile_error[RD::SHADER_STAGE_MAX];
 
 public:
-	void set_stage_bytecode(RD::ShaderStage p_stage, const Vector<uint8_t> &p_bytecode) {
+	void set_stage_bytecode(RD::ShaderStage p_stage, const std::vector<uint8_t> &p_bytecode) {
 		ERR_FAIL_INDEX(p_stage, RD::SHADER_STAGE_MAX);
 		bytecode[p_stage] = p_bytecode;
 	}
 
-	Vector<uint8_t> get_stage_bytecode(RD::ShaderStage p_stage) const {
-		ERR_FAIL_INDEX_V(p_stage, RD::SHADER_STAGE_MAX, Vector<uint8_t>());
+	std::vector<uint8_t> get_stage_bytecode(RD::ShaderStage p_stage) const {
+		ERR_FAIL_INDEX_V(p_stage, RD::SHADER_STAGE_MAX, std::vector<uint8_t>());
 		return bytecode[p_stage];
 	}
 
@@ -331,12 +333,12 @@ public:
 		return versions[p_version];
 	}
 
-	Vector<StringName> get_version_list() const {
-		Vector<StringName> vnames;
+	std::vector<StringName> get_version_list() const {
+		std::vector<StringName> vnames;
 		for (Map<StringName, Ref<RDShaderBytecode>>::Element *E = versions.front(); E; E = E->next()) {
 			vnames.push_back(E->key());
 		}
-		vnames.sort_custom<StringName::AlphCompare>();
+		std::sort(vnames.begin(),  vnames.end(), StringName::AlphCompare());
 		return vnames;
 	}
 
@@ -377,7 +379,7 @@ public:
 
 protected:
 	Dictionary _get_versions() const {
-		Vector<StringName> vnames = get_version_list();
+		std::vector<StringName> vnames = get_version_list();
 		Dictionary ret;
 		for (int i = 0; i < vnames.size(); i++) {
 			ret[vnames[i]] = versions[vnames[i]];

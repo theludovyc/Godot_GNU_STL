@@ -118,7 +118,7 @@ public:
 	virtual bool is_unsaved() override;
 	virtual Variant get_edit_state() override;
 	virtual void set_edit_state(const Variant &p_state) override;
-	virtual Vector<String> get_functions() override;
+	virtual std::vector<String> get_functions() override;
 	virtual Array get_breakpoints() override;
 	virtual void goto_line(int p_line, bool p_with_error = false) override;
 	void goto_line_selection(int p_line, int p_begin, int p_end);

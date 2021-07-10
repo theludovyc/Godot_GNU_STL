@@ -36,6 +36,8 @@
 #include "editor_node.h"
 #include "progress_dialog.h"
 
+//todo std::vector.data()
+
 void EditorAssetInstaller::_update_subitems(TreeItem *p_item, bool p_check, bool p_first) {
 	if (p_check) {
 		if (p_item->get_custom_color(0) == Color()) {
@@ -242,7 +244,7 @@ void EditorAssetInstaller::ok_pressed() {
 
 	int ret = unzGoToFirstFile(pkg);
 
-	Vector<String> failed_files;
+	std::vector<String> failed_files;
 
 	ProgressDialog::get_singleton()->add_task("uncompress", TTR("Uncompressing Assets"), status_map.size());
 
@@ -275,17 +277,17 @@ void EditorAssetInstaller::ok_pressed() {
 				memdelete(da);
 
 			} else {
-				Vector<uint8_t> data;
+				std::vector<uint8_t> data;
 				data.resize(info.uncompressed_size);
 
 				//read
 				unzOpenCurrentFile(pkg);
-				unzReadCurrentFile(pkg, data.ptrw(), data.size());
+				unzReadCurrentFile(pkg, data.data(), data.size());
 				unzCloseCurrentFile(pkg);
 
 				FileAccess *f = FileAccess::open(path, FileAccess::WRITE);
 				if (f) {
-					f->store_buffer(data.ptr(), data.size());
+					f->store_buffer(data.data(), data.size());
 					memdelete(f);
 				} else {
 					failed_files.push_back(path);

@@ -39,8 +39,8 @@ POTGenerator *POTGenerator::singleton = nullptr;
 
 #ifdef DEBUG_POT
 void POTGenerator::_print_all_translation_strings() {
-	for (OrderedHashMap<String, Vector<POTGenerator::MsgidData>>::Element E = all_translation_strings.front(); E; E = E.next()) {
-		Vector<MsgidData> v_md = all_translation_strings[E.key()];
+	for (OrderedHashMap<String, std::vector<POTGenerator::MsgidData>>::Element E = all_translation_strings.front(); E; E = E.next()) {
+		std::vector<MsgidData> v_md = all_translation_strings[E.key()];
 		for (int i = 0; i < v_md.size(); i++) {
 			print_line("++++++");
 			print_line("msgid: " + E.key());
@@ -63,12 +63,12 @@ void POTGenerator::generate_pot(const String &p_file) {
 	// Clear all_translation_strings of the previous round.
 	all_translation_strings.clear();
 
-	Vector<String> files = ProjectSettings::get_singleton()->get("internationalization/locale/translations_pot_files");
+	std::vector<String> files = ProjectSettings::get_singleton()->get("internationalization/locale/translations_pot_files");
 
 	// Collect all translatable strings according to files order in "POT Generation" setting.
 	for (int i = 0; i < files.size(); i++) {
-		Vector<String> msgids;
-		Vector<Vector<String>> msgids_context_plural;
+		std::vector<String> msgids;
+		std::vector<std::vector<String>> msgids_context_plural;
 		String file_path = files[i];
 		String file_extension = file_path.get_extension();
 
@@ -80,7 +80,7 @@ void POTGenerator::generate_pot(const String &p_file) {
 		}
 
 		for (int j = 0; j < msgids_context_plural.size(); j++) {
-			Vector<String> entry = msgids_context_plural[j];
+			std::vector<String> entry = msgids_context_plural[j];
 			_add_new_msgid(entry[0], entry[1], entry[2], file_path);
 		}
 		for (int j = 0; j < msgids.size(); j++) {
@@ -100,7 +100,7 @@ void POTGenerator::_write_to_pot(const String &p_file) {
 	}
 
 	String project_name = ProjectSettings::get_singleton()->get("application/config/name");
-	Vector<String> files = ProjectSettings::get_singleton()->get("internationalization/locale/translations_pot_files");
+	std::vector<String> files = ProjectSettings::get_singleton()->get("internationalization/locale/translations_pot_files");
 	String extracted_files = "";
 	for (int i = 0; i < files.size(); i++) {
 		extracted_files += "# " + files[i] + "\n";
@@ -121,9 +121,9 @@ void POTGenerator::_write_to_pot(const String &p_file) {
 
 	file->store_string(header);
 
-	for (OrderedHashMap<String, Vector<MsgidData>>::Element E_pair = all_translation_strings.front(); E_pair; E_pair = E_pair.next()) {
+	for (OrderedHashMap<String, std::vector<MsgidData>>::Element E_pair = all_translation_strings.front(); E_pair; E_pair = E_pair.next()) {
 		String msgid = E_pair.key();
-		Vector<MsgidData> v_msgid_data = E_pair.value();
+		std::vector<MsgidData> v_msgid_data = E_pair.value();
 		for (int i = 0; i < v_msgid_data.size(); i++) {
 			String context = v_msgid_data[i].ctx;
 			String plural = v_msgid_data[i].plural;
@@ -158,13 +158,15 @@ void POTGenerator::_write_to_pot(const String &p_file) {
 
 void POTGenerator::_write_msgid(FileAccess *r_file, const String &p_id, bool p_plural) {
 	// Split \\n and \n.
-	Vector<String> temp = p_id.split("\\n");
-	Vector<String> msg_lines;
+	std::vector<String> temp = p_id.split("\\n");
+	std::vector<String> msg_lines;
 	for (int i = 0; i < temp.size(); i++) {
-		msg_lines.append_array(temp[i].split("\n"));
+		auto vec = temp[i].split("\n");
+
+		msg_lines.insert(msg_lines.end(), vec.begin(), vec.end());
 		if (i < temp.size() - 1) {
 			// Add \n.
-			msg_lines.set(msg_lines.size() - 1, msg_lines[msg_lines.size() - 1] + "\\n");
+			msg_lines[msg_lines.size() - 1] = msg_lines[msg_lines.size() - 1] + "\\n";
 		}
 	}
 
@@ -182,13 +184,13 @@ void POTGenerator::_write_msgid(FileAccess *r_file, const String &p_id, bool p_p
 void POTGenerator::_add_new_msgid(const String &p_msgid, const String &p_context, const String &p_plural, const String &p_location) {
 	// Insert new location if msgid under same context exists already.
 	if (all_translation_strings.has(p_msgid)) {
-		Vector<MsgidData> &v_mdata = all_translation_strings[p_msgid];
+		std::vector<MsgidData> &v_mdata = all_translation_strings[p_msgid];
 		for (int i = 0; i < v_mdata.size(); i++) {
 			if (v_mdata[i].ctx == p_context) {
 				if (!v_mdata[i].plural.is_empty() && !p_plural.is_empty() && v_mdata[i].plural != p_plural) {
 					WARN_PRINT("Redefinition of plural message (msgid_plural), under the same message (msgid) and context (msgctxt)");
 				}
-				v_mdata.write[i].locations.insert(p_location);
+				v_mdata[i].locations.insert(p_location);
 				return;
 			}
 		}

@@ -39,8 +39,8 @@ class ResourceImporterTextureAtlas : public ResourceImporter {
 	struct PackData {
 		Rect2 region;
 		bool is_mesh = false;
-		Vector<int> chart_pieces; //one for region, many for mesh
-		Vector<Vector<Vector2>> chart_vertices; //for mesh
+		std::vector<int> chart_pieces; //one for region, many for mesh
+		std::vector<std::vector<Vector2>> chart_vertices; //for mesh
 		Ref<Image> image;
 	};
 

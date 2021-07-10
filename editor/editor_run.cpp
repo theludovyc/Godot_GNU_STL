@@ -193,15 +193,16 @@ Error EditorRun::run(const String &p_scene, const String &p_custom_args, const L
 		// Example: `prime-run %command% --time-scale 0.5`
 		const int placeholder_pos = p_custom_args.find("%command%");
 
-		Vector<String> custom_args;
+		std::vector<String> custom_args;
 
 		if (placeholder_pos != -1) {
 			// Prepend executable-specific custom arguments.
 			// If nothing is placed before `%command%`, behave as if no placeholder was specified.
-			Vector<String> exec_args = p_custom_args.substr(0, placeholder_pos).split(" ", false);
+			std::vector<String> exec_args = p_custom_args.substr(0, placeholder_pos).split(" ", false);
 			if (exec_args.size() >= 1) {
 				exec = exec_args[0];
-				exec_args.remove(0);
+
+				exec_args.erase(exec_args.begin());
 
 				// Append the Godot executable name before we append executable arguments
 				// (since the order is reversed when using `push_front()`).
