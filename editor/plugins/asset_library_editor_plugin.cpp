@@ -30,14 +30,14 @@
 
 #include "asset_library_editor_plugin.h"
 
-#include "core/input/input.h"
 #include "core/io/json.h"
 #include "core/os/keyboard.h"
 #include "core/version.h"
 #include "editor/editor_node.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
 #include "editor/project_settings_editor.h"
+
+//todo std::vector.data()
 
 void EditorAssetLibraryItem::configure(const String &p_title, int p_asset_id, const String &p_category, int p_category_id, const String &p_author, int p_author_id, const String &p_cost) {
 	title->set_text(p_title);
@@ -711,7 +711,7 @@ void EditorAssetLibrary::_image_update(bool use_cache, bool final, const PackedB
 				int len = file->get_32();
 				cached_data.resize(len);
 
-				uint8_t *w = cached_data.ptrw();
+				uint8_t *w = cached_data.data();
 				file->get_buffer(w, len);
 
 				image_data = cached_data;
@@ -721,7 +721,7 @@ void EditorAssetLibrary::_image_update(bool use_cache, bool final, const PackedB
 		}
 
 		int len = image_data.size();
-		const uint8_t *r = image_data.ptr();
+		const uint8_t *r = image_data.data();
 		Ref<Image> image = Ref<Image>(memnew(Image));
 
 		uint8_t png_signature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
@@ -793,7 +793,7 @@ void EditorAssetLibrary::_image_request_completed(int p_status, int p_code, cons
 					}
 
 					int len = p_data.size();
-					const uint8_t *r = p_data.ptr();
+					const uint8_t *r = p_data.data();
 					file = FileAccess::open(cache_filename_base + ".data", FileAccess::WRITE);
 					if (file) {
 						file->store_32(len);
@@ -830,7 +830,7 @@ void EditorAssetLibrary::_update_image_queue() {
 	for (Map<int, ImageQueue>::Element *E = image_queue.front(); E; E = E->next()) {
 		if (!E->get().active && current_images < max_images) {
 			String cache_filename_base = EditorPaths::get_singleton()->get_cache_dir().plus_file("assetimage_" + E->get().image_url.md5_text());
-			Vector<String> headers;
+			std::vector<String> headers;
 
 			if (FileAccess::exists(cache_filename_base + ".etag") && FileAccess::exists(cache_filename_base + ".data")) {
 				FileAccess *file = FileAccess::open(cache_filename_base + ".etag", FileAccess::READ);
@@ -1053,7 +1053,7 @@ void EditorAssetLibrary::_http_request_completed(int p_status, int p_code, const
 
 	{
 		int datalen = p_data.size();
-		const uint8_t *r = p_data.ptr();
+		const uint8_t *r = p_data.data();
 		str.parse_utf8((const char *)r, datalen);
 	}
 

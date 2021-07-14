@@ -30,25 +30,21 @@
 
 #include "resource_importer_scene.h"
 
-#include "core/io/resource_saver.h"
 #include "editor/editor_node.h"
 #include "editor/import/scene_import_settings.h"
 #include "editor/import/scene_importer_mesh_node_3d.h"
 #include "scene/3d/area_3d.h"
 #include "scene/3d/collision_shape_3d.h"
-#include "scene/3d/mesh_instance_3d.h"
 #include "scene/3d/navigation_region_3d.h"
 #include "scene/3d/physics_body_3d.h"
-#include "scene/3d/vehicle_body_3d.h"
-#include "scene/animation/animation_player.h"
-#include "scene/resources/animation.h"
 #include "scene/resources/box_shape_3d.h"
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/ray_shape_3d.h"
 #include "scene/resources/resource_format_text.h"
 #include "scene/resources/sphere_shape_3d.h"
-#include "scene/resources/surface_tool.h"
 #include "scene/resources/world_margin_shape_3d.h"
+
+//todo std::vector.data()
 
 uint32_t EditorSceneImporter::get_import_flags() const {
 	if (get_script_instance()) {
@@ -239,7 +235,7 @@ static void _gen_shape_list(const Ref<Mesh> &mesh, List<Ref<Shape3D>> &r_shape_l
 		Ref<Shape3D> shape = mesh->create_trimesh_shape();
 		r_shape_list.push_back(shape);
 	} else {
-		Vector<Ref<Shape3D>> cd = mesh->convex_decompose();
+		std::vector<Ref<Shape3D>> cd = mesh->convex_decompose();
 		if (cd.size()) {
 			for (int i = 0; i < cd.size(); i++) {
 				r_shape_list.push_back(cd[i]);
@@ -254,7 +250,7 @@ static void _pre_gen_shape_list(const Ref<EditorSceneImporterMesh> &mesh, List<R
 		Ref<Shape3D> shape = mesh->create_trimesh_shape();
 		r_shape_list.push_back(shape);
 	} else {
-		Vector<Ref<Shape3D>> cd = mesh->convex_decompose();
+		std::vector<Ref<Shape3D>> cd = mesh->convex_decompose();
 		if (cd.size()) {
 			for (int i = 0; i < cd.size(); i++) {
 				r_shape_list.push_back(cd[i]);
@@ -1136,7 +1132,7 @@ Ref<Animation> ResourceImporterScene::import_animation_from_other_importer(Edito
 	return importer->import_animation(p_path, p_flags, p_bake_fps);
 }
 
-void ResourceImporterScene::_generate_meshes(Node *p_node, const Dictionary &p_mesh_data, bool p_generate_lods, bool p_create_shadow_meshes, LightBakeMode p_light_bake_mode, float p_lightmap_texel_size, const Vector<uint8_t> &p_src_lightmap_cache, Vector<Vector<uint8_t>> &r_lightmap_caches) {
+void ResourceImporterScene::_generate_meshes(Node *p_node, const Dictionary &p_mesh_data, bool p_generate_lods, bool p_create_shadow_meshes, LightBakeMode p_light_bake_mode, float p_lightmap_texel_size, const std::vector<uint8_t> &p_src_lightmap_cache, std::vector<std::vector<uint8_t>> &r_lightmap_caches) {
 	EditorSceneImporterMeshNode3D *src_mesh_node = Object::cast_to<EditorSceneImporterMeshNode3D>(p_node);
 	if (src_mesh_node) {
 		//is mesh
@@ -1216,19 +1212,22 @@ void ResourceImporterScene::_generate_meshes(Node *p_node, const Dictionary &p_m
 						n = n->get_parent_node_3d();
 					}
 
-					Vector<uint8_t> lightmap_cache;
+					std::vector<uint8_t> lightmap_cache;
 					src_mesh_node->get_mesh()->lightmap_unwrap_cached(xf, p_lightmap_texel_size, p_src_lightmap_cache, lightmap_cache);
 
-					if (!lightmap_cache.is_empty()) {
-						if (r_lightmap_caches.is_empty()) {
+					if (!lightmap_cache.empty()) {
+						if (r_lightmap_caches.empty()) {
 							r_lightmap_caches.push_back(lightmap_cache);
 						} else {
-							String new_md5 = String::md5(lightmap_cache.ptr()); // MD5 is stored at the beginning of the cache data
+							String new_md5 = String::md5(lightmap_cache.data()); // MD5 is stored at the beginning of the cache data
 
 							for (int i = 0; i < r_lightmap_caches.size(); i++) {
-								String md5 = String::md5(r_lightmap_caches[i].ptr());
+								String md5 = String::md5(r_lightmap_caches[i].data());
 								if (new_md5 < md5) {
-									r_lightmap_caches.insert(i, lightmap_cache);
+
+									//todo
+									r_lightmap_caches.insert(r_lightmap_caches.begin() + i, lightmap_cache);
+
 									break;
 								}
 
@@ -1453,8 +1452,8 @@ Error ResourceImporterScene::import(const String &p_source_file, const String &p
 	float texel_size = p_options["meshes/lightmap_texel_size"];
 	float lightmap_texel_size = MAX(0.001, texel_size);
 
-	Vector<uint8_t> src_lightmap_cache;
-	Vector<Vector<uint8_t>> mesh_lightmap_caches;
+	std::vector<uint8_t> src_lightmap_cache;
+	std::vector<std::vector<uint8_t>> mesh_lightmap_caches;
 
 	{
 		src_lightmap_cache = FileAccess::get_file_as_array(p_source_file + ".unwrap_cache", &err);
@@ -1474,8 +1473,8 @@ Error ResourceImporterScene::import(const String &p_source_file, const String &p
 		if (f) {
 			f->store_32(mesh_lightmap_caches.size());
 			for (int i = 0; i < mesh_lightmap_caches.size(); i++) {
-				String md5 = String::md5(mesh_lightmap_caches[i].ptr());
-				f->store_buffer(mesh_lightmap_caches[i].ptr(), mesh_lightmap_caches[i].size());
+				String md5 = String::md5(mesh_lightmap_caches[i].data());
+				f->store_buffer(mesh_lightmap_caches[i].data(), mesh_lightmap_caches[i].size());
 			}
 			f->close();
 		}

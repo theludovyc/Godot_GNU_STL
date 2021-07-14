@@ -295,7 +295,7 @@ class ThemeTypeEditor : public MarginContainer {
 	VBoxContainer *icon_items_list;
 	VBoxContainer *stylebox_items_list;
 
-	Vector<Control *> focusables;
+	std::vector<Control *> focusables;
 	Timer *update_debounce_timer;
 
 	VBoxContainer *_create_item_list(Theme::DataType p_data_type);

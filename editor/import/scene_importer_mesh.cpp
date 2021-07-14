@@ -30,8 +30,9 @@
 
 #include "scene_importer_mesh.h"
 
-#include "core/math/math_defs.h"
 #include "scene/resources/surface_tool.h"
+
+//todo std::vector.data()
 
 void EditorSceneImporterMesh::add_blend_shape(const String &p_name) {
 	ERR_FAIL_COND(surfaces.size() > 0);
@@ -63,14 +64,14 @@ void EditorSceneImporterMesh::add_surface(Mesh::PrimitiveType p_primitive, const
 	s.arrays = p_arrays;
 	s.name = p_name;
 
-	Vector<Vector3> vertex_array = p_arrays[Mesh::ARRAY_VERTEX];
+	std::vector<Vector3> vertex_array = p_arrays[Mesh::ARRAY_VERTEX];
 	int vertex_count = vertex_array.size();
 	ERR_FAIL_COND(vertex_count == 0);
 
 	for (int i = 0; i < blend_shapes.size(); i++) {
 		Array bsdata = p_blend_shapes[i];
 		ERR_FAIL_COND(bsdata.size() != Mesh::ARRAY_MAX);
-		Vector<Vector3> vertex_data = bsdata[Mesh::ARRAY_VERTEX];
+		std::vector<Vector3> vertex_data = bsdata[Mesh::ARRAY_VERTEX];
 		ERR_FAIL_COND(vertex_data.size() != vertex_count);
 		Surface::BlendShape bs;
 		bs.arrays = bsdata;
@@ -119,9 +120,9 @@ int EditorSceneImporterMesh::get_surface_lod_count(int p_surface) const {
 	ERR_FAIL_INDEX_V(p_surface, surfaces.size(), 0);
 	return surfaces[p_surface].lods.size();
 }
-Vector<int> EditorSceneImporterMesh::get_surface_lod_indices(int p_surface, int p_lod) const {
-	ERR_FAIL_INDEX_V(p_surface, surfaces.size(), Vector<int>());
-	ERR_FAIL_INDEX_V(p_lod, surfaces[p_surface].lods.size(), Vector<int>());
+std::vector<int> EditorSceneImporterMesh::get_surface_lod_indices(int p_surface, int p_lod) const {
+	ERR_FAIL_INDEX_V(p_surface, surfaces.size(), std::vector<int>());
+	ERR_FAIL_INDEX_V(p_lod, surfaces[p_surface].lods.size(), std::vector<int>());
 
 	return surfaces[p_surface].lods[p_lod].indices;
 }
@@ -139,7 +140,7 @@ Ref<Material> EditorSceneImporterMesh::get_surface_material(int p_surface) const
 
 void EditorSceneImporterMesh::set_surface_material(int p_surface, const Ref<Material> &p_material) {
 	ERR_FAIL_INDEX(p_surface, surfaces.size());
-	surfaces.write[p_surface].material = p_material;
+	surfaces[p_surface].material = p_material;
 }
 
 Basis EditorSceneImporterMesh::compute_rotation_matrix_from_ortho_6d(Vector3 p_x_raw, Vector3 p_y_raw) {
@@ -173,17 +174,17 @@ void EditorSceneImporterMesh::generate_lods() {
 			continue;
 		}
 
-		surfaces.write[i].lods.clear();
-		Vector<Vector3> vertices = surfaces[i].arrays[RS::ARRAY_VERTEX];
-		Vector<int> indices = surfaces[i].arrays[RS::ARRAY_INDEX];
+		surfaces[i].lods.clear();
+		std::vector<Vector3> vertices = surfaces[i].arrays[RS::ARRAY_VERTEX];
+		std::vector<int> indices = surfaces[i].arrays[RS::ARRAY_INDEX];
 		if (indices.size() == 0) {
 			continue; //no lods if no indices
 		}
-		Vector<Vector3> normals = surfaces[i].arrays[RS::ARRAY_NORMAL];
+		std::vector<Vector3> normals = surfaces[i].arrays[RS::ARRAY_NORMAL];
 		uint32_t vertex_count = vertices.size();
-		const Vector3 *vertices_ptr = vertices.ptr();
-		Vector<float> attributes;
-		Vector<float> normal_weights;
+		const Vector3 *vertices_ptr = vertices.data();
+		std::vector<float> attributes;
+		std::vector<float> normal_weights;
 		int32_t attribute_count = 6;
 		if (normals.size()) {
 			attributes.resize(normals.size() * attribute_count);
@@ -195,16 +196,16 @@ void EditorSceneImporterMesh::generate_lods() {
 				basis = compute_rotation_matrix_from_ortho_6d(basis_x, basis_y);
 				basis_x = basis.get_axis(0);
 				basis_y = basis.get_axis(1);
-				attributes.write[normal_i * attribute_count + 0] = basis_x.x;
-				attributes.write[normal_i * attribute_count + 1] = basis_x.y;
-				attributes.write[normal_i * attribute_count + 2] = basis_x.z;
-				attributes.write[normal_i * attribute_count + 3] = basis_y.x;
-				attributes.write[normal_i * attribute_count + 4] = basis_y.y;
-				attributes.write[normal_i * attribute_count + 5] = basis_y.z;
+				attributes[normal_i * attribute_count + 0] = basis_x.x;
+				attributes[normal_i * attribute_count + 1] = basis_x.y;
+				attributes[normal_i * attribute_count + 2] = basis_x.z;
+				attributes[normal_i * attribute_count + 3] = basis_y.x;
+				attributes[normal_i * attribute_count + 4] = basis_y.y;
+				attributes[normal_i * attribute_count + 5] = basis_y.z;
 			}
 			normal_weights.resize(vertex_count);
 			for (int32_t weight_i = 0; weight_i < normal_weights.size(); weight_i++) {
-				normal_weights.write[weight_i] = 1.0;
+				normal_weights[weight_i] = 1.0;
 			}
 		} else {
 			attribute_count = 0;
@@ -217,9 +218,9 @@ void EditorSceneImporterMesh::generate_lods() {
 		float mesh_error = 0.0f;
 		float scale = SurfaceTool::simplify_scale_func((const float *)vertices_ptr, vertex_count, sizeof(Vector3));
 		while (index_target > min_indices) {
-			Vector<int> new_indices;
+			std::vector<int> new_indices;
 			new_indices.resize(indices.size());
-			size_t new_len = SurfaceTool::simplify_with_attrib_func((unsigned int *)new_indices.ptrw(), (const unsigned int *)indices.ptr(), indices.size(), (const float *)vertices_ptr, vertex_count, sizeof(Vector3), index_target, max_mesh_error_percentage, &mesh_error, (float *)attributes.ptrw(), normal_weights.ptrw(), attribute_count);
+			size_t new_len = SurfaceTool::simplify_with_attrib_func((unsigned int *)new_indices.data(), (const unsigned int *)indices.data(), indices.size(), (const float *)vertices_ptr, vertex_count, sizeof(Vector3), index_target, max_mesh_error_percentage, &mesh_error, (float *)attributes.data(), normal_weights.data(), attribute_count);
 			if ((int)new_len > (index_target * error_tolerance)) {
 				break;
 			}
@@ -233,8 +234,8 @@ void EditorSceneImporterMesh::generate_lods() {
 			}
 			new_indices.resize(new_len);
 			lod.indices = new_indices;
-			print_line("Lod " + itos(surfaces.write[i].lods.size()) + " begin with " + itos(indices.size() / 3) + " triangles and shoot for " + itos(index_target / 3) + " triangles. Got " + itos(new_len / 3) + " triangles. Lod screen ratio " + rtos(lod.distance));
-			surfaces.write[i].lods.push_back(lod);
+			print_line("Lod " + itos(surfaces[i].lods.size()) + " begin with " + itos(indices.size() / 3) + " triangles and shoot for " + itos(index_target / 3) + " triangles. Got " + itos(new_len / 3) + " triangles. Lod screen ratio " + rtos(lod.distance));
+			surfaces[i].lods.push_back(lod);
 			index_target *= threshold;
 		}
 	}
@@ -325,12 +326,12 @@ void EditorSceneImporterMesh::create_shadow_mesh() {
 
 	for (int i = 0; i < surfaces.size(); i++) {
 		LocalVector<int> vertex_remap;
-		Vector<Vector3> new_vertices;
-		Vector<Vector3> vertices = surfaces[i].arrays[RS::ARRAY_VERTEX];
+		std::vector<Vector3> new_vertices;
+		std::vector<Vector3> vertices = surfaces[i].arrays[RS::ARRAY_VERTEX];
 		int vertex_count = vertices.size();
 		{
 			Map<Vector3, int> unique_vertices;
-			const Vector3 *vptr = vertices.ptr();
+			const Vector3 *vptr = vertices.data();
 			for (int j = 0; j < vertex_count; j++) {
 				Vector3 v = vptr[j];
 
@@ -355,13 +356,13 @@ void EditorSceneImporterMesh::create_shadow_mesh() {
 
 		new_surface[RS::ARRAY_VERTEX] = new_vertices;
 
-		Vector<int> indices = surfaces[i].arrays[RS::ARRAY_INDEX];
+		std::vector<int> indices = surfaces[i].arrays[RS::ARRAY_INDEX];
 		if (indices.size()) {
 			int index_count = indices.size();
-			const int *index_rptr = indices.ptr();
-			Vector<int> new_indices;
+			const int *index_rptr = indices.data();
+			std::vector<int> new_indices;
 			new_indices.resize(indices.size());
-			int *index_wptr = new_indices.ptrw();
+			int *index_wptr = new_indices.data();
 
 			for (int j = 0; j < index_count; j++) {
 				int index = index_rptr[j];
@@ -377,9 +378,9 @@ void EditorSceneImporterMesh::create_shadow_mesh() {
 				indices = surfaces[i].lods[j].indices;
 
 				index_count = indices.size();
-				index_rptr = indices.ptr();
+				index_rptr = indices.data();
 				new_indices.resize(indices.size());
-				index_wptr = new_indices.ptrw();
+				index_wptr = new_indices.data();
 
 				for (int k = 0; k < index_count; k++) {
 					int index = index_rptr[j];
@@ -472,12 +473,12 @@ Dictionary EditorSceneImporterMesh::_get_data() const {
 	return data;
 }
 
-Vector<Face3> EditorSceneImporterMesh::get_faces() const {
-	Vector<Face3> faces;
+std::vector<Face3> EditorSceneImporterMesh::get_faces() const {
+	std::vector<Face3> faces;
 	for (int i = 0; i < surfaces.size(); i++) {
 		if (surfaces[i].primitive == Mesh::PRIMITIVE_TRIANGLES) {
-			Vector<Vector3> vertices = surfaces[i].arrays[Mesh::ARRAY_VERTEX];
-			Vector<int> indices = surfaces[i].arrays[Mesh::ARRAY_INDEX];
+			std::vector<Vector3> vertices = surfaces[i].arrays[Mesh::ARRAY_VERTEX];
+			std::vector<int> indices = surfaces[i].arrays[Mesh::ARRAY_INDEX];
 			if (indices.size()) {
 				for (int j = 0; j < indices.size(); j += 3) {
 					Face3 f;
@@ -501,14 +502,14 @@ Vector<Face3> EditorSceneImporterMesh::get_faces() const {
 	return faces;
 }
 
-Vector<Ref<Shape3D>> EditorSceneImporterMesh::convex_decompose() const {
-	ERR_FAIL_COND_V(!Mesh::convex_composition_function, Vector<Ref<Shape3D>>());
+std::vector<Ref<Shape3D>> EditorSceneImporterMesh::convex_decompose() const {
+	ERR_FAIL_COND_V(!Mesh::convex_composition_function, std::vector<Ref<Shape3D>>());
 
-	const Vector<Face3> faces = get_faces();
+	const std::vector<Face3> faces = get_faces();
 
-	Vector<Vector<Face3>> decomposed = Mesh::convex_composition_function(faces);
+	std::vector<std::vector<Face3>> decomposed = Mesh::convex_composition_function(faces);
 
-	Vector<Ref<Shape3D>> ret;
+	std::vector<Ref<Shape3D>> ret;
 
 	for (int i = 0; i < decomposed.size(); i++) {
 		Set<Vector3> points;
@@ -518,10 +519,10 @@ Vector<Ref<Shape3D>> EditorSceneImporterMesh::convex_decompose() const {
 			points.insert(decomposed[i][j].vertex[2]);
 		}
 
-		Vector<Vector3> convex_points;
+		std::vector<Vector3> convex_points;
 		convex_points.resize(points.size());
 		{
-			Vector3 *w = convex_points.ptrw();
+			Vector3 *w = convex_points.data();
 			int idx = 0;
 			for (Set<Vector3>::Element *E = points.front(); E; E = E->next()) {
 				w[idx++] = E->get();
@@ -538,19 +539,19 @@ Vector<Ref<Shape3D>> EditorSceneImporterMesh::convex_decompose() const {
 }
 
 Ref<Shape3D> EditorSceneImporterMesh::create_trimesh_shape() const {
-	Vector<Face3> faces = get_faces();
+	std::vector<Face3> faces = get_faces();
 	if (faces.size() == 0) {
 		return Ref<Shape3D>();
 	}
 
-	Vector<Vector3> face_points;
+	std::vector<Vector3> face_points;
 	face_points.resize(faces.size() * 3);
 
 	for (int i = 0; i < face_points.size(); i += 3) {
-		Face3 f = faces.get(i / 3);
-		face_points.set(i, f.vertex[0]);
-		face_points.set(i + 1, f.vertex[1]);
-		face_points.set(i + 2, f.vertex[2]);
+		Face3 f = faces[i / 3];
+		face_points[i] = f.vertex[0];
+		face_points[i + 1] = f.vertex[1];
+		face_points[i + 2] = f.vertex[2];
 	}
 
 	Ref<ConcavePolygonShape3D> shape = memnew(ConcavePolygonShape3D);
@@ -559,7 +560,7 @@ Ref<Shape3D> EditorSceneImporterMesh::create_trimesh_shape() const {
 }
 
 Ref<NavigationMesh> EditorSceneImporterMesh::create_navigation_mesh() {
-	Vector<Face3> faces = get_faces();
+	std::vector<Face3> faces = get_faces();
 	if (faces.size() == 0) {
 		return Ref<NavigationMesh>();
 	}
@@ -581,22 +582,22 @@ Ref<NavigationMesh> EditorSceneImporterMesh::create_navigation_mesh() {
 		}
 	}
 
-	Vector<Vector3> vertices;
+	std::vector<Vector3> vertices;
 	vertices.resize(unique_vertices.size());
 	for (Map<Vector3, int>::Element *E = unique_vertices.front(); E; E = E->next()) {
-		vertices.write[E->get()] = E->key();
+		vertices[E->get()] = E->key();
 	}
 
 	Ref<NavigationMesh> nm;
 	nm.instantiate();
 	nm->set_vertices(vertices);
 
-	Vector<int> v3;
+	std::vector<int> v3;
 	v3.resize(3);
 	for (uint32_t i = 0; i < face_indices.size(); i += 3) {
-		v3.write[0] = face_indices[i + 0];
-		v3.write[1] = face_indices[i + 1];
-		v3.write[2] = face_indices[i + 2];
+		v3[0] = face_indices[i + 0];
+		v3[1] = face_indices[i + 1];
+		v3[2] = face_indices[i + 2];
 		nm->add_polygon(v3);
 	}
 
@@ -613,7 +614,7 @@ struct EditorSceneImporterMeshLightmapSurface {
 	String name;
 };
 
-Error EditorSceneImporterMesh::lightmap_unwrap_cached(const Transform3D &p_base_transform, float p_texel_size, const Vector<uint8_t> &p_src_cache, Vector<uint8_t> &r_dst_cache) {
+Error EditorSceneImporterMesh::lightmap_unwrap_cached(const Transform3D &p_base_transform, float p_texel_size, const std::vector<uint8_t> &p_src_cache, std::vector<uint8_t> &r_dst_cache) {
 	ERR_FAIL_COND_V(!array_mesh_lightmap_unwrap_callback, ERR_UNCONFIGURED);
 	ERR_FAIL_COND_V_MSG(blend_shapes.size() != 0, ERR_UNAVAILABLE, "Can't unwrap mesh with blend shapes.");
 
@@ -623,7 +624,7 @@ Error EditorSceneImporterMesh::lightmap_unwrap_cached(const Transform3D &p_base_
 	LocalVector<float> uv;
 	LocalVector<Pair<int, int>> uv_indices;
 
-	Vector<EditorSceneImporterMeshLightmapSurface> lightmap_surfaces;
+	std::vector<EditorSceneImporterMeshLightmapSurface> lightmap_surfaces;
 
 	// Keep only the scale
 	Basis basis = p_base_transform.get_basis();
@@ -720,7 +721,7 @@ Error EditorSceneImporterMesh::lightmap_unwrap_cached(const Transform3D &p_base_
 	int size_x;
 	int size_y;
 
-	bool ok = array_mesh_lightmap_unwrap_callback(p_texel_size, vertices.ptr(), normals.ptr(), vertices.size() / 3, indices.ptr(), indices.size(), p_src_cache.ptr(), &use_cache, &gen_cache, &gen_cache_size, &gen_uvs, &gen_vertices, &gen_vertex_count, &gen_indices, &gen_index_count, &size_x, &size_y);
+	bool ok = array_mesh_lightmap_unwrap_callback(p_texel_size, vertices.ptr(), normals.ptr(), vertices.size() / 3, indices.ptr(), indices.size(), p_src_cache.data(), &use_cache, &gen_cache, &gen_cache_size, &gen_uvs, &gen_vertices, &gen_vertex_count, &gen_indices, &gen_index_count, &size_x, &size_y);
 
 	if (!ok) {
 		return ERR_CANT_CREATE;
@@ -796,7 +797,7 @@ Error EditorSceneImporterMesh::lightmap_unwrap_cached(const Transform3D &p_base_
 
 	if (gen_cache_size > 0) {
 		r_dst_cache.resize(gen_cache_size);
-		memcpy(r_dst_cache.ptrw(), gen_cache, gen_cache_size);
+		memcpy(r_dst_cache.data(), gen_cache, gen_cache_size);
 		memfree(gen_cache);
 	}
 

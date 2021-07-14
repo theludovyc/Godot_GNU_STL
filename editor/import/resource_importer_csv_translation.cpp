@@ -33,7 +33,6 @@
 #include "core/io/file_access.h"
 #include "core/io/resource_saver.h"
 #include "core/string/optimized_translation.h"
-#include "core/string/translation.h"
 
 String ResourceImporterCSVTranslation::get_importer_name() const {
 	return "csv_translation";
@@ -92,11 +91,11 @@ Error ResourceImporterCSVTranslation::import(const String &p_source_file, const 
 
 	ERR_FAIL_COND_V_MSG(!f, ERR_INVALID_PARAMETER, "Cannot open file from path '" + p_source_file + "'.");
 
-	Vector<String> line = f->get_csv_line(delimiter);
+	std::vector<String> line = f->get_csv_line(delimiter);
 	ERR_FAIL_COND_V(line.size() <= 1, ERR_PARSE_ERROR);
 
-	Vector<String> locales;
-	Vector<Ref<Translation>> translations;
+	std::vector<String> locales;
+	std::vector<Ref<Translation>> translations;
 
 	for (int i = 1; i < line.size(); i++) {
 		String locale = line[i];
@@ -115,7 +114,7 @@ Error ResourceImporterCSVTranslation::import(const String &p_source_file, const 
 		String key = line[0];
 		if (key != "") {
 			for (int i = 1; i < line.size(); i++) {
-				translations.write[i - 1]->add_message(key, line[i].c_unescape());
+				translations[i - 1]->add_message(key, line[i].c_unescape());
 			}
 		}
 

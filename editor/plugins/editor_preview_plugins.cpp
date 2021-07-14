@@ -42,6 +42,8 @@
 #include "scene/resources/mesh.h"
 #include "servers/audio/audio_stream.h"
 
+//todo std::vector.data()
+
 void post_process_preview(Ref<Image> p_image) {
 	if (p_image->get_format() != Image::FORMAT_RGBA8) {
 		p_image->convert(Image::FORMAT_RGBA8);
@@ -200,12 +202,12 @@ Ref<Texture2D> EditorBitmapPreviewPlugin::generate(const RES &p_from, const Size
 		return Ref<Texture2D>();
 	}
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 
 	data.resize(bm->get_size().width * bm->get_size().height);
 
 	{
-		uint8_t *w = data.ptrw();
+		uint8_t *w = data.data();
 
 		for (int i = 0; i < bm->get_size().width; i++) {
 			for (int j = 0; j < bm->get_size().height; j++) {
@@ -383,10 +385,10 @@ EditorMaterialPreviewPlugin::EditorMaterialPreviewPlugin() {
 	const double lon_step = Math_TAU / lons;
 	real_t radius = 1.0;
 
-	Vector<Vector3> vertices;
-	Vector<Vector3> normals;
-	Vector<Vector2> uvs;
-	Vector<float> tangents;
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
+	std::vector<Vector2> uvs;
+	std::vector<float> tangents;
 	Basis tt = Basis(Vector3(0, 1, 0), Math_PI * 0.5);
 
 	for (int i = 1; i <= lats; i++) {
@@ -623,13 +625,13 @@ Ref<Texture2D> EditorAudioStreamPreviewPlugin::generate(const RES &p_from, const
 	Ref<AudioStream> stream = p_from;
 	ERR_FAIL_COND_V(stream.is_null(), Ref<Texture2D>());
 
-	Vector<uint8_t> img;
+	std::vector<uint8_t> img;
 
 	int w = p_size.x;
 	int h = p_size.y;
 	img.resize(w * h * 3);
 
-	uint8_t *imgdata = img.ptrw();
+	uint8_t *imgdata = img.data();
 	uint8_t *imgw = imgdata;
 
 	Ref<AudioStreamPlayback> playback = stream->instance_playback();
@@ -641,11 +643,11 @@ Ref<Texture2D> EditorAudioStreamPreviewPlugin::generate(const RES &p_from, const
 	}
 	int frame_length = AudioServer::get_singleton()->get_mix_rate() * len_s;
 
-	Vector<AudioFrame> frames;
+	std::vector<AudioFrame> frames;
 	frames.resize(frame_length);
 
 	playback->start();
-	playback->mix(frames.ptrw(), 1, frames.size());
+	playback->mix(frames.data(), 1, frames.size());
 	playback->stop();
 
 	for (int i = 0; i < w; i++) {

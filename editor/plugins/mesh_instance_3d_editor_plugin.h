@@ -62,7 +62,7 @@ class MeshInstance3DEditor : public Control {
 
 	AcceptDialog *debug_uv_dialog;
 	Control *debug_uv;
-	Vector<Vector2> uv_lines;
+	std::vector<Vector2> uv_lines;
 
 	void _menu_option(int p_option);
 	void _create_outline_mesh();

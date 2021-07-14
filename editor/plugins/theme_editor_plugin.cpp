@@ -1978,7 +1978,9 @@ void ThemeTypeEditor::_update_type_list() {
 
 	Control *focused = get_focus_owner();
 	if (focused) {
-		if (focusables.has(focused)) {
+		auto it = std::find(focusables.begin(), focusables.end(), focused);
+
+		if (it != focusables.end()) {
 			// If focus is currently on one of the internal property editors, don't update.
 			updating = false;
 			return;
@@ -1987,10 +1989,15 @@ void ThemeTypeEditor::_update_type_list() {
 		Node *focus_parent = focused->get_parent();
 		while (focus_parent) {
 			Control *c = Object::cast_to<Control>(focus_parent);
-			if (c && focusables.has(c)) {
-				// If focus is currently on one of the internal property editors, don't update.
-				updating = false;
-				return;
+
+			if (c) {
+				it = std::find(focusables.begin(), focusables.end(), c);
+
+				if(it != focusables.end()){
+					// If focus is currently on one of the internal property editors, don't update.
+					updating = false;
+					return;
+				}
 			}
 
 			focus_parent = focus_parent->get_parent();
@@ -2171,7 +2178,7 @@ HBoxContainer *ThemeTypeEditor::_create_property_control(Theme::DataType p_data_
 }
 
 void ThemeTypeEditor::_add_focusable(Control *p_control) {
-	focusables.append(p_control);
+	focusables.push_back(p_control);
 }
 
 void ThemeTypeEditor::_update_type_items() {

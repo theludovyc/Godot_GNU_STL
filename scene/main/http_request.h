@@ -66,11 +66,11 @@ private:
 	String request_string;
 	String url;
 	int port = 80;
-	Vector<String> headers;
+	std::vector<String> headers;
 	bool validate_ssl = false;
 	bool use_ssl = false;
 	HTTPClient::Method method;
-	Vector<uint8_t> request_data;
+	std::vector<uint8_t> request_data;
 
 	bool request_sent = false;
 	Ref<HTTPClient> client;
@@ -80,7 +80,7 @@ private:
 
 	bool got_response = false;
 	int response_code = 0;
-	Vector<String> response_headers;
+	std::vector<String> response_headers;
 
 	String download_to_file;
 
@@ -121,8 +121,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	Error request(const String &p_url, const Vector<String> &p_custom_headers = Vector<String>(), bool p_ssl_validate_domain = true, HTTPClient::Method p_method = HTTPClient::METHOD_GET, const String &p_request_data = ""); //connects to a full url and perform request
-	Error request_raw(const String &p_url, const Vector<String> &p_custom_headers = Vector<String>(), bool p_ssl_validate_domain = true, HTTPClient::Method p_method = HTTPClient::METHOD_GET, const Vector<uint8_t> &p_request_data_raw = Vector<uint8_t>()); //connects to a full url and perform request
+	Error request(const String &p_url, const std::vector<String> &p_custom_headers = std::vector<String>(), bool p_ssl_validate_domain = true, HTTPClient::Method p_method = HTTPClient::METHOD_GET, const String &p_request_data = ""); //connects to a full url and perform request
+	Error request_raw(const String &p_url, const std::vector<String> &p_custom_headers = std::vector<String>(), bool p_ssl_validate_domain = true, HTTPClient::Method p_method = HTTPClient::METHOD_GET, const std::vector<uint8_t> &p_request_data_raw = std::vector<uint8_t>()); //connects to a full url and perform request
 	void cancel_request();
 	HTTPClient::Status get_http_client_status() const;
 

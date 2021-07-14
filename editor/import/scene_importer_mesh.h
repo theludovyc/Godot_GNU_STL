@@ -49,17 +49,17 @@ class EditorSceneImporterMesh : public Resource {
 		struct BlendShape {
 			Array arrays;
 		};
-		Vector<BlendShape> blend_shape_data;
+		std::vector<BlendShape> blend_shape_data;
 		struct LOD {
-			Vector<int> indices;
+			std::vector<int> indices;
 			float distance;
 		};
-		Vector<LOD> lods;
+		std::vector<LOD> lods;
 		Ref<Material> material;
 		String name;
 	};
-	Vector<Surface> surfaces;
-	Vector<String> blend_shapes;
+	std::vector<Surface> surfaces;
+	std::vector<String> blend_shapes;
 	Mesh::BlendShapeMode blend_shape_mode = Mesh::BLEND_SHAPE_MODE_NORMALIZED;
 
 	Ref<ArrayMesh> mesh;
@@ -91,7 +91,7 @@ public:
 	Array get_surface_arrays(int p_surface) const;
 	Array get_surface_blend_shape_arrays(int p_surface, int p_blend_shape) const;
 	int get_surface_lod_count(int p_surface) const;
-	Vector<int> get_surface_lod_indices(int p_surface, int p_lod) const;
+	std::vector<int> get_surface_lod_indices(int p_surface, int p_lod) const;
 	float get_surface_lod_size(int p_surface, int p_lod) const;
 	Ref<Material> get_surface_material(int p_surface) const;
 
@@ -102,11 +102,11 @@ public:
 	void create_shadow_mesh();
 	Ref<EditorSceneImporterMesh> get_shadow_mesh() const;
 
-	Vector<Face3> get_faces() const;
-	Vector<Ref<Shape3D>> convex_decompose() const;
+	std::vector<Face3> get_faces() const;
+	std::vector<Ref<Shape3D>> convex_decompose() const;
 	Ref<Shape3D> create_trimesh_shape() const;
 	Ref<NavigationMesh> create_navigation_mesh();
-	Error lightmap_unwrap_cached(const Transform3D &p_base_transform, float p_texel_size, const Vector<uint8_t> &p_src_cache, Vector<uint8_t> &r_dst_cache);
+	Error lightmap_unwrap_cached(const Transform3D &p_base_transform, float p_texel_size, const std::vector<uint8_t> &p_src_cache, std::vector<uint8_t> &r_dst_cache);
 
 	void set_lightmap_size_hint(const Size2i &p_size);
 	Size2i get_lightmap_size_hint() const;

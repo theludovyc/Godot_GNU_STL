@@ -30,7 +30,8 @@
 
 #include "http_request.h"
 #include "core/io/compression.h"
-#include "core/string/ustring.h"
+
+//todo std::vector.data()
 
 void HTTPRequest::_redirect_request(const String &p_new_url) {
 }
@@ -87,7 +88,7 @@ String HTTPRequest::get_header_value(const PackedStringArray &p_headers, const S
 	String lowwer_case_header_name = p_header_name.to_lower();
 	for (int i = 0; i < p_headers.size(); i++) {
 		if (p_headers[i].find(":", 0) >= 0) {
-			Vector<String> parts = p_headers[i].split(":", false, 1);
+			std::vector<String> parts = p_headers[i].split(":", false, 1);
 			if (parts[0].strip_edges().to_lower() == lowwer_case_header_name) {
 				value = parts[1].strip_edges();
 				break;
@@ -98,20 +99,20 @@ String HTTPRequest::get_header_value(const PackedStringArray &p_headers, const S
 	return value;
 }
 
-Error HTTPRequest::request(const String &p_url, const Vector<String> &p_custom_headers, bool p_ssl_validate_domain, HTTPClient::Method p_method, const String &p_request_data) {
+Error HTTPRequest::request(const String &p_url, const std::vector<String> &p_custom_headers, bool p_ssl_validate_domain, HTTPClient::Method p_method, const String &p_request_data) {
 	// Copy the string into a raw buffer
-	Vector<uint8_t> raw_data;
+	std::vector<uint8_t> raw_data;
 
 	CharString charstr = p_request_data.utf8();
 	size_t len = charstr.length();
 	raw_data.resize(len);
-	uint8_t *w = raw_data.ptrw();
+	uint8_t *w = raw_data.data();
 	memcpy(w, charstr.ptr(), len);
 
 	return request_raw(p_url, p_custom_headers, p_ssl_validate_domain, p_method, raw_data);
 }
 
-Error HTTPRequest::request_raw(const String &p_url, const Vector<String> &p_custom_headers, bool p_ssl_validate_domain, HTTPClient::Method p_method, const Vector<uint8_t> &p_request_data_raw) {
+Error HTTPRequest::request_raw(const String &p_url, const std::vector<String> &p_custom_headers, bool p_ssl_validate_domain, HTTPClient::Method p_method, const std::vector<uint8_t> &p_request_data_raw) {
 	ERR_FAIL_COND_V(!is_inside_tree(), ERR_UNCONFIGURED);
 	ERR_FAIL_COND_V_MSG(requesting, ERR_BUSY, "HTTPRequest is processing a request. Wait for completion or cancel it before attempting a new one.");
 
@@ -323,7 +324,7 @@ bool HTTPRequest::_update_connection() {
 				// Did not request yet, do request
 
 				int size = request_data.size();
-				Error err = client->request(method, request_string, headers, size > 0 ? request_data.ptr() : nullptr, size);
+				Error err = client->request(method, request_string, headers, size > 0 ? request_data.data() : nullptr, size);
 				if (err != OK) {
 					call_deferred("_request_done", RESULT_CONNECTION_ERROR, 0, PackedStringArray(), PackedByteArray());
 					return true;
@@ -380,14 +381,14 @@ bool HTTPRequest::_update_connection() {
 			if (chunk.size()) {
 				downloaded.add(chunk.size());
 				if (file) {
-					const uint8_t *r = chunk.ptr();
+					const uint8_t *r = chunk.data();
 					file->store_buffer(r, chunk.size());
 					if (file->get_error() != OK) {
 						call_deferred("_request_done", RESULT_DOWNLOAD_FILE_WRITE_ERROR, response_code, response_headers, PackedByteArray());
 						return true;
 					}
 				} else {
-					body.append_array(chunk);
+					body.insert(body.end(), chunk.begin(), chunk.end());
 				}
 			}
 
@@ -445,7 +446,7 @@ void HTTPRequest::_request_done(int p_status, int p_code, const PackedStringArra
 	if (accept_gzip && is_compressed && p_data.size() > 0) {
 		// Decompress request body
 		PackedByteArray *decompressed = memnew(PackedByteArray);
-		int result = Compression::decompress_dynamic(decompressed, body_size_limit, p_data.ptr(), p_data.size(), mode);
+		int result = Compression::decompress_dynamic(decompressed, body_size_limit, p_data.data(), p_data.size(), mode);
 		if (result == OK) {
 			data = decompressed;
 		} else if (result == -5) {

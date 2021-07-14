@@ -30,14 +30,12 @@
 
 #include "collision_polygon_3d_editor_plugin.h"
 
-#include "canvas_item_editor_plugin.h"
-#include "core/input/input.h"
-#include "core/io/file_access.h"
 #include "core/math/geometry_2d.h"
 #include "core/os/keyboard.h"
-#include "editor/editor_settings.h"
 #include "node_3d_editor_plugin.h"
 #include "scene/3d/camera_3d.h"
+
+//todo std::vector.data()
 
 void CollisionPolygon3DEditor::_notification(int p_what) {
 	switch (p_what) {
@@ -135,7 +133,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 		//Let the snap happen when the point is being moved, instead.
 		//cpoint = CanvasItemEditor::get_singleton()->snap_point(cpoint);
 
-		Vector<Vector2> poly = node->call("get_polygon");
+		std::vector<Vector2> poly = node->call("get_polygon");
 
 		//first check if a point is to be added (segment split)
 		real_t grab_threshold = EDITOR_GET("editors/poly_editor/point_grab_radius");
@@ -212,7 +210,10 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 
 							if (closest_idx >= 0) {
 								pre_move_edit = poly;
-								poly.insert(closest_idx + 1, cpoint);
+
+								//todo
+								poly.insert(poly.begin() + closest_idx + 1, cpoint);
+
 								edited_point = closest_idx + 1;
 								edited_point_pos = cpoint;
 								node->call("set_polygon", poly);
@@ -254,7 +255,7 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 							//apply
 
 							ERR_FAIL_INDEX_V(edited_point, poly.size(), false);
-							poly.write[edited_point] = edited_point_pos;
+							poly[edited_point] = edited_point_pos;
 							undo_redo->create_action(TTR("Edit Poly"));
 							undo_redo->add_do_method(node, "set_polygon", poly);
 							undo_redo->add_undo_method(node, "set_polygon", pre_move_edit);
@@ -285,7 +286,10 @@ bool CollisionPolygon3DEditor::forward_spatial_gui_input(Camera3D *p_camera, con
 					if (closest_idx >= 0) {
 						undo_redo->create_action(TTR("Edit Poly (Remove Point)"));
 						undo_redo->add_undo_method(node, "set_polygon", poly);
-						poly.remove(closest_idx);
+
+						//todo
+						poly.erase(poly.begin() + closest_idx);
+
 						undo_redo->add_do_method(node, "set_polygon", poly);
 						undo_redo->add_do_method(this, "_polygon_draw");
 						undo_redo->add_undo_method(this, "_polygon_draw");
@@ -348,7 +352,7 @@ void CollisionPolygon3DEditor::_polygon_draw() {
 		return;
 	}
 
-	Vector<Vector2> poly;
+	std::vector<Vector2> poly;
 
 	if (wip_active) {
 		poly = wip;
@@ -446,10 +450,10 @@ void CollisionPolygon3DEditor::_polygon_draw() {
 
 	Array a;
 	a.resize(Mesh::ARRAY_MAX);
-	Vector<Vector3> va;
+	std::vector<Vector3> va;
 	{
 		va.resize(poly.size());
-		Vector3 *w = va.ptrw();
+		Vector3 *w = va.data();
 		for (int i = 0; i < poly.size(); i++) {
 			Vector2 p, p2;
 			p = i == edited_point ? edited_point_pos : poly[i];
@@ -467,7 +471,7 @@ void CollisionPolygon3DEditor::edit(Node *p_collision_polygon) {
 	if (p_collision_polygon) {
 		node = Object::cast_to<Node3D>(p_collision_polygon);
 		//Enable the pencil tool if the polygon is empty
-		if (Vector<Vector2>(node->call("get_polygon")).size() == 0) {
+		if (std::vector<Vector2>(node->call("get_polygon")).size() == 0) {
 			_menu_option(MODE_CREATE);
 		}
 		wip.clear();
