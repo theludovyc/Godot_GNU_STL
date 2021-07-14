@@ -31,7 +31,6 @@
 #include "main.h"
 
 #include "core/config/project_settings.h"
-#include "core/core_string_names.h"
 #include "core/crypto/crypto.h"
 #include "core/debugger/engine_debugger.h"
 #include "core/extension/extension_api_dump.h"
@@ -40,12 +39,8 @@
 #include "core/io/dir_access.h"
 #include "core/io/file_access_network.h"
 #include "core/io/file_access_pack.h"
-#include "core/io/file_access_zip.h"
 #include "core/io/image_loader.h"
-#include "core/io/ip.h"
-#include "core/io/resource_loader.h"
 #include "core/object/message_queue.h"
-#include "core/os/os.h"
 #include "core/os/time.h"
 #include "core/register_core_types.h"
 #include "core/string/translation.h"
@@ -65,16 +60,10 @@
 #include "scene/register_scene_types.h"
 #include "scene/resources/packed_scene.h"
 #include "servers/audio_server.h"
-#include "servers/camera_server.h"
-#include "servers/display_server.h"
 #include "servers/navigation_server_2d.h"
 #include "servers/navigation_server_3d.h"
-#include "servers/physics_server_2d.h"
-#include "servers/physics_server_3d.h"
 #include "servers/register_server_types.h"
 #include "servers/rendering/rendering_server_default.h"
-#include "servers/text_server.h"
-#include "servers/xr_server.h"
 
 #ifdef PLATFORM_HAVE_APIS
 	#include "platform/register_platform_apis.h"
@@ -89,7 +78,6 @@
 #include "editor/doc_data_class_path.gen.h"
 #include "editor/doc_tools.h"
 #include "editor/editor_node.h"
-#include "editor/editor_settings.h"
 #include "editor/progress_dialog.h"
 #include "editor/project_manager.h"
 
@@ -315,7 +303,7 @@ void Main::print_help(const char *p_binary) {
 			OS::get_singleton()->print(", ");
 		}
 		OS::get_singleton()->print("'%s' (", DisplayServer::get_create_function_name(i));
-		Vector<String> rd = DisplayServer::get_create_function_rendering_drivers(i);
+		std::vector<String> rd = DisplayServer::get_create_function_rendering_drivers(i);
 		for (int j = 0; j < rd.size(); j++) {
 			if (j > 0) {
 				OS::get_singleton()->print(", ");
@@ -600,7 +588,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	String remotefs;
 	String remotefs_pass;
 
-	Vector<String> breakpoints;
+	std::vector<String> breakpoints;
 	bool use_custom_res = true;
 	bool force_res = false;
 	bool saw_vsync_via_compositor_override = false;

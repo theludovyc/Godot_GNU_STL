@@ -33,11 +33,9 @@
 #include "core/object/message_queue.h"
 #include "core/os/os.h"
 #include "scene/main/node.h"
-#include "scene/main/scene_tree.h"
 #include "servers/audio_server.h"
-#include "servers/physics_server_2d.h"
-#include "servers/physics_server_3d.h"
-#include "servers/rendering_server.h"
+
+//todo std::vector.data()
 
 Performance *Performance::singleton = nullptr;
 
@@ -235,7 +233,7 @@ void Performance::set_physics_process_time(float p_pt) {
 	_physics_process_time = p_pt;
 }
 
-void Performance::add_custom_monitor(const StringName &p_id, const Callable &p_callable, const Vector<Variant> &p_args) {
+void Performance::add_custom_monitor(const StringName &p_id, const Callable &p_callable, const std::vector<Variant> &p_args) {
 	ERR_FAIL_COND_MSG(has_custom_monitor(p_id), "Custom monitor with id '" + String(p_id) + "' already exists.");
 	_monitor_map.insert(p_id, MonitorCall(p_callable, p_args));
 	_monitor_modification_time = OS::get_singleton()->get_ticks_usec();
@@ -285,7 +283,7 @@ Performance::Performance() {
 	singleton = this;
 }
 
-Performance::MonitorCall::MonitorCall(Callable p_callable, Vector<Variant> p_arguments) {
+Performance::MonitorCall::MonitorCall(Callable p_callable, std::vector<Variant> p_arguments) {
 	_callable = p_callable;
 	_arguments = p_arguments;
 }
@@ -294,12 +292,12 @@ Performance::MonitorCall::MonitorCall() {
 }
 
 Variant Performance::MonitorCall::call(bool &r_error, String &r_error_message) {
-	Vector<const Variant *> arguments_mem;
+	std::vector<const Variant *> arguments_mem;
 	arguments_mem.resize(_arguments.size());
 	for (int i = 0; i < _arguments.size(); i++) {
-		arguments_mem.write[i] = &_arguments[i];
+		arguments_mem[i] = &_arguments[i];
 	}
-	const Variant **args = (const Variant **)arguments_mem.ptr();
+	const Variant **args = (const Variant **)arguments_mem.data();
 	int argc = _arguments.size();
 	Variant return_value;
 	Callable::CallError error;
