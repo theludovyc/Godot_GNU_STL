@@ -31,9 +31,10 @@
 #include "animation_tree.h"
 
 #include "animation_blend_tree.h"
-#include "core/config/engine.h"
 #include "scene/scene_string_names.h"
 #include "servers/audio/audio_stream.h"
+
+//todo std::vector.data()
 
 void AnimationNode::get_parameter_list(List<PropertyInfo> *r_list) const {
 	if (get_script_instance()) {
@@ -115,7 +116,7 @@ void AnimationNode::blend_animation(const StringName &p_animation, float p_time,
 	state->animation_states.push_back(anim_state);
 }
 
-float AnimationNode::_pre_process(const StringName &p_base_path, AnimationNode *p_parent, State *p_state, float p_time, bool p_seek, const Vector<StringName> &p_connections) {
+float AnimationNode::_pre_process(const StringName &p_base_path, AnimationNode *p_parent, State *p_state, float p_time, bool p_seek, const std::vector<StringName> &p_connections) {
 	base_path = p_base_path;
 	parent = p_parent;
 	connections = p_connections;
@@ -161,20 +162,20 @@ float AnimationNode::blend_input(int p_input, float p_time, bool p_seek, float p
 	float activity = 0.0;
 	float ret = _blend_node(node_name, blend_tree->get_node_connection_array(node_name), nullptr, node, p_time, p_seek, p_blend, p_filter, p_optimize, &activity);
 
-	Vector<AnimationTree::Activity> *activity_ptr = state->tree->input_activity_map.getptr(base_path);
+	std::vector<AnimationTree::Activity> *activity_ptr = state->tree->input_activity_map.getptr(base_path);
 
 	if (activity_ptr && p_input < activity_ptr->size()) {
-		activity_ptr->write[p_input].last_pass = state->last_pass;
-		activity_ptr->write[p_input].activity = activity;
+		(*activity_ptr)[p_input].last_pass = state->last_pass;
+		(*activity_ptr)[p_input].activity = activity;
 	}
 	return ret;
 }
 
 float AnimationNode::blend_node(const StringName &p_sub_path, Ref<AnimationNode> p_node, float p_time, bool p_seek, float p_blend, FilterAction p_filter, bool p_optimize) {
-	return _blend_node(p_sub_path, Vector<StringName>(), this, p_node, p_time, p_seek, p_blend, p_filter, p_optimize);
+	return _blend_node(p_sub_path, std::vector<StringName>(), this, p_node, p_time, p_seek, p_blend, p_filter, p_optimize);
 }
 
-float AnimationNode::_blend_node(const StringName &p_subpath, const Vector<StringName> &p_connections, AnimationNode *p_new_parent, Ref<AnimationNode> p_node, float p_time, bool p_seek, float p_blend, FilterAction p_filter, bool p_optimize, float *r_max) {
+float AnimationNode::_blend_node(const StringName &p_subpath, const std::vector<StringName> &p_connections, AnimationNode *p_new_parent, Ref<AnimationNode> p_node, float p_time, bool p_seek, float p_blend, FilterAction p_filter, bool p_optimize, float *r_max) {
 	ERR_FAIL_COND_V(!p_node.is_valid(), 0);
 	ERR_FAIL_COND_V(!state, 0);
 
@@ -184,8 +185,8 @@ float AnimationNode::_blend_node(const StringName &p_subpath, const Vector<Strin
 		p_node->blends.resize(blend_count);
 	}
 
-	float *blendw = p_node->blends.ptrw();
-	const float *blendr = blends.ptr();
+	float *blendw = p_node->blends.data();
+	const float *blendr = blends.data();
 
 	bool any_valid = false;
 
@@ -318,13 +319,16 @@ void AnimationNode::add_input(const String &p_name) {
 void AnimationNode::set_input_name(int p_input, const String &p_name) {
 	ERR_FAIL_INDEX(p_input, inputs.size());
 	ERR_FAIL_COND(p_name.find(".") != -1 || p_name.find("/") != -1);
-	inputs.write[p_input].name = p_name;
+	inputs[p_input].name = p_name;
 	emit_changed();
 }
 
 void AnimationNode::remove_input(int p_index) {
 	ERR_FAIL_INDEX(p_index, inputs.size());
-	inputs.remove(p_index);
+
+	//todo
+	inputs.erase(inputs.begin() + p_index);
+
 	emit_changed();
 }
 
@@ -557,7 +561,7 @@ bool AnimationTree::_update_caches(AnimationPlayer *player) {
 
 			if (!track) {
 				RES resource;
-				Vector<StringName> leftover_path;
+				std::vector<StringName> leftover_path;
 				Node *child = parent->get_node_and_resource(path, resource, leftover_path);
 
 				if (!child) {
@@ -790,7 +794,7 @@ void AnimationTree::_process_graph(float p_delta) {
 		// root source blends
 
 		root->blends.resize(state.track_count);
-		float *src_blendsw = root->blends.ptrw();
+		float *src_blendsw = root->blends.data();
 		for (int i = 0; i < state.track_count; i++) {
 			src_blendsw[i] = 1.0; //by default all go to 1 for the root input
 		}
@@ -801,11 +805,11 @@ void AnimationTree::_process_graph(float p_delta) {
 	{
 		if (started) {
 			//if started, seek
-			root->_pre_process(SceneStringNames::get_singleton()->parameters_base_path, nullptr, &state, 0, true, Vector<StringName>());
+			root->_pre_process(SceneStringNames::get_singleton()->parameters_base_path, nullptr, &state, 0, true, std::vector<StringName>());
 			started = false;
 		}
 
-		root->_pre_process(SceneStringNames::get_singleton()->parameters_base_path, nullptr, &state, p_delta, false, Vector<StringName>());
+		root->_pre_process(SceneStringNames::get_singleton()->parameters_base_path, nullptr, &state, p_delta, false, std::vector<StringName>());
 	}
 
 	if (!state.valid) {
@@ -981,7 +985,7 @@ void AnimationTree::_process_graph(float p_delta) {
 
 						for (List<int>::Element *F = indices.front(); F; F = F->next()) {
 							StringName method = a->method_track_get_name(i, F->get());
-							Vector<Variant> params = a->method_track_get_params(i, F->get());
+							std::vector<Variant> params = a->method_track_get_params(i, F->get());
 
 							int s = params.size();
 
@@ -1338,7 +1342,7 @@ void AnimationTree::_update_properties_for_node(const String &p_base_path, Ref<A
 	}
 
 	if (node->get_input_count() && !input_activity_map.has(p_base_path)) {
-		Vector<Activity> activity;
+		std::vector<Activity> activity;
 		for (int i = 0; i < node->get_input_count(); i++) {
 			Activity a;
 			a.activity = 0;
@@ -1447,7 +1451,7 @@ float AnimationTree::get_connection_activity(const StringName &p_path, int p_con
 	if (!input_activity_map_get.has(p_path)) {
 		return 0;
 	}
-	const Vector<Activity> *activity = input_activity_map_get[p_path];
+	const std::vector<Activity> *activity = input_activity_map_get[p_path];
 
 	if (!activity || p_connection < 0 || p_connection >= activity->size()) {
 		return 0;

@@ -95,7 +95,7 @@ private:
 	/* TRANSFORM TRACK */
 
 	struct TransformTrack : public Track {
-		Vector<TKey<TransformKey>> transforms;
+		std::vector<TKey<TransformKey>> transforms;
 
 		TransformTrack() { type = TYPE_TRANSFORM3D; }
 	};
@@ -105,7 +105,7 @@ private:
 	struct ValueTrack : public Track {
 		UpdateMode update_mode = UPDATE_CONTINUOUS;
 		bool update_on_seek = false;
-		Vector<TKey<Variant>> values;
+		std::vector<TKey<Variant>> values;
 
 		ValueTrack() {
 			type = TYPE_VALUE;
@@ -116,11 +116,11 @@ private:
 
 	struct MethodKey : public Key {
 		StringName method;
-		Vector<Variant> params;
+		std::vector<Variant> params;
 	};
 
 	struct MethodTrack : public Track {
-		Vector<MethodKey> methods;
+		std::vector<MethodKey> methods;
 		MethodTrack() { type = TYPE_METHOD; }
 	};
 
@@ -133,7 +133,7 @@ private:
 	};
 
 	struct BezierTrack : public Track {
-		Vector<TKey<BezierKey>> values;
+		std::vector<TKey<BezierKey>> values;
 
 		BezierTrack() {
 			type = TYPE_BEZIER;
@@ -151,7 +151,7 @@ private:
 	};
 
 	struct AudioTrack : public Track {
-		Vector<TKey<AudioKey>> values;
+		std::vector<TKey<AudioKey>> values;
 
 		AudioTrack() {
 			type = TYPE_AUDIO;
@@ -161,14 +161,14 @@ private:
 	/* AUDIO TRACK */
 
 	struct AnimationTrack : public Track {
-		Vector<TKey<StringName>> values;
+		std::vector<TKey<StringName>> values;
 
 		AnimationTrack() {
 			type = TYPE_ANIMATION;
 		}
 	};
 
-	Vector<Track *> tracks;
+	std::vector<Track *> tracks;
 
 	/*
 	template<class T>
@@ -181,7 +181,7 @@ private:
 	int _insert(float p_time, T &p_keys, const V &p_value);
 
 	template <class K>
-	inline int _find(const Vector<K> &p_keys, float p_time) const;
+	inline int _find(const std::vector<K> &p_keys, float p_time) const;
 
 	_FORCE_INLINE_ Animation::TransformKey _interpolate(const Animation::TransformKey &p_a, const Animation::TransformKey &p_b, float p_c) const;
 
@@ -197,10 +197,10 @@ private:
 	_FORCE_INLINE_ float _cubic_interpolate(const float &p_pre_a, const float &p_a, const float &p_b, const float &p_post_b, float p_c) const;
 
 	template <class T>
-	_FORCE_INLINE_ T _interpolate(const Vector<TKey<T>> &p_keys, float p_time, InterpolationType p_interp, bool p_loop_wrap, bool *p_ok) const;
+	_FORCE_INLINE_ T _interpolate(const std::vector<TKey<T>> &p_keys, float p_time, InterpolationType p_interp, bool p_loop_wrap, bool *p_ok) const;
 
 	template <class T>
-	_FORCE_INLINE_ void _track_get_key_indices_in_range(const Vector<T> &p_array, float from_time, float to_time, List<int> *p_indices) const;
+	_FORCE_INLINE_ void _track_get_key_indices_in_range(const std::vector<T> &p_array, float from_time, float to_time, List<int> *p_indices) const;
 
 	_FORCE_INLINE_ void _value_track_get_key_indices_in_range(const ValueTrack *vt, float from_time, float to_time, List<int> *p_indices) const;
 	_FORCE_INLINE_ void _method_track_get_key_indices_in_range(const MethodTrack *mt, float from_time, float to_time, List<int> *p_indices) const;
@@ -223,20 +223,20 @@ private:
 		return ret;
 	}
 
-	Vector<int> _value_track_get_key_indices(int p_track, float p_time, float p_delta) const {
+	std::vector<int> _value_track_get_key_indices(int p_track, float p_time, float p_delta) const {
 		List<int> idxs;
 		value_track_get_key_indices(p_track, p_time, p_delta, &idxs);
-		Vector<int> idxr;
+		std::vector<int> idxr;
 
 		for (List<int>::Element *E = idxs.front(); E; E = E->next()) {
 			idxr.push_back(E->get());
 		}
 		return idxr;
 	}
-	Vector<int> _method_track_get_key_indices(int p_track, float p_time, float p_delta) const {
+	std::vector<int> _method_track_get_key_indices(int p_track, float p_time, float p_delta) const {
 		List<int> idxs;
 		method_track_get_key_indices(p_track, p_time, p_delta, &idxs);
-		Vector<int> idxr;
+		std::vector<int> idxr;
 
 		for (List<int>::Element *E = idxs.front(); E; E = E->next()) {
 			idxr.push_back(E->get());
@@ -329,7 +329,7 @@ public:
 	UpdateMode value_track_get_update_mode(int p_track) const;
 
 	void method_track_get_key_indices(int p_track, float p_time, float p_delta, List<int> *p_indices) const;
-	Vector<Variant> method_track_get_params(int p_track, int p_key_idx) const;
+	std::vector<Variant> method_track_get_params(int p_track, int p_key_idx) const;
 	StringName method_track_get_name(int p_track, int p_key_idx) const;
 
 	void copy_track(int p_track, Ref<Animation> p_to_animation);

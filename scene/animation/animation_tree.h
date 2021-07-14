@@ -55,7 +55,7 @@ public:
 		String name;
 	};
 
-	Vector<Input> inputs;
+	std::vector<Input> inputs;
 
 	float process_input(int p_input, float p_time, bool p_seek, float p_blend);
 
@@ -65,7 +65,7 @@ public:
 		Ref<Animation> animation;
 		float time = 0.0;
 		float delta = 0.0;
-		const Vector<float> *track_blends = nullptr;
+		const std::vector<float> *track_blends = nullptr;
 		float blend = 0.0;
 		bool seeked = false;
 	};
@@ -81,15 +81,15 @@ public:
 		uint64_t last_pass = 0;
 	};
 
-	Vector<float> blends;
+	std::vector<float> blends;
 	State *state = nullptr;
 
-	float _pre_process(const StringName &p_base_path, AnimationNode *p_parent, State *p_state, float p_time, bool p_seek, const Vector<StringName> &p_connections);
+	float _pre_process(const StringName &p_base_path, AnimationNode *p_parent, State *p_state, float p_time, bool p_seek, const std::vector<StringName> &p_connections);
 	void _pre_update_animations(HashMap<NodePath, int> *track_map);
 
 	//all this is temporary
 	StringName base_path;
-	Vector<StringName> connections;
+	std::vector<StringName> connections;
 	AnimationNode *parent = nullptr;
 
 	HashMap<NodePath, bool> filter;
@@ -98,7 +98,7 @@ public:
 	Array _get_filters() const;
 	void _set_filters(const Array &p_filters);
 	friend class AnimationNodeBlendTree;
-	float _blend_node(const StringName &p_subpath, const Vector<StringName> &p_connections, AnimationNode *p_new_parent, Ref<AnimationNode> p_node, float p_time, bool p_seek, float p_blend, FilterAction p_filter = FILTER_IGNORE, bool p_optimize = true, float *r_max = nullptr);
+	float _blend_node(const StringName &p_subpath, const std::vector<StringName> &p_connections, AnimationNode *p_new_parent, Ref<AnimationNode> p_node, float p_time, bool p_seek, float p_blend, FilterAction p_filter = FILTER_IGNORE, bool p_optimize = true, float *r_max = nullptr);
 
 protected:
 	void blend_animation(const StringName &p_animation, float p_time, float p_delta, bool p_seeked, float p_blend);
@@ -201,7 +201,7 @@ private:
 
 	struct TrackCacheValue : public TrackCache {
 		Variant value;
-		Vector<StringName> subpath;
+		std::vector<StringName> subpath;
 		TrackCacheValue() { type = Animation::TYPE_VALUE; }
 	};
 
@@ -211,7 +211,7 @@ private:
 
 	struct TrackCacheBezier : public TrackCache {
 		float value = 0.0;
-		Vector<StringName> subpath;
+		std::vector<StringName> subpath;
 		TrackCacheBezier() {
 			type = Animation::TYPE_BEZIER;
 		}
@@ -274,8 +274,8 @@ private:
 		float activity = 0.0;
 	};
 
-	HashMap<StringName, Vector<Activity>> input_activity_map;
-	HashMap<StringName, Vector<Activity> *> input_activity_map_get;
+	HashMap<StringName, std::vector<Activity>> input_activity_map;
+	HashMap<StringName, std::vector<Activity> *> input_activity_map_get;
 
 	void _update_properties_for_node(const String &p_base_path, Ref<AnimationNode> node);
 

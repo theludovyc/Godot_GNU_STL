@@ -32,8 +32,9 @@
 
 #include "core/io/file_access.h"
 #include "core/io/image_loader.h"
-#include "core/io/resource_saver.h"
 #include "scene/resources/texture.h"
+
+//todo std::vector.data()
 
 String ResourceImporterImage::get_importer_name() const {
 	return "image";
@@ -77,10 +78,10 @@ Error ResourceImporterImage::import(const String &p_source_file, const String &p
 
 	uint64_t len = f->get_length();
 
-	Vector<uint8_t> data;
+	std::vector<uint8_t> data;
 	data.resize(len);
 
-	f->get_buffer(data.ptrw(), len);
+	f->get_buffer(data.data(), len);
 
 	memdelete(f);
 
@@ -93,7 +94,7 @@ Error ResourceImporterImage::import(const String &p_source_file, const String &p
 	//SAVE the extension (so it can be recognized by the loader later
 	f->store_pascal_string(p_source_file.get_extension().to_lower());
 	//SAVE the actual image
-	f->store_buffer(data.ptr(), len);
+	f->store_buffer(data.data(), len);
 
 	memdelete(f);
 

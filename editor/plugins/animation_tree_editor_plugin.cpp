@@ -34,17 +34,7 @@
 #include "animation_blend_space_2d_editor.h"
 #include "animation_blend_tree_editor_plugin.h"
 #include "animation_state_machine_editor.h"
-#include "core/config/project_settings.h"
-#include "core/input/input.h"
-#include "core/io/resource_loader.h"
-#include "core/math/delaunay_2d.h"
-#include "core/os/keyboard.h"
 #include "editor/editor_scale.h"
-#include "scene/animation/animation_blend_tree.h"
-#include "scene/animation/animation_player.h"
-#include "scene/gui/menu_button.h"
-#include "scene/gui/panel.h"
-#include "scene/main/window.h"
 #include "scene/scene_string_names.h"
 
 void AnimationTreeEditor::edit(AnimationTree *p_tree) {
@@ -54,7 +44,7 @@ void AnimationTreeEditor::edit(AnimationTree *p_tree) {
 
 	tree = p_tree;
 
-	Vector<String> path;
+	std::vector<String> path;
 	if (tree->has_meta("_tree_edit_path")) {
 		path = tree->get_meta("_tree_edit_path");
 		edit_path(path);
@@ -98,7 +88,7 @@ void AnimationTreeEditor::_update_path() {
 	}
 }
 
-void AnimationTreeEditor::edit_path(const Vector<String> &p_path) {
+void AnimationTreeEditor::edit_path(const std::vector<String> &p_path) {
 	button_path.clear();
 
 	Ref<AnimationNode> node = tree->get_tree_root();
@@ -132,12 +122,12 @@ void AnimationTreeEditor::edit_path(const Vector<String> &p_path) {
 	_update_path();
 }
 
-Vector<String> AnimationTreeEditor::get_edited_path() const {
+std::vector<String> AnimationTreeEditor::get_edited_path() const {
 	return button_path;
 }
 
 void AnimationTreeEditor::enter_editor(const String &p_path) {
-	Vector<String> path = edited_path;
+	std::vector<String> path = edited_path;
 	path.push_back(p_path);
 	edit_path(path);
 }
@@ -150,7 +140,7 @@ void AnimationTreeEditor::_notification(int p_what) {
 		}
 
 		if (root != current_root) {
-			edit_path(Vector<String>());
+			edit_path(std::vector<String>());
 		}
 
 		if (button_path.size() != edited_path.size()) {
@@ -175,8 +165,10 @@ void AnimationTreeEditor::add_plugin(AnimationTreeNodeEditorPlugin *p_editor) {
 
 void AnimationTreeEditor::remove_plugin(AnimationTreeNodeEditorPlugin *p_editor) {
 	ERR_FAIL_COND(p_editor->get_parent() != editor_base);
+
 	editor_base->remove_child(p_editor);
-	editors.erase(p_editor);
+
+	std::remove(editors.begin(),  editors.end(), p_editor);
 }
 
 String AnimationTreeEditor::get_base_path() {
@@ -196,25 +188,25 @@ bool AnimationTreeEditor::can_edit(const Ref<AnimationNode> &p_node) const {
 	return false;
 }
 
-Vector<String> AnimationTreeEditor::get_animation_list() {
+std::vector<String> AnimationTreeEditor::get_animation_list() {
 	if (!singleton->is_visible()) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 
 	AnimationTree *tree = singleton->tree;
 	if (!tree || !tree->has_node(tree->get_animation_player())) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 
 	AnimationPlayer *ap = Object::cast_to<AnimationPlayer>(tree->get_node(tree->get_animation_player()));
 
 	if (!ap) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 
 	List<StringName> anims;
 	ap->get_animation_list(&anims);
-	Vector<String> ret;
+	std::vector<String> ret;
 	for (List<StringName>::Element *E = anims.front(); E; E = E->next()) {
 		ret.push_back(E->get());
 	}
