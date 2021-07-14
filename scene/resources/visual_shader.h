@@ -117,7 +117,7 @@ private:
 		}
 	};
 
-	Error _write_node(Type p_type, StringBuilder &global_code, StringBuilder &global_code_per_node, Map<Type, StringBuilder> &global_code_per_func, StringBuilder &code, Vector<DefaultTextureParam> &def_tex_params, const VMap<ConnectionKey, const List<Connection>::Element *> &input_connections, const VMap<ConnectionKey, const List<Connection>::Element *> &output_connections, int node, Set<int> &processed, bool for_preview, Set<StringName> &r_classes) const;
+	Error _write_node(Type p_type, StringBuilder &global_code, StringBuilder &global_code_per_node, Map<Type, StringBuilder> &global_code_per_func, StringBuilder &code, std::vector<DefaultTextureParam> &def_tex_params, const VMap<ConnectionKey, const List<Connection>::Element *> &input_connections, const VMap<ConnectionKey, const List<Connection>::Element *> &output_connections, int node, Set<int> &processed, bool for_preview, Set<StringName> &r_classes) const;
 
 	void _input_type_changed(Type p_type, int p_id);
 	bool has_func_name(RenderingServer::ShaderMode p_mode, const String &p_func_name) const;
@@ -153,7 +153,7 @@ public:
 	Vector2 get_node_position(Type p_type, int p_id) const;
 	Ref<VisualShaderNode> get_node(Type p_type, int p_id) const;
 
-	Vector<int> get_node_list(Type p_type) const;
+	std::vector<int> get_node_list(Type p_type) const;
 	int get_valid_node_id(Type p_type) const;
 
 	int find_node_id(Type p_type, const Ref<VisualShaderNode> &p_node) const;
@@ -180,7 +180,7 @@ public:
 	void set_graph_offset(const Vector2 &p_offset);
 	Vector2 get_graph_offset() const;
 
-	String generate_preview_shader(Type p_type, int p_node, int p_port, Vector<DefaultTextureParam> &r_default_tex_params) const;
+	String generate_preview_shader(Type p_type, int p_node, int p_port, std::vector<DefaultTextureParam> &r_default_tex_params) const;
 
 	String validate_port_name(const String &p_port_name, VisualShaderNode *p_node, int p_port_id, bool p_output) const;
 	String validate_uniform_name(const String &p_name, const Ref<VisualShaderNodeUniform> &p_uniform) const;
@@ -266,9 +266,9 @@ public:
 	bool is_disabled() const;
 	void set_disabled(bool p_disabled = true);
 
-	virtual Vector<StringName> get_editable_properties() const;
+	virtual std::vector<StringName> get_editable_properties() const;
 
-	virtual Vector<VisualShader::DefaultTextureParam> get_default_texture_parameters(VisualShader::Type p_type, int p_id) const;
+	virtual std::vector<VisualShader::DefaultTextureParam> get_default_texture_parameters(VisualShader::Type p_type, int p_id) const;
 	virtual String generate_global(Shader::Mode p_mode, VisualShader::Type p_type, int p_id) const;
 	virtual String generate_global_per_node(Shader::Mode p_mode, VisualShader::Type p_type, int p_id) const;
 	virtual String generate_global_per_func(Shader::Mode p_mode, VisualShader::Type p_type, int p_id) const;
@@ -381,7 +381,7 @@ public:
 
 	PortType get_input_type_by_name(String p_name) const;
 
-	virtual Vector<StringName> get_editable_properties() const override;
+	virtual std::vector<StringName> get_editable_properties() const override;
 
 	VisualShaderNodeInput();
 };
@@ -457,7 +457,7 @@ public:
 	virtual bool is_qualifier_supported(Qualifier p_qual) const = 0;
 	virtual bool is_convertible_to_constant() const = 0;
 
-	virtual Vector<StringName> get_editable_properties() const override;
+	virtual std::vector<StringName> get_editable_properties() const override;
 	virtual String get_warning(Shader::Mode p_mode, VisualShader::Type p_type) const override;
 
 	VisualShaderNodeUniform();
@@ -518,7 +518,7 @@ public:
 	UniformType get_uniform_type_by_name(const String &p_name) const;
 	UniformType get_uniform_type_by_index(int p_idx) const;
 
-	virtual Vector<StringName> get_editable_properties() const override;
+	virtual std::vector<StringName> get_editable_properties() const override;
 
 	virtual String generate_code(Shader::Mode p_mode, VisualShader::Type p_type, int p_id, const String *p_input_vars, const String *p_output_vars, bool p_for_preview = false) const override;
 

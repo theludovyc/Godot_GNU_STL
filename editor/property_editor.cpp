@@ -235,7 +235,7 @@ void CustomPropertyEditor::_menu_option(int p_which) {
 						emit_signal("variant_changed");
 						break;
 					}
-					ERR_FAIL_COND(inheritors_array.is_empty());
+					ERR_FAIL_COND(inheritors_array.empty());
 
 					String intype = inheritors_array[p_which - TYPE_BASE_ID];
 
@@ -1247,7 +1247,7 @@ void CustomPropertyEditor::_action_pressed(int p_which) {
 		} break;
 		case Variant::OBJECT: {
 			if (p_which == 0) {
-				ERR_FAIL_COND(inheritors_array.is_empty());
+				ERR_FAIL_COND(inheritors_array.empty());
 
 				String intype = inheritors_array[0];
 

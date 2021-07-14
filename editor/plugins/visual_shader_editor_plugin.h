@@ -282,7 +282,7 @@ class VisualShaderEditor : public VBoxContainer {
 		}
 	};
 
-	Vector<AddOption> add_options;
+	std::vector<AddOption> add_options;
 	int cubemap_node_option_idx;
 	int texture2d_node_option_idx;
 	int texture2d_array_node_option_idx;
@@ -385,7 +385,7 @@ class VisualShaderEditor : public VBoxContainer {
 	void _copy_nodes();
 	void _paste_nodes(bool p_use_custom_position = false, const Vector2 &p_custom_position = Vector2());
 
-	Vector<Ref<VisualShaderNodePlugin>> plugins;
+	std::vector<Ref<VisualShaderNodePlugin>> plugins;
 	Ref<VisualShaderGraphPlugin> graph_plugin;
 
 	void _mode_selected(int p_id);
@@ -493,7 +493,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void setup(const Vector<String> &p_options);
+	void setup(const std::vector<String> &p_options);
 	virtual void update_property() override;
 	void set_option_button_clip(bool p_enable);
 	EditorPropertyShaderMode();

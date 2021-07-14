@@ -30,13 +30,11 @@
 
 #include "editor_help.h"
 
-#include "core/input/input.h"
 #include "core/os/keyboard.h"
 #include "doc_data_compressed.gen.h"
 #include "editor/plugins/script_editor_plugin.h"
 #include "editor_node.h"
 #include "editor_scale.h"
-#include "editor_settings.h"
 
 #define CONTRIBUTE_URL "https://docs.godotengine.org/en/latest/community/contributing/updating_the_class_reference.html"
 
@@ -624,7 +622,7 @@ void EditorHelp::_update_doc() {
 	bool method_descr = false;
 	bool sort_methods = EditorSettings::get_singleton()->get("text_editor/help/sort_functions_alphabetically");
 
-	Vector<DocData::MethodDoc> methods;
+	std::vector<DocData::MethodDoc> methods;
 
 	for (int i = 0; i < cd.methods.size(); i++) {
 		if (skip_methods.has(cd.methods[i].name)) {
@@ -641,7 +639,7 @@ void EditorHelp::_update_doc() {
 
 	if (methods.size()) {
 		if (sort_methods) {
-			methods.sort();
+			std::sort(methods.begin(),  methods.end());
 		}
 
 		section_line.push_back(Pair<String, int>(TTR("Methods"), class_desc->get_line_count() - 2));
@@ -659,7 +657,7 @@ void EditorHelp::_update_doc() {
 
 		bool any_previous = false;
 		for (int pass = 0; pass < 2; pass++) {
-			Vector<DocData::MethodDoc> m;
+			std::vector<DocData::MethodDoc> m;
 
 			for (int i = 0; i < methods.size(); i++) {
 				const String &q = methods[i].qualifiers;
@@ -668,7 +666,7 @@ void EditorHelp::_update_doc() {
 				}
 			}
 
-			if (any_previous && !m.is_empty()) {
+			if (any_previous && !m.empty()) {
 				class_desc->push_cell();
 				class_desc->pop(); //cell
 				class_desc->push_cell();
@@ -702,7 +700,7 @@ void EditorHelp::_update_doc() {
 				_add_method(m[i], true);
 			}
 
-			any_previous = !m.is_empty();
+			any_previous = !m.empty();
 		}
 
 		class_desc->pop(); //table
@@ -776,7 +774,7 @@ void EditorHelp::_update_doc() {
 	// Signals
 	if (cd.signals.size()) {
 		if (sort_methods) {
-			cd.signals.sort();
+			std::sort(cd.signals.begin(),  cd.signals.end());
 		}
 
 		section_line.push_back(Pair<String, int>(TTR("Signals"), class_desc->get_line_count() - 2));
@@ -844,13 +842,13 @@ void EditorHelp::_update_doc() {
 
 	// Constants and enums
 	if (cd.constants.size()) {
-		Map<String, Vector<DocData::ConstantDoc>> enums;
-		Vector<DocData::ConstantDoc> constants;
+		Map<String, std::vector<DocData::ConstantDoc>> enums;
+		std::vector<DocData::ConstantDoc> constants;
 
 		for (int i = 0; i < cd.constants.size(); i++) {
 			if (!cd.constants[i].enumeration.is_empty()) {
 				if (!enums.has(cd.constants[i].enumeration)) {
-					enums[cd.constants[i].enumeration] = Vector<DocData::ConstantDoc>();
+					enums[cd.constants[i].enumeration] = std::vector<DocData::ConstantDoc>();
 				}
 
 				enums[cd.constants[i].enumeration].push_back(cd.constants[i]);
@@ -875,7 +873,7 @@ void EditorHelp::_update_doc() {
 
 			class_desc->add_newline();
 
-			for (Map<String, Vector<DocData::ConstantDoc>>::Element *E = enums.front(); E; E = E->next()) {
+			for (Map<String, std::vector<DocData::ConstantDoc>>::Element *E = enums.front(); E; E = E->next()) {
 				enum_line[E->key()] = class_desc->get_line_count() - 2;
 
 				class_desc->push_font(doc_code_font);
@@ -912,7 +910,7 @@ void EditorHelp::_update_doc() {
 				}
 
 				class_desc->push_indent(1);
-				Vector<DocData::ConstantDoc> enum_list = E->get();
+				std::vector<DocData::ConstantDoc> enum_list = E->get();
 
 				Map<String, int> enumValuesContainer;
 				int enumStartingLine = enum_line[E->key()];
@@ -985,7 +983,7 @@ void EditorHelp::_update_doc() {
 
 				if (constants[i].value.begins_with("Color(") && constants[i].value.ends_with(")")) {
 					String stripped = constants[i].value.replace(" ", "").replace("Color(", "").replace(")", "");
-					Vector<float> color = stripped.split_floats(",");
+					std::vector<float> color = stripped.split_floats(",");
 					if (color.size() >= 3) {
 						class_desc->push_color(Color(color[0], color[1], color[2]));
 						static const char32_t prefix[3] = { 0x25CF /* filled circle */, ' ', 0 };
@@ -1209,7 +1207,7 @@ void EditorHelp::_update_doc() {
 		class_desc->add_newline();
 
 		for (int pass = 0; pass < 2; pass++) {
-			Vector<DocData::MethodDoc> methods_filtered;
+			std::vector<DocData::MethodDoc> methods_filtered;
 
 			for (int i = 0; i < methods.size(); i++) {
 				const String &q = methods[i].qualifiers;
@@ -1616,8 +1614,8 @@ void EditorHelp::update_doc() {
 	_update_doc();
 }
 
-Vector<Pair<String, int>> EditorHelp::get_sections() {
-	Vector<Pair<String, int>> sections;
+std::vector<Pair<String, int>> EditorHelp::get_sections() {
+	std::vector<Pair<String, int>> sections;
 
 	for (int i = 0; i < section_line.size(); i++) {
 		sections.push_back(Pair<String, int>(section_line[i].first, i));
