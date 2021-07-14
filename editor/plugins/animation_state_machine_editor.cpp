@@ -30,17 +30,10 @@
 
 #include "animation_state_machine_editor.h"
 
-#include "core/config/project_settings.h"
-#include "core/input/input.h"
-#include "core/io/resource_loader.h"
 #include "core/math/geometry_2d.h"
 #include "core/os/keyboard.h"
 #include "editor/editor_scale.h"
 #include "scene/animation/animation_blend_tree.h"
-#include "scene/animation/animation_player.h"
-#include "scene/gui/menu_button.h"
-#include "scene/gui/panel.h"
-#include "scene/main/window.h"
 
 bool AnimationNodeStateMachineEditor::can_edit(const Ref<AnimationNode> &p_node) {
 	Ref<AnimationNodeStateMachine> ansm = p_node;
@@ -572,7 +565,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 	bool playing = false;
 	StringName current;
 	StringName blend_from;
-	Vector<StringName> travel_path;
+	std::vector<StringName> travel_path;
 
 	if (playback.is_valid()) {
 		playing = playback->is_playing();
@@ -744,7 +737,7 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 		Ref<StyleBox> sb = name == selected_node ? style_selected : style;
 		int strsize = font->get_string_size(name, font_size).width;
 
-		NodeRect &nr = node_rects.write[i];
+		NodeRect &nr = node_rects[i];
 
 		Vector2 offset = nr.node.position;
 		int h = nr.node.size.height;
@@ -754,7 +747,9 @@ void AnimationNodeStateMachineEditor::_state_machine_draw() {
 		//now scroll it to draw
 		state_machine_draw->draw_style_box(sb, nr.node);
 
-		if (playing && (blend_from == name || current == name || travel_path.find(name) != -1)) {
+		auto it = std::find(travel_path.begin(), travel_path.end(), name);
+
+		if (playing && (blend_from == name || current == name || it != travel_path.end())) {
 			state_machine_draw->draw_style_box(playing_overlay, nr.node);
 		}
 
@@ -976,7 +971,7 @@ void AnimationNodeStateMachineEditor::_notification(int p_what) {
 		}
 
 		bool same_travel_path = true;
-		Vector<StringName> tp;
+		std::vector<StringName> tp;
 		bool is_playing = false;
 		StringName current_node;
 		StringName blend_from_node;

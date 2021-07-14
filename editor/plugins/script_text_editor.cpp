@@ -32,15 +32,13 @@
 
 #include "core/math/expression.h"
 #include "core/os/keyboard.h"
-#include "editor/debugger/editor_debugger_node.h"
 #include "editor/editor_node.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
 
 void ConnectionInfoDialog::ok_pressed() {
 }
 
-void ConnectionInfoDialog::popup_connections(String p_method, Vector<Node *> p_nodes) {
+void ConnectionInfoDialog::popup_connections(String p_method, std::vector<Node *> p_nodes) {
 	method->set_text(p_method);
 
 	tree->clear();
@@ -108,7 +106,7 @@ ConnectionInfoDialog::ConnectionInfoDialog() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Vector<String> ScriptTextEditor::get_functions() {
+std::vector<String> ScriptTextEditor::get_functions() {
 	CodeEdit *te = code_editor->get_text_editor();
 	String text = te->get_text();
 	List<String> fnc;
@@ -578,8 +576,8 @@ void ScriptTextEditor::_bookmark_item_pressed(int p_idx) {
 	}
 }
 
-static Vector<Node *> _find_all_node_for_script(Node *p_base, Node *p_current, const Ref<Script> &p_script) {
-	Vector<Node *> nodes;
+static std::vector<Node *> _find_all_node_for_script(Node *p_base, Node *p_current, const Ref<Script> &p_script) {
+	std::vector<Node *> nodes;
 
 	if (p_current->get_owner() != p_base && p_base != p_current) {
 		return nodes;
@@ -591,8 +589,9 @@ static Vector<Node *> _find_all_node_for_script(Node *p_base, Node *p_current, c
 	}
 
 	for (int i = 0; i < p_current->get_child_count(); i++) {
-		Vector<Node *> found = _find_all_node_for_script(p_base, p_current->get_child(i), p_script);
-		nodes.append_array(found);
+		std::vector<Node *> found = _find_all_node_for_script(p_base, p_current->get_child(i), p_script);
+
+		nodes.insert(nodes.end(), found.begin(), found.end());
 	}
 
 	return nodes;
@@ -904,7 +903,7 @@ void ScriptTextEditor::_update_connected_methods() {
 		return;
 	}
 
-	Vector<Node *> nodes = _find_all_node_for_script(base, base, script);
+	std::vector<Node *> nodes = _find_all_node_for_script(base, base, script);
 	Set<StringName> methods_found;
 	for (int i = 0; i < nodes.size(); i++) {
 		List<Connection> connections;
@@ -994,7 +993,7 @@ void ScriptTextEditor::_gutter_clicked(int p_line, int p_gutter) {
 		return;
 	}
 
-	Vector<Node *> nodes = _find_all_node_for_script(base, base, script);
+	std::vector<Node *> nodes = _find_all_node_for_script(base, base, script);
 	connection_info_dialog->popup_connections(method, nodes);
 }
 
@@ -1093,7 +1092,7 @@ void ScriptTextEditor::_edit_option(int p_op) {
 				end = tx->get_line_count() - 1;
 			}
 			scr->get_language()->auto_indent_code(text, begin, end);
-			Vector<String> lines = text.split("\n");
+			std::vector<String> lines = text.split("\n");
 			for (int i = begin; i <= end; ++i) {
 				tx->set_line(i, lines[i]);
 			}
@@ -1123,7 +1122,7 @@ void ScriptTextEditor::_edit_option(int p_op) {
 		} break;
 		case EDIT_EVALUATE: {
 			Expression expression;
-			Vector<String> lines = code_editor->get_text_editor()->get_selection_text().split("\n");
+			std::vector<String> lines = code_editor->get_text_editor()->get_selection_text().split("\n");
 			PackedStringArray results;
 
 			for (int i = 0; i < lines.size(); i++) {
@@ -1581,7 +1580,7 @@ void ScriptTextEditor::_text_edit_gui_input(const Ref<InputEvent> &ev) {
 			if (valid) {
 				color_args = line.substr(begin, end - begin);
 				String stripped = color_args.replace(" ", "").replace("(", "").replace(")", "");
-				Vector<float> color = stripped.split_floats(",");
+				std::vector<float> color = stripped.split_floats(",");
 				if (color.size() > 2) {
 					float alpha = color.size() > 3 ? color[3] : 1.0f;
 					color_picker->set_pick_color(Color(color[0], color[1], color[2], alpha));

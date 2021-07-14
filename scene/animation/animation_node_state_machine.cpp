@@ -162,7 +162,7 @@ StringName AnimationNodeStateMachinePlayback::get_blend_from_node() const {
 	return fading_from;
 }
 
-Vector<StringName> AnimationNodeStateMachinePlayback::get_travel_path() const {
+std::vector<StringName> AnimationNodeStateMachinePlayback::get_travel_path() const {
 	return path;
 }
 
@@ -281,7 +281,7 @@ bool AnimationNodeStateMachinePlayback::_travel(AnimationNodeStateMachine *p_sta
 		at = cost_map[at].prev;
 	}
 
-	path.reverse();
+	std::reverse(path.begin(),  path.end());
 
 	return true;
 }
@@ -458,7 +458,8 @@ float AnimationNodeStateMachinePlayback::process(AnimationNodeStateMachine *p_st
 			}
 
 			if (path.size()) { //if it came from path, remove path
-				path.remove(0);
+				//todo
+				path.erase(path.begin());
 			}
 			current = next;
 			if (switch_mode == AnimationNodeStateMachineTransition::SWITCH_MODE_SYNC) {
@@ -581,13 +582,13 @@ StringName AnimationNodeStateMachine::get_node_name(const Ref<AnimationNode> &p_
 }
 
 void AnimationNodeStateMachine::get_child_nodes(List<ChildNode> *r_child_nodes) {
-	Vector<StringName> nodes;
+	std::vector<StringName> nodes;
 
 	for (Map<StringName, State>::Element *E = states.front(); E; E = E->next()) {
 		nodes.push_back(E->key());
 	}
 
-	nodes.sort_custom<StringName::AlphCompare>();
+	std::sort(nodes.begin(),  nodes.end(), StringName::AlphCompare());
 
 	for (int i = 0; i < nodes.size(); i++) {
 		ChildNode cn;
@@ -617,8 +618,11 @@ void AnimationNodeStateMachine::remove_node(const StringName &p_name) {
 
 	for (int i = 0; i < transitions.size(); i++) {
 		if (transitions[i].from == p_name || transitions[i].to == p_name) {
-			transitions.write[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-			transitions.remove(i);
+			transitions[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
+
+			//todo
+			transitions.erase(transitions.begin() + i);
+
 			i--;
 		}
 	}
@@ -648,11 +652,11 @@ void AnimationNodeStateMachine::rename_node(const StringName &p_name, const Stri
 
 	for (int i = 0; i < transitions.size(); i++) {
 		if (transitions[i].from == p_name) {
-			transitions.write[i].from = p_new_name;
+			transitions[i].from = p_new_name;
 		}
 
 		if (transitions[i].to == p_name) {
-			transitions.write[i].to = p_new_name;
+			transitions[i].to = p_new_name;
 		}
 	}
 
@@ -744,8 +748,10 @@ int AnimationNodeStateMachine::get_transition_count() const {
 void AnimationNodeStateMachine::remove_transition(const StringName &p_from, const StringName &p_to) {
 	for (int i = 0; i < transitions.size(); i++) {
 		if (transitions[i].from == p_from && transitions[i].to == p_to) {
-			transitions.write[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-			transitions.remove(i);
+			transitions[i].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
+
+			//todo
+			transitions.erase(transitions.begin() + i);
 			return;
 		}
 	}
@@ -757,8 +763,10 @@ void AnimationNodeStateMachine::remove_transition(const StringName &p_from, cons
 
 void AnimationNodeStateMachine::remove_transition_by_index(int p_transition) {
 	ERR_FAIL_INDEX(p_transition, transitions.size());
-	transitions.write[p_transition].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
-	transitions.remove(p_transition);
+	transitions[p_transition].transition->disconnect("advance_condition_changed", callable_mp(this, &AnimationNodeStateMachine::_tree_changed));
+
+	//todo
+	transitions.erase(transitions.begin() + p_transition);
 	/*if (playing) {
 		path.clear();
 	}*/

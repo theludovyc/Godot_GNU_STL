@@ -1261,7 +1261,7 @@ void ThemeItemEditorDialog::_update_edit_types() {
 	default_types.sort_custom<StringName::AlphCompare>();
 
 	String selected_type = "";
-	Vector<int> selected_ids = edit_type_list->get_selected_items();
+	std::vector<int> selected_ids = edit_type_list->get_selected_items();
 	if (selected_ids.size() > 0) {
 		selected_type = edit_type_list->get_item_text(selected_ids[0]);
 

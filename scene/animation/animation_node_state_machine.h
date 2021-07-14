@@ -105,7 +105,7 @@ class AnimationNodeStateMachinePlayback : public Resource {
 	float fading_time = 0.0;
 	float fading_pos = 0.0;
 
-	Vector<StringName> path;
+	std::vector<StringName> path;
 	bool playing = false;
 
 	StringName start_request;
@@ -126,7 +126,7 @@ public:
 	bool is_playing() const;
 	StringName get_current_node() const;
 	StringName get_blend_from_node() const;
-	Vector<StringName> get_travel_path() const;
+	std::vector<StringName> get_travel_path() const;
 	float get_current_play_pos() const;
 	float get_current_length() const;
 
@@ -152,7 +152,7 @@ private:
 		Ref<AnimationNodeStateMachineTransition> transition;
 	};
 
-	Vector<Transition> transitions;
+	std::vector<Transition> transitions;
 
 	StringName playback = "playback";
 

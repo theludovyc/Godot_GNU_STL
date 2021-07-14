@@ -30,33 +30,17 @@
 
 #include "property_editor.h"
 
-#include "core/config/project_settings.h"
-#include "core/input/input.h"
-#include "core/io/image_loader.h"
-#include "core/io/marshalls.h"
-#include "core/io/resource_loader.h"
 #include "core/math/expression.h"
-#include "core/object/class_db.h"
 #include "core/os/keyboard.h"
-#include "core/string/print_string.h"
-#include "core/templates/pair.h"
 #include "editor/array_property_edit.h"
 #include "editor/create_dialog.h"
 #include "editor/dictionary_property_edit.h"
 #include "editor/editor_export.h"
 #include "editor/editor_file_system.h"
-#include "editor/editor_help.h"
 #include "editor/editor_node.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
 #include "editor/filesystem_dock.h"
-#include "editor/multi_node_edit.h"
-#include "editor/property_selector.h"
-#include "scene/gui/label.h"
-#include "scene/main/window.h"
-#include "scene/resources/font.h"
 #include "scene/resources/packed_scene.h"
-#include "scene/scene_string_names.h"
 
 void EditorResourceConversionPlugin::_bind_methods() {
 	MethodInfo mi;
@@ -241,7 +225,7 @@ void CustomPropertyEditor::_menu_option(int p_which) {
 					if (p_which >= CONVERT_BASE_ID) {
 						int to_type = p_which - CONVERT_BASE_ID;
 
-						Vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(RES(v));
+						std::vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(RES(v));
 
 						ERR_FAIL_INDEX(to_type, conversions.size());
 
@@ -400,10 +384,10 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 				}
 
 			} else if (hint == PROPERTY_HINT_ENUM) {
-				Vector<String> options = hint_text.split(",");
+				std::vector<String> options = hint_text.split(",");
 				int current_val = 0;
 				for (int i = 0; i < options.size(); i++) {
-					Vector<String> text_split = options[i].split(":");
+					std::vector<String> text_split = options[i].split(":");
 					if (text_split.size() != 1) {
 						current_val = text_split[1].to_int();
 					}
@@ -490,7 +474,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 				easing_draw->show();
 				set_size(Size2(200, 150) * EDSCALE);
 			} else if (hint == PROPERTY_HINT_FLAGS) {
-				Vector<String> flags = hint_text.split(",");
+				std::vector<String> flags = hint_text.split(",");
 				for (int i = 0; i < flags.size(); i++) {
 					String flag = flags[i];
 					if (flag == "") {
@@ -529,7 +513,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 				names.push_back(TTR("Clear"));
 				config_action_buttons(names);
 			} else if (hint == PROPERTY_HINT_ENUM) {
-				Vector<String> options = hint_text.split(",");
+				std::vector<String> options = hint_text.split(",");
 				for (int i = 0; i < options.size(); i++) {
 					menu->add_item(options[i], i);
 				}
@@ -867,7 +851,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 			} else if (hint_text != "") {
 				int idx = 0;
 
-				Vector<EditorData::CustomType> custom_resources;
+				std::vector<EditorData::CustomType> custom_resources;
 
 				if (EditorNode::get_editor_data().get_custom_types().has("Resource")) {
 					custom_resources = EditorNode::get_editor_data().get_custom_types()["Resource"];
@@ -896,7 +880,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 
 						bool is_custom_resource = false;
 						Ref<Texture2D> icon;
-						if (!custom_resources.is_empty()) {
+						if (!custom_resources.empty()) {
 							for (int k = 0; k < custom_resources.size(); k++) {
 								if (custom_resources[k].name == t) {
 									is_custom_resource = true;
@@ -969,7 +953,7 @@ bool CustomPropertyEditor::edit(Object *p_owner, const String &p_name, Variant::
 			}
 
 			if (!RES(v).is_null()) {
-				Vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(RES(v));
+				std::vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin(RES(v));
 				if (conversions.size()) {
 					menu->add_separator();
 				}
@@ -1203,7 +1187,7 @@ void CustomPropertyEditor::_action_pressed(int p_which) {
 					file->clear_filters();
 
 					if (hint_text != "") {
-						Vector<String> extensions = hint_text.split(",");
+						std::vector<String> extensions = hint_text.split(",");
 						for (int i = 0; i < extensions.size(); i++) {
 							String filter = extensions[i];
 							if (filter.begins_with(".")) {
@@ -1828,7 +1812,7 @@ CustomPropertyEditor::CustomPropertyEditor() {
 		action_buttons[i] = memnew(Button);
 		action_buttons[i]->hide();
 		add_child(action_buttons[i]);
-		Vector<Variant> binds;
+		std::vector<Variant> binds;
 		binds.push_back(i);
 		action_buttons[i]->connect("pressed", callable_mp(this, &CustomPropertyEditor::_action_pressed), binds);
 	}

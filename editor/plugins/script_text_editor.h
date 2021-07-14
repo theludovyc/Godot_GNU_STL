@@ -45,7 +45,7 @@ class ConnectionInfoDialog : public AcceptDialog {
 	virtual void ok_pressed() override;
 
 public:
-	void popup_connections(String p_method, Vector<Node *> p_nodes);
+	void popup_connections(String p_method, std::vector<Node *> p_nodes);
 
 	ConnectionInfoDialog();
 };
@@ -61,11 +61,11 @@ class ScriptTextEditor : public ScriptEditorBase {
 	bool script_is_valid = false;
 	bool editor_enabled = false;
 
-	Vector<String> functions;
+	std::vector<String> functions;
 
 	List<Connection> missing_connections;
 
-	Vector<String> member_keywords;
+	std::vector<String> member_keywords;
 
 	HBoxContainer *edit_hb = nullptr;
 
@@ -202,7 +202,7 @@ public:
 	virtual RES get_edited_resource() const override;
 	virtual void set_edited_resource(const RES &p_res) override;
 	virtual void enable_editor() override;
-	virtual Vector<String> get_functions() override;
+	virtual std::vector<String> get_functions() override;
 	virtual void reload_text() override;
 	virtual String get_name() override;
 	virtual Ref<Texture2D> get_theme_icon() override;

@@ -30,14 +30,11 @@
 
 #include "editor_translation_parser.h"
 
-#include "core/error/error_macros.h"
-#include "core/io/file_access.h"
 #include "core/object/script_language.h"
-#include "core/templates/set.h"
 
 EditorTranslationParser *EditorTranslationParser::singleton = nullptr;
 
-Error EditorTranslationParserPlugin::parse_file(const String &p_path, Vector<String> *r_ids, Vector<Vector<String>> *r_ids_ctx_plural) {
+Error EditorTranslationParserPlugin::parse_file(const String &p_path, std::vector<String> *r_ids, std::vector<std::vector<String>> *r_ids_ctx_plural) {
 	if (!get_script_instance()) {
 		return ERR_UNAVAILABLE;
 	}
@@ -49,7 +46,7 @@ Error EditorTranslationParserPlugin::parse_file(const String &p_path, Vector<Str
 
 		// Add user's extracted translatable messages.
 		for (int i = 0; i < ids.size(); i++) {
-			r_ids->append(ids[i]);
+			r_ids->push_back(ids[i]);
 		}
 
 		// Add user's collected translatable messages with context or plurals.
@@ -57,11 +54,11 @@ Error EditorTranslationParserPlugin::parse_file(const String &p_path, Vector<Str
 			Array arr = ids_ctx_plural[i];
 			ERR_FAIL_COND_V_MSG(arr.size() != 3, ERR_INVALID_DATA, "Array entries written into `msgids_context_plural` in `parse_file()` method should have the form [\"message\", \"context\", \"plural message\"]");
 
-			Vector<String> id_ctx_plural;
+			std::vector<String> id_ctx_plural;
 			id_ctx_plural.push_back(arr[0]);
 			id_ctx_plural.push_back(arr[1]);
 			id_ctx_plural.push_back(arr[2]);
-			r_ids_ctx_plural->append(id_ctx_plural);
+			r_ids_ctx_plural->push_back(id_ctx_plural);
 		}
 		return OK;
 	} else {
@@ -158,9 +155,9 @@ void EditorTranslationParser::add_parser(const Ref<EditorTranslationParserPlugin
 
 void EditorTranslationParser::remove_parser(const Ref<EditorTranslationParserPlugin> &p_parser, ParserType p_type) {
 	if (p_type == ParserType::STANDARD) {
-		standard_parsers.erase(p_parser);
+		std::remove(standard_parsers.begin(),  standard_parsers.end(), p_parser);
 	} else if (p_type == ParserType::CUSTOM) {
-		custom_parsers.erase(p_parser);
+		std::remove(custom_parsers.begin(),  custom_parsers.end(), p_parser);
 	}
 }
 

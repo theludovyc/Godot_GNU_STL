@@ -30,23 +30,8 @@
 
 #include "project_export.h"
 
-#include "core/config/project_settings.h"
-#include "core/io/dir_access.h"
-#include "core/io/file_access.h"
-#include "core/io/image_loader.h"
-#include "core/io/resource_loader.h"
-#include "core/io/resource_saver.h"
-#include "core/os/os.h"
-#include "core/string/optimized_translation.h"
-#include "editor_data.h"
 #include "editor_node.h"
 #include "editor_scale.h"
-#include "editor_settings.h"
-#include "scene/gui/box_container.h"
-#include "scene/gui/margin_container.h"
-#include "scene/gui/scroll_container.h"
-#include "scene/gui/tab_container.h"
-#include "servers/display_server.h"
 
 void ProjectExportDialog::_theme_changed() {
 	duplicate_preset->set_icon(presets->get_theme_icon("Duplicate", "EditorIcons"));
@@ -220,7 +205,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	name->set_text(current->get_name());
 
 	List<String> extension_list = current->get_platform()->get_binary_extensions(current);
-	Vector<String> extension_vector;
+	std::vector<String> extension_vector;
 	for (int i = 0; i < extension_list.size(); i++) {
 		extension_vector.push_back("*." + extension_list[i]);
 	}
@@ -241,7 +226,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	String error;
 	if (!current->get_platform()->can_export(current, error, needs_templates)) {
 		if (error != String()) {
-			Vector<String> items = error.split("\n", false);
+			std::vector<String> items = error.split("\n", false);
 			error = "";
 			for (int i = 0; i < items.size(); i++) {
 				if (i > 0) {
@@ -329,7 +314,7 @@ void ProjectExportDialog::_update_feature_list() {
 	current->get_platform()->get_preset_features(current, &features);
 
 	String custom = current->get_custom_features();
-	Vector<String> custom_list = custom.split(",");
+	std::vector<String> custom_list = custom.split(",");
 	for (int i = 0; i < custom_list.size(); i++) {
 		String f = custom_list[i].strip_edges();
 		if (f != String()) {

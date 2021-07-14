@@ -61,7 +61,7 @@ Variant NavigationPolygonEditor::_get_polygon(int p_idx) const {
 	if (navpoly.is_valid()) {
 		return navpoly->get_outline(p_idx);
 	} else {
-		return Variant(Vector<Vector2>());
+		return Variant(std::vector<Vector2>());
 	}
 }
 

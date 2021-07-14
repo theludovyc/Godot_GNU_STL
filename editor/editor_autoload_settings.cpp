@@ -30,12 +30,10 @@
 
 #include "editor_autoload_settings.h"
 
-#include "core/config/project_settings.h"
 #include "core/core_constants.h"
 #include "editor_node.h"
 #include "editor_scale.h"
 #include "project_settings_editor.h"
-#include "scene/main/window.h"
 #include "scene/resources/packed_scene.h"
 
 #define PREVIEW_LIST_MAX_SIZE 10
@@ -628,7 +626,7 @@ void EditorAutoloadSettings::drop_data_fw(const Point2 &p_point, const Variant &
 	Dictionary drop_data = p_data;
 	PackedStringArray autoloads = drop_data["autoloads"];
 
-	Vector<int> orders;
+	std::vector<int> orders;
 	orders.resize(autoload_cache.size());
 
 	for (int i = 0; i < autoloads.size(); i++) {
@@ -650,10 +648,10 @@ void EditorAutoloadSettings::drop_data_fw(const Point2 &p_point, const Variant &
 	int i = 0;
 
 	for (List<AutoLoadInfo>::Element *F = autoload_cache.front(); F; F = F->next()) {
-		orders.write[i++] = F->get().order;
+		orders[i++] = F->get().order;
 	}
 
-	orders.sort();
+	std::sort(orders.begin(),  orders.end());
 
 	UndoRedo *undo_redo = EditorNode::get_undo_redo();
 

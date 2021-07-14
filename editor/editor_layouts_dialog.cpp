@@ -31,7 +31,6 @@
 #include "editor_layouts_dialog.h"
 
 #include "core/io/config_file.h"
-#include "core/object/class_db.h"
 #include "core/os/keyboard.h"
 #include "editor/editor_settings.h"
 #include "scene/gui/item_list.h"
@@ -68,7 +67,7 @@ void EditorLayoutsDialog::_bind_methods() {
 
 void EditorLayoutsDialog::ok_pressed() {
 	if (layout_names->is_anything_selected()) {
-		Vector<int> const selected_items = layout_names->get_selected_items();
+		std::vector<int> const selected_items = layout_names->get_selected_items();
 		for (int i = 0; i < selected_items.size(); ++i) {
 			emit_signal("name_confirmed", layout_names->get_item_text(selected_items[i]));
 		}
