@@ -30,26 +30,35 @@
 
 #include "image_loader_png.h"
 
+#include <iostream>
+#include <string.h>
+
 #include "core/os/os.h"
-#include "core/string/print_string.h"
 #include "drivers/png/png_driver_common.h"
 
-#include <string.h>
+//todo std::vector.data()
 
 Error ImageLoaderPNG::load_image(Ref<Image> p_image, FileAccess *f, bool p_force_linear, float p_scale) {
 	const uint64_t buffer_size = f->get_length();
-	Vector<uint8_t> file_buffer;
-	Error err = file_buffer.resize(buffer_size);
-	if (err) {
+	std::vector<uint8_t> file_buffer;
+
+	try{
+		file_buffer.resize(buffer_size);
+	}catch(std::bad_alloc e){
 		f->close();
-		return err;
+
+		std::cerr << e.what() << std::endl;
+
+		return Error::FAILED;
 	}
+
 	{
-		uint8_t *writer = file_buffer.ptrw();
+		uint8_t *writer = file_buffer.data();
 		f->get_buffer(writer, buffer_size);
 		f->close();
 	}
-	const uint8_t *reader = file_buffer.ptr();
+
+	const uint8_t *reader = file_buffer.data();
 	return PNGDriverCommon::png_to_image(reader, buffer_size, p_force_linear, p_image);
 }
 
@@ -68,32 +77,36 @@ Ref<Image> ImageLoaderPNG::load_mem_png(const uint8_t *p_png, int p_size) {
 	return img;
 }
 
-Ref<Image> ImageLoaderPNG::lossless_unpack_png(const Vector<uint8_t> &p_data) {
+Ref<Image> ImageLoaderPNG::lossless_unpack_png(const std::vector<uint8_t> &p_data) {
 	const int len = p_data.size();
 	ERR_FAIL_COND_V(len < 4, Ref<Image>());
-	const uint8_t *r = p_data.ptr();
+	const uint8_t *r = p_data.data();
 	ERR_FAIL_COND_V(r[0] != 'P' || r[1] != 'N' || r[2] != 'G' || r[3] != ' ', Ref<Image>());
 	return load_mem_png(&r[4], len - 4);
 }
 
-Vector<uint8_t> ImageLoaderPNG::lossless_pack_png(const Ref<Image> &p_image) {
-	Vector<uint8_t> out_buffer;
+std::vector<uint8_t> ImageLoaderPNG::lossless_pack_png(const Ref<Image> &p_image) {
+	std::vector<uint8_t> out_buffer;
 
 	// add Godot's own "PNG " prefix
-	if (out_buffer.resize(4) != OK) {
-		ERR_FAIL_V(Vector<uint8_t>());
+	try{
+		out_buffer.resize(4);
+	}catch (std::bad_alloc e){
+		std::cerr << e.what() << std::endl;
+
+		return std::vector<uint8_t>();
 	}
 
 	// scope for writer lifetime
 	{
 		// must be closed before call to image_to_png
-		uint8_t *writer = out_buffer.ptrw();
+		uint8_t *writer = out_buffer.data();
 		memcpy(writer, "PNG ", 4);
 	}
 
 	Error err = PNGDriverCommon::image_to_png(p_image, out_buffer);
 	if (err) {
-		ERR_FAIL_V(Vector<uint8_t>());
+		ERR_FAIL_V(std::vector<uint8_t>());
 	}
 
 	return out_buffer;
