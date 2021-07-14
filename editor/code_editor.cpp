@@ -30,15 +30,10 @@
 
 #include "code_editor.h"
 
-#include "core/input/input.h"
 #include "core/os/keyboard.h"
 #include "core/string/string_builder.h"
 #include "editor/editor_scale.h"
 #include "editor_node.h"
-#include "editor_settings.h"
-#include "scene/gui/margin_container.h"
-#include "scene/gui/separator.h"
-#include "scene/resources/font.h"
 
 void GotoLineDialog::popup_find_line(CodeEdit *p_edit) {
 	text_editor = p_edit;
@@ -1474,7 +1469,7 @@ void CodeTextEditor::set_edit_state(const Variant &p_state) {
 	}
 
 	if (state.has("folded_lines")) {
-		Vector<int> folded_lines = state["folded_lines"];
+		std::vector<int> folded_lines = state["folded_lines"];
 		for (int i = 0; i < folded_lines.size(); i++) {
 			text_editor->fold_line(folded_lines[i]);
 		}
@@ -1582,10 +1577,10 @@ void CodeTextEditor::_on_settings_change() {
 		} break;
 		case 2: { // Custom.
 			text_editor->clear_opentype_features();
-			Vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_opentype_features")).split(",");
+			std::vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_opentype_features")).split(",");
 			Dictionary ftrs;
 			for (int i = 0; i < subtag.size(); i++) {
-				Vector<String> subtag_a = subtag[i].split("=");
+				std::vector<String> subtag_a = subtag[i].split("=");
 				if (subtag_a.size() == 2) {
 					text_editor->set_opentype_feature(subtag_a[0], subtag_a[1].to_int());
 				} else if (subtag_a.size() == 1) {
@@ -1804,10 +1799,10 @@ CodeTextEditor::CodeTextEditor() {
 		} break;
 		case 2: { // Custom.
 			text_editor->clear_opentype_features();
-			Vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_opentype_features")).split(",");
+			std::vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_opentype_features")).split(",");
 			Dictionary ftrs;
 			for (int i = 0; i < subtag.size(); i++) {
-				Vector<String> subtag_a = subtag[i].split("=");
+				std::vector<String> subtag_a = subtag[i].split("=");
 				if (subtag_a.size() == 2) {
 					text_editor->set_opentype_feature(subtag_a[0], subtag_a[1].to_int());
 				} else if (subtag_a.size() == 1) {

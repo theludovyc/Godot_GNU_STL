@@ -30,9 +30,7 @@
 
 #include "editor_feature_profile.h"
 
-#include "core/io/dir_access.h"
 #include "core/io/json.h"
-#include "editor/editor_settings.h"
 #include "editor_node.h"
 #include "editor_scale.h"
 
@@ -345,7 +343,7 @@ void EditorFeatureProfileManager::_update_profile_list(const String &p_select_pr
 		selected_profile = p_select_profile;
 	}
 
-	Vector<String> profiles;
+	std::vector<String> profiles;
 	DirAccessRef d = DirAccess::open(EditorSettings::get_singleton()->get_feature_profiles_dir());
 	ERR_FAIL_COND_MSG(!d, "Cannot open directory '" + EditorSettings::get_singleton()->get_feature_profiles_dir() + "'.");
 
@@ -364,7 +362,7 @@ void EditorFeatureProfileManager::_update_profile_list(const String &p_select_pr
 		}
 	}
 
-	profiles.sort();
+	std::sort(profiles.begin(),  profiles.end());
 
 	profile_list->clear();
 
@@ -775,7 +773,7 @@ void EditorFeatureProfileManager::_update_selected_profile() {
 	_class_list_item_selected();
 }
 
-void EditorFeatureProfileManager::_import_profiles(const Vector<String> &p_paths) {
+void EditorFeatureProfileManager::_import_profiles(const std::vector<String> &p_paths) {
 	//test it first
 	for (int i = 0; i < p_paths.size(); i++) {
 		Ref<EditorFeatureProfile> profile;
