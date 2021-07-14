@@ -41,6 +41,8 @@
 #include "progress_dialog.h"
 #include "scene/gui/link_button.h"
 
+//std::vector.data()
+
 void ExportTemplateManager::_update_template_status() {
 	// Fetch installed templates from the file system.
 	DirAccess *da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
@@ -238,7 +240,7 @@ void ExportTemplateManager::_refresh_mirrors_completed(int p_status, int p_code,
 
 	String response_json;
 	{
-		const uint8_t *r = p_data.ptr();
+		const uint8_t *r = p_data.data();
 		response_json.parse_utf8((const char *)r, p_data.size());
 	}
 
@@ -393,16 +395,16 @@ bool ExportTemplateManager::_install_file_selected(const String &p_file, bool p_
 
 		String file = fname;
 		if (file.ends_with("version.txt")) {
-			Vector<uint8_t> data;
+			std::vector<uint8_t> data;
 			data.resize(info.uncompressed_size);
 
 			// Read.
 			unzOpenCurrentFile(pkg);
-			ret = unzReadCurrentFile(pkg, data.ptrw(), data.size());
+			ret = unzReadCurrentFile(pkg, data.data(), data.size());
 			unzCloseCurrentFile(pkg);
 
 			String data_str;
-			data_str.parse_utf8((const char *)data.ptr(), data.size());
+			data_str.parse_utf8((const char *)data.data(), data.size());
 			data_str = data_str.strip_edges();
 
 			// Version number should be of the form major.minor[.patch].status[.module_config]
@@ -461,12 +463,12 @@ bool ExportTemplateManager::_install_file_selected(const String &p_file, bool p_
 			continue;
 		}
 
-		Vector<uint8_t> data;
+		std::vector<uint8_t> data;
 		data.resize(info.uncompressed_size);
 
 		// Read
 		unzOpenCurrentFile(pkg);
-		unzReadCurrentFile(pkg, data.ptrw(), data.size());
+		unzReadCurrentFile(pkg, data.data(), data.size());
 		unzCloseCurrentFile(pkg);
 
 		String base_dir = file_path.get_base_dir().trim_suffix("/");
@@ -499,7 +501,7 @@ bool ExportTemplateManager::_install_file_selected(const String &p_file, bool p_
 			ERR_CONTINUE_MSG(true, "Can't open file from path '" + String(to_write) + "'.");
 		}
 
-		f->store_buffer(data.ptr(), data.size());
+		f->store_buffer(data.data(), data.size());
 
 #ifndef WINDOWS_ENABLED
 		FileAccess::set_unix_permissions(to_write, (info.external_fa >> 16) & 0x01FF);
@@ -695,12 +697,12 @@ Error ExportTemplateManager::install_android_template() {
 		String base_dir = path.get_base_dir();
 
 		if (!path.ends_with("/")) {
-			Vector<uint8_t> data;
+			std::vector<uint8_t> data;
 			data.resize(info.uncompressed_size);
 
 			// Read.
 			unzOpenCurrentFile(pkg);
-			unzReadCurrentFile(pkg, data.ptrw(), data.size());
+			unzReadCurrentFile(pkg, data.data(), data.size());
 			unzCloseCurrentFile(pkg);
 
 			if (!dirs_tested.has(base_dir)) {
@@ -711,7 +713,7 @@ Error ExportTemplateManager::install_android_template() {
 			String to_write = String("res://android/build").plus_file(path);
 			FileAccess *f = FileAccess::open(to_write, FileAccess::WRITE);
 			if (f) {
-				f->store_buffer(data.ptr(), data.size());
+				f->store_buffer(data.data(), data.size());
 				memdelete(f);
 #ifndef WINDOWS_ENABLED
 				FileAccess::set_unix_permissions(to_write, (info.external_fa >> 16) & 0x01FF);

@@ -30,11 +30,11 @@
 
 #include "font.h"
 
-#include "core/io/resource_loader.h"
 #include "core/string/translation.h"
-#include "core/templates/hashfuncs.h"
 #include "scene/resources/text_line.h"
 #include "scene/resources/text_paragraph.h"
+
+//todo std::vector.data()
 
 void FontData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("load_resource", "filename", "base_size"), &FontData::load_resource, DEFVAL(16));
@@ -173,13 +173,13 @@ bool FontData::_get(const StringName &p_name, Variant &r_ret) const {
 }
 
 void FontData::_get_property_list(List<PropertyInfo> *p_list) const {
-	Vector<String> lang_over = get_language_support_overrides();
+	std::vector<String> lang_over = get_language_support_overrides();
 	for (int i = 0; i < lang_over.size(); i++) {
 		p_list->push_back(PropertyInfo(Variant::BOOL, "language_support_override/" + lang_over[i], PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_STORAGE));
 	}
 	p_list->push_back(PropertyInfo(Variant::NIL, "language_support_override/_new", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
 
-	Vector<String> scr_over = get_script_support_overrides();
+	std::vector<String> scr_over = get_script_support_overrides();
 	for (int i = 0; i < scr_over.size(); i++) {
 		p_list->push_back(PropertyInfo(Variant::BOOL, "script_support_override/" + scr_over[i], PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_STORAGE));
 	}
@@ -218,8 +218,8 @@ void FontData::_load_memory(const PackedByteArray &p_data, const String &p_type,
 	if (rid != RID()) {
 		TS->free(rid);
 	}
-	rid = TS->create_font_memory(p_data.ptr(), p_data.size(), p_type, p_base_size);
-	path = TTR("(Memory: " + p_type.to_upper() + " @ 0x" + String::num_int64((uint64_t)p_data.ptr(), 16, true) + ")");
+	rid = TS->create_font_memory(p_data.data(), p_data.size(), p_type, p_base_size);
+	path = TTR("(Memory: " + p_type.to_upper() + " @ 0x" + String::num_int64((uint64_t)p_data.data(), 16, true) + ")");
 	base_size = TS->font_get_base_size(rid);
 	emit_changed();
 }
@@ -464,9 +464,9 @@ void FontData::remove_language_support_override(const String &p_language) {
 	emit_changed();
 }
 
-Vector<String> FontData::get_language_support_overrides() const {
+std::vector<String> FontData::get_language_support_overrides() const {
 	if (rid == RID()) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 	return TS->font_get_language_support_overrides(rid);
 }
@@ -497,9 +497,9 @@ void FontData::remove_script_support_override(const String &p_script) {
 	emit_changed();
 }
 
-Vector<String> FontData::get_script_support_overrides() const {
+std::vector<String> FontData::get_script_support_overrides() const {
 	if (rid == RID()) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 	return TS->font_get_script_support_overrides(rid);
 }
@@ -673,7 +673,7 @@ void Font::add_data(const Ref<FontData> &p_data) {
 	data.push_back(p_data);
 
 	if (data[data.size() - 1].is_valid()) {
-		data.write[data.size() - 1]->connect("changed", callable_mp(this, &Font::_data_changed), varray(), CONNECT_REFERENCE_COUNTED);
+		data[data.size() - 1]->connect("changed", callable_mp(this, &Font::_data_changed), varray(), CONNECT_REFERENCE_COUNTED);
 	}
 
 	cache.clear();
@@ -688,13 +688,13 @@ void Font::set_data(int p_idx, const Ref<FontData> &p_data) {
 	ERR_FAIL_INDEX(p_idx, data.size());
 
 	if (data[p_idx].is_valid()) {
-		data.write[p_idx]->disconnect("changed", callable_mp(this, &Font::_data_changed));
+		data[p_idx]->disconnect("changed", callable_mp(this, &Font::_data_changed));
 	}
 
-	data.write[p_idx] = p_data;
+	data[p_idx] = p_data;
 
 	if (data[p_idx].is_valid()) {
-		data.write[p_idx]->connect("changed", callable_mp(this, &Font::_data_changed), varray(), CONNECT_REFERENCE_COUNTED);
+		data[p_idx]->connect("changed", callable_mp(this, &Font::_data_changed), varray(), CONNECT_REFERENCE_COUNTED);
 	}
 
 	cache.clear();
@@ -717,10 +717,11 @@ void Font::remove_data(int p_idx) {
 	ERR_FAIL_INDEX(p_idx, data.size());
 
 	if (data[p_idx].is_valid()) {
-		data.write[p_idx]->disconnect("changed", callable_mp(this, &Font::_data_changed));
+		data[p_idx]->disconnect("changed", callable_mp(this, &Font::_data_changed));
 	}
 
-	data.remove(p_idx);
+	//todo
+	data.erase(data.begin() + p_idx);
 
 	cache.clear();
 	cache_wrap.clear();
@@ -804,7 +805,7 @@ void Font::set_spacing(int p_type, int p_value) {
 // Drawing string and string sizes, cached.
 
 Size2 Font::get_string_size(const String &p_text, int p_size) const {
-	ERR_FAIL_COND_V(data.is_empty(), Size2());
+	ERR_FAIL_COND_V(data.empty(), Size2());
 
 	uint64_t hash = p_text.hash64();
 	hash = hash_djb2_one_64(p_size, hash);
@@ -826,7 +827,7 @@ Size2 Font::get_string_size(const String &p_text, int p_size) const {
 }
 
 Size2 Font::get_multiline_string_size(const String &p_text, float p_width, int p_size, uint8_t p_flags) const {
-	ERR_FAIL_COND_V(data.is_empty(), Size2());
+	ERR_FAIL_COND_V(data.empty(), Size2());
 
 	uint64_t hash = p_text.hash64();
 	hash = hash_djb2_one_64(p_size, hash);
@@ -861,7 +862,7 @@ Size2 Font::get_multiline_string_size(const String &p_text, float p_width, int p
 }
 
 void Font::draw_string(RID p_canvas_item, const Point2 &p_pos, const String &p_text, HAlign p_align, float p_width, int p_size, const Color &p_modulate, int p_outline_size, const Color &p_outline_modulate, uint8_t p_flags) const {
-	ERR_FAIL_COND(data.is_empty());
+	ERR_FAIL_COND(data.empty());
 
 	uint64_t hash = p_text.hash64();
 	hash = hash_djb2_one_64(p_size, hash);
@@ -893,7 +894,7 @@ void Font::draw_string(RID p_canvas_item, const Point2 &p_pos, const String &p_t
 }
 
 void Font::draw_multiline_string(RID p_canvas_item, const Point2 &p_pos, const String &p_text, HAlign p_align, float p_width, int p_max_lines, int p_size, const Color &p_modulate, int p_outline_size, const Color &p_outline_modulate, uint8_t p_flags) const {
-	ERR_FAIL_COND(data.is_empty());
+	ERR_FAIL_COND(data.empty());
 
 	uint64_t hash = p_text.hash64();
 	hash = hash_djb2_one_64(p_size, hash);
@@ -1008,8 +1009,8 @@ float Font::draw_char(RID p_canvas_item, const Point2 &p_pos, char32_t p_char, c
 	return 0;
 }
 
-Vector<RID> Font::get_rids() const {
-	Vector<RID> ret;
+std::vector<RID> Font::get_rids() const {
+	std::vector<RID> ret;
 	for (int i = 0; i < data.size(); i++) {
 		RID rid = data[i]->get_rid();
 		if (rid != RID()) {

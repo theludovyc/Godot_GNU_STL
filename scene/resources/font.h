@@ -119,13 +119,13 @@ public:
 	void set_language_support_override(const String &p_language, bool p_supported);
 	bool get_language_support_override(const String &p_language) const;
 	void remove_language_support_override(const String &p_language);
-	Vector<String> get_language_support_overrides() const;
+	std::vector<String> get_language_support_overrides() const;
 
 	bool is_script_supported(const String &p_script) const;
 	void set_script_support_override(const String &p_script, bool p_supported);
 	bool get_script_support_override(const String &p_script) const;
 	void remove_script_support_override(const String &p_script);
-	Vector<String> get_script_support_overrides() const;
+	std::vector<String> get_script_support_overrides() const;
 
 	uint32_t get_glyph_index(char32_t p_char, char32_t p_variation_selector = 0x0000) const;
 
@@ -160,7 +160,7 @@ private:
 	mutable LRUCache<uint64_t, Ref<TextLine>> cache;
 	mutable LRUCache<uint64_t, Ref<TextParagraph>> cache_wrap;
 
-	Vector<Ref<FontData>> data;
+	std::vector<Ref<FontData>> data;
 
 protected:
 	static void _bind_methods();
@@ -207,7 +207,7 @@ public:
 	Size2 get_char_size(char32_t p_char, char32_t p_next = 0, int p_size = -1) const;
 	float draw_char(RID p_canvas_item, const Point2 &p_pos, char32_t p_char, char32_t p_next = 0, int p_size = -1, const Color &p_modulate = Color(1, 1, 1), int p_outline_size = 0, const Color &p_outline_modulate = Color(1, 1, 1, 0)) const;
 
-	Vector<RID> get_rids() const;
+	std::vector<RID> get_rids() const;
 
 	void update_changes();
 

@@ -30,10 +30,11 @@
 
 #include "editor_spin_slider.h"
 
-#include "core/input/input.h"
 #include "core/math/expression.h"
 #include "editor_node.h"
 #include "editor_scale.h"
+
+//todo std::vector.data()
 
 String EditorSpinSlider::get_tooltip(const Point2 &p_pos) const {
 	if (grabber->is_visible()) {
@@ -279,9 +280,9 @@ void EditorSpinSlider::_notification(int p_what) {
 
 		float text_start = rtl ? Math::round(sb->get_offset().x) : Math::round(sb->get_offset().x + label_width + sep);
 		Vector2 text_ofs = rtl ? Vector2(text_start + (number_width - TS->shaped_text_get_width(num_rid)), vofs) : Vector2(text_start, vofs);
-		const Vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(num_rid);
+		const std::vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(num_rid);
 		int v_size = visual.size();
-		const TextServer::Glyph *glyphs = visual.ptr();
+		const TextServer::Glyph *glyphs = visual.data();
 		for (int i = 0; i < v_size; i++) {
 			for (int j = 0; j < glyphs[i].repeat; j++) {
 				if (text_ofs.x >= text_start && (text_ofs.x + glyphs[i].advance) <= (text_start + number_width)) {

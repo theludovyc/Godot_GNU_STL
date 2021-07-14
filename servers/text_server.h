@@ -160,7 +160,7 @@ public:
 			int start = -1;
 			int end = -1;
 
-			Vector<RID> fonts;
+			std::vector<RID> fonts;
 			int font_size = 0;
 
 			Variant embedded_key;
@@ -168,7 +168,7 @@ public:
 			String language;
 			Dictionary features;
 		};
-		Vector<Span> spans;
+		std::vector<Span> spans;
 
 		struct EmbeddedObject {
 			int pos = 0;
@@ -194,8 +194,8 @@ public:
 		float upos = 0.f;
 		float uthk = 0.f;
 
-		Vector<TextServer::Glyph> glyphs;
-		Vector<TextServer::Glyph> glyphs_logical;
+		std::vector<TextServer::Glyph> glyphs;
+		std::vector<TextServer::Glyph> glyphs_logical;
 	};
 
 protected:
@@ -277,13 +277,13 @@ public:
 	virtual void font_set_language_support_override(RID p_font, const String &p_language, bool p_supported) = 0;
 	virtual bool font_get_language_support_override(RID p_font, const String &p_language) = 0;
 	virtual void font_remove_language_support_override(RID p_font, const String &p_language) = 0;
-	virtual Vector<String> font_get_language_support_overrides(RID p_font) = 0;
+	virtual std::vector<String> font_get_language_support_overrides(RID p_font) = 0;
 
 	virtual bool font_is_script_supported(RID p_font, const String &p_script) const = 0;
 	virtual void font_set_script_support_override(RID p_font, const String &p_script, bool p_supported) = 0;
 	virtual bool font_get_script_support_override(RID p_font, const String &p_script) = 0;
 	virtual void font_remove_script_support_override(RID p_font, const String &p_script) = 0;
-	virtual Vector<String> font_get_script_support_overrides(RID p_font) = 0;
+	virtual std::vector<String> font_get_script_support_overrides(RID p_font) = 0;
 
 	virtual uint32_t font_get_glyph_index(RID p_font, char32_t p_char, char32_t p_variation_selector = 0x0000) const = 0;
 	virtual Vector2 font_get_glyph_advance(RID p_font, uint32_t p_index, int p_size) const = 0;
@@ -292,7 +292,7 @@ public:
 	virtual Vector2 font_draw_glyph(RID p_font, RID p_canvas, int p_size, const Vector2 &p_pos, uint32_t p_index, const Color &p_color = Color(1, 1, 1)) const = 0;
 	virtual Vector2 font_draw_glyph_outline(RID p_font, RID p_canvas, int p_size, int p_outline_size, const Vector2 &p_pos, uint32_t p_index, const Color &p_color = Color(1, 1, 1)) const = 0;
 
-	virtual bool font_get_glyph_contours(RID p_font, int p_size, uint32_t p_index, Vector<Vector3> &r_points, Vector<int32_t> &r_contours, bool &r_orientation) const = 0;
+	virtual bool font_get_glyph_contours(RID p_font, int p_size, uint32_t p_index, std::vector<Vector3> &r_points, std::vector<int32_t> &r_contours, bool &r_orientation) const = 0;
 
 	virtual float font_get_oversampling() const = 0;
 	virtual void font_set_oversampling(float p_oversampling) = 0;
@@ -300,7 +300,7 @@ public:
 	Vector2 get_hex_code_box_size(int p_size, char32_t p_index) const;
 	void draw_hex_code_box(RID p_canvas, int p_size, const Vector2 &p_pos, char32_t p_index, const Color &p_color) const;
 
-	virtual Vector<String> get_system_fonts() const = 0;
+	virtual std::vector<String> get_system_fonts() const = 0;
 
 	/* Shaped text buffer interface */
 
@@ -311,7 +311,7 @@ public:
 	virtual void shaped_text_set_direction(RID p_shaped, Direction p_direction = DIRECTION_AUTO) = 0;
 	virtual Direction shaped_text_get_direction(RID p_shaped) const = 0;
 
-	virtual void shaped_text_set_bidi_override(RID p_shaped, const Vector<Vector2i> &p_override) = 0;
+	virtual void shaped_text_set_bidi_override(RID p_shaped, const std::vector<Vector2i> &p_override) = 0;
 
 	virtual void shaped_text_set_orientation(RID p_shaped, Orientation p_orientation = ORIENTATION_HORIZONTAL) = 0;
 	virtual Orientation shaped_text_get_orientation(RID p_shaped) const = 0;
@@ -322,7 +322,7 @@ public:
 	virtual void shaped_text_set_preserve_control(RID p_shaped, bool p_enabled) = 0;
 	virtual bool shaped_text_get_preserve_control(RID p_shaped) const = 0;
 
-	virtual bool shaped_text_add_string(RID p_shaped, const String &p_text, const Vector<RID> &p_fonts, int p_size, const Dictionary &p_opentype_features = Dictionary(), const String &p_language = "") = 0;
+	virtual bool shaped_text_add_string(RID p_shaped, const String &p_text, const std::vector<RID> &p_fonts, int p_size, const Dictionary &p_opentype_features = Dictionary(), const String &p_language = "") = 0;
 	virtual bool shaped_text_add_object(RID p_shaped, Variant p_key, const Size2 &p_size, VAlign p_inline_align = VALIGN_CENTER, int p_length = 1) = 0;
 	virtual bool shaped_text_resize_object(RID p_shaped, Variant p_key, const Size2 &p_size, VAlign p_inline_align = VALIGN_CENTER) = 0;
 
@@ -330,7 +330,7 @@ public:
 	virtual RID shaped_text_get_parent(RID p_shaped) const = 0;
 
 	virtual float shaped_text_fit_to_width(RID p_shaped, float p_width, uint8_t /*JustificationFlag*/ p_jst_flags = JUSTIFICATION_WORD_BOUND | JUSTIFICATION_KASHIDA) = 0;
-	virtual float shaped_text_tab_align(RID p_shaped, const Vector<float> &p_tab_stops) = 0;
+	virtual float shaped_text_tab_align(RID p_shaped, const std::vector<float> &p_tab_stops) = 0;
 
 	virtual bool shaped_text_shape(RID p_shaped) = 0;
 	virtual bool shaped_text_update_breaks(RID p_shaped) = 0;
@@ -338,15 +338,15 @@ public:
 
 	virtual bool shaped_text_is_ready(RID p_shaped) const = 0;
 
-	virtual Vector<Glyph> shaped_text_get_glyphs(RID p_shaped) const = 0;
+	virtual std::vector<Glyph> shaped_text_get_glyphs(RID p_shaped) const = 0;
 
 	virtual Vector2i shaped_text_get_range(RID p_shaped) const = 0;
 
-	virtual Vector<Glyph> shaped_text_sort_logical(RID p_shaped) = 0;
+	virtual std::vector<Glyph> shaped_text_sort_logical(RID p_shaped) = 0;
 
-	virtual Vector<Vector2i> shaped_text_get_line_breaks_adv(RID p_shaped, const Vector<float> &p_width, int p_start = 0, bool p_once = true, uint8_t /*TextBreakFlag*/ p_break_flags = BREAK_MANDATORY | BREAK_WORD_BOUND) const;
-	virtual Vector<Vector2i> shaped_text_get_line_breaks(RID p_shaped, float p_width, int p_start = 0, uint8_t /*TextBreakFlag*/ p_break_flags = BREAK_MANDATORY | BREAK_WORD_BOUND) const;
-	virtual Vector<Vector2i> shaped_text_get_word_breaks(RID p_shaped) const;
+	virtual std::vector<Vector2i> shaped_text_get_line_breaks_adv(RID p_shaped, const std::vector<float> &p_width, int p_start = 0, bool p_once = true, uint8_t /*TextBreakFlag*/ p_break_flags = BREAK_MANDATORY | BREAK_WORD_BOUND) const;
+	virtual std::vector<Vector2i> shaped_text_get_line_breaks(RID p_shaped, float p_width, int p_start = 0, uint8_t /*TextBreakFlag*/ p_break_flags = BREAK_MANDATORY | BREAK_WORD_BOUND) const;
+	virtual std::vector<Vector2i> shaped_text_get_word_breaks(RID p_shaped) const;
 	virtual Array shaped_text_get_objects(RID p_shaped) const = 0;
 	virtual Rect2 shaped_text_get_object_rect(RID p_shaped, Variant p_key) const = 0;
 
@@ -360,7 +360,7 @@ public:
 	virtual Direction shaped_text_get_dominant_direciton_in_range(RID p_shaped, int p_start, int p_end) const;
 
 	virtual void shaped_text_get_carets(RID p_shaped, int p_position, Rect2 &p_leading_caret, Direction &p_leading_dir, Rect2 &p_trailing_caret, Direction &p_trailing_dir) const;
-	virtual Vector<Vector2> shaped_text_get_selection(RID p_shaped, int p_start, int p_end) const;
+	virtual std::vector<Vector2> shaped_text_get_selection(RID p_shaped, int p_start, int p_end) const;
 
 	virtual int shaped_text_hit_test_grapheme(RID p_shaped, float p_coords) const; // Return grapheme index.
 	virtual int shaped_text_hit_test_position(RID p_shaped, float p_coords) const; // Return caret/selection position.

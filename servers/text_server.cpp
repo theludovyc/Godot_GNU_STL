@@ -31,6 +31,8 @@
 #include "servers/text_server.h"
 #include "scene/main/canvas_item.h"
 
+//todo std::vector.data()
+
 TextServerManager *TextServerManager::singleton = nullptr;
 TextServer *TextServerManager::server = nullptr;
 TextServerManager::TextServerCreate TextServerManager::server_create_functions[TextServerManager::MAX_SERVERS];
@@ -463,7 +465,7 @@ void TextServer::initialize_hex_code_box_fonts() {
 	};
 
 	if (RenderingServer::get_singleton() != nullptr) {
-		Vector<uint8_t> hex_box_data;
+		std::vector<uint8_t> hex_box_data;
 
 		Ref<Image> image;
 		image.instantiate();
@@ -471,7 +473,7 @@ void TextServer::initialize_hex_code_box_fonts() {
 		Ref<ImageTexture> hex_code_image_tex[2];
 
 		hex_box_data.resize(tamsyn5x9_png_len);
-		memcpy(hex_box_data.ptrw(), tamsyn5x9_png, tamsyn5x9_png_len);
+		memcpy(hex_box_data.data(), tamsyn5x9_png, tamsyn5x9_png_len);
 		image->load_png_from_buffer(hex_box_data);
 		hex_code_image_tex[0].instantiate();
 		hex_code_image_tex[0]->create_from_image(image);
@@ -481,7 +483,7 @@ void TextServer::initialize_hex_code_box_fonts() {
 		hex_box_data.clear();
 
 		hex_box_data.resize(tamsyn10x20_png_len);
-		memcpy(hex_box_data.ptrw(), tamsyn10x20_png, tamsyn10x20_png_len);
+		memcpy(hex_box_data.data(), tamsyn10x20_png, tamsyn10x20_png_len);
 		image->load_png_from_buffer(hex_box_data);
 		hex_code_image_tex[1].instantiate();
 		hex_code_image_tex[1]->create_from_image(image);
@@ -565,13 +567,13 @@ void TextServer::draw_hex_code_box(RID p_canvas, int p_size, const Vector2 &p_po
 	}
 }
 
-Vector<Vector2i> TextServer::shaped_text_get_line_breaks_adv(RID p_shaped, const Vector<float> &p_width, int p_start, bool p_once, uint8_t /*TextBreakFlag*/ p_break_flags) const {
-	Vector<Vector2i> lines;
+std::vector<Vector2i> TextServer::shaped_text_get_line_breaks_adv(RID p_shaped, const std::vector<float> &p_width, int p_start, bool p_once, uint8_t /*TextBreakFlag*/ p_break_flags) const {
+	std::vector<Vector2i> lines;
 
-	ERR_FAIL_COND_V(p_width.is_empty(), lines);
+	ERR_FAIL_COND_V(p_width.empty(), lines);
 
 	const_cast<TextServer *>(this)->shaped_text_update_breaks(p_shaped);
-	const Vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
+	const std::vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
 	const Vector2i &range = shaped_text_get_range(p_shaped);
 
 	float width = 0.f;
@@ -580,7 +582,7 @@ Vector<Vector2i> TextServer::shaped_text_get_line_breaks_adv(RID p_shaped, const
 	int chunk = 0;
 
 	int l_size = logical.size();
-	const Glyph *l_gl = logical.ptr();
+	const Glyph *l_gl = logical.data();
 
 	for (int i = 0; i < l_size; i++) {
 		if (l_gl[i].start < p_start) {
@@ -636,11 +638,11 @@ Vector<Vector2i> TextServer::shaped_text_get_line_breaks_adv(RID p_shaped, const
 	return lines;
 }
 
-Vector<Vector2i> TextServer::shaped_text_get_line_breaks(RID p_shaped, float p_width, int p_start, uint8_t /*TextBreakFlag*/ p_break_flags) const {
-	Vector<Vector2i> lines;
+std::vector<Vector2i> TextServer::shaped_text_get_line_breaks(RID p_shaped, float p_width, int p_start, uint8_t /*TextBreakFlag*/ p_break_flags) const {
+	std::vector<Vector2i> lines;
 
 	const_cast<TextServer *>(this)->shaped_text_update_breaks(p_shaped);
-	const Vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
+	const std::vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
 	const Vector2i &range = shaped_text_get_range(p_shaped);
 
 	float width = 0.f;
@@ -648,7 +650,7 @@ Vector<Vector2i> TextServer::shaped_text_get_line_breaks(RID p_shaped, float p_w
 	int last_safe_break = -1;
 
 	int l_size = logical.size();
-	const Glyph *l_gl = logical.ptr();
+	const Glyph *l_gl = logical.data();
 
 	for (int i = 0; i < l_size; i++) {
 		if (l_gl[i].start < p_start) {
@@ -695,17 +697,17 @@ Vector<Vector2i> TextServer::shaped_text_get_line_breaks(RID p_shaped, float p_w
 	return lines;
 }
 
-Vector<Vector2i> TextServer::shaped_text_get_word_breaks(RID p_shaped) const {
-	Vector<Vector2i> words;
+std::vector<Vector2i> TextServer::shaped_text_get_word_breaks(RID p_shaped) const {
+	std::vector<Vector2i> words;
 
 	const_cast<TextServer *>(this)->shaped_text_update_justification_ops(p_shaped);
-	const Vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
+	const std::vector<Glyph> &logical = const_cast<TextServer *>(this)->shaped_text_sort_logical(p_shaped);
 	const Vector2i &range = shaped_text_get_range(p_shaped);
 
 	int word_start = range.x;
 
 	int l_size = logical.size();
-	const Glyph *l_gl = logical.ptr();
+	const Glyph *l_gl = logical.data();
 
 	for (int i = 0; i < l_size; i++) {
 		if (l_gl[i].count > 0) {
@@ -723,8 +725,8 @@ Vector<Vector2i> TextServer::shaped_text_get_word_breaks(RID p_shaped) const {
 }
 
 void TextServer::shaped_text_get_carets(RID p_shaped, int p_position, Rect2 &p_leading_caret, Direction &p_leading_dir, Rect2 &p_trailing_caret, Direction &p_trailing_dir) const {
-	Vector<Rect2> carets;
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	std::vector<Rect2> carets;
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 	TextServer::Orientation orientation = shaped_text_get_orientation(p_shaped);
 	const Vector2 &range = shaped_text_get_range(p_shaped);
 	float ascent = shaped_text_get_ascent(p_shaped);
@@ -736,7 +738,7 @@ void TextServer::shaped_text_get_carets(RID p_shaped, int p_position, Rect2 &p_l
 	p_trailing_dir = DIRECTION_AUTO;
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	for (int i = 0; i < v_size; i++) {
 		if (glyphs[i].count > 0) {
@@ -871,7 +873,7 @@ void TextServer::shaped_text_get_carets(RID p_shaped, int p_position, Rect2 &p_l
 }
 
 TextServer::Direction TextServer::shaped_text_get_dominant_direciton_in_range(RID p_shaped, int p_start, int p_end) const {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 
 	if (p_start == p_end) {
 		return DIRECTION_AUTO;
@@ -884,7 +886,7 @@ TextServer::Direction TextServer::shaped_text_get_dominant_direciton_in_range(RI
 	int ltr = 0;
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	for (int i = 0; i < v_size; i++) {
 		if ((glyphs[i].end > start) && (glyphs[i].start < end)) {
@@ -906,9 +908,9 @@ TextServer::Direction TextServer::shaped_text_get_dominant_direciton_in_range(RI
 	}
 }
 
-Vector<Vector2> TextServer::shaped_text_get_selection(RID p_shaped, int p_start, int p_end) const {
-	Vector<Vector2> ranges;
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+std::vector<Vector2> TextServer::shaped_text_get_selection(RID p_shaped, int p_start, int p_end) const {
+	std::vector<Vector2> ranges;
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 
 	if (p_start == p_end) {
 		return ranges;
@@ -918,7 +920,7 @@ Vector<Vector2> TextServer::shaped_text_get_selection(RID p_shaped, int p_start,
 	int end = MAX(p_start, p_end);
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	float off = 0.0f;
 	for (int i = 0; i < v_size; i++) {
@@ -988,8 +990,10 @@ Vector<Vector2> TextServer::shaped_text_get_selection(RID p_shaped, int p_start,
 		int j = i + 1;
 		while (j < ranges.size()) {
 			if (Math::is_equal_approx(ranges[i].y, ranges[j].x, (real_t)UNIT_EPSILON)) {
-				ranges.write[i].y = ranges[j].y;
-				ranges.remove(j);
+				ranges[i].y = ranges[j].y;
+
+				//todo
+				ranges.erase(ranges.begin() + j);
 				continue;
 			}
 			j++;
@@ -1001,13 +1005,13 @@ Vector<Vector2> TextServer::shaped_text_get_selection(RID p_shaped, int p_start,
 }
 
 int TextServer::shaped_text_hit_test_grapheme(RID p_shaped, float p_coords) const {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 
 	// Exact grapheme hit test, return -1 if missed.
 	float off = 0.0f;
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	for (int i = 0; i < v_size; i++) {
 		for (int j = 0; j < glyphs[i].repeat; j++) {
@@ -1021,10 +1025,10 @@ int TextServer::shaped_text_hit_test_grapheme(RID p_shaped, float p_coords) cons
 }
 
 int TextServer::shaped_text_hit_test_position(RID p_shaped, float p_coords) const {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	// Cursor placement hit test.
 
@@ -1091,9 +1095,9 @@ int TextServer::shaped_text_hit_test_position(RID p_shaped, float p_coords) cons
 }
 
 int TextServer::shaped_text_next_grapheme_pos(RID p_shaped, int p_pos) {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 	for (int i = 0; i < v_size; i++) {
 		if (p_pos >= glyphs[i].start && p_pos < glyphs[i].end) {
 			return glyphs[i].end;
@@ -1103,9 +1107,9 @@ int TextServer::shaped_text_next_grapheme_pos(RID p_shaped, int p_pos) {
 }
 
 int TextServer::shaped_text_prev_grapheme_pos(RID p_shaped, int p_pos) {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 	for (int i = 0; i < v_size; i++) {
 		if (p_pos > glyphs[i].start && p_pos <= glyphs[i].end) {
 			return glyphs[i].start;
@@ -1116,12 +1120,12 @@ int TextServer::shaped_text_prev_grapheme_pos(RID p_shaped, int p_pos) {
 }
 
 void TextServer::shaped_text_draw(RID p_shaped, RID p_canvas, const Vector2 &p_pos, float p_clip_l, float p_clip_r, const Color &p_color) const {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 	TextServer::Orientation orientation = shaped_text_get_orientation(p_shaped);
 	bool hex_codes = shaped_text_get_preserve_control(p_shaped) || shaped_text_get_preserve_invalid(p_shaped);
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 
 	Vector2 ofs = p_pos;
 	// Draw at the baseline.
@@ -1168,11 +1172,11 @@ void TextServer::shaped_text_draw(RID p_shaped, RID p_canvas, const Vector2 &p_p
 }
 
 void TextServer::shaped_text_draw_outline(RID p_shaped, RID p_canvas, const Vector2 &p_pos, float p_clip_l, float p_clip_r, int p_outline_size, const Color &p_color) const {
-	const Vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
+	const std::vector<TextServer::Glyph> visual = shaped_text_get_glyphs(p_shaped);
 	TextServer::Orientation orientation = shaped_text_get_orientation(p_shaped);
 
 	int v_size = visual.size();
-	const Glyph *glyphs = visual.ptr();
+	const Glyph *glyphs = visual.data();
 	Vector2 ofs = p_pos;
 	// Draw at the baseline.
 	for (int i = 0; i < v_size; i++) {
@@ -1216,12 +1220,12 @@ void TextServer::shaped_text_draw_outline(RID p_shaped, RID p_canvas, const Vect
 }
 
 RID TextServer::_create_font_memory(const PackedByteArray &p_data, const String &p_type, int p_base_size) {
-	return create_font_memory(p_data.ptr(), p_data.size(), p_type, p_base_size);
+	return create_font_memory(p_data.data(), p_data.size(), p_type, p_base_size);
 }
 
 Dictionary TextServer::_font_get_glyph_contours(RID p_font, int p_size, uint32_t p_index) const {
-	Vector<Vector3> points;
-	Vector<int32_t> contours;
+	std::vector<Vector3> points;
+	std::vector<int32_t> contours;
 	bool orientation;
 	bool ok = font_get_glyph_contours(p_font, p_size, p_index, points, contours, orientation);
 	Dictionary out;
@@ -1235,7 +1239,7 @@ Dictionary TextServer::_font_get_glyph_contours(RID p_font, int p_size, uint32_t
 }
 
 void TextServer::_shaped_text_set_bidi_override(RID p_shaped, const Array &p_override) {
-	Vector<Vector2i> overrides;
+	std::vector<Vector2i> overrides;
 	for (int i = 0; i < p_override.size(); i++) {
 		overrides.push_back(p_override[i]);
 	}
@@ -1245,7 +1249,7 @@ void TextServer::_shaped_text_set_bidi_override(RID p_shaped, const Array &p_ove
 Array TextServer::_shaped_text_get_glyphs(RID p_shaped) const {
 	Array ret;
 
-	Vector<Glyph> glyphs = shaped_text_get_glyphs(p_shaped);
+	std::vector<Glyph> glyphs = shaped_text_get_glyphs(p_shaped);
 	for (int i = 0; i < glyphs.size(); i++) {
 		Dictionary glyph;
 
@@ -1269,7 +1273,7 @@ Array TextServer::_shaped_text_get_glyphs(RID p_shaped) const {
 Array TextServer::_shaped_text_get_line_breaks_adv(RID p_shaped, const PackedFloat32Array &p_width, int p_start, bool p_once, uint8_t p_break_flags) const {
 	Array ret;
 
-	Vector<Vector2i> lines = shaped_text_get_line_breaks_adv(p_shaped, p_width, p_start, p_once, p_break_flags);
+	std::vector<Vector2i> lines = shaped_text_get_line_breaks_adv(p_shaped, p_width, p_start, p_once, p_break_flags);
 	for (int i = 0; i < lines.size(); i++) {
 		ret.push_back(lines[i]);
 	}
@@ -1280,7 +1284,7 @@ Array TextServer::_shaped_text_get_line_breaks_adv(RID p_shaped, const PackedFlo
 Array TextServer::_shaped_text_get_line_breaks(RID p_shaped, float p_width, int p_start, uint8_t p_break_flags) const {
 	Array ret;
 
-	Vector<Vector2i> lines = shaped_text_get_line_breaks(p_shaped, p_width, p_start, p_break_flags);
+	std::vector<Vector2i> lines = shaped_text_get_line_breaks(p_shaped, p_width, p_start, p_break_flags);
 	for (int i = 0; i < lines.size(); i++) {
 		ret.push_back(lines[i]);
 	}
@@ -1291,7 +1295,7 @@ Array TextServer::_shaped_text_get_line_breaks(RID p_shaped, float p_width, int 
 Array TextServer::_shaped_text_get_word_breaks(RID p_shaped) const {
 	Array ret;
 
-	Vector<Vector2i> words = shaped_text_get_word_breaks(p_shaped);
+	std::vector<Vector2i> words = shaped_text_get_word_breaks(p_shaped);
 	for (int i = 0; i < words.size(); i++) {
 		ret.push_back(words[i]);
 	}
@@ -1317,7 +1321,7 @@ Dictionary TextServer::_shaped_text_get_carets(RID p_shaped, int p_position) con
 Array TextServer::_shaped_text_get_selection(RID p_shaped, int p_start, int p_end) const {
 	Array ret;
 
-	Vector<Vector2> ranges = shaped_text_get_selection(p_shaped, p_start, p_end);
+	std::vector<Vector2> ranges = shaped_text_get_selection(p_shaped, p_start, p_end);
 	for (int i = 0; i < ranges.size(); i++) {
 		ret.push_back(ranges[i]);
 	}

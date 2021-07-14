@@ -162,9 +162,9 @@ void editor_register_fonts(Ref<Theme> p_theme) {
 		CustomFontSource->set_antialiased(font_antialiased);
 		CustomFontSource->set_hinting(font_hinting);
 
-		Vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_variations")).split(",");
+		std::vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_variations")).split(",");
 		for (int i = 0; i < subtag.size(); i++) {
-			Vector<String> subtag_a = subtag[i].split("=");
+			std::vector<String> subtag_a = subtag[i].split("=");
 			if (subtag_a.size() == 2) {
 				CustomFontSource->set_variation(subtag_a[0], subtag_a[1].to_float());
 			}
@@ -290,10 +290,10 @@ void editor_register_fonts(Ref<Theme> p_theme) {
 	dfmono->set_antialiased(font_antialiased);
 	dfmono->set_hinting(font_hinting);
 
-	Vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_variations")).split(",");
+	std::vector<String> subtag = String(EditorSettings::get_singleton()->get("interface/editor/code_font_custom_variations")).split(",");
 	Dictionary ftrs;
 	for (int i = 0; i < subtag.size(); i++) {
-		Vector<String> subtag_a = subtag[i].split("=");
+		std::vector<String> subtag_a = subtag[i].split("=");
 		if (subtag_a.size() == 2) {
 			dfmono->set_variation(subtag_a[0], subtag_a[1].to_float());
 		}

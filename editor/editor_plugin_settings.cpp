@@ -30,13 +30,8 @@
 
 #include "editor_plugin_settings.h"
 
-#include "core/config/project_settings.h"
-#include "core/io/config_file.h"
-#include "core/io/file_access.h"
-#include "core/os/main_loop.h"
 #include "editor_node.h"
 #include "editor_scale.h"
-#include "scene/gui/margin_container.h"
 
 void EditorPluginSettings::_notification(int p_what) {
 	if (p_what == NOTIFICATION_WM_WINDOW_FOCUS_IN) {
@@ -52,8 +47,9 @@ void EditorPluginSettings::update_plugins() {
 	updating = true;
 	TreeItem *root = plugin_list->create_item();
 
-	Vector<String> plugins = _get_plugins("res://addons");
-	plugins.sort();
+	std::vector<String> plugins = _get_plugins("res://addons");
+
+	std::sort(plugins.begin(),  plugins.end());
 
 	for (int i = 0; i < plugins.size(); i++) {
 		Ref<ConfigFile> cf;
@@ -156,14 +152,14 @@ void EditorPluginSettings::_cell_button_pressed(Object *p_item, int p_column, in
 	}
 }
 
-Vector<String> EditorPluginSettings::_get_plugins(const String &p_dir) {
+std::vector<String> EditorPluginSettings::_get_plugins(const String &p_dir) {
 	DirAccessRef da = DirAccess::create(DirAccess::ACCESS_RESOURCES);
 	Error err = da->change_dir(p_dir);
 	if (err != OK) {
-		return Vector<String>();
+		return std::vector<String>();
 	}
 
-	Vector<String> plugins;
+	std::vector<String> plugins;
 	da->list_dir_begin();
 	for (String path = da->get_next(); path != String(); path = da->get_next()) {
 		if (path[0] == '.' || !da->current_is_dir()) {
@@ -175,7 +171,9 @@ Vector<String> EditorPluginSettings::_get_plugins(const String &p_dir) {
 		if (FileAccess::exists(plugin_config)) {
 			plugins.push_back(plugin_config);
 		} else {
-			plugins.append_array(_get_plugins(full_path));
+			auto vec = _get_plugins(full_path);
+
+			plugins.insert(plugins.end(), vec.begin(), vec.end());
 		}
 	}
 

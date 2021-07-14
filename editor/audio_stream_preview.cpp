@@ -30,6 +30,8 @@
 
 #include "audio_stream_preview.h"
 
+//todo std::vector.data()
+
 /////////////////////
 
 float AudioStreamPreview::get_length() const {
@@ -107,7 +109,7 @@ void AudioStreamPreviewGenerator::_preview_thread(void *p_preview) {
 
 	int mixbuff_chunk_frames = AudioServer::get_singleton()->get_mix_rate() * muxbuff_chunk_s;
 
-	Vector<AudioFrame> mix_chunk;
+	std::vector<AudioFrame> mix_chunk;
 	mix_chunk.resize(mixbuff_chunk_frames);
 
 	int frames_total = AudioServer::get_singleton()->get_mix_rate() * preview->preview->length;
@@ -121,7 +123,7 @@ void AudioStreamPreviewGenerator::_preview_thread(void *p_preview) {
 		int to_write = uint64_t(to_read) * uint64_t(preview->preview->preview.size() / 2) / uint64_t(frames_total);
 		to_write = MIN(to_write, (preview->preview->preview.size() / 2) - ofs_write);
 
-		preview->playback->mix(mix_chunk.ptrw(), 1.0, to_read);
+		preview->playback->mix(mix_chunk.data(), 1.0, to_read);
 
 		for (int i = 0; i < to_write; i++) {
 			float max = -1000;
@@ -145,8 +147,8 @@ void AudioStreamPreviewGenerator::_preview_thread(void *p_preview) {
 			uint8_t pfrom = CLAMP((min * 0.5 + 0.5) * 255, 0, 255);
 			uint8_t pto = CLAMP((max * 0.5 + 0.5) * 255, 0, 255);
 
-			preview->preview->preview.write[(ofs_write + i) * 2 + 0] = pfrom;
-			preview->preview->preview.write[(ofs_write + i) * 2 + 1] = pto;
+			preview->preview->preview[(ofs_write + i) * 2 + 0] = pfrom;
+			preview->preview->preview[(ofs_write + i) * 2 + 1] = pto;
 		}
 
 		frames_todo -= to_read;
@@ -182,11 +184,11 @@ Ref<AudioStreamPreview> AudioStreamPreviewGenerator::generate_preview(const Ref<
 
 	int frames = AudioServer::get_singleton()->get_mix_rate() * len_s;
 
-	Vector<uint8_t> maxmin;
+	std::vector<uint8_t> maxmin;
 	int pw = frames / 20;
 	maxmin.resize(pw * 2);
 	{
-		uint8_t *ptr = maxmin.ptrw();
+		uint8_t *ptr = maxmin.data();
 		for (int i = 0; i < pw * 2; i++) {
 			ptr[i] = 127;
 		}
