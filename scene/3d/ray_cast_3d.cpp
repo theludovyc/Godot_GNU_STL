@@ -377,11 +377,11 @@ void RayCast3D::set_debug_shape_thickness(const float p_debug_shape_thickness) {
 	}
 }
 
-const Vector<Vector3> &RayCast3D::get_debug_shape_vertices() const {
+const std::vector<Vector3> &RayCast3D::get_debug_shape_vertices() const {
 	return debug_shape_vertices;
 }
 
-const Vector<Vector3> &RayCast3D::get_debug_line_vertices() const {
+const std::vector<Vector3> &RayCast3D::get_debug_line_vertices() const {
 	return debug_line_vertices;
 }
 
@@ -469,14 +469,14 @@ void RayCast3D::_update_debug_shape() {
 	uint32_t flags = 0;
 	int surface_count = 0;
 
-	if (!debug_line_vertices.is_empty()) {
+	if (!debug_line_vertices.empty()) {
 		a[Mesh::ARRAY_VERTEX] = debug_line_vertices;
 		mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, a, Array(), Dictionary(), flags);
 		mesh->surface_set_material(surface_count, debug_material);
 		++surface_count;
 	}
 
-	if (!debug_shape_vertices.is_empty()) {
+	if (!debug_shape_vertices.empty()) {
 		a[Mesh::ARRAY_VERTEX] = debug_shape_vertices;
 		mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLE_STRIP, a, Array(), Dictionary(), flags);
 		mesh->surface_set_material(surface_count, debug_material);

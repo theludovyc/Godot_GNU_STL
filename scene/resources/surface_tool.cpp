@@ -30,6 +30,8 @@
 
 #include "surface_tool.h"
 
+//todo std::vector.data()
+
 #define _VERTEX_SNAP 0.0001
 #define EQ_VERTEX_DIST 0.00001
 
@@ -101,8 +103,8 @@ uint32_t SurfaceTool::VertexHasher::hash(const Vertex &p_vtx) {
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.uv, sizeof(real_t) * 2, h);
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.uv2, sizeof(real_t) * 2, h);
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.color, sizeof(real_t) * 4, h);
-	h = hash_djb2_buffer((const uint8_t *)p_vtx.bones.ptr(), p_vtx.bones.size() * sizeof(int), h);
-	h = hash_djb2_buffer((const uint8_t *)p_vtx.weights.ptr(), p_vtx.weights.size() * sizeof(float), h);
+	h = hash_djb2_buffer((const uint8_t *)p_vtx.bones.data(), p_vtx.bones.size() * sizeof(int), h);
+	h = hash_djb2_buffer((const uint8_t *)p_vtx.weights.data(), p_vtx.weights.size() * sizeof(float), h);
 	h = hash_djb2_buffer((const uint8_t *)&p_vtx.custom[0], sizeof(Color) * RS::ARRAY_CUSTOM_COUNT, h);
 	h = hash_djb2_one_32(p_vtx.smooth_group, h);
 	return h;
@@ -148,7 +150,7 @@ void SurfaceTool::add_vertex(const Vector3 &p_vertex) {
 			}
 		} else if (vtx.weights.size() > expected_vertices) {
 			//more than required, sort, cap and normalize.
-			Vector<WeightSort> weights;
+			std::vector<WeightSort> weights;
 			for (int i = 0; i < vtx.weights.size(); i++) {
 				WeightSort ws;
 				ws.index = vtx.bones[i];
@@ -157,7 +159,8 @@ void SurfaceTool::add_vertex(const Vector3 &p_vertex) {
 			}
 
 			//sort
-			weights.sort();
+			std::sort(weights.begin(),  weights.end());
+
 			//cap
 			weights.resize(expected_vertices);
 			//renormalize
@@ -171,11 +174,11 @@ void SurfaceTool::add_vertex(const Vector3 &p_vertex) {
 
 			for (int i = 0; i < expected_vertices; i++) {
 				if (total > 0) {
-					vtx.weights.write[i] = weights[i].weight / total;
+					vtx.weights[i] = weights[i].weight / total;
 				} else {
-					vtx.weights.write[i] = 0;
+					vtx.weights[i] = 0;
 				}
-				vtx.bones.write[i] = weights[i].index;
+				vtx.bones[i] = weights[i].index;
 			}
 		}
 	}
@@ -243,7 +246,7 @@ void SurfaceTool::set_custom(int p_index, const Color &p_custom) {
 	last_custom[p_index] = p_custom;
 }
 
-void SurfaceTool::set_bones(const Vector<int> &p_bones) {
+void SurfaceTool::set_bones(const std::vector<int> &p_bones) {
 	ERR_FAIL_COND(!begun);
 	ERR_FAIL_COND(!first && !(format & Mesh::ARRAY_FORMAT_BONES));
 
@@ -254,7 +257,7 @@ void SurfaceTool::set_bones(const Vector<int> &p_bones) {
 	last_bones = p_bones;
 }
 
-void SurfaceTool::set_weights(const Vector<float> &p_weights) {
+void SurfaceTool::set_weights(const std::vector<float> &p_weights) {
 	ERR_FAIL_COND(!begun);
 	ERR_FAIL_COND(!first && !(format & Mesh::ARRAY_FORMAT_WEIGHTS));
 
@@ -269,7 +272,7 @@ void SurfaceTool::set_smooth_group(uint32_t p_group) {
 	last_smooth_group = p_group;
 }
 
-void SurfaceTool::add_triangle_fan(const Vector<Vector3> &p_vertices, const Vector<Vector2> &p_uvs, const Vector<Color> &p_colors, const Vector<Vector2> &p_uv2s, const Vector<Vector3> &p_normals, const Vector<Plane> &p_tangents) {
+void SurfaceTool::add_triangle_fan(const std::vector<Vector3> &p_vertices, const std::vector<Vector2> &p_uvs, const std::vector<Color> &p_colors, const std::vector<Vector2> &p_uv2s, const std::vector<Vector3> &p_normals, const std::vector<Plane> &p_tangents) {
 	ERR_FAIL_COND(!begun);
 	ERR_FAIL_COND(primitive != Mesh::PRIMITIVE_TRIANGLES);
 	ERR_FAIL_COND(p_vertices.size() < 3);
@@ -320,9 +323,9 @@ Array SurfaceTool::commit_to_arrays() {
 		switch (i) {
 			case Mesh::ARRAY_VERTEX:
 			case Mesh::ARRAY_NORMAL: {
-				Vector<Vector3> array;
+				std::vector<Vector3> array;
 				array.resize(varr_len);
-				Vector3 *w = array.ptrw();
+				Vector3 *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -343,9 +346,9 @@ Array SurfaceTool::commit_to_arrays() {
 
 			case Mesh::ARRAY_TEX_UV:
 			case Mesh::ARRAY_TEX_UV2: {
-				Vector<Vector2> array;
+				std::vector<Vector2> array;
 				array.resize(varr_len);
-				Vector2 *w = array.ptrw();
+				Vector2 *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -363,9 +366,9 @@ Array SurfaceTool::commit_to_arrays() {
 				a[i] = array;
 			} break;
 			case Mesh::ARRAY_TANGENT: {
-				Vector<float> array;
+				std::vector<float> array;
 				array.resize(varr_len * 4);
-				float *w = array.ptrw();
+				float *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -383,9 +386,9 @@ Array SurfaceTool::commit_to_arrays() {
 
 			} break;
 			case Mesh::ARRAY_COLOR: {
-				Vector<Color> array;
+				std::vector<Color> array;
 				array.resize(varr_len);
-				Color *w = array.ptrw();
+				Color *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -402,9 +405,9 @@ Array SurfaceTool::commit_to_arrays() {
 				int fmt = i - Mesh::ARRAY_CUSTOM0;
 				switch (last_custom_format[fmt]) {
 					case CUSTOM_RGBA8_UNORM: {
-						Vector<uint8_t> array;
+						std::vector<uint8_t> array;
 						array.resize(varr_len * 4);
-						uint8_t *w = array.ptrw();
+						uint8_t *w = array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -419,9 +422,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RGBA8_SNORM: {
-						Vector<uint8_t> array;
+						std::vector<uint8_t> array;
 						array.resize(varr_len * 4);
-						uint8_t *w = array.ptrw();
+						uint8_t *w = array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -436,9 +439,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RG_HALF: {
-						Vector<uint8_t> array;
+						std::vector<uint8_t> array;
 						array.resize(varr_len * 4);
-						uint16_t *w = (uint16_t *)array.ptrw();
+						uint16_t *w = (uint16_t *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -451,9 +454,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RGBA_HALF: {
-						Vector<uint8_t> array;
+						std::vector<uint8_t> array;
 						array.resize(varr_len * 8);
-						uint16_t *w = (uint16_t *)array.ptrw();
+						uint16_t *w = (uint16_t *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -468,9 +471,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_R_FLOAT: {
-						Vector<float> array;
+						std::vector<float> array;
 						array.resize(varr_len);
-						float *w = (float *)array.ptrw();
+						float *w = (float *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -482,9 +485,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RG_FLOAT: {
-						Vector<float> array;
+						std::vector<float> array;
 						array.resize(varr_len * 2);
-						float *w = (float *)array.ptrw();
+						float *w = (float *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -497,9 +500,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RGB_FLOAT: {
-						Vector<float> array;
+						std::vector<float> array;
 						array.resize(varr_len * 3);
-						float *w = (float *)array.ptrw();
+						float *w = (float *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -513,9 +516,9 @@ Array SurfaceTool::commit_to_arrays() {
 						a[i] = array;
 					} break;
 					case CUSTOM_RGBA_FLOAT: {
-						Vector<float> array;
+						std::vector<float> array;
 						array.resize(varr_len * 4);
-						float *w = (float *)array.ptrw();
+						float *w = (float *)array.data();
 
 						for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 							const Vertex &v = vertex_array[idx];
@@ -535,10 +538,12 @@ Array SurfaceTool::commit_to_arrays() {
 			} break;
 			case Mesh::ARRAY_BONES: {
 				int count = skin_weights == SKIN_8_WEIGHTS ? 8 : 4;
-				Vector<int> array;
+				std::vector<int> array;
 				array.resize(varr_len * count);
-				array.fill(0);
-				int *w = array.ptrw();
+
+				std::fill(array.begin(),  array.end(), 0);
+
+				int *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -557,12 +562,14 @@ Array SurfaceTool::commit_to_arrays() {
 
 			} break;
 			case Mesh::ARRAY_WEIGHTS: {
-				Vector<float> array;
+				std::vector<float> array;
 				int count = skin_weights == SKIN_8_WEIGHTS ? 8 : 4;
 
 				array.resize(varr_len * count);
-				array.fill(0.0f);
-				float *w = array.ptrw();
+
+				std::fill(array.begin(), array.end(), 0.0f);
+
+				float *w = array.data();
 
 				for (uint32_t idx = 0; idx < vertex_array.size(); idx++) {
 					const Vertex &v = vertex_array[idx];
@@ -583,9 +590,9 @@ Array SurfaceTool::commit_to_arrays() {
 			case Mesh::ARRAY_INDEX: {
 				ERR_CONTINUE(index_array.size() == 0);
 
-				Vector<int> array;
+				std::vector<int> array;
 				array.resize(index_array.size());
-				int *w = array.ptrw();
+				int *w = array.data();
 
 				for (uint32_t idx = 0; idx < index_array.size(); idx++) {
 					w[idx] = index_array[idx];
@@ -682,15 +689,15 @@ void SurfaceTool::_create_list(const Ref<Mesh> &p_existing, int p_surface, Local
 void SurfaceTool::create_vertex_array_from_triangle_arrays(const Array &p_arrays, LocalVector<SurfaceTool::Vertex> &ret, uint32_t *r_format) {
 	ret.clear();
 
-	Vector<Vector3> varr = p_arrays[RS::ARRAY_VERTEX];
-	Vector<Vector3> narr = p_arrays[RS::ARRAY_NORMAL];
-	Vector<float> tarr = p_arrays[RS::ARRAY_TANGENT];
-	Vector<Color> carr = p_arrays[RS::ARRAY_COLOR];
-	Vector<Vector2> uvarr = p_arrays[RS::ARRAY_TEX_UV];
-	Vector<Vector2> uv2arr = p_arrays[RS::ARRAY_TEX_UV2];
-	Vector<int> barr = p_arrays[RS::ARRAY_BONES];
-	Vector<float> warr = p_arrays[RS::ARRAY_WEIGHTS];
-	Vector<float> custom_float[RS::ARRAY_CUSTOM_COUNT];
+	std::vector<Vector3> varr = p_arrays[RS::ARRAY_VERTEX];
+	std::vector<Vector3> narr = p_arrays[RS::ARRAY_NORMAL];
+	std::vector<float> tarr = p_arrays[RS::ARRAY_TANGENT];
+	std::vector<Color> carr = p_arrays[RS::ARRAY_COLOR];
+	std::vector<Vector2> uvarr = p_arrays[RS::ARRAY_TEX_UV];
+	std::vector<Vector2> uv2arr = p_arrays[RS::ARRAY_TEX_UV2];
+	std::vector<int> barr = p_arrays[RS::ARRAY_BONES];
+	std::vector<float> warr = p_arrays[RS::ARRAY_WEIGHTS];
+	std::vector<float> custom_float[RS::ARRAY_CUSTOM_COUNT];
 
 	int vc = varr.size();
 	if (vc == 0) {
@@ -777,18 +784,18 @@ void SurfaceTool::create_vertex_array_from_triangle_arrays(const Array &p_arrays
 			v.uv2 = uv2arr[i];
 		}
 		if (lformat & RS::ARRAY_FORMAT_BONES) {
-			Vector<int> b;
+			std::vector<int> b;
 			b.resize(wcount);
 			for (int j = 0; j < wcount; j++) {
-				b.write[j] = barr[i * wcount + j];
+				b[j] = barr[i * wcount + j];
 			}
 			v.bones = b;
 		}
 		if (lformat & RS::ARRAY_FORMAT_WEIGHTS) {
-			Vector<float> w;
+			std::vector<float> w;
 			w.resize(wcount);
 			for (int j = 0; j < wcount; j++) {
-				w.write[j] = warr[i * wcount + j];
+				w[j] = warr[i * wcount + j];
 			}
 			v.weights = w;
 		}
@@ -817,11 +824,11 @@ void SurfaceTool::_create_list_from_arrays(Array arr, LocalVector<Vertex> *r_ver
 	//indices
 	r_index->clear();
 
-	Vector<int> idx = arr[RS::ARRAY_INDEX];
+	std::vector<int> idx = arr[RS::ARRAY_INDEX];
 	int is = idx.size();
 	if (is) {
 		lformat |= RS::ARRAY_FORMAT_INDEX;
-		const int *iarr = idx.ptr();
+		const int *iarr = idx.data();
 		for (int i = 0; i < is; i++) {
 			r_index->push_back(iarr[i]);
 		}
@@ -1140,8 +1147,8 @@ float SurfaceTool::get_max_axis_length() const {
 
 	return aabb.get_longest_axis_size();
 }
-Vector<int> SurfaceTool::generate_lod(float p_threshold, int p_target_index_count) {
-	Vector<int> lod;
+std::vector<int> SurfaceTool::generate_lod(float p_threshold, int p_target_index_count) {
+	std::vector<int> lod;
 
 	ERR_FAIL_COND_V(simplify_func == nullptr, lod);
 	ERR_FAIL_COND_V(vertex_array.size() == 0, lod);
@@ -1157,7 +1164,7 @@ Vector<int> SurfaceTool::generate_lod(float p_threshold, int p_target_index_coun
 	}
 
 	float error;
-	uint32_t index_count = simplify_func((unsigned int *)lod.ptrw(), (unsigned int *)index_array.ptr(), index_array.size(), vertices.ptr(), vertex_array.size(), sizeof(float) * 3, p_target_index_count, p_threshold, &error);
+	uint32_t index_count = simplify_func((unsigned int *)lod.data(), (unsigned int *)index_array.ptr(), index_array.size(), vertices.ptr(), vertex_array.size(), sizeof(float) * 3, p_target_index_count, p_threshold, &error);
 	ERR_FAIL_COND_V(index_count == 0, lod);
 	lod.resize(index_count);
 
@@ -1184,7 +1191,7 @@ void SurfaceTool::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_custom", "index", "custom"), &SurfaceTool::set_custom);
 	ClassDB::bind_method(D_METHOD("set_smooth_group", "index"), &SurfaceTool::set_smooth_group);
 
-	ClassDB::bind_method(D_METHOD("add_triangle_fan", "vertices", "uvs", "colors", "uv2s", "normals", "tangents"), &SurfaceTool::add_triangle_fan, DEFVAL(Vector<Vector2>()), DEFVAL(Vector<Color>()), DEFVAL(Vector<Vector2>()), DEFVAL(Vector<Vector3>()), DEFVAL(Vector<Plane>()));
+	ClassDB::bind_method(D_METHOD("add_triangle_fan", "vertices", "uvs", "colors", "uv2s", "normals", "tangents"), &SurfaceTool::add_triangle_fan, DEFVAL(std::vector<Vector2>()), DEFVAL(std::vector<Color>()), DEFVAL(std::vector<Vector2>()), DEFVAL(std::vector<Vector3>()), DEFVAL(std::vector<Plane>()));
 
 	ClassDB::bind_method(D_METHOD("add_index", "index"), &SurfaceTool::add_index);
 

@@ -47,8 +47,8 @@ public:
 		Vector3 tangent;
 		Vector2 uv;
 		Vector2 uv2;
-		Vector<int> bones;
-		Vector<float> weights;
+		std::vector<int> bones;
+		std::vector<float> weights;
 		Color custom[RS::ARRAY_CUSTOM_COUNT];
 		uint32_t smooth_group = 0;
 
@@ -112,8 +112,8 @@ private:
 	Vector3 last_normal;
 	Vector2 last_uv;
 	Vector2 last_uv2;
-	Vector<int> last_bones;
-	Vector<float> last_weights;
+	std::vector<int> last_bones;
+	std::vector<float> last_weights;
 	Plane last_tangent;
 	uint32_t last_smooth_group = 0;
 
@@ -155,13 +155,13 @@ public:
 	void set_uv(const Vector2 &p_uv);
 	void set_uv2(const Vector2 &p_uv2);
 	void set_custom(int p_index, const Color &p_custom);
-	void set_bones(const Vector<int> &p_bones);
-	void set_weights(const Vector<float> &p_weights);
+	void set_bones(const std::vector<int> &p_bones);
+	void set_weights(const std::vector<float> &p_weights);
 	void set_smooth_group(uint32_t p_group);
 
 	void add_vertex(const Vector3 &p_vertex);
 
-	void add_triangle_fan(const Vector<Vector3> &p_vertices, const Vector<Vector2> &p_uvs = Vector<Vector2>(), const Vector<Color> &p_colors = Vector<Color>(), const Vector<Vector2> &p_uv2s = Vector<Vector2>(), const Vector<Vector3> &p_normals = Vector<Vector3>(), const Vector<Plane> &p_tangents = Vector<Plane>());
+	void add_triangle_fan(const std::vector<Vector3> &p_vertices, const std::vector<Vector2> &p_uvs = std::vector<Vector2>(), const std::vector<Color> &p_colors = std::vector<Color>(), const std::vector<Vector2> &p_uv2s = std::vector<Vector2>(), const std::vector<Vector3> &p_normals = std::vector<Vector3>(), const std::vector<Plane> &p_tangents = std::vector<Plane>());
 
 	void add_index(int p_index);
 
@@ -172,7 +172,7 @@ public:
 
 	void optimize_indices_for_cache();
 	float get_max_axis_length() const;
-	Vector<int> generate_lod(float p_threshold, int p_target_index_count = 3);
+	std::vector<int> generate_lod(float p_threshold, int p_target_index_count = 3);
 
 	void set_material(const Ref<Material> &p_material);
 	Ref<Material> get_material() const;

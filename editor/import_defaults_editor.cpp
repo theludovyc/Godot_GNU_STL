@@ -165,12 +165,13 @@ void ImportDefaultsEditor::clear() {
 
 	List<Ref<ResourceImporter>> importer_list;
 	ResourceFormatImporter::get_singleton()->get_importers(&importer_list);
-	Vector<String> names;
+	std::vector<String> names;
 	for (List<Ref<ResourceImporter>>::Element *E = importer_list.front(); E; E = E->next()) {
 		String vn = E->get()->get_visible_name();
 		names.push_back(vn);
 	}
-	names.sort();
+
+	std::sort(names.begin(), names.end());
 
 	for (int i = 0; i < names.size(); i++) {
 		importers->add_item(names[i]);

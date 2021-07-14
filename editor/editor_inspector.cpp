@@ -30,8 +30,6 @@
 
 #include "editor_inspector.h"
 
-#include "array_property_edit.h"
-#include "dictionary_property_edit.h"
 #include "editor/doc_tools.h"
 #include "editor_feature_profile.h"
 #include "editor_node.h"
@@ -894,7 +892,7 @@ Control *EditorProperty::make_custom_tooltip(const String &p_text) const {
 
 	String text;
 	PackedStringArray slices = p_text.split("::", false);
-	if (!slices.is_empty()) {
+	if (!slices.empty()) {
 		String property_name = slices[0].strip_edges();
 		text = TTR("Property:") + " [u][b]" + property_name + "[/b][/u]";
 
@@ -1011,7 +1009,7 @@ void EditorInspectorPlugin::add_property_editor(const String &p_for_property, Co
 	added_editors.push_back(ae);
 }
 
-void EditorInspectorPlugin::add_property_editor_for_multiple_properties(const String &p_label, const Vector<String> &p_properties, Control *p_prop) {
+void EditorInspectorPlugin::add_property_editor_for_multiple_properties(const String &p_label, const std::vector<String> &p_properties, Control *p_prop) {
 	AddedEditor ae;
 	ae.properties = p_properties;
 	ae.property_editor = p_prop;
@@ -1109,7 +1107,7 @@ Control *EditorInspectorCategory::make_custom_tooltip(const String &p_text) cons
 	help_bit->get_rich_text()->set_fixed_size_to_width(360 * EDSCALE);
 
 	PackedStringArray slices = p_text.split("::", false);
-	if (!slices.is_empty()) {
+	if (!slices.empty()) {
 		String property_name = slices[0].strip_edges();
 		String text = "[u][b]" + property_name + "[/b][/u]";
 
@@ -1925,7 +1923,7 @@ void EditorInspector::update_tree() {
 						}
 					}
 
-					Vector<String> slices = propname.operator String().split("/");
+					std::vector<String> slices = propname.operator String().split("/");
 					if (slices.size() == 2 && slices[0].begins_with("custom_")) {
 						// Likely a theme property.
 						for (int i = 0; i < F->get().theme_properties.size(); i++) {
@@ -2336,7 +2334,7 @@ void EditorInspector::_property_changed_update_all(const String &p_path, const V
 	update_tree();
 }
 
-void EditorInspector::_multiple_properties_changed(Vector<String> p_paths, Array p_values) {
+void EditorInspector::_multiple_properties_changed(std::vector<String> p_paths, Array p_values) {
 	ERR_FAIL_COND(p_paths.size() == 0 || p_values.size() == 0);
 	ERR_FAIL_COND(p_paths.size() != p_values.size());
 	String names;

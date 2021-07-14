@@ -92,7 +92,7 @@ private:
 
 	float split_ratio;
 
-	Vector<Control *> focusables;
+	std::vector<Control *> focusables;
 	Control *label_reference;
 	Control *bottom_editor;
 
@@ -181,7 +181,7 @@ class EditorInspectorPlugin : public RefCounted {
 	friend class EditorInspector;
 	struct AddedEditor {
 		Control *property_editor = nullptr;
-		Vector<String> properties;
+		std::vector<String> properties;
 		String label;
 	};
 
@@ -193,7 +193,7 @@ protected:
 public:
 	void add_custom_control(Control *control);
 	void add_property_editor(const String &p_for_property, Control *p_prop);
-	void add_property_editor_for_multiple_properties(const String &p_label, const Vector<String> &p_properties, Control *p_prop);
+	void add_property_editor_for_multiple_properties(const String &p_label, const std::vector<String> &p_properties, Control *p_prop);
 
 	virtual bool can_handle(Object *p_object);
 	virtual void parse_begin(Object *p_object);
@@ -319,7 +319,7 @@ class EditorInspector : public ScrollContainer {
 
 	void _property_changed(const String &p_path, const Variant &p_value, const String &p_name = "", bool p_changing = false);
 	void _property_changed_update_all(const String &p_path, const Variant &p_value, const String &p_name = "", bool p_changing = false);
-	void _multiple_properties_changed(Vector<String> p_paths, Array p_values);
+	void _multiple_properties_changed(std::vector<String> p_paths, Array p_values);
 	void _property_keyed(const String &p_path, bool p_advance);
 	void _property_keyed_with_value(const String &p_path, const Variant &p_value, bool p_advance);
 	void _property_deleted(const String &p_path);

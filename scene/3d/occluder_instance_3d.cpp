@@ -32,6 +32,8 @@
 #include "core/core_string_names.h"
 #include "scene/3d/mesh_instance_3d.h"
 
+//todo std::vector.data()
+
 RID Occluder3D::get_rid() const {
 	if (!occluder.is_valid()) {
 		occluder = RS::get_singleton()->occluder_create();
@@ -67,7 +69,7 @@ PackedInt32Array Occluder3D::get_indices() const {
 void Occluder3D::_update_changes() {
 	aabb = AABB();
 
-	const Vector3 *ptr = vertices.ptr();
+	const Vector3 *ptr = vertices.data();
 	for (int i = 0; i < vertices.size(); i++) {
 		aabb.expand_to(ptr[i]);
 	}
@@ -78,21 +80,21 @@ void Occluder3D::_update_changes() {
 	emit_changed();
 }
 
-Vector<Vector3> Occluder3D::get_debug_lines() const {
-	if (!debug_lines.is_empty()) {
+std::vector<Vector3> Occluder3D::get_debug_lines() const {
+	if (!debug_lines.empty()) {
 		return debug_lines;
 	}
 
 	if (indices.size() % 3 != 0) {
-		return Vector<Vector3>();
+		return std::vector<Vector3>();
 	}
 
 	for (int i = 0; i < indices.size() / 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			int a = indices[i * 3 + j];
 			int b = indices[i * 3 + (j + 1) % 3];
-			ERR_FAIL_INDEX_V_MSG(a, vertices.size(), Vector<Vector3>(), "Occluder indices are out of range.");
-			ERR_FAIL_INDEX_V_MSG(b, vertices.size(), Vector<Vector3>(), "Occluder indices are out of range.");
+			ERR_FAIL_INDEX_V_MSG(a, vertices.size(), std::vector<Vector3>(), "Occluder indices are out of range.");
+			ERR_FAIL_INDEX_V_MSG(b, vertices.size(), std::vector<Vector3>(), "Occluder indices are out of range.");
 			debug_lines.push_back(vertices[a]);
 			debug_lines.push_back(vertices[b]);
 		}
@@ -151,8 +153,8 @@ AABB OccluderInstance3D::get_aabb() const {
 	return AABB();
 }
 
-Vector<Face3> OccluderInstance3D::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> OccluderInstance3D::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 void OccluderInstance3D::set_occluder(const Ref<Occluder3D> &p_occluder) {
@@ -256,7 +258,7 @@ void OccluderInstance3D::_bake_node(Node *p_node, PackedVector3Array &r_vertices
 				PackedVector3Array vertices = arrays[Mesh::ARRAY_VERTEX];
 				r_vertices.resize(r_vertices.size() + vertices.size());
 
-				Vector3 *vtx_ptr = r_vertices.ptrw();
+				Vector3 *vtx_ptr = r_vertices.data();
 				for (int j = 0; j < vertices.size(); j++) {
 					vtx_ptr[vertex_offset + j] = global_to_local.xform(vertices[j]);
 				}
@@ -265,7 +267,7 @@ void OccluderInstance3D::_bake_node(Node *p_node, PackedVector3Array &r_vertices
 				PackedInt32Array indices = arrays[Mesh::ARRAY_INDEX];
 				r_indices.resize(r_indices.size() + indices.size());
 
-				int *idx_ptr = r_indices.ptrw();
+				int *idx_ptr = r_indices.data();
 				for (int j = 0; j < indices.size(); j++) {
 					idx_ptr[index_offset + j] = vertex_offset + indices[j];
 				}
@@ -295,7 +297,7 @@ OccluderInstance3D::BakeError OccluderInstance3D::bake(Node *p_from_node, String
 
 	_bake_node(p_from_node, vertices, indices);
 
-	if (vertices.is_empty() || indices.is_empty()) {
+	if (vertices.empty() || indices.empty()) {
 		return BAKE_ERROR_NO_MESHES;
 	}
 

@@ -32,9 +32,10 @@
 
 #include "core/io/config_file.h"
 #include "core/io/image_loader.h"
-#include "core/version.h"
 #include "editor/editor_file_system.h"
 #include "editor/editor_node.h"
+
+//todo std::vector.data()
 
 void ResourceImporterTexture::_texture_reimport_roughness(const Ref<StreamTexture2D> &p_tex, const String &p_normal_path, RS::TextureDetectRoughnessChannel p_channel) {
 	MutexLock lock(singleton->mutex);
@@ -80,7 +81,7 @@ void ResourceImporterTexture::update_imports() {
 	}
 
 	MutexLock lock(mutex);
-	Vector<String> to_reimport;
+	std::vector<String> to_reimport;
 	{
 		if (make_flags.is_empty()) {
 			return;
@@ -227,7 +228,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 			f->store_32(p_image->get_format());
 
 			for (int i = 0; i < p_image->get_mipmap_count() + 1; i++) {
-				Vector<uint8_t> data;
+				std::vector<uint8_t> data;
 				if (use_webp) {
 					data = Image::webp_lossless_packer(p_image->get_image_from_mipmap(i));
 				} else {
@@ -236,7 +237,7 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 				int data_len = data.size();
 				f->store_32(data_len);
 
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				f->store_buffer(r, data_len);
 			}
 
@@ -249,11 +250,11 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 			f->store_32(p_image->get_format());
 
 			for (int i = 0; i < p_image->get_mipmap_count() + 1; i++) {
-				Vector<uint8_t> data = Image::webp_lossy_packer(p_image->get_image_from_mipmap(i), p_lossy_quality);
+				std::vector<uint8_t> data = Image::webp_lossy_packer(p_image->get_image_from_mipmap(i), p_lossy_quality);
 				int data_len = data.size();
 				f->store_32(data_len);
 
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				f->store_buffer(r, data_len);
 			}
 		} break;
@@ -268,9 +269,9 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 			f->store_32(image->get_mipmap_count());
 			f->store_32(image->get_format());
 
-			Vector<uint8_t> data = image->get_data();
+			std::vector<uint8_t> data = image->get_data();
 			int dl = data.size();
-			const uint8_t *r = data.ptr();
+			const uint8_t *r = data.data();
 			f->store_buffer(r, dl);
 		} break;
 		case COMPRESS_VRAM_UNCOMPRESSED: {
@@ -280,9 +281,9 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 			f->store_32(p_image->get_mipmap_count());
 			f->store_32(p_image->get_format());
 
-			Vector<uint8_t> data = p_image->get_data();
+			std::vector<uint8_t> data = p_image->get_data();
 			int dl = data.size();
-			const uint8_t *r = data.ptr();
+			const uint8_t *r = data.data();
 
 			f->store_buffer(r, dl);
 
@@ -295,11 +296,11 @@ void ResourceImporterTexture::save_to_stex_format(FileAccess *f, const Ref<Image
 			f->store_32(p_image->get_format());
 
 			for (int i = 0; i < p_image->get_mipmap_count() + 1; i++) {
-				Vector<uint8_t> data = Image::basis_universal_packer(p_image->get_image_from_mipmap(i), p_channels);
+				std::vector<uint8_t> data = Image::basis_universal_packer(p_image->get_image_from_mipmap(i), p_channels);
 				int data_len = data.size();
 				f->store_32(data_len);
 
-				const uint8_t *r = data.ptr();
+				const uint8_t *r = data.data();
 				f->store_buffer(r, data_len);
 			}
 		} break;
@@ -611,7 +612,7 @@ bool ResourceImporterTexture::are_import_settings_valid(const String &p_path) co
 		return true; //do not care about non vram
 	}
 
-	Vector<String> formats_imported;
+	std::vector<String> formats_imported;
 	if (metadata.has("imported_formats")) {
 		formats_imported = metadata["imported_formats"];
 	}
@@ -622,7 +623,9 @@ bool ResourceImporterTexture::are_import_settings_valid(const String &p_path) co
 		String setting_path = "rendering/textures/vram_compression/import_" + String(compression_formats[index]);
 		bool test = ProjectSettings::get_singleton()->get(setting_path);
 		if (test) {
-			if (formats_imported.find(compression_formats[index]) == -1) {
+			auto it = std::find(formats_imported.begin(), formats_imported.end(), compression_formats[index]);
+
+			if (it == formats_imported.end()) {
 				valid = false;
 				break;
 			}

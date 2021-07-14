@@ -39,7 +39,7 @@ class Occluder3D : public Resource {
 
 	mutable RID occluder;
 	mutable Ref<ArrayMesh> debug_mesh;
-	mutable Vector<Vector3> debug_lines;
+	mutable std::vector<Vector3> debug_lines;
 	AABB aabb;
 
 	PackedVector3Array vertices;
@@ -57,7 +57,7 @@ public:
 	void set_indices(PackedInt32Array p_indices);
 	PackedInt32Array get_indices() const;
 
-	Vector<Vector3> get_debug_lines() const;
+	std::vector<Vector3> get_debug_lines() const;
 	Ref<ArrayMesh> get_debug_mesh() const;
 	AABB get_aabb() const;
 
@@ -92,7 +92,7 @@ public:
 	Ref<Occluder3D> get_occluder() const;
 
 	virtual AABB get_aabb() const override;
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	void set_bake_mask(uint32_t p_mask);
 	uint32_t get_bake_mask() const;
