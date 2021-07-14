@@ -156,7 +156,7 @@ class Skeleton3DEditor : public VBoxContainer {
 	void create_editors();
 
 	void create_physical_skeleton();
-	PhysicalBone3D *create_physical_bone(int bone_id, int bone_child_id, const Vector<BoneInfo> &bones_infos);
+	PhysicalBone3D *create_physical_bone(int bone_id, int bone_child_id, const std::vector<BoneInfo> &bones_infos);
 
 	Variant get_drag_data_fw(const Point2 &p_point, Control *p_from);
 	bool can_drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_from) const;

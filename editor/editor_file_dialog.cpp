@@ -30,19 +30,13 @@
 
 #include "editor_file_dialog.h"
 
-#include "core/io/file_access.h"
 #include "core/os/keyboard.h"
-#include "core/os/os.h"
-#include "core/string/print_string.h"
 #include "dependency_editor.h"
 #include "editor_file_system.h"
 #include "editor_resource_preview.h"
 #include "editor_scale.h"
 #include "editor_settings.h"
 #include "scene/gui/center_container.h"
-#include "scene/gui/label.h"
-#include "scene/gui/margin_container.h"
-#include "servers/display_server.h"
 
 EditorFileDialog::GetIconFunc EditorFileDialog::get_icon_func = nullptr;
 EditorFileDialog::GetIconFunc EditorFileDialog::get_large_icon_func = nullptr;
@@ -197,8 +191,8 @@ void EditorFileDialog::set_enable_multiple_selection(bool p_enable) {
 	item_list->set_select_mode(p_enable ? ItemList::SELECT_MULTI : ItemList::SELECT_SINGLE);
 };
 
-Vector<String> EditorFileDialog::get_selected_files() const {
-	Vector<String> list;
+std::vector<String> EditorFileDialog::get_selected_files() const {
+	std::vector<String> list;
 	for (int i = 0; i < item_list->get_item_count(); i++) {
 		if (item_list->is_selected(i)) {
 			list.push_back(item_list->get_item_text(i));
@@ -284,7 +278,7 @@ void EditorFileDialog::_post_popup() {
 		recent->clear();
 
 		bool res = access == ACCESS_RESOURCES;
-		Vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
+		std::vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
 		for (int i = 0; i < recentd.size(); i++) {
 			bool cres = recentd[i].begins_with("res://");
 			if (cres != res) {
@@ -302,7 +296,10 @@ void EditorFileDialog::_post_popup() {
 			bool exists = dir_access->dir_exists(recentd[i]);
 			if (!exists) {
 				// Remove invalid directory from the list of Recent directories.
-				recentd.remove(i--);
+
+				//todo
+				recentd.erase(recentd.begin() + i--);
+
 			} else {
 				recent->add_item(name, folder);
 				recent->set_item_metadata(recent->get_item_count() - 1, recentd[i]);
@@ -369,7 +366,7 @@ void EditorFileDialog::_action_pressed() {
 	if (mode == FILE_MODE_OPEN_FILES) {
 		String fbase = dir_access->get_current_dir();
 
-		Vector<String> files;
+		std::vector<String> files;
 		for (int i = 0; i < item_list->get_item_count(); i++) {
 			if (item_list->is_selected(i)) {
 				files.push_back(fbase.plus_file(item_list->get_item_text(i)));
@@ -676,13 +673,13 @@ bool EditorFileDialog::_is_open_should_be_disabled() {
 		return false;
 	}
 
-	Vector<int> items = item_list->get_selected_items();
+	std::vector<int> items = item_list->get_selected_items();
 	if (items.size() == 0) {
 		return mode != FILE_MODE_OPEN_DIR; // In "Open folder" mode, having nothing selected picks the current folder.
 	}
 
 	for (int i = 0; i < items.size(); i++) {
-		Dictionary d = item_list->get_item_metadata(items.get(i));
+		Dictionary d = item_list->get_item_metadata(items[i]);
 
 		if (((mode == FILE_MODE_OPEN_FILE || mode == FILE_MODE_OPEN_FILES) && d["dir"]) || (mode == FILE_MODE_OPEN_DIR && !d["dir"])) {
 			return true;
@@ -701,7 +698,7 @@ void EditorFileDialog::update_file_name() {
 		String filter_str = filters[idx];
 		String file_str = file->get_text();
 		String base_name = file_str.get_basename();
-		Vector<String> filter_substr = filter_str.split(";");
+		std::vector<String> filter_substr = filter_str.split(";");
 		if (filter_substr.size() >= 2) {
 			file_str = base_name + "." + filter_substr[0].strip_edges().lstrip("*.").to_lower();
 		} else {
@@ -1102,8 +1099,8 @@ void EditorFileDialog::_make_dir() {
 
 void EditorFileDialog::_delete_items() {
 	// Collect the selected folders and files to delete and check them in the deletion dependency dialog.
-	Vector<String> folders;
-	Vector<String> files;
+	std::vector<String> folders;
+	std::vector<String> files;
 	for (int i = 0; i < item_list->get_item_count(); i++) {
 		if (!item_list->is_selected(i)) {
 			continue;
@@ -1164,15 +1161,28 @@ void EditorFileDialog::_favorite_move_up() {
 	int current = favorites->get_current();
 
 	if (current > 0 && current < favorites->get_item_count()) {
-		Vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
+		std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
 
-		int a_idx = favorited.find(String(favorites->get_item_metadata(current - 1)));
-		int b_idx = favorited.find(String(favorites->get_item_metadata(current)));
+		auto it = std::find(favorited.begin(), favorited.end(), String(favorites->get_item_metadata(current - 1)));
+
+		int a_idx = -1;
+
+		if(it != favorited.end()){
+			a_idx = std::distance(favorited.begin(), it);
+		}
+
+		it = std::find(favorited.begin(), favorited.end(), String(favorites->get_item_metadata(current)));
+
+		int b_idx = -1;
+
+		if(it != favorited.end()){
+			b_idx = std::distance(favorited.begin(), it);
+		}
 
 		if (a_idx == -1 || b_idx == -1) {
 			return;
 		}
-		SWAP(favorited.write[a_idx], favorited.write[b_idx]);
+		SWAP(favorited[a_idx], favorited[b_idx]);
 
 		EditorSettings::get_singleton()->set_favorites(favorited);
 
@@ -1185,15 +1195,29 @@ void EditorFileDialog::_favorite_move_down() {
 	int current = favorites->get_current();
 
 	if (current >= 0 && current < favorites->get_item_count() - 1) {
-		Vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
+		std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
 
-		int a_idx = favorited.find(String(favorites->get_item_metadata(current + 1)));
-		int b_idx = favorited.find(String(favorites->get_item_metadata(current)));
+		//todo
+		auto it_a = std::find(favorited.begin(), favorited.end(), String(favorites->get_item_metadata(current + 1)));
+
+		int a_idx = -1;
+
+		if(it_a != favorited.end()){
+			a_idx = std::distance(favorited.begin(), it_a);
+		}
+
+		auto it_b = std::find(favorited.begin(), favorited.end(), String(favorites->get_item_metadata(current)));
+
+		int b_idx = -1;
+
+		if(it_b != favorited.end()){
+			b_idx = std::distance(favorited.begin(), it_b);
+		}
 
 		if (a_idx == -1 || b_idx == -1) {
 			return;
 		}
-		SWAP(favorited.write[a_idx], favorited.write[b_idx]);
+		SWAP(favorited[a_idx], favorited[b_idx]);
 
 		EditorSettings::get_singleton()->set_favorites(favorited);
 
@@ -1212,7 +1236,7 @@ void EditorFileDialog::_update_favorites() {
 
 	favorite->set_pressed(false);
 
-	Vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
+	std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
 	for (int i = 0; i < favorited.size(); i++) {
 		bool cres = favorited[i].begins_with("res://");
 		if (cres != res) {
@@ -1259,7 +1283,7 @@ void EditorFileDialog::_favorite_pressed() {
 		cd += "/";
 	}
 
-	Vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
+	std::vector<String> favorited = EditorSettings::get_singleton()->get_favorites();
 
 	bool found = false;
 	for (int i = 0; i < favorited.size(); i++) {
@@ -1275,7 +1299,7 @@ void EditorFileDialog::_favorite_pressed() {
 	}
 
 	if (found) {
-		favorited.erase(cd);
+		std::remove(favorited.begin(), favorited.end(), cd);
 	} else {
 		favorited.push_back(cd);
 	}
@@ -1286,7 +1310,7 @@ void EditorFileDialog::_favorite_pressed() {
 }
 
 void EditorFileDialog::_recent_selected(int p_idx) {
-	Vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
+	std::vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
 	ERR_FAIL_INDEX(p_idx, recentd.size());
 
 	dir_access->change_dir(recent->get_item_metadata(p_idx));
@@ -1437,7 +1461,7 @@ void EditorFileDialog::set_default_display_mode(DisplayMode p_mode) {
 
 void EditorFileDialog::_save_to_recent() {
 	String dir = get_current_dir();
-	Vector<String> recent = EditorSettings::get_singleton()->get_recent_dirs();
+	std::vector<String> recent = EditorSettings::get_singleton()->get_recent_dirs();
 
 	const int max = 20;
 	int count = 0;
@@ -1446,14 +1470,18 @@ void EditorFileDialog::_save_to_recent() {
 	for (int i = 0; i < recent.size(); i++) {
 		bool cres = recent[i].begins_with("res://");
 		if (recent[i] == dir || (res == cres && count > max)) {
-			recent.remove(i);
+
+			//todo
+			recent.erase(recent.begin() + i);
+
 			i--;
 		} else {
 			count++;
 		}
 	}
 
-	recent.insert(0, dir);
+	//todo
+	recent.insert(recent.begin(), dir);
 
 	EditorSettings::get_singleton()->set_recent_dirs(recent);
 }

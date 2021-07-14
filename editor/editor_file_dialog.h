@@ -127,11 +127,11 @@ private:
 	ItemList *favorites;
 	ItemList *recent;
 
-	Vector<String> local_history;
+	std::vector<String> local_history;
 	int local_history_pos;
 	void _push_history();
 
-	Vector<String> filters;
+	std::vector<String> filters;
 
 	bool preview_waiting;
 	int preview_wheel_index;
@@ -207,7 +207,7 @@ public:
 	void add_filter(const String &p_filter);
 
 	void set_enable_multiple_selection(bool p_enable);
-	Vector<String> get_selected_files() const;
+	std::vector<String> get_selected_files() const;
 
 	String get_current_dir() const;
 	String get_current_file() const;

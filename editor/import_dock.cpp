@@ -39,7 +39,7 @@ public:
 	Map<StringName, Variant> values;
 	List<PropertyInfo> properties;
 	Ref<ResourceImporter> importer;
-	Vector<String> paths;
+	std::vector<String> paths;
 	Set<StringName> checked;
 	bool checking;
 
@@ -174,7 +174,7 @@ void ImportDock::_update_options(const Ref<ConfigFile> &p_config) {
 	}
 }
 
-void ImportDock::set_edit_multiple_paths(const Vector<String> &p_paths) {
+void ImportDock::set_edit_multiple_paths(const std::vector<String> &p_paths) {
 	clear();
 
 	// Use the value that is repeated the most.
@@ -419,8 +419,10 @@ static bool _find_owners(EditorFileSystemDirectory *efsd, const String &p_path) 
 	}
 
 	for (int i = 0; i < efsd->get_file_count(); i++) {
-		Vector<String> deps = efsd->get_file_deps(i);
-		if (deps.find(p_path) != -1) {
+		std::vector<String> deps = efsd->get_file_deps(i);
+
+		auto it = std::find(deps.begin(), deps.end(), p_path);
+		if (it != deps.end()) {
 			return true;
 		}
 	}

@@ -30,16 +30,12 @@
 
 #include "skeleton_3d_editor_plugin.h"
 
-#include "core/io/resource_saver.h"
-#include "editor/editor_file_dialog.h"
 #include "editor/editor_properties.h"
 #include "editor/editor_scale.h"
 #include "editor/plugins/animation_player_editor_plugin.h"
 #include "node_3d_editor_plugin.h"
 #include "scene/3d/collision_shape_3d.h"
-#include "scene/3d/mesh_instance_3d.h"
 #include "scene/3d/physics_body_3d.h"
-#include "scene/3d/physics_joint_3d.h"
 #include "scene/resources/capsule_shape_3d.h"
 #include "scene/resources/sphere_shape_3d.h"
 
@@ -126,7 +122,7 @@ void BoneTransformEditor::_notification(int p_what) {
 			const float button_height = key_button->get_size().y;
 
 			const float width = get_size().x - get_theme_constant("inspector_margin", "Editor");
-			Vector<Rect2> input_rects;
+			std::vector<Rect2> input_rects;
 			if (keyable && section->get_vbox()->is_visible()) {
 				input_rects.push_back(Rect2(key_button->get_position() + buffer, Size2(width, button_height)));
 			} else {
@@ -342,23 +338,23 @@ void Skeleton3DEditor::create_physical_skeleton() {
 		return;
 	}
 
-	Vector<BoneInfo> bones_infos;
+	std::vector<BoneInfo> bones_infos;
 	bones_infos.resize(bc);
 
 	for (int bone_id = 0; bc > bone_id; ++bone_id) {
 		const int parent = skeleton->get_bone_parent(bone_id);
 
 		if (parent < 0) {
-			bones_infos.write[bone_id].relative_rest = skeleton->get_bone_rest(bone_id);
+			bones_infos[bone_id].relative_rest = skeleton->get_bone_rest(bone_id);
 
 		} else {
 			const int parent_parent = skeleton->get_bone_parent(parent);
 
-			bones_infos.write[bone_id].relative_rest = bones_infos[parent].relative_rest * skeleton->get_bone_rest(bone_id);
+			bones_infos[bone_id].relative_rest = bones_infos[parent].relative_rest * skeleton->get_bone_rest(bone_id);
 
 			/// create physical bone on parent
 			if (!bones_infos[parent].physical_bone) {
-				bones_infos.write[parent].physical_bone = create_physical_bone(parent, bone_id, bones_infos);
+				bones_infos[parent].physical_bone = create_physical_bone(parent, bone_id, bones_infos);
 
 				ur->create_action(TTR("Create physical bones"));
 				ur->add_do_method(skeleton, "add_child", bones_infos[parent].physical_bone);
@@ -379,7 +375,7 @@ void Skeleton3DEditor::create_physical_skeleton() {
 	}
 }
 
-PhysicalBone3D *Skeleton3DEditor::create_physical_bone(int bone_id, int bone_child_id, const Vector<BoneInfo> &bones_infos) {
+PhysicalBone3D *Skeleton3DEditor::create_physical_bone(int bone_id, int bone_child_id, const std::vector<BoneInfo> &bones_infos) {
 	const Transform3D child_rest = skeleton->get_bone_rest(bone_child_id);
 
 	const real_t half_height(child_rest.origin.length() * 0.5);
@@ -551,7 +547,7 @@ void Skeleton3DEditor::update_joint_tree() {
 
 	items.insert(-1, root);
 
-	const Vector<int> &joint_porder = skeleton->get_bone_process_orders();
+	const std::vector<int> &joint_porder = skeleton->get_bone_process_orders();
 	Ref<Texture> bone_icon = get_theme_icon("BoneAttachment3D", "EditorIcons");
 
 	for (int i = 0; i < joint_porder.size(); ++i) {
@@ -638,7 +634,7 @@ void Skeleton3DEditor::_notification(int p_what) {
 			update_joint_tree();
 			update_editors();
 
-			get_tree()->connect("node_removed", callable_mp(this, &Skeleton3DEditor::_node_removed), Vector<Variant>(), Object::CONNECT_ONESHOT);
+			get_tree()->connect("node_removed", callable_mp(this, &Skeleton3DEditor::_node_removed), std::vector<Variant>(), Object::CONNECT_ONESHOT);
 			joint_tree->connect("item_selected", callable_mp(this, &Skeleton3DEditor::_joint_tree_selection_changed));
 			joint_tree->connect("item_rmb_selected", callable_mp(this, &Skeleton3DEditor::_joint_tree_rmb_select));
 #ifdef TOOLS_ENABLED

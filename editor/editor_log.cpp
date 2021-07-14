@@ -35,7 +35,6 @@
 #include "editor_node.h"
 #include "editor_scale.h"
 #include "scene/gui/center_container.h"
-#include "scene/resources/font.h"
 
 void EditorLog::_error_handler(void *p_self, const char *p_func, const char *p_file, int p_line, const char *p_error, const char *p_errorexp, ErrorHandlerType p_type) {
 	EditorLog *self = (EditorLog *)p_self;
@@ -167,7 +166,7 @@ void EditorLog::_process_message(const String &p_msg, MessageType p_type) {
 	if (messages.size() > 0 && messages[messages.size() - 1].text == p_msg) {
 		// If previous message is the same as the new one, increase previous count rather than adding another
 		// instance to the messages list.
-		LogMessage &previous = messages.write[messages.size() - 1];
+		LogMessage &previous = messages[messages.size() - 1];
 		previous.count++;
 
 		_add_log_line(previous, collapse);
@@ -187,7 +186,7 @@ void EditorLog::add_message(const String &p_msg, MessageType p_type) {
 	// get grouped together and sent to the editor log as one message. This can mess with the
 	// search functionality (see the comments on the PR above for more details). This behaviour
 	// also matches that of other IDE's.
-	Vector<String> lines = p_msg.split("\n", false);
+	std::vector<String> lines = p_msg.split("\n", false);
 
 	for (int i = 0; i < lines.size(); i++) {
 		_process_message(lines[i], p_type);

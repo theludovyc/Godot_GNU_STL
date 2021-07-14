@@ -30,15 +30,10 @@
 
 #include "sprite_frames_editor_plugin.h"
 
-#include "core/config/project_settings.h"
-#include "core/io/resource_loader.h"
 #include "core/os/keyboard.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
 #include "scene/3d/sprite_3d.h"
 #include "scene/gui/center_container.h"
-#include "scene/gui/margin_container.h"
-#include "scene/gui/panel_container.h"
 
 void SpriteFramesEditor::_gui_input(Ref<InputEvent> p_event) {
 }
@@ -336,7 +331,7 @@ void SpriteFramesEditor::_notification(int p_what) {
 	}
 }
 
-void SpriteFramesEditor::_file_load_request(const Vector<String> &p_path, int p_at_pos) {
+void SpriteFramesEditor::_file_load_request(const std::vector<String> &p_path, int p_at_pos) {
 	ERR_FAIL_COND(!frames->has_animation(edited_anim));
 
 	List<Ref<Texture2D>> resources;
@@ -920,7 +915,7 @@ bool SpriteFramesEditor::can_drop_data_fw(const Point2 &p_point, const Variant &
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		if (files.size() == 0) {
 			return false;
@@ -990,7 +985,7 @@ void SpriteFramesEditor::drop_data_fw(const Point2 &p_point, const Variant &p_da
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		if (Input::get_singleton()->is_key_pressed(KEY_CTRL)) {
 			_prepare_sprite_sheet(files[0]);

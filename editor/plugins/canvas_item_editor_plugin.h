@@ -294,14 +294,14 @@ private:
 			return has_z && p_rr.has_z ? p_rr.z_index < z_index : p_rr.has_z;
 		}
 	};
-	Vector<_SelectResult> selection_results;
+	std::vector<_SelectResult> selection_results;
 
 	struct _HoverResult {
 		Point2 position;
 		Ref<Texture2D> icon;
 		String name;
 	};
-	Vector<_HoverResult> hovering_results;
+	std::vector<_HoverResult> hovering_results;
 
 	struct BoneList {
 		Transform2D xform;
@@ -407,8 +407,8 @@ private:
 
 	bool _is_node_locked(const Node *p_node);
 	bool _is_node_movable(const Node *p_node, bool p_popup_warning = false);
-	void _find_canvas_items_at_pos(const Point2 &p_pos, Node *p_node, Vector<_SelectResult> &r_items, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
-	void _get_canvas_items_at_pos(const Point2 &p_pos, Vector<_SelectResult> &r_items, bool p_allow_locked = false);
+	void _find_canvas_items_at_pos(const Point2 &p_pos, Node *p_node, std::vector<_SelectResult> &r_items, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
+	void _get_canvas_items_at_pos(const Point2 &p_pos, std::vector<_SelectResult> &r_items, bool p_allow_locked = false);
 
 	void _find_canvas_items_in_rect(const Rect2 &p_rect, Node *p_node, List<CanvasItem *> *r_items, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
 	bool _select_click_on_item(CanvasItem *item, Point2 p_click_pos, bool p_append);
@@ -657,9 +657,9 @@ class CanvasItemEditorViewport : public Control {
 	GDCLASS(CanvasItemEditorViewport, Control);
 
 	String default_type;
-	Vector<String> types;
+	std::vector<String> types;
 
-	Vector<String> selected_files;
+	std::vector<String> selected_files;
 	Node *target_node;
 	Point2 drop_pos;
 
@@ -680,7 +680,7 @@ class CanvasItemEditorViewport : public Control {
 	void _on_change_type_confirmed();
 	void _on_change_type_closed();
 
-	void _create_preview(const Vector<String> &files) const;
+	void _create_preview(const std::vector<String> &files) const;
 	void _remove_preview();
 
 	bool _cyclical_dependency_exists(const String &p_target_scene_path, Node *p_desired_node);
