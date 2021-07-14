@@ -37,7 +37,8 @@
 #include "core/math/geometry_2d.h"
 #include "editor/editor_atlas_packer.h"
 #include "scene/resources/mesh.h"
-#include "scene/resources/texture.h"
+
+//todo std::vector.data()
 
 String ResourceImporterTextureAtlas::get_importer_name() const {
 	return "texture_atlas";
@@ -189,14 +190,14 @@ static void _plot_triangle(Vector2i *vertices, const Vector2i &p_offset, bool p_
 Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file, const Map<String, Map<StringName, Variant>> &p_source_file_options, const Map<String, String> &p_base_paths) {
 	ERR_FAIL_COND_V(p_source_file_options.size() == 0, ERR_BUG); //should never happen
 
-	Vector<EditorAtlasPacker::Chart> charts;
-	Vector<PackData> pack_data_files;
+	std::vector<EditorAtlasPacker::Chart> charts;
+	std::vector<PackData> pack_data_files;
 
 	pack_data_files.resize(p_source_file_options.size());
 
 	int idx = 0;
 	for (const Map<String, Map<StringName, Variant>>::Element *E = p_source_file_options.front(); E; E = E->next(), idx++) {
-		PackData &pack_data = pack_data_files.write[idx];
+		PackData &pack_data = pack_data_files[idx];
 		const String &source = E->key();
 		const Map<StringName, Variant> &options = E->get();
 
@@ -242,14 +243,14 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 			Ref<BitMap> bit_map;
 			bit_map.instantiate();
 			bit_map->create_from_image_alpha(image);
-			Vector<Vector<Vector2>> polygons = bit_map->clip_opaque_to_polygons(Rect2(0, 0, image->get_width(), image->get_height()));
+			std::vector<std::vector<Vector2>> polygons = bit_map->clip_opaque_to_polygons(Rect2(0, 0, image->get_width(), image->get_height()));
 
 			for (int j = 0; j < polygons.size(); j++) {
 				EditorAtlasPacker::Chart chart;
 				chart.vertices = polygons[j];
 				chart.can_transpose = true;
 
-				Vector<int> poly = Geometry2D::triangulate_polygon(polygons[j]);
+				std::vector<int> poly = Geometry2D::triangulate_polygon(polygons[j]);
 				for (int i = 0; i < poly.size(); i += 3) {
 					EditorAtlasPacker::Chart::Face f;
 					f.vertex[0] = poly[i + 0];
@@ -276,7 +277,7 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 	new_atlas->create(atlas_width, atlas_height, false, Image::FORMAT_RGBA8);
 
 	for (int i = 0; i < pack_data_files.size(); i++) {
-		PackData &pack_data = pack_data_files.write[i];
+		PackData &pack_data = pack_data_files[i];
 
 		for (int j = 0; j < pack_data.chart_pieces.size(); j++) {
 			const EditorAtlasPacker::Chart &chart = charts[pack_data.chart_pieces[j]];
@@ -312,7 +313,7 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 	//save the images
 	idx = 0;
 	for (const Map<String, Map<StringName, Variant>>::Element *E = p_source_file_options.front(); E; E = E->next(), idx++) {
-		PackData &pack_data = pack_data_files.write[idx];
+		PackData &pack_data = pack_data_files[idx];
 
 		Ref<Texture2D> texture;
 
@@ -333,9 +334,9 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 
 			for (int i = 0; i < pack_data.chart_pieces.size(); i++) {
 				const EditorAtlasPacker::Chart &chart = charts[pack_data.chart_pieces[i]];
-				Vector<Vector2> vertices;
-				Vector<int> indices;
-				Vector<Vector2> uvs;
+				std::vector<Vector2> vertices;
+				std::vector<int> indices;
+				std::vector<Vector2> uvs;
 				int vc = chart.vertices.size();
 				int fc = chart.faces.size();
 				vertices.resize(vc);
@@ -343,9 +344,9 @@ Error ResourceImporterTextureAtlas::import_group_file(const String &p_group_file
 				indices.resize(fc * 3);
 
 				{
-					Vector2 *vw = vertices.ptrw();
-					int *iw = indices.ptrw();
-					Vector2 *uvw = uvs.ptrw();
+					Vector2 *vw = vertices.data();
+					int *iw = indices.data();
+					Vector2 *uvw = uvs.data();
 
 					for (int j = 0; j < vc; j++) {
 						vw[j] = chart.vertices[j];

@@ -36,8 +36,6 @@
 #include "core/io/image_loader.h"
 #include "editor/editor_file_system.h"
 #include "editor/editor_node.h"
-#include "resource_importer_texture.h"
-#include "scene/resources/texture.h"
 
 String ResourceImporterLayeredTexture::get_importer_name() const {
 	switch (mode) {
@@ -155,31 +153,31 @@ void ResourceImporterLayeredTexture::get_import_options(List<ImportOption> *r_op
 	}
 }
 
-void ResourceImporterLayeredTexture::_save_tex(Vector<Ref<Image>> p_images, const String &p_to_path, int p_compress_mode, float p_lossy, Image::CompressMode p_vram_compression, Image::CompressSource p_csource, Image::UsedChannels used_channels, bool p_mipmaps, bool p_force_po2) {
-	Vector<Ref<Image>> mipmap_images; //for 3D
+void ResourceImporterLayeredTexture::_save_tex(std::vector<Ref<Image>> p_images, const String &p_to_path, int p_compress_mode, float p_lossy, Image::CompressMode p_vram_compression, Image::CompressSource p_csource, Image::UsedChannels used_channels, bool p_mipmaps, bool p_force_po2) {
+	std::vector<Ref<Image>> mipmap_images; //for 3D
 
 	if (mode == MODE_3D) {
 		//3D saves in its own way
 
 		for (int i = 0; i < p_images.size(); i++) {
-			if (p_images.write[i]->has_mipmaps()) {
-				p_images.write[i]->clear_mipmaps();
+			if (p_images[i]->has_mipmaps()) {
+				p_images[i]->clear_mipmaps();
 			}
 
 			if (p_force_po2) {
-				p_images.write[i]->resize_to_po2();
+				p_images[i]->resize_to_po2();
 			}
 		}
 
 		if (p_mipmaps) {
-			Vector<Ref<Image>> parent_images = p_images;
+			std::vector<Ref<Image>> parent_images = p_images;
 			//create 3D mipmaps, this is horrible, though not used very often
 			int w = p_images[0]->get_width();
 			int h = p_images[0]->get_height();
 			int d = p_images.size();
 
 			while (w > 1 || h > 1 || d > 1) {
-				Vector<Ref<Image>> mipmaps;
+				std::vector<Ref<Image>> mipmaps;
 				int mm_w = MAX(1, w >> 1);
 				int mm_h = MAX(1, h >> 1);
 				int mm_d = MAX(1, d >> 1);
@@ -238,20 +236,21 @@ void ResourceImporterLayeredTexture::_save_tex(Vector<Ref<Image>> p_images, cons
 				h = mm_h;
 				d = mm_d;
 
-				mipmap_images.append_array(mipmaps);
+				mipmap_images.insert(mipmap_images.end(), mipmaps.begin(), mipmaps.end());
+
 				parent_images = mipmaps;
 			}
 		}
 	} else {
 		for (int i = 0; i < p_images.size(); i++) {
 			if (p_force_po2) {
-				p_images.write[i]->resize_to_po2();
+				p_images[i]->resize_to_po2();
 			}
 
 			if (p_mipmaps) {
-				p_images.write[i]->generate_mipmaps();
+				p_images[i]->generate_mipmaps();
 			} else {
-				p_images.write[i]->clear_mipmaps();
+				p_images[i]->clear_mipmaps();
 			}
 		}
 	}
@@ -363,7 +362,7 @@ Error ResourceImporterLayeredTexture::import(const String &p_source_file, const 
 
 	Image::UsedChannels used_channels = image->detect_used_channels(csource);
 
-	Vector<Ref<Image>> slices;
+	std::vector<Ref<Image>> slices;
 
 	int slice_w = image->get_width() / hslices;
 	int slice_h = image->get_height() / vslices;
@@ -407,12 +406,12 @@ Error ResourceImporterLayeredTexture::import(const String &p_source_file, const 
 					//but user selected to compress hdr anyway, so force an alpha-less format.
 					if (image->get_format() == Image::FORMAT_RGBAF) {
 						for (int i = 0; i < slices.size(); i++) {
-							slices.write[i]->convert(Image::FORMAT_RGBF);
+							slices[i]->convert(Image::FORMAT_RGBF);
 						}
 
 					} else if (image->get_format() == Image::FORMAT_RGBAH) {
 						for (int i = 0; i < slices.size(); i++) {
-							slices.write[i]->convert(Image::FORMAT_RGBH);
+							slices[i]->convert(Image::FORMAT_RGBH);
 						}
 					}
 				} else {
@@ -425,7 +424,7 @@ Error ResourceImporterLayeredTexture::import(const String &p_source_file, const 
 					//default to rgbe
 					if (image->get_format() != Image::FORMAT_RGBE9995) {
 						for (int i = 0; i < slices.size(); i++) {
-							slices.write[i]->convert(Image::FORMAT_RGBE9995);
+							slices[i]->convert(Image::FORMAT_RGBE9995);
 						}
 					}
 				}
@@ -516,7 +515,7 @@ bool ResourceImporterLayeredTexture::are_import_settings_valid(const String &p_p
 		return true; //do not care about non vram
 	}
 
-	Vector<String> formats_imported;
+	std::vector<String> formats_imported;
 	if (metadata.has("imported_formats")) {
 		formats_imported = metadata["imported_formats"];
 	}
@@ -527,7 +526,9 @@ bool ResourceImporterLayeredTexture::are_import_settings_valid(const String &p_p
 		String setting_path = "rendering/textures/vram_compression/import_" + String(compression_formats[index]);
 		bool test = ProjectSettings::get_singleton()->get(setting_path);
 		if (test) {
-			if (formats_imported.find(compression_formats[index]) == -1) {
+			auto it = std::find(formats_imported.begin(), formats_imported.end(), compression_formats[index]);
+
+			if (it == formats_imported.end()) {
 				valid = false;
 				break;
 			}
