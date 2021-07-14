@@ -30,10 +30,14 @@
 
 #include "png_driver_common.h"
 
+#include <string.h>
+#include <iostream>
+
 #include "core/os/os.h"
 
-#include <png.h>
-#include <string.h>
+#include "thirdparty/libpng/png.h"
+
+//todo std::vector.data()
 
 namespace PNGDriverCommon {
 
@@ -105,13 +109,19 @@ Error png_to_image(const uint8_t *p_source, size_t p_size, bool p_force_linear, 
 	}
 
 	const png_uint_32 stride = PNG_IMAGE_ROW_STRIDE(png_img);
-	Vector<uint8_t> buffer;
-	Error err = buffer.resize(PNG_IMAGE_BUFFER_SIZE(png_img, stride));
-	if (err) {
+
+	std::vector<uint8_t> buffer;
+
+	try{
+		buffer.resize(PNG_IMAGE_BUFFER_SIZE(png_img, stride));
+	}catch(std::bad_alloc e){
 		png_image_free(&png_img); // only required when we return before finish_read
-		return err;
+
+		std::cerr << e.what() << std::endl;
+		return Error::FAILED;
 	}
-	uint8_t *writer = buffer.ptrw();
+
+	uint8_t *writer = buffer.data();
 
 	// read image data to buffer and release libpng resources
 	success = png_image_finish_read(&png_img, nullptr, writer, stride, nullptr);
@@ -124,7 +134,7 @@ Error png_to_image(const uint8_t *p_source, size_t p_size, bool p_force_linear, 
 	return OK;
 }
 
-Error image_to_png(const Ref<Image> &p_image, Vector<uint8_t> &p_buffer) {
+Error image_to_png(const Ref<Image> &p_image, std::vector<uint8_t> &p_buffer) {
 	Ref<Image> source_image = p_image->duplicate();
 
 	if (source_image->is_compressed()) {
@@ -162,8 +172,8 @@ Error image_to_png(const Ref<Image> &p_image, Vector<uint8_t> &p_buffer) {
 			}
 	}
 
-	const Vector<uint8_t> image_data = source_image->get_data();
-	const uint8_t *reader = image_data.ptr();
+	const std::vector<uint8_t> image_data = source_image->get_data();
+	const uint8_t *reader = image_data.data();
 
 	// we may be passed a buffer with existing content we're expected to append to
 	const int buffer_offset = p_buffer.size();
@@ -174,10 +184,15 @@ Error image_to_png(const Ref<Image> &p_image, Vector<uint8_t> &p_buffer) {
 	size_t compressed_size = png_size_estimate;
 	int success = 0;
 	{ // scope writer lifetime
-		Error err = p_buffer.resize(buffer_offset + png_size_estimate);
-		ERR_FAIL_COND_V(err, err);
+		try{
+			p_buffer.resize(buffer_offset + png_size_estimate);
+		}catch(std::bad_alloc e){
+			std::cerr << e.what() << std::endl;
+			return Error::FAILED;
+		}
 
-		uint8_t *writer = p_buffer.ptrw();
+		uint8_t *writer = p_buffer.data();
+
 		success = png_image_write_to_memory(&png_img, &writer[buffer_offset],
 				&compressed_size, 0, reader, 0, nullptr);
 		ERR_FAIL_COND_V_MSG(check_error(png_img), FAILED, png_img.message);
@@ -187,10 +202,14 @@ Error image_to_png(const Ref<Image> &p_image, Vector<uint8_t> &p_buffer) {
 		ERR_FAIL_COND_V(compressed_size <= png_size_estimate, FAILED);
 
 		// write failed due to buffer size, resize and retry
-		Error err = p_buffer.resize(buffer_offset + compressed_size);
-		ERR_FAIL_COND_V(err, err);
+		try{
+			p_buffer.resize(buffer_offset + compressed_size);
+		}catch (std::bad_alloc e){
+			std::cerr << e.what() << std::endl;
+			return Error::FAILED;
+		}
 
-		uint8_t *writer = p_buffer.ptrw();
+		uint8_t *writer = p_buffer.data();
 		success = png_image_write_to_memory(&png_img, &writer[buffer_offset],
 				&compressed_size, 0, reader, 0, nullptr);
 		ERR_FAIL_COND_V_MSG(check_error(png_img), FAILED, png_img.message);
@@ -198,8 +217,12 @@ Error image_to_png(const Ref<Image> &p_image, Vector<uint8_t> &p_buffer) {
 	}
 
 	// trim buffer size to content
-	Error err = p_buffer.resize(buffer_offset + compressed_size);
-	ERR_FAIL_COND_V(err, err);
+	try{
+		p_buffer.resize(buffer_offset + compressed_size);
+	}catch (std::bad_alloc e){
+		std::cerr << e.what() << std::endl;
+		return Error::FAILED;
+	}
 
 	return OK;
 }
