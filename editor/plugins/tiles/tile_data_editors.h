@@ -89,7 +89,7 @@ class GenericTilePolygonEditor : public VBoxContainer {
 
 private:
 	Ref<TileSet> tile_set;
-	LocalVector<Vector<Point2>> polygons;
+	LocalVector<std::vector<Point2>> polygons;
 	bool multiple_polygon_mode = false;
 
 	UndoRedo *undo_redo = EditorNode::get_undo_redo();
@@ -120,7 +120,7 @@ private:
 	Button *button_pixel_snap;
 	MenuButton *button_advanced_menu;
 
-	Vector<Point2> in_creation_polygon;
+	std::vector<Point2> in_creation_polygon;
 
 	Panel *panel;
 	Control *base_control;
@@ -163,11 +163,11 @@ public:
 	void set_background(Ref<Texture2D> p_texture, Rect2 p_region = Rect2(), Vector2 p_offset = Vector2(), bool p_flip_h = false, bool p_flip_v = false, bool p_transpose = false, Color p_modulate = Color(1.0, 1.0, 1.0, 0.0));
 
 	int get_polygon_count();
-	int add_polygon(Vector<Point2> p_polygon, int p_index = -1);
+	int add_polygon(std::vector<Point2> p_polygon, int p_index = -1);
 	void remove_polygon(int p_index);
 	void clear_polygons();
-	void set_polygon(int p_polygon_index, Vector<Point2> p_polygon);
-	Vector<Point2> get_polygon(int p_polygon_index);
+	void set_polygon(int p_polygon_index, std::vector<Point2> p_polygon);
+	std::vector<Point2> get_polygon(int p_polygon_index);
 
 	void set_polygons_color(Color p_color);
 	void set_multiple_polygon_mode(bool p_multiple_polygon_mode);

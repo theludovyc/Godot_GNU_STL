@@ -30,7 +30,6 @@
 
 #include "gradient_editor_plugin.h"
 
-#include "canvas_item_editor_plugin.h"
 #include "editor/editor_scale.h"
 #include "node_3d_editor_plugin.h"
 
@@ -44,7 +43,7 @@ void GradientEditor::_gradient_changed() {
 	}
 
 	editing = true;
-	Vector<Gradient::Point> points = gradient->get_points();
+	std::vector<Gradient::Point> points = gradient->get_points();
 	set_points(points);
 	editing = false;
 }

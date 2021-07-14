@@ -33,6 +33,8 @@
 #include "../editor_settings.h"
 #include "core/io/marshalls.h"
 
+//todo std::vector.data()
+
 //#define DEBUG_PRINT(m_p) print_line(m_p)
 //#define DEBUG_TIME(m_what) printf("MS: %s - %lu\n", m_what, OS::get_singleton()->get_ticks_usec());
 
@@ -69,16 +71,16 @@ void EditorFileServer::_subthread_start(void *s) {
 		_close_client(cd);
 		ERR_FAIL_COND(passlen > 512);
 	} else if (passlen > 0) {
-		Vector<char> passutf8;
+		std::vector<char> passutf8;
 		passutf8.resize(passlen + 1);
-		err = cd->connection->get_data((uint8_t *)passutf8.ptr(), passlen);
+		err = cd->connection->get_data((uint8_t *)passutf8.data(), passlen);
 		if (err != OK) {
 			_close_client(cd);
 			ERR_FAIL_COND(err != OK);
 		}
-		passutf8.write[passlen] = 0;
+		passutf8[passlen] = 0;
 		String s2;
-		s2.parse_utf8(passutf8.ptr());
+		s2.parse_utf8(passutf8.data());
 		if (s2 != cd->efs->password) {
 			encode_uint32(ERR_INVALID_DATA, buf4);
 			cd->connection->put_data(buf4, 4);
@@ -132,16 +134,16 @@ void EditorFileServer::_subthread_start(void *s) {
 				}
 
 				int namelen = decode_uint32(buf4);
-				Vector<char> fileutf8;
+				std::vector<char> fileutf8;
 				fileutf8.resize(namelen + 1);
-				err = cd->connection->get_data((uint8_t *)fileutf8.ptr(), namelen);
+				err = cd->connection->get_data((uint8_t *)fileutf8.data(), namelen);
 				if (err != OK) {
 					_close_client(cd);
 					ERR_FAIL_COND(err != OK);
 				}
-				fileutf8.write[namelen] = 0;
+				fileutf8[namelen] = 0;
 				String s2;
-				s2.parse_utf8(fileutf8.ptr());
+				s2.parse_utf8(fileutf8.data());
 
 				if (cmd == FileAccessNetwork::COMMAND_FILE_EXISTS) {
 					print_verbose("FILE EXISTS: " + s2);
@@ -228,9 +230,9 @@ void EditorFileServer::_subthread_start(void *s) {
 				ERR_CONTINUE(blocklen > (16 * 1024 * 1024));
 
 				cd->files[id]->seek(offset);
-				Vector<uint8_t> buf;
+				std::vector<uint8_t> buf;
 				buf.resize(blocklen);
-				uint32_t read = cd->files[id]->get_buffer(buf.ptrw(), blocklen);
+				uint32_t read = cd->files[id]->get_buffer(buf.data(), blocklen);
 
 				print_verbose("GET BLOCK - offset: " + itos(offset) + ", blocklen: " + itos(blocklen));
 
@@ -243,7 +245,7 @@ void EditorFileServer::_subthread_start(void *s) {
 				cd->connection->put_data(buf4, 8);
 				encode_uint32(read, buf4);
 				cd->connection->put_data(buf4, 4);
-				cd->connection->put_data(buf.ptr(), read);
+				cd->connection->put_data(buf.data(), read);
 
 			} break;
 			case FileAccessNetwork::COMMAND_CLOSE: {

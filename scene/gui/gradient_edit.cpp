@@ -30,6 +30,8 @@
 
 #include "gradient_edit.h"
 
+#include <algorithm>
+
 #include "core/os/keyboard.h"
 
 #ifdef TOOLS_ENABLED
@@ -97,7 +99,10 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 	Ref<InputEventKey> k = p_event;
 
 	if (k.is_valid() && k->is_pressed() && k->get_keycode() == KEY_DELETE && grabbed != -1) {
-		points.remove(grabbed);
+
+		//todo
+		points.erase(points.begin() + grabbed);
+
 		grabbed = -1;
 		grabbing = false;
 		update();
@@ -117,7 +122,10 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 	if (mb.is_valid() && mb->get_button_index() == 2 && mb->is_pressed()) {
 		grabbed = _get_point_from_pos(mb->get_position().x);
 		if (grabbed != -1) {
-			points.remove(grabbed);
+
+			//todo
+			points.erase(points.begin() + grabbed);
+
 			grabbed = -1;
 			grabbing = false;
 			update();
@@ -137,7 +145,9 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			newPoint.offset = CLAMP(x / float(total_w), 0, 1);
 
 			points.push_back(newPoint);
-			points.sort();
+
+			std::sort(points.begin(), points.end());
+
 			for (int i = 0; i < points.size(); ++i) {
 				if (points[i].offset == newPoint.offset) {
 					grabbed = i;
@@ -206,7 +216,9 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 		newPoint.color = prev.color.lerp(next.color, (newPoint.offset - prev.offset) / (next.offset - prev.offset));
 
 		points.push_back(newPoint);
-		points.sort();
+
+		std::sort(points.begin(),  points.end());
+
 		for (int i = 0; i < points.size(); i++) {
 			if (points[i].offset == newPoint.offset) {
 				grabbed = i;
@@ -278,9 +290,10 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 		if (!valid || grabbed == -1) {
 			return;
 		}
-		points.write[grabbed].offset = newofs;
+		points[grabbed].offset = newofs;
 
-		points.sort();
+		std::sort(points.begin(),  points.end());
+
 		for (int i = 0; i < points.size(); i++) {
 			if (points[i].offset == newofs) {
 				grabbed = i;
@@ -341,8 +354,8 @@ void GradientEdit::_notification(int p_what) {
 				continue;
 			}
 
-			Vector<Vector2> points;
-			Vector<Color> colors;
+			std::vector<Vector2> points;
+			std::vector<Color> colors;
 			points.push_back(Vector2(prev.offset * total_w, h));
 			points.push_back(Vector2(prev.offset * total_w, 0));
 			points.push_back(Vector2(next.offset * total_w, 0));
@@ -351,7 +364,7 @@ void GradientEdit::_notification(int p_what) {
 			colors.push_back(prev.color);
 			colors.push_back(next.color);
 			colors.push_back(next.color);
-			draw_primitive(points, colors, Vector<Point2>());
+			draw_primitive(points, colors, std::vector<Point2>());
 			prev = next;
 		}
 
@@ -407,17 +420,17 @@ void GradientEdit::_notification(int p_what) {
 
 void GradientEdit::_draw_checker(int x, int y, int w, int h) {
 	//Draw it with polygon to insert UVs for scale
-	Vector<Vector2> backPoints;
+	std::vector<Vector2> backPoints;
 	backPoints.push_back(Vector2(x, y));
 	backPoints.push_back(Vector2(x, y + h));
 	backPoints.push_back(Vector2(x + w, y + h));
 	backPoints.push_back(Vector2(x + w, y));
-	Vector<Color> colorPoints;
+	std::vector<Color> colorPoints;
 	colorPoints.push_back(Color(1, 1, 1, 1));
 	colorPoints.push_back(Color(1, 1, 1, 1));
 	colorPoints.push_back(Color(1, 1, 1, 1));
 	colorPoints.push_back(Color(1, 1, 1, 1));
-	Vector<Vector2> uvPoints;
+	std::vector<Vector2> uvPoints;
 	//Draw checker pattern pixel-perfect and scale it by 2.
 	uvPoints.push_back(Vector2(x, y));
 	uvPoints.push_back(Vector2(x, y + h * .5f / checker->get_height()));
@@ -434,12 +447,12 @@ void GradientEdit::_color_changed(const Color &p_color) {
 	if (grabbed == -1) {
 		return;
 	}
-	points.write[grabbed].color = p_color;
+	points[grabbed].color = p_color;
 	update();
 	emit_signal("ramp_changed");
 }
 
-void GradientEdit::set_ramp(const Vector<float> &p_offsets, const Vector<Color> &p_colors) {
+void GradientEdit::set_ramp(const std::vector<float> &p_offsets, const std::vector<Color> &p_colors) {
 	ERR_FAIL_COND(p_offsets.size() != p_colors.size());
 	points.clear();
 	for (int i = 0; i < p_offsets.size(); i++) {
@@ -449,27 +462,28 @@ void GradientEdit::set_ramp(const Vector<float> &p_offsets, const Vector<Color> 
 		points.push_back(p);
 	}
 
-	points.sort();
+	std::sort(points.begin(),  points.end());
+
 	update();
 }
 
-Vector<float> GradientEdit::get_offsets() const {
-	Vector<float> ret;
+std::vector<float> GradientEdit::get_offsets() const {
+	std::vector<float> ret;
 	for (int i = 0; i < points.size(); i++) {
 		ret.push_back(points[i].offset);
 	}
 	return ret;
 }
 
-Vector<Color> GradientEdit::get_colors() const {
-	Vector<Color> ret;
+std::vector<Color> GradientEdit::get_colors() const {
+	std::vector<Color> ret;
 	for (int i = 0; i < points.size(); i++) {
 		ret.push_back(points[i].color);
 	}
 	return ret;
 }
 
-void GradientEdit::set_points(Vector<Gradient::Point> &p_points) {
+void GradientEdit::set_points(std::vector<Gradient::Point> &p_points) {
 	if (points.size() != p_points.size()) {
 		grabbed = -1;
 	}
@@ -477,7 +491,7 @@ void GradientEdit::set_points(Vector<Gradient::Point> &p_points) {
 	points = p_points;
 }
 
-Vector<Gradient::Point> &GradientEdit::get_points() {
+std::vector<Gradient::Point> &GradientEdit::get_points() {
 	return points;
 }
 

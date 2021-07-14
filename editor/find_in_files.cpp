@@ -44,10 +44,12 @@
 #include "scene/gui/progress_bar.h"
 #include "scene/gui/tree.h"
 
+//todo std::vector.data()
+
 const char *FindInFiles::SIGNAL_RESULT_FOUND = "result_found";
 const char *FindInFiles::SIGNAL_FINISHED = "finished";
 
-// TODO Would be nice in Vector and Vectors
+// TODO Would be nice in std::vector and Vectors
 template <typename T>
 inline void pop_back(T &container) {
 	container.resize(container.size() - 1);
@@ -162,7 +164,7 @@ void FindInFiles::_iterate() {
 	if (_folders_stack.size() != 0) {
 		// Scan folders first so we can build a list of files and have progress info later
 
-		PackedStringArray &folders_to_scan = _folders_stack.write[_folders_stack.size() - 1];
+		PackedStringArray &folders_to_scan = _folders_stack[_folders_stack.size() - 1];
 
 		if (folders_to_scan.size() != 0) {
 			// Scan one folder below
@@ -839,7 +841,7 @@ void FindInFilesPanel::_on_replace_all_clicked() {
 		TreeItem *file_item = E->value();
 		String fpath = file_item->get_metadata(0);
 
-		Vector<Result> locations;
+		std::vector<Result> locations;
 		for (TreeItem *item = file_item->get_first_child(); item; item = item->get_next()) {
 			if (!item->is_checked(0)) {
 				continue;
@@ -875,11 +877,11 @@ public:
 			if (c == '\n') {
 				_line_buffer.push_back(c);
 				_line_buffer.push_back(0);
-				return String::utf8(_line_buffer.ptr());
+				return String::utf8(_line_buffer.data());
 
 			} else if (c == '\0') {
 				_line_buffer.push_back(c);
-				return String::utf8(_line_buffer.ptr());
+				return String::utf8(_line_buffer.data());
 
 			} else if (c != '\r') {
 				_line_buffer.push_back(c);
@@ -889,14 +891,14 @@ public:
 		}
 
 		_line_buffer.push_back(0);
-		return String::utf8(_line_buffer.ptr());
+		return String::utf8(_line_buffer.data());
 	}
 
 private:
-	Vector<char> _line_buffer;
+	std::vector<char> _line_buffer;
 };
 
-void FindInFilesPanel::apply_replaces_in_file(String fpath, const Vector<Result> &locations, String new_text) {
+void FindInFilesPanel::apply_replaces_in_file(String fpath, const std::vector<Result> &locations, String new_text) {
 	// If the file is already open, I assume the editor will reload it.
 	// If there are unsaved changes, the user will be asked on focus,
 	// however that means either losing changes or losing replaces.

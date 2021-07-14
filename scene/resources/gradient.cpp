@@ -35,10 +35,10 @@
 Gradient::Gradient() {
 	//Set initial gradient transition from black to white
 	points.resize(2);
-	points.write[0].color = Color(0, 0, 0, 1);
-	points.write[0].offset = 0;
-	points.write[1].color = Color(1, 1, 1, 1);
-	points.write[1].offset = 1;
+	points[0].color = Color(0, 0, 0, 1);
+	points[0].offset = 0;
+	points[1].color = Color(1, 1, 1, 1);
+	points[1].offset = 1;
 }
 
 Gradient::~Gradient() {
@@ -68,45 +68,45 @@ void Gradient::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_COLOR_ARRAY, "colors"), "set_colors", "get_colors");
 }
 
-Vector<float> Gradient::get_offsets() const {
-	Vector<float> offsets;
+std::vector<float> Gradient::get_offsets() const {
+	std::vector<float> offsets;
 	offsets.resize(points.size());
 	for (int i = 0; i < points.size(); i++) {
-		offsets.write[i] = points[i].offset;
+		offsets[i] = points[i].offset;
 	}
 	return offsets;
 }
 
-Vector<Color> Gradient::get_colors() const {
-	Vector<Color> colors;
+std::vector<Color> Gradient::get_colors() const {
+	std::vector<Color> colors;
 	colors.resize(points.size());
 	for (int i = 0; i < points.size(); i++) {
-		colors.write[i] = points[i].color;
+		colors[i] = points[i].color;
 	}
 	return colors;
 }
 
-void Gradient::set_offsets(const Vector<float> &p_offsets) {
+void Gradient::set_offsets(const std::vector<float> &p_offsets) {
 	points.resize(p_offsets.size());
 	for (int i = 0; i < points.size(); i++) {
-		points.write[i].offset = p_offsets[i];
+		points[i].offset = p_offsets[i];
 	}
 	is_sorted = false;
 	emit_signal(CoreStringNames::get_singleton()->changed);
 }
 
-void Gradient::set_colors(const Vector<Color> &p_colors) {
+void Gradient::set_colors(const std::vector<Color> &p_colors) {
 	if (points.size() < p_colors.size()) {
 		is_sorted = false;
 	}
 	points.resize(p_colors.size());
 	for (int i = 0; i < points.size(); i++) {
-		points.write[i].color = p_colors[i];
+		points[i].color = p_colors[i];
 	}
 	emit_signal(CoreStringNames::get_singleton()->changed);
 }
 
-Vector<Gradient::Point> &Gradient::get_points() {
+std::vector<Gradient::Point> &Gradient::get_points() {
 	return points;
 }
 
@@ -123,11 +123,14 @@ void Gradient::add_point(float p_offset, const Color &p_color) {
 void Gradient::remove_point(int p_index) {
 	ERR_FAIL_INDEX(p_index, points.size());
 	ERR_FAIL_COND(points.size() <= 1);
-	points.remove(p_index);
+
+	//todo
+	points.erase(points.begin() + p_index);
+
 	emit_signal(CoreStringNames::get_singleton()->changed);
 }
 
-void Gradient::set_points(Vector<Gradient::Point> &p_points) {
+void Gradient::set_points(std::vector<Gradient::Point> &p_points) {
 	points = p_points;
 	is_sorted = false;
 	emit_signal(CoreStringNames::get_singleton()->changed);
@@ -136,7 +139,7 @@ void Gradient::set_points(Vector<Gradient::Point> &p_points) {
 void Gradient::set_offset(int pos, const float offset) {
 	ERR_FAIL_INDEX(pos, points.size());
 	_update_sorting();
-	points.write[pos].offset = offset;
+	points[pos].offset = offset;
 	is_sorted = false;
 	emit_signal(CoreStringNames::get_singleton()->changed);
 }
@@ -150,7 +153,7 @@ float Gradient::get_offset(int pos) {
 void Gradient::set_color(int pos, const Color &color) {
 	ERR_FAIL_INDEX(pos, points.size());
 	_update_sorting();
-	points.write[pos].color = color;
+	points[pos].color = color;
 	emit_signal(CoreStringNames::get_singleton()->changed);
 }
 
