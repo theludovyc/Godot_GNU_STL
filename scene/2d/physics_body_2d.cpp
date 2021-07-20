@@ -30,12 +30,7 @@
 
 #include "physics_body_2d.h"
 
-#include "core/config/engine.h"
 #include "core/core_string_names.h"
-#include "core/math/math_funcs.h"
-#include "core/object/class_db.h"
-#include "core/templates/list.h"
-#include "core/templates/rid.h"
 #include "scene/scene_string_names.h"
 
 void PhysicsBody2D::_bind_methods() {
@@ -1160,11 +1155,11 @@ Ref<KinematicCollision2D> CharacterBody2D::_get_slide_collision(int p_bounce) {
 	}
 
 	if (slide_colliders[p_bounce].is_null()) {
-		slide_colliders.write[p_bounce].instantiate();
-		slide_colliders.write[p_bounce]->owner = this;
+		slide_colliders[p_bounce].instantiate();
+		slide_colliders[p_bounce]->owner = this;
 	}
 
-	slide_colliders.write[p_bounce]->result = motion_results[p_bounce];
+	slide_colliders[p_bounce]->result = motion_results[p_bounce];
 	return slide_colliders[p_bounce];
 }
 
@@ -1340,7 +1335,7 @@ CharacterBody2D::CharacterBody2D() :
 CharacterBody2D::~CharacterBody2D() {
 	for (int i = 0; i < slide_colliders.size(); i++) {
 		if (slide_colliders[i].is_valid()) {
-			slide_colliders.write[i]->owner = nullptr;
+			slide_colliders[i]->owner = nullptr;
 		}
 	}
 }

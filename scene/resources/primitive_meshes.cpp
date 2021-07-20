@@ -29,7 +29,8 @@
 /*************************************************************************/
 
 #include "primitive_meshes.h"
-#include "servers/rendering_server.h"
+
+//todo std::vector.data()
 
 /**
   PrimitiveMesh
@@ -39,14 +40,14 @@ void PrimitiveMesh::_update() const {
 	arr.resize(RS::ARRAY_MAX);
 	_create_mesh_array(arr);
 
-	Vector<Vector3> points = arr[RS::ARRAY_VERTEX];
+	std::vector<Vector3> points = arr[RS::ARRAY_VERTEX];
 
 	aabb = AABB();
 
 	int pc = points.size();
 	ERR_FAIL_COND(pc == 0);
 	{
-		const Vector3 *r = points.ptr();
+		const Vector3 *r = points.data();
 		for (int i = 0; i < pc; i++) {
 			if (i == 0) {
 				aabb.position = r[i];
@@ -56,15 +57,15 @@ void PrimitiveMesh::_update() const {
 		}
 	}
 
-	Vector<int> indices = arr[RS::ARRAY_INDEX];
+	std::vector<int> indices = arr[RS::ARRAY_INDEX];
 
 	if (flip_faces) {
-		Vector<Vector3> normals = arr[RS::ARRAY_NORMAL];
+		std::vector<Vector3> normals = arr[RS::ARRAY_NORMAL];
 
 		if (normals.size() && indices.size()) {
 			{
 				int nc = normals.size();
-				Vector3 *w = normals.ptrw();
+				Vector3 *w = normals.data();
 				for (int i = 0; i < nc; i++) {
 					w[i] = -w[i];
 				}
@@ -72,7 +73,7 @@ void PrimitiveMesh::_update() const {
 
 			{
 				int ic = indices.size();
-				int *w = indices.ptrw();
+				int *w = indices.data();
 				for (int i = 0; i < ic; i += 3) {
 					SWAP(w[i + 0], w[i + 1]);
 				}
@@ -269,11 +270,11 @@ void CapsuleMesh::_create_mesh_array(Array &p_arr) const {
 
 	// note, this has been aligned with our collision shape but I've left the descriptions as top/middle/bottom
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -476,11 +477,11 @@ void BoxMesh::_create_mesh_array(Array &p_arr) const {
 
 	// set our bounding box
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -721,11 +722,11 @@ void CylinderMesh::_create_mesh_array(Array &p_arr) const {
 	int i, j, prevrow, thisrow, point;
 	float x, y, z, u, v, radius;
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -930,11 +931,11 @@ void PlaneMesh::_create_mesh_array(Array &p_arr) const {
 
 	Size2 start_pos = size * -0.5;
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -1042,11 +1043,11 @@ void PrismMesh::_create_mesh_array(Array &p_arr) const {
 
 	// set our bounding box
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -1313,10 +1314,10 @@ PrismMesh::PrismMesh() {}
 */
 
 void QuadMesh::_create_mesh_array(Array &p_arr) const {
-	Vector<Vector3> faces;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
+	std::vector<Vector3> faces;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
 
 	faces.resize(6);
 	normals.resize(6);
@@ -1339,12 +1340,12 @@ void QuadMesh::_create_mesh_array(Array &p_arr) const {
 
 	for (int i = 0; i < 6; i++) {
 		int j = indices[i];
-		faces.set(i, quad_faces[j]);
-		normals.set(i, Vector3(0, 0, 1));
-		tangents.set(i * 4 + 0, 1.0);
-		tangents.set(i * 4 + 1, 0.0);
-		tangents.set(i * 4 + 2, 0.0);
-		tangents.set(i * 4 + 3, 1.0);
+		faces[i] = quad_faces[j];
+		normals[i] = Vector3(0, 0, 1);
+		tangents[i * 4 + 0] = 1.0;
+		tangents[i * 4 + 1] = 0.0;
+		tangents[i * 4 + 2] = 0.0;
+		tangents[i * 4 + 3] = 1.0;
 
 		static const Vector2 quad_uv[4] = {
 			Vector2(0, 1),
@@ -1353,7 +1354,7 @@ void QuadMesh::_create_mesh_array(Array &p_arr) const {
 			Vector2(1, 1),
 		};
 
-		uvs.set(i, quad_uv[j]);
+		uvs[i] = quad_uv[j];
 	}
 
 	p_arr[RS::ARRAY_VERTEX] = faces;
@@ -1391,11 +1392,11 @@ void SphereMesh::_create_mesh_array(Array &p_arr) const {
 
 	// set our bounding box
 
-	Vector<Vector3> points;
-	Vector<Vector3> normals;
-	Vector<float> tangents;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector3> points;
+	std::vector<Vector3> normals;
+	std::vector<float> tangents;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 	point = 0;
 
 #define ADD_TANGENT(m_x, m_y, m_z, m_d) \
@@ -1528,9 +1529,9 @@ SphereMesh::SphereMesh() {}
 */
 
 void PointMesh::_create_mesh_array(Array &p_arr) const {
-	Vector<Vector3> faces;
+	std::vector<Vector3> faces;
 	faces.resize(1);
-	faces.set(0, Vector3(0.0, 0.0, 0.0));
+	faces[0] = Vector3(0.0, 0.0, 0.0);
 
 	p_arr[RS::ARRAY_VERTEX] = faces;
 }

@@ -278,8 +278,8 @@ private:
 	bool on_wall = false;
 	bool sync_to_physics = false;
 
-	Vector<PhysicsServer2D::MotionResult> motion_results;
-	Vector<Ref<KinematicCollision2D>> slide_colliders;
+	std::vector<PhysicsServer2D::MotionResult> motion_results;
+	std::vector<Ref<KinematicCollision2D>> slide_colliders;
 
 	Ref<KinematicCollision2D> _get_slide_collision(int p_bounce);
 

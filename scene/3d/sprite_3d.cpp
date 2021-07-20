@@ -33,6 +33,8 @@
 #include "core/core_string_names.h"
 #include "scene/scene_string_names.h"
 
+//todo std::vector.data()
+
 Color SpriteBase3D::_get_color_accum() {
 	if (!color_dirty) {
 		return color_accum;
@@ -184,8 +186,8 @@ AABB SpriteBase3D::get_aabb() const {
 	return aabb;
 }
 
-Vector<Face3> SpriteBase3D::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> SpriteBase3D::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 Ref<TriangleMesh> SpriteBase3D::generate_triangle_mesh() const {
@@ -193,9 +195,9 @@ Ref<TriangleMesh> SpriteBase3D::generate_triangle_mesh() const {
 		return triangle_mesh;
 	}
 
-	Vector<Vector3> faces;
+	std::vector<Vector3> faces;
 	faces.resize(6);
-	Vector3 *facesw = faces.ptrw();
+	Vector3 *facesw = faces.data();
 
 	Rect2 final_rect = get_item_rect();
 
@@ -378,23 +380,23 @@ SpriteBase3D::SpriteBase3D() {
 
 	// create basic mesh and store format information
 	for (int i = 0; i < 4; i++) {
-		mesh_normals.write[i] = Vector3(0.0, 0.0, 0.0);
-		mesh_tangents.write[i * 4 + 0] = 0.0;
-		mesh_tangents.write[i * 4 + 1] = 0.0;
-		mesh_tangents.write[i * 4 + 2] = 0.0;
-		mesh_tangents.write[i * 4 + 3] = 0.0;
-		mesh_colors.write[i] = Color(1.0, 1.0, 1.0, 1.0);
-		mesh_uvs.write[i] = Vector2(0.0, 0.0);
-		mesh_vertices.write[i] = Vector3(0.0, 0.0, 0.0);
+		mesh_normals[i] = Vector3(0.0, 0.0, 0.0);
+		mesh_tangents[i * 4 + 0] = 0.0;
+		mesh_tangents[i * 4 + 1] = 0.0;
+		mesh_tangents[i * 4 + 2] = 0.0;
+		mesh_tangents[i * 4 + 3] = 0.0;
+		mesh_colors[i] = Color(1.0, 1.0, 1.0, 1.0);
+		mesh_uvs[i] = Vector2(0.0, 0.0);
+		mesh_vertices[i] = Vector3(0.0, 0.0, 0.0);
 	}
 
 	indices.resize(6);
-	indices.write[0] = 0;
-	indices.write[1] = 1;
-	indices.write[2] = 2;
-	indices.write[3] = 0;
-	indices.write[4] = 2;
-	indices.write[5] = 3;
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 0;
+	indices[4] = 2;
+	indices[5] = 3;
 
 	Array mesh_array;
 	mesh_array.resize(RS::ARRAY_MAX);
@@ -538,8 +540,8 @@ void Sprite3D::_draw() {
 	AABB aabb;
 
 	// Everything except position and UV is compressed
-	uint8_t *vertex_write_buffer = vertex_buffer.ptrw();
-	uint8_t *attribute_write_buffer = attribute_buffer.ptrw();
+	uint8_t *vertex_write_buffer = vertex_buffer.data();
+	uint8_t *attribute_write_buffer = attribute_buffer.data();
 
 	uint32_t v_normal;
 	{
@@ -904,8 +906,8 @@ void AnimatedSprite3D::_draw() {
 	AABB aabb;
 
 	// Everything except position and UV is compressed
-	uint8_t *vertex_write_buffer = vertex_buffer.ptrw();
-	uint8_t *attribute_write_buffer = attribute_buffer.ptrw();
+	uint8_t *vertex_write_buffer = vertex_buffer.data();
+	uint8_t *attribute_write_buffer = attribute_buffer.data();
 
 	uint32_t v_normal;
 	{

@@ -42,7 +42,7 @@ class VSet {
 
 	_FORCE_INLINE_ int _find(const T &p_val, bool &r_exact) const {
 		r_exact = false;
-		if (_data.is_empty()) {
+		if (_data.empty()) {
 			return 0;
 		}
 
@@ -78,7 +78,7 @@ class VSet {
 	}
 
 	_FORCE_INLINE_ int _find_exact(const T &p_val) const {
-		if (_data.is_empty()) {
+		if (_data.empty()) {
 			return -1;
 		}
 
@@ -109,7 +109,9 @@ public:
 		if (exact) {
 			return;
 		}
-		_data.insert(pos, p_val);
+
+		//todo
+		_data.insert(_data.begin() + pos, p_val);
 	}
 
 	bool has(const T &p_val) const {
@@ -118,22 +120,25 @@ public:
 
 	void erase(const T &p_val) {
 		int pos = _find_exact(p_val);
+
 		if (pos < 0) {
 			return;
 		}
-		_data.remove(pos);
+
+		//todo
+		_data.erase(_data.begin() + pos);
 	}
 
 	int find(const T &p_val) const {
 		return _find_exact(p_val);
 	}
 
-	_FORCE_INLINE_ bool is_empty() const { return _data.is_empty(); }
+	_FORCE_INLINE_ bool is_empty() const { return _data.empty(); }
 
 	_FORCE_INLINE_ int size() const { return _data.size(); }
 
 	inline T &operator[](int p_index) {
-		return _data.write[p_index];
+		return _data[p_index];
 	}
 
 	inline const T &operator[](int p_index) const {

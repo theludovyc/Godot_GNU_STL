@@ -49,8 +49,8 @@ Ref<MultiMesh> MultiMeshInstance3D::get_multimesh() const {
 	return multimesh;
 }
 
-Vector<Face3> MultiMeshInstance3D::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> MultiMeshInstance3D::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 AABB MultiMeshInstance3D::get_aabb() const {
