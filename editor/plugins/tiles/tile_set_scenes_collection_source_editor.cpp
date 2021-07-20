@@ -32,9 +32,6 @@
 
 #include "editor/editor_resource_preview.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
-
-#include "scene/gui/item_list.h"
 
 #include "core/core_string_names.h"
 
@@ -221,7 +218,7 @@ void TileSetScenesCollectionSourceEditor::_source_add_pressed() {
 }
 
 void TileSetScenesCollectionSourceEditor::_source_delete_pressed() {
-	Vector<int> selected_indices = scene_tiles_list->get_selected_items();
+	std::vector<int> selected_indices = scene_tiles_list->get_selected_items();
 	ERR_FAIL_COND(selected_indices.size() <= 0);
 	int scene_id = scene_tiles_list->get_item_metadata(selected_indices[0]);
 
@@ -240,7 +237,7 @@ void TileSetScenesCollectionSourceEditor::_update_source_inspector() {
 }
 
 void TileSetScenesCollectionSourceEditor::_update_tile_inspector() {
-	Vector<int> selected_indices = scene_tiles_list->get_selected_items();
+	std::vector<int> selected_indices = scene_tiles_list->get_selected_items();
 	bool has_atlas_tile_selected = (selected_indices.size() > 0);
 
 	// Update the proxy object.
@@ -255,7 +252,7 @@ void TileSetScenesCollectionSourceEditor::_update_tile_inspector() {
 }
 
 void TileSetScenesCollectionSourceEditor::_update_action_buttons() {
-	Vector<int> selected_indices = scene_tiles_list->get_selected_items();
+	std::vector<int> selected_indices = scene_tiles_list->get_selected_items();
 	scene_tile_delete_button->set_disabled(selected_indices.size() <= 0);
 }
 
@@ -265,7 +262,7 @@ void TileSetScenesCollectionSourceEditor::_update_scenes_list() {
 	}
 
 	// Get the previously selected id.
-	Vector<int> selected_indices = scene_tiles_list->get_selected_items();
+	std::vector<int> selected_indices = scene_tiles_list->get_selected_items();
 	int old_selected_scene_id = (selected_indices.size() > 0) ? int(scene_tiles_list->get_item_metadata(selected_indices[0])) : -1;
 
 	// Clear the list.
@@ -372,7 +369,7 @@ void TileSetScenesCollectionSourceEditor::drop_data_fw(const Point2 &p_point, co
 		// Handle dropping a texture in the list of atlas resources.
 		int scene_id = -1;
 		Dictionary d = p_data;
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 		for (int i = 0; i < files.size(); i++) {
 			Ref<PackedScene> resource = ResourceLoader::load(files[i]);
 			if (resource.is_valid()) {
@@ -400,7 +397,7 @@ bool TileSetScenesCollectionSourceEditor::can_drop_data_fw(const Point2 &p_point
 
 		// Check if we have a Texture2D.
 		if (String(d["type"]) == "files") {
-			Vector<String> files = d["files"];
+			std::vector<String> files = d["files"];
 
 			if (files.size() == 0) {
 				return false;

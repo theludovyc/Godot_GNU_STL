@@ -35,7 +35,6 @@
 #include "core/math/geometry_2d.h"
 #include "core/os/keyboard.h"
 
-#include "editor/editor_properties.h"
 #include "editor/editor_scale.h"
 
 void TileDataEditor::_call_tile_set_changed() {
@@ -133,13 +132,13 @@ void GenericTilePolygonEditor::_base_control_draw() {
 
 	// Draw the polygons.
 	for (unsigned int i = 0; i < polygons.size(); i++) {
-		const Vector<Vector2> &polygon = polygons[i];
+		const std::vector<Vector2> &polygon = polygons[i];
 		Color color = polygon_color;
-		if (!in_creation_polygon.is_empty()) {
+		if (!in_creation_polygon.empty()) {
 			color = color.darkened(0.3);
 		}
 		color.a = 0.5;
-		Vector<Color> v_color;
+		std::vector<Color> v_color;
 		v_color.push_back(color);
 		base_control->draw_polygon(polygon, v_color);
 
@@ -150,7 +149,7 @@ void GenericTilePolygonEditor::_base_control_draw() {
 	}
 
 	// Draw the polygon in creation.
-	if (!in_creation_polygon.is_empty()) {
+	if (!in_creation_polygon.empty()) {
 		for (int i = 0; i < in_creation_polygon.size() - 1; i++) {
 			base_control->draw_line(in_creation_polygon[i], in_creation_polygon[i + 1], Color(1.0, 1.0, 1.0));
 		}
@@ -163,7 +162,7 @@ void GenericTilePolygonEditor::_base_control_draw() {
 		_snap_to_half_pixel(in_creation_point);
 	}
 
-	if (drag_type == DRAG_TYPE_CREATE_POINT && !in_creation_polygon.is_empty()) {
+	if (drag_type == DRAG_TYPE_CREATE_POINT && !in_creation_polygon.empty()) {
 		base_control->draw_line(in_creation_polygon[in_creation_polygon.size() - 1], in_creation_point, Color(1.0, 1.0, 1.0));
 	}
 
@@ -179,13 +178,13 @@ void GenericTilePolygonEditor::_base_control_draw() {
 	}
 
 	base_control->draw_set_transform_matrix(Transform2D());
-	if (!in_creation_polygon.is_empty()) {
+	if (!in_creation_polygon.empty()) {
 		for (int i = 0; i < in_creation_polygon.size(); i++) {
 			base_control->draw_texture(handle, xform.xform(in_creation_polygon[i]) - handle->get_size() / 2);
 		}
 	} else {
 		for (int i = 0; i < (int)polygons.size(); i++) {
-			const Vector<Vector2> &polygon = polygons[i];
+			const std::vector<Vector2> &polygon = polygons[i];
 			for (int j = 0; j < polygon.size(); j++) {
 				const Color modulate = (tinted_polygon_index == i && tinted_point_index == j) ? Color(0.5, 1, 2) : Color(1, 1, 1);
 				base_control->draw_texture(handle, xform.xform(polygon[j]) - handle->get_size() / 2, modulate);
@@ -267,7 +266,7 @@ void GenericTilePolygonEditor::_grab_polygon_point(Vector2 p_pos, const Transfor
 	r_point_index = -1;
 	float closest_distance = grab_threshold + 1.0;
 	for (unsigned int i = 0; i < polygons.size(); i++) {
-		const Vector<Vector2> &polygon = polygons[i];
+		const std::vector<Vector2> &polygon = polygons[i];
 		for (int j = 0; j < polygon.size(); j++) {
 			float distance = p_pos.distance_to(p_polygon_xform.xform(polygon[j]));
 			if (distance < grab_threshold && distance < closest_distance) {
@@ -287,7 +286,7 @@ void GenericTilePolygonEditor::_grab_polygon_segment_point(Vector2 p_pos, const 
 	r_segment_index = -1;
 	float closest_distance = grab_threshold * 2.0;
 	for (unsigned int i = 0; i < polygons.size(); i++) {
-		const Vector<Vector2> &polygon = polygons[i];
+		const std::vector<Vector2> &polygon = polygons[i];
 		for (int j = 0; j < polygon.size(); j++) {
 			Vector2 segment[2] = { polygon[j], polygon[(j + 1) % polygon.size()] };
 			Vector2 closest_point = Geometry2D::get_closest_point_to_segment(point, segment);
@@ -305,7 +304,7 @@ void GenericTilePolygonEditor::_grab_polygon_segment_point(Vector2 p_pos, const 
 void GenericTilePolygonEditor::_snap_to_tile_shape(Point2 &r_point, float &r_current_snapped_dist, float p_snap_dist) {
 	ERR_FAIL_COND(!tile_set.is_valid());
 
-	Vector<Point2> polygon = tile_set->get_tile_shape_polygon();
+	std::vector<Point2> polygon = tile_set->get_tile_shape_polygon();
 	Point2 snapped_point = r_point;
 
 	// Snap to polygon vertices.
@@ -362,7 +361,7 @@ void GenericTilePolygonEditor::_base_control_gui_input(Ref<InputEvent> p_event) 
 			if (button_pixel_snap->is_pressed()) {
 				_snap_to_half_pixel(point);
 			}
-			polygons[drag_polygon_index].write[drag_point_index] = point;
+			polygons[drag_polygon_index][drag_point_index] = point;
 		} else if (drag_type == DRAG_TYPE_PAN) {
 			panning += mm->get_position() - drag_last_pos;
 			drag_last_pos = mm->get_position();
@@ -433,7 +432,10 @@ void GenericTilePolygonEditor::_base_control_gui_input(Ref<InputEvent> p_event) 
 						Vector2 point_to_create;
 						_grab_polygon_segment_point(mb->get_position(), xform, closest_polygon, closest_point, point_to_create);
 						if (closest_polygon >= 0) {
-							polygons[closest_polygon].insert(closest_point + 1, point_to_create);
+
+							//todo
+							polygons[closest_polygon].insert(polygons[closest_polygon].begin() + closest_point + 1, point_to_create);
+
 							drag_type = DRAG_TYPE_DRAG_POINT;
 							drag_polygon_index = closest_polygon;
 							drag_point_index = closest_point + 1;
@@ -447,7 +449,9 @@ void GenericTilePolygonEditor::_base_control_gui_input(Ref<InputEvent> p_event) 
 					_grab_polygon_point(mb->get_position(), xform, closest_polygon, closest_point);
 					if (closest_polygon >= 0) {
 						PackedVector2Array old_polygon = polygons[closest_polygon];
-						polygons[closest_polygon].remove(closest_point);
+
+						std::remove(old_polygon.begin(),  old_polygon.end(), closest_point);
+
 						undo_redo->create_action(TTR("Edit Polygons"));
 						if (polygons[closest_polygon].size() < 3) {
 							remove_polygon(closest_polygon);
@@ -494,7 +498,9 @@ void GenericTilePolygonEditor::_base_control_gui_input(Ref<InputEvent> p_event) 
 					_grab_polygon_point(mb->get_position(), xform, closest_polygon, closest_point);
 					if (closest_polygon >= 0) {
 						PackedVector2Array old_polygon = polygons[closest_polygon];
-						polygons[closest_polygon].remove(closest_point);
+
+						std::remove(old_polygon.begin(),  old_polygon.end(), closest_point);
+
 						undo_redo->create_action(TTR("Edit Polygons"));
 						if (polygons[closest_polygon].size() < 3) {
 							remove_polygon(closest_polygon);
@@ -558,7 +564,7 @@ int GenericTilePolygonEditor::get_polygon_count() {
 	return polygons.size();
 }
 
-int GenericTilePolygonEditor::add_polygon(Vector<Point2> p_polygon, int p_index) {
+int GenericTilePolygonEditor::add_polygon(std::vector<Point2> p_polygon, int p_index) {
 	ERR_FAIL_COND_V(p_polygon.size() < 3, -1);
 	ERR_FAIL_COND_V(!multiple_polygon_mode && polygons.size() >= 1, -1);
 
@@ -590,7 +596,7 @@ void GenericTilePolygonEditor::clear_polygons() {
 	base_control->update();
 }
 
-void GenericTilePolygonEditor::set_polygon(int p_polygon_index, Vector<Point2> p_polygon) {
+void GenericTilePolygonEditor::set_polygon(int p_polygon_index, std::vector<Point2> p_polygon) {
 	ERR_FAIL_INDEX(p_polygon_index, (int)polygons.size());
 	ERR_FAIL_COND(p_polygon.size() < 3);
 	polygons[p_polygon_index] = p_polygon;
@@ -598,8 +604,8 @@ void GenericTilePolygonEditor::set_polygon(int p_polygon_index, Vector<Point2> p
 	base_control->update();
 }
 
-Vector<Point2> GenericTilePolygonEditor::get_polygon(int p_polygon_index) {
-	ERR_FAIL_INDEX_V(p_polygon_index, (int)polygons.size(), Vector<Point2>());
+std::vector<Point2> GenericTilePolygonEditor::get_polygon(int p_polygon_index) {
+	ERR_FAIL_INDEX_V(p_polygon_index, (int)polygons.size(), std::vector<Point2>());
 	return polygons[p_polygon_index];
 }
 
@@ -793,7 +799,7 @@ void TileDataDefaultEditor::forward_painting_atlas_gui_input(TileAtlasView *p_ti
 	Ref<InputEventMouseMotion> mm = p_event;
 	if (mm.is_valid()) {
 		if (drag_type == DRAG_TYPE_PAINT) {
-			Vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
+			std::vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
 			for (int i = 0; i < line.size(); i++) {
 				Vector2i coords = p_tile_set_atlas_source->get_tile_at_coords(line[i]);
 				if (coords != TileSetSource::INVALID_ATLAS_COORDS) {
@@ -1129,7 +1135,7 @@ void TileDataOcclusionShapeEditor::draw_over_tile(CanvasItem *p_canvas_item, Tra
 	}
 	color.a *= 0.5;
 
-	Vector<Color> debug_occlusion_color;
+	std::vector<Color> debug_occlusion_color;
 	debug_occlusion_color.push_back(color);
 
 	RenderingServer::get_singleton()->canvas_item_add_set_transform(p_canvas_item->get_canvas_item(), p_transform);
@@ -1281,7 +1287,7 @@ void TileDataCollisionEditor::_set_painted_value(TileSetAtlasSource *p_tile_set_
 
 	polygon_editor->clear_polygons();
 	for (int i = 0; i < tile_data->get_collision_polygons_count(physics_layer); i++) {
-		Vector<Vector2> polygon = tile_data->get_collision_polygon_points(physics_layer, i);
+		std::vector<Vector2> polygon = tile_data->get_collision_polygon_points(physics_layer, i);
 		if (polygon.size() >= 3) {
 			polygon_editor->add_polygon(polygon);
 		}
@@ -1387,7 +1393,7 @@ void TileDataCollisionEditor::draw_over_tile(CanvasItem *p_canvas_item, Transfor
 	ERR_FAIL_COND(!tile_data);
 
 	// Draw all shapes.
-	Vector<Color> color;
+	std::vector<Color> color;
 	if (p_selected) {
 		Color grid_color = EditorSettings::get_singleton()->get("editors/tiles_editor/grid_color");
 		Color selection_color = Color().from_hsv(Math::fposmod(grid_color.get_h() + 0.5, 1.0), grid_color.get_s(), grid_color.get_v(), 1.0);
@@ -1400,7 +1406,7 @@ void TileDataCollisionEditor::draw_over_tile(CanvasItem *p_canvas_item, Transfor
 
 	RenderingServer::get_singleton()->canvas_item_add_set_transform(p_canvas_item->get_canvas_item(), p_transform);
 	for (int i = 0; i < tile_data->get_collision_polygons_count(physics_layer); i++) {
-		Vector<Vector2> polygon = tile_data->get_collision_polygon_points(physics_layer, i);
+		std::vector<Vector2> polygon = tile_data->get_collision_polygon_points(physics_layer, i);
 		if (polygon.size() >= 3) {
 			p_canvas_item->draw_polygon(polygon, color);
 		}
@@ -1412,7 +1418,7 @@ void TileDataTerrainsEditor::_update_terrain_selector() {
 	ERR_FAIL_COND(!tile_set.is_valid());
 
 	// Update the terrain set selector.
-	Vector<String> options;
+	std::vector<String> options;
 	options.push_back(String(TTR("No terrains")) + String(":-1"));
 	for (int i = 0; i < tile_set->get_terrain_sets_count(); i++) {
 		options.push_back(vformat("Terrain Set %d", i));
@@ -1426,7 +1432,7 @@ void TileDataTerrainsEditor::_update_terrain_selector() {
 		terrain_property_editor->hide();
 	} else {
 		options.clear();
-		Vector<Vector<Ref<Texture2D>>> icons = tile_set->generate_terrains_icons(Size2(16, 16) * EDSCALE);
+		std::vector<std::vector<Ref<Texture2D>>> icons = tile_set->generate_terrains_icons(Size2(16, 16) * EDSCALE);
 		options.push_back(String(TTR("No terrain")) + String(":-1"));
 		for (int i = 0; i < tile_set->get_terrains_count(terrain_set); i++) {
 			String name = tile_set->get_terrain_name(terrain_set, i);
@@ -1498,13 +1504,13 @@ void TileDataTerrainsEditor::forward_draw_over_atlas(TileAtlasView *p_tile_atlas
 				Transform2D xform;
 				xform.set_origin(position);
 
-				Vector<Color> color;
+				std::vector<Color> color;
 				color.push_back(Color(1.0, 1.0, 1.0, 0.5));
 
 				for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 					TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 					if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-						Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+						std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 						if (Geometry2D::is_point_in_polygon(xform.affine_inverse().xform(mouse_pos), polygon)) {
 							p_canvas_item->draw_set_transform_matrix(p_transform * xform);
 							p_canvas_item->draw_polygon(polygon, color);
@@ -1612,13 +1618,13 @@ void TileDataTerrainsEditor::forward_draw_over_atlas(TileAtlasView *p_tile_atlas
 		}
 
 		Vector2 end = p_transform.affine_inverse().xform(p_canvas_item->get_local_mouse_position());
-		Vector<Point2> mouse_pos_rect_polygon;
+		std::vector<Point2> mouse_pos_rect_polygon;
 		mouse_pos_rect_polygon.push_back(drag_start_pos);
 		mouse_pos_rect_polygon.push_back(Vector2(end.x, drag_start_pos.y));
 		mouse_pos_rect_polygon.push_back(end);
 		mouse_pos_rect_polygon.push_back(Vector2(drag_start_pos.x, end.y));
 
-		Vector<Color> color;
+		std::vector<Color> color;
 		color.push_back(Color(1.0, 1.0, 1.0, 0.5));
 
 		p_canvas_item->draw_set_transform_matrix(p_transform);
@@ -1632,11 +1638,11 @@ void TileDataTerrainsEditor::forward_draw_over_atlas(TileAtlasView *p_tile_atlas
 			for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 				TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 				if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-					Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+					std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 					for (int j = 0; j < polygon.size(); j++) {
-						polygon.write[j] += position;
+						polygon[j] += position;
 					}
-					if (!Geometry2D::intersect_polygons(polygon, mouse_pos_rect_polygon).is_empty()) {
+					if (!Geometry2D::intersect_polygons(polygon, mouse_pos_rect_polygon).empty()) {
 						// Draw bit.
 						p_canvas_item->draw_polygon(polygon, color);
 					}
@@ -1670,13 +1676,13 @@ void TileDataTerrainsEditor::forward_draw_over_alternatives(TileAtlasView *p_til
 				Transform2D xform;
 				xform.set_origin(position);
 
-				Vector<Color> color;
+				std::vector<Color> color;
 				color.push_back(Color(1.0, 1.0, 1.0, 0.5));
 
 				for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 					TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 					if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-						Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+						std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 						if (Geometry2D::is_point_in_polygon(xform.affine_inverse().xform(mouse_pos), polygon)) {
 							p_canvas_item->draw_set_transform_matrix(p_transform * xform);
 							p_canvas_item->draw_polygon(polygon, color);
@@ -1732,7 +1738,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 	Ref<InputEventMouseMotion> mm = p_event;
 	if (mm.is_valid()) {
 		if (drag_type == DRAG_TYPE_PAINT_TERRAIN_SET) {
-			Vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
+			std::vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
 			for (int i = 0; i < line.size(); i++) {
 				Vector2i coords = p_tile_set_atlas_source->get_tile_at_coords(line[i]);
 				if (coords != TileSetSource::INVALID_ATLAS_COORDS) {
@@ -1764,7 +1770,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 		} else if (drag_type == DRAG_TYPE_PAINT_TERRAIN_BITS) {
 			int terrain_set = Dictionary(drag_painted_value)["terrain_set"];
 			int terrain = Dictionary(drag_painted_value)["terrain"];
-			Vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
+			std::vector<Vector2i> line = Geometry2D::bresenham_line(p_tile_atlas_view->get_atlas_tile_coords_at_pos(drag_last_pos), p_tile_atlas_view->get_atlas_tile_coords_at_pos(mm->get_position()));
 			for (int i = 0; i < line.size(); i++) {
 				Vector2i coords = p_tile_set_atlas_source->get_tile_at_coords(line[i]);
 				if (coords != TileSetSource::INVALID_ATLAS_COORDS) {
@@ -1794,7 +1800,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 						for (int j = 0; j < TileSet::CELL_NEIGHBOR_MAX; j++) {
 							TileSet::CellNeighbor bit = TileSet::CellNeighbor(j);
 							if (tile_data->is_valid_peering_bit_terrain(bit)) {
-								Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(tile_data->get_terrain_set(), bit);
+								std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(tile_data->get_terrain_set(), bit);
 								if (Geometry2D::is_segment_intersecting_polygon(mm->get_position() - position, drag_last_pos - position, polygon)) {
 									tile_data->set_peering_bit_terrain(bit, terrain);
 								}
@@ -1824,7 +1830,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 						for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 							TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 							if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-								Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+								std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 								if (Geometry2D::is_point_in_polygon(mb->get_position() - position, polygon)) {
 									dummy_object->set("terrain", tile_data->get_peering_bit_terrain(bit));
 								}
@@ -1921,7 +1927,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 								for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 									TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 									if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-										Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+										std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 										if (Geometry2D::is_point_in_polygon(mb->get_position() - position, polygon)) {
 											tile_data->set_peering_bit_terrain(bit, terrain);
 										}
@@ -2034,7 +2040,7 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 						}
 					}
 
-					Vector<Point2> mouse_pos_rect_polygon;
+					std::vector<Point2> mouse_pos_rect_polygon;
 					mouse_pos_rect_polygon.push_back(drag_start_pos);
 					mouse_pos_rect_polygon.push_back(Vector2(mb->get_position().x, drag_start_pos.y));
 					mouse_pos_rect_polygon.push_back(mb->get_position());
@@ -2051,11 +2057,11 @@ void TileDataTerrainsEditor::forward_painting_atlas_gui_input(TileAtlasView *p_t
 								Rect2i texture_region = p_tile_set_atlas_source->get_tile_texture_region(coords);
 								Vector2i position = (texture_region.position + texture_region.get_end()) / 2 + p_tile_set_atlas_source->get_tile_effective_texture_offset(coords, 0);
 
-								Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+								std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 								for (int j = 0; j < polygon.size(); j++) {
-									polygon.write[j] += position;
+									polygon[j] += position;
 								}
-								if (!Geometry2D::intersect_polygons(polygon, mouse_pos_rect_polygon).is_empty()) {
+								if (!Geometry2D::intersect_polygons(polygon, mouse_pos_rect_polygon).empty()) {
 									// Draw bit.
 									undo_redo->add_do_property(p_tile_set_atlas_source, vformat("%d:%d/%d/terrains_peering_bit/" + String(TileSet::CELL_NEIGHBOR_ENUM_TO_TEXT[i]), coords.x, coords.y, E->get().alternative_tile), terrain);
 									undo_redo->add_undo_property(p_tile_set_atlas_source, vformat("%d:%d/%d/terrains_peering_bit/" + String(TileSet::CELL_NEIGHBOR_ENUM_TO_TEXT[i]), coords.x, coords.y, E->get().alternative_tile), tile_data->get_peering_bit_terrain(bit));
@@ -2136,7 +2142,7 @@ void TileDataTerrainsEditor::forward_painting_alternatives_gui_input(TileAtlasVi
 					for (int j = 0; j < TileSet::CELL_NEIGHBOR_MAX; j++) {
 						TileSet::CellNeighbor bit = TileSet::CellNeighbor(j);
 						if (tile_data->is_valid_peering_bit_terrain(bit)) {
-							Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(tile_data->get_terrain_set(), bit);
+							std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(tile_data->get_terrain_set(), bit);
 							if (Geometry2D::is_segment_intersecting_polygon(mm->get_position() - position, drag_last_pos - position, polygon)) {
 								tile_data->set_peering_bit_terrain(bit, terrain);
 							}
@@ -2167,7 +2173,7 @@ void TileDataTerrainsEditor::forward_painting_alternatives_gui_input(TileAtlasVi
 						for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 							TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 							if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-								Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+								std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 								if (Geometry2D::is_point_in_polygon(mb->get_position() - position, polygon)) {
 									dummy_object->set("terrain", tile_data->get_peering_bit_terrain(bit));
 								}
@@ -2240,7 +2246,7 @@ void TileDataTerrainsEditor::forward_painting_alternatives_gui_input(TileAtlasVi
 							for (int i = 0; i < TileSet::CELL_NEIGHBOR_MAX; i++) {
 								TileSet::CellNeighbor bit = TileSet::CellNeighbor(i);
 								if (tile_set->is_valid_peering_bit_terrain(terrain_set, bit)) {
-									Vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
+									std::vector<Vector2> polygon = tile_set->get_terrain_bit_polygon(terrain_set, bit);
 									if (Geometry2D::is_point_in_polygon(mb->get_position() - position, polygon)) {
 										tile_data->set_peering_bit_terrain(bit, terrain);
 									}
@@ -2354,7 +2360,7 @@ Variant TileDataNavigationEditor::_get_painted_value() {
 	navigation_polygon.instantiate();
 
 	for (int i = 0; i < polygon_editor->get_polygon_count(); i++) {
-		Vector<Vector2> polygon = polygon_editor->get_polygon(i);
+		std::vector<Vector2> polygon = polygon_editor->get_polygon(i);
 		navigation_polygon->add_outline(polygon);
 	}
 
@@ -2428,7 +2434,7 @@ void TileDataNavigationEditor::draw_over_tile(CanvasItem *p_canvas_item, Transfo
 
 	Ref<NavigationPolygon> navigation_polygon = tile_data->get_navigation_polygon(navigation_layer);
 	if (navigation_polygon.is_valid()) {
-		Vector<Vector2> verts = navigation_polygon->get_vertices();
+		std::vector<Vector2> verts = navigation_polygon->get_vertices();
 		if (verts.size() < 3) {
 			return;
 		}
@@ -2444,19 +2450,19 @@ void TileDataNavigationEditor::draw_over_tile(CanvasItem *p_canvas_item, Transfo
 		RandomPCG rand;
 		for (int i = 0; i < navigation_polygon->get_polygon_count(); i++) {
 			// An array of vertices for this polygon.
-			Vector<int> polygon = navigation_polygon->get_polygon(i);
-			Vector<Vector2> vertices;
+			std::vector<int> polygon = navigation_polygon->get_polygon(i);
+			std::vector<Vector2> vertices;
 			vertices.resize(polygon.size());
 			for (int j = 0; j < polygon.size(); j++) {
 				ERR_FAIL_INDEX(polygon[j], verts.size());
-				vertices.write[j] = verts[polygon[j]];
+				vertices[j] = verts[polygon[j]];
 			}
 
 			// Generate the polygon color, slightly randomly modified from the settings one.
 			Color random_variation_color;
 			random_variation_color.set_hsv(color.get_h() + rand.random(-1.0, 1.0) * 0.05, color.get_s(), color.get_v() + rand.random(-1.0, 1.0) * 0.1);
 			random_variation_color.a = color.a;
-			Vector<Color> colors;
+			std::vector<Color> colors;
 			colors.push_back(random_variation_color);
 
 			RenderingServer::get_singleton()->canvas_item_add_polygon(p_canvas_item->get_canvas_item(), vertices, colors);

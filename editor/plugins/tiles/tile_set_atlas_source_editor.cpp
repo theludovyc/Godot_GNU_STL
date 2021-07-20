@@ -32,17 +32,8 @@
 
 #include "tiles_editor_plugin.h"
 
-#include "editor/editor_inspector.h"
 #include "editor/editor_scale.h"
 #include "editor/progress_dialog.h"
-
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
-#include "scene/gui/control.h"
-#include "scene/gui/item_list.h"
-#include "scene/gui/separator.h"
-#include "scene/gui/split_container.h"
-#include "scene/gui/tab_container.h"
 
 #include "core/core_string_names.h"
 #include "core/math/geometry_2d.h"
@@ -625,7 +616,7 @@ void TileSetAtlasSourceEditor::_update_current_tile_data_editor() {
 	// Find the property to use.
 	String property;
 	if (tools_button_group->get_pressed_button() == tool_select_button && tile_inspector->is_visible() && !tile_inspector->get_selected_path().is_empty()) {
-		Vector<String> components = tile_inspector->get_selected_path().split("/");
+		std::vector<String> components = tile_inspector->get_selected_path().split("/");
 		if (components.size() >= 1) {
 			property = components[0];
 
@@ -879,7 +870,7 @@ void TileSetAtlasSourceEditor::_tile_atlas_control_gui_input(const Ref<InputEven
 				last_base_tiles_coords = last_base_tiles_coords.max(Vector2i(0, 0)).min(grid_size - Vector2i(1, 1));
 				new_base_tiles_coords = new_base_tiles_coords.max(Vector2i(0, 0)).min(grid_size - Vector2i(1, 1));
 
-				Vector<Point2i> line = Geometry2D::bresenham_line(last_base_tiles_coords, new_base_tiles_coords);
+				std::vector<Point2i> line = Geometry2D::bresenham_line(last_base_tiles_coords, new_base_tiles_coords);
 				for (int i = 0; i < line.size(); i++) {
 					if (tile_set_atlas_source->get_tile_at_coords(line[i]) == TileSetSource::INVALID_ATLAS_COORDS) {
 						tile_set_atlas_source->create_tile(line[i]);
@@ -894,7 +885,7 @@ void TileSetAtlasSourceEditor::_tile_atlas_control_gui_input(const Ref<InputEven
 				last_base_tiles_coords = last_base_tiles_coords.max(Vector2i(0, 0)).min(grid_size - Vector2i(1, 1));
 				new_base_tiles_coords = new_base_tiles_coords.max(Vector2i(0, 0)).min(grid_size - Vector2i(1, 1));
 
-				Vector<Point2i> line = Geometry2D::bresenham_line(last_base_tiles_coords, new_base_tiles_coords);
+				std::vector<Point2i> line = Geometry2D::bresenham_line(last_base_tiles_coords, new_base_tiles_coords);
 				for (int i = 0; i < line.size(); i++) {
 					Vector2i base_tile_coords = tile_set_atlas_source->get_tile_at_coords(line[i]);
 					if (base_tile_coords != TileSetSource::INVALID_ATLAS_COORDS) {
@@ -1359,9 +1350,9 @@ Map<Vector2i, List<const PropertyInfo *>> TileSetAtlasSourceEditor::_group_prope
 	// Group properties per tile.
 	Map<Vector2i, List<const PropertyInfo *>> per_tile;
 	for (const List<PropertyInfo>::Element *E_property = r_list.front(); E_property; E_property = E_property->next()) {
-		Vector<String> components = String(E_property->get().name).split("/", true, 1);
+		std::vector<String> components = String(E_property->get().name).split("/", true, 1);
 		if (components.size() >= 1) {
-			Vector<String> coord_arr = components[0].split(":");
+			std::vector<String> coord_arr = components[0].split(":");
 			if (coord_arr.size() == 2 && coord_arr[0].is_valid_int() && coord_arr[1].is_valid_int()) {
 				Vector2i coords = Vector2i(coord_arr[0].to_int(), coord_arr[1].to_int());
 				per_tile[coords].push_back(&(E_property->get()));
@@ -1409,7 +1400,7 @@ void TileSetAtlasSourceEditor::_menu_option(int p_option) {
 					undo_redo->add_undo_method(tile_set_atlas_source, "create_alternative_tile", selected.tile, selected.alternative);
 					if (per_tile.has(selected.tile)) {
 						for (List<const PropertyInfo *>::Element *E_property = per_tile[selected.tile].front(); E_property; E_property = E_property->next()) {
-							Vector<String> components = E_property->get()->name.split("/", true, 2);
+							std::vector<String> components = E_property->get()->name.split("/", true, 2);
 							if (components.size() >= 2 && components[1].is_valid_int() && components[1].to_int() == selected.alternative) {
 								String property = E_property->get()->name;
 								Variant value = tile_set_atlas_source->get(property);
@@ -1870,7 +1861,7 @@ void TileSetAtlasSourceEditor::_undo_redo_inspector_callback(Object *p_undo_redo
 
 	AtlasTileProxyObject *tile_data = Object::cast_to<AtlasTileProxyObject>(p_edited);
 	if (tile_data) {
-		Vector<String> components = String(p_property).split("/", true, 2);
+		std::vector<String> components = String(p_property).split("/", true, 2);
 		if (components.size() == 2 && components[1] == "polygons_count") {
 			int layer_index = components[0].trim_prefix("physics_layer_").to_int();
 			int new_polygons_count = p_new_value;

@@ -30,13 +30,8 @@
 
 #include "resource_importer_obj.h"
 
-#include "core/io/file_access.h"
-#include "core/io/resource_saver.h"
 #include "editor/import/scene_importer_mesh.h"
 #include "editor/import/scene_importer_mesh_node_3d.h"
-#include "scene/3d/mesh_instance_3d.h"
-#include "scene/3d/node_3d.h"
-#include "scene/resources/mesh.h"
 #include "scene/resources/surface_tool.h"
 
 uint32_t EditorOBJImporter::get_import_flags() const {
@@ -67,7 +62,7 @@ static Error _parse_material_library(const String &p_path, Map<String, Ref<Stand
 		} else if (l.begins_with("Kd ")) {
 			//normal
 			ERR_FAIL_COND_V(current.is_null(), ERR_FILE_CORRUPT);
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 4, ERR_INVALID_DATA);
 			Color c = current->get_albedo();
 			c.r = v[1].to_float();
@@ -77,7 +72,7 @@ static Error _parse_material_library(const String &p_path, Map<String, Ref<Stand
 		} else if (l.begins_with("Ks ")) {
 			//normal
 			ERR_FAIL_COND_V(current.is_null(), ERR_FILE_CORRUPT);
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 4, ERR_INVALID_DATA);
 			float r = v[1].to_float();
 			float g = v[2].to_float();
@@ -87,14 +82,14 @@ static Error _parse_material_library(const String &p_path, Map<String, Ref<Stand
 		} else if (l.begins_with("Ns ")) {
 			//normal
 			ERR_FAIL_COND_V(current.is_null(), ERR_FILE_CORRUPT);
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() != 2, ERR_INVALID_DATA);
 			float s = v[1].to_float();
 			current->set_metallic((1000.0 - s) / 1000.0);
 		} else if (l.begins_with("d ")) {
 			//normal
 			ERR_FAIL_COND_V(current.is_null(), ERR_FILE_CORRUPT);
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() != 2, ERR_INVALID_DATA);
 			float d = v[1].to_float();
 			Color c = current->get_albedo();
@@ -106,7 +101,7 @@ static Error _parse_material_library(const String &p_path, Map<String, Ref<Stand
 		} else if (l.begins_with("Tr ")) {
 			//normal
 			ERR_FAIL_COND_V(current.is_null(), ERR_FILE_CORRUPT);
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() != 2, ERR_INVALID_DATA);
 			float d = v[1].to_float();
 			Color c = current->get_albedo();
@@ -214,9 +209,9 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh>> &r_meshes, bool p_
 	Vector3 offset_mesh = p_offset_mesh;
 	int mesh_flags = 0;
 
-	Vector<Vector3> vertices;
-	Vector<Vector3> normals;
-	Vector<Vector2> uvs;
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
+	std::vector<Vector2> uvs;
 	String name;
 
 	Map<String, Map<String, Ref<StandardMaterial3D>>> material_map;
@@ -242,7 +237,7 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh>> &r_meshes, bool p_
 
 		if (l.begins_with("v ")) {
 			//vertex
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 4, ERR_FILE_CORRUPT);
 			Vector3 vtx;
 			vtx.x = v[1].to_float() * scale_mesh.x + offset_mesh.x;
@@ -251,7 +246,7 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh>> &r_meshes, bool p_
 			vertices.push_back(vtx);
 		} else if (l.begins_with("vt ")) {
 			//uv
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 3, ERR_FILE_CORRUPT);
 			Vector2 uv;
 			uv.x = v[1].to_float();
@@ -260,7 +255,7 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh>> &r_meshes, bool p_
 
 		} else if (l.begins_with("vn ")) {
 			//normal
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 4, ERR_FILE_CORRUPT);
 			Vector3 nrm;
 			nrm.x = v[1].to_float();
@@ -270,12 +265,12 @@ static Error _parse_obj(const String &p_path, List<Ref<Mesh>> &r_meshes, bool p_
 		} else if (l.begins_with("f ")) {
 			//vertex
 
-			Vector<String> v = l.split(" ", false);
+			std::vector<String> v = l.split(" ", false);
 			ERR_FAIL_COND_V(v.size() < 4, ERR_FILE_CORRUPT);
 
 			//not very fast, could be sped up
 
-			Vector<String> face[3];
+			std::vector<String> face[3];
 			face[0] = v[1].split("/");
 			face[1] = v[2].split("/");
 			ERR_FAIL_COND_V(face[0].size() == 0, ERR_FILE_CORRUPT);

@@ -30,10 +30,7 @@
 
 #include "resource_preloader_editor_plugin.h"
 
-#include "core/config/project_settings.h"
-#include "core/io/resource_loader.h"
 #include "editor/editor_scale.h"
-#include "editor/editor_settings.h"
 
 void ResourcePreloaderEditor::_gui_input(Ref<InputEvent> p_event) {
 }
@@ -44,14 +41,14 @@ void ResourcePreloaderEditor::_notification(int p_what) {
 	}
 
 	if (p_what == NOTIFICATION_READY) {
-		//NodePath("/root")->connect("node_removed", this,"_node_removed",Vector<Variant>(),true);
+		//NodePath("/root")->connect("node_removed", this,"_node_removed",std::vector<Variant>(),true);
 	}
 
 	if (p_what == NOTIFICATION_DRAW) {
 	}
 }
 
-void ResourcePreloaderEditor::_files_load_request(const Vector<String> &p_paths) {
+void ResourcePreloaderEditor::_files_load_request(const std::vector<String> &p_paths) {
 	for (int i = 0; i < p_paths.size(); i++) {
 		String path = p_paths[i];
 
@@ -280,7 +277,7 @@ bool ResourcePreloaderEditor::can_drop_data_fw(const Point2 &p_point, const Vari
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		return files.size() != 0;
 	}
@@ -328,7 +325,7 @@ void ResourcePreloaderEditor::drop_data_fw(const Point2 &p_point, const Variant 
 	}
 
 	if (String(d["type"]) == "files") {
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 
 		_files_load_request(files);
 	}
