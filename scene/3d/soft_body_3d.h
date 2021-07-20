@@ -41,7 +41,7 @@ class SoftBodyRenderingServerHandler : public RenderingServerHandler {
 
 	RID mesh;
 	int surface = 0;
-	Vector<uint8_t> buffer;
+	std::vector<uint8_t> buffer;
 	uint32_t stride = 0;
 	uint32_t offset_vertices = 0;
 	uint32_t offset_normal = 0;
@@ -94,7 +94,7 @@ private:
 	uint32_t collision_mask = 1;
 	uint32_t collision_layer = 1;
 	NodePath parent_collision_ignore;
-	Vector<PinnedPoint> pinned_points;
+	std::vector<PinnedPoint> pinned_points;
 	bool simulation_started = false;
 	bool pinned_points_cache_dirty = true;
 
@@ -150,8 +150,8 @@ public:
 	void set_parent_collision_ignore(const NodePath &p_parent_collision_ignore);
 	const NodePath &get_parent_collision_ignore() const;
 
-	void set_pinned_points_indices(Vector<PinnedPoint> p_pinned_points_indices);
-	Vector<PinnedPoint> get_pinned_points_indices();
+	void set_pinned_points_indices(std::vector<PinnedPoint> p_pinned_points_indices);
+	std::vector<PinnedPoint> get_pinned_points_indices();
 
 	void set_simulation_precision(int p_simulation_precision);
 	int get_simulation_precision();

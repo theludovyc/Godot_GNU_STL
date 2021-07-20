@@ -77,7 +77,7 @@ private:
 		String end_key;
 		bool line_only = false;
 	};
-	Vector<ColorRegion> color_regions;
+	std::vector<ColorRegion> color_regions;
 	Map<int, int> color_region_cache;
 
 	Dictionary keywords;

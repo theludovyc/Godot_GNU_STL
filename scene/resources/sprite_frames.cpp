@@ -37,7 +37,8 @@ void SpriteFrames::add_frame(const StringName &p_anim, const Ref<Texture2D> &p_f
 	ERR_FAIL_COND_MSG(!E, "Animation '" + String(p_anim) + "' doesn't exist.");
 
 	if (p_at_pos >= 0 && p_at_pos < E->get().frames.size()) {
-		E->get().frames.insert(p_at_pos, p_frame);
+		//todo
+		E->get().frames.insert(E->get().frames.begin() + p_at_pos, p_frame);
 	} else {
 		E->get().frames.push_back(p_frame);
 	}
@@ -56,7 +57,7 @@ void SpriteFrames::remove_frame(const StringName &p_anim, int p_idx) {
 	Map<StringName, Anim>::Element *E = animations.find(p_anim);
 	ERR_FAIL_COND_MSG(!E, "Animation '" + String(p_anim) + "' doesn't exist.");
 
-	E->get().frames.remove(p_idx);
+	E->get().frames.erase(E->get().frames.begin() + p_idx);
 	emit_changed();
 }
 
@@ -96,8 +97,8 @@ void SpriteFrames::rename_animation(const StringName &p_prev, const StringName &
 	animations[p_next] = anim;
 }
 
-Vector<String> SpriteFrames::_get_animation_list() const {
-	Vector<String> ret;
+std::vector<String> SpriteFrames::_get_animation_list() const {
+	std::vector<String> ret;
 	List<StringName> al;
 	get_animation_list(&al);
 	for (List<StringName>::Element *E = al.front(); E; E = E->next()) {
@@ -113,12 +114,12 @@ void SpriteFrames::get_animation_list(List<StringName> *r_animations) const {
 	}
 }
 
-Vector<String> SpriteFrames::get_animation_names() const {
-	Vector<String> names;
+std::vector<String> SpriteFrames::get_animation_names() const {
+	std::vector<String> names;
 	for (const Map<StringName, Anim>::Element *E = animations.front(); E; E = E->next()) {
 		names.push_back(E->key());
 	}
-	names.sort();
+	std::sort(names.begin(),  names.end());
 	return names;
 }
 
@@ -154,7 +155,7 @@ void SpriteFrames::_set_frames(const Array &p_frames) {
 
 	E->get().frames.resize(p_frames.size());
 	for (int i = 0; i < E->get().frames.size(); i++) {
-		E->get().frames.write[i] = p_frames[i];
+		E->get().frames[i] = p_frames[i];
 	}
 }
 

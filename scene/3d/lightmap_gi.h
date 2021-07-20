@@ -58,7 +58,7 @@ class LightmapGIData : public Resource {
 		int slice_index = 0;
 	};
 
-	Vector<User> users;
+	std::vector<User> users;
 
 	void _set_user_data(const Array &p_data);
 	Array _get_user_data() const;
@@ -162,10 +162,10 @@ private:
 		int32_t subindex = 0;
 		Ref<Mesh> mesh;
 		int32_t lightmap_scale = 0;
-		Vector<Ref<Material>> overrides;
+		std::vector<Ref<Material>> overrides;
 	};
 
-	void _find_meshes_and_lights(Node *p_at_node, Vector<MeshesFound> &meshes, Vector<LightsFound> &lights, Vector<Vector3> &probes);
+	void _find_meshes_and_lights(Node *p_at_node, std::vector<MeshesFound> &meshes, std::vector<LightsFound> &lights, std::vector<Vector3> &probes);
 
 	void _assign_lightmaps();
 	void _clear_lightmaps();
@@ -188,8 +188,8 @@ private:
 		int32_t under = EMPTY_LEAF;
 	};
 
-	int _bsp_get_simplex_side(const Vector<Vector3> &p_points, const LocalVector<BSPSimplex> &p_simplices, const Plane &p_plane, uint32_t p_simplex) const;
-	int32_t _compute_bsp_tree(const Vector<Vector3> &p_points, const LocalVector<Plane> &p_planes, LocalVector<int32_t> &planes_tested, const LocalVector<BSPSimplex> &p_simplices, const LocalVector<int32_t> &p_simplex_indices, LocalVector<BSPNode> &bsp_nodes);
+	int _bsp_get_simplex_side(const std::vector<Vector3> &p_points, const LocalVector<BSPSimplex> &p_simplices, const Plane &p_plane, uint32_t p_simplex) const;
+	int32_t _compute_bsp_tree(const std::vector<Vector3> &p_points, const LocalVector<Plane> &p_planes, LocalVector<int32_t> &planes_tested, const LocalVector<BSPSimplex> &p_simplices, const LocalVector<int32_t> &p_simplex_indices, LocalVector<BSPNode> &bsp_nodes);
 
 	struct BakeStepUD {
 		Lightmapper::BakeStepFunc func;
@@ -222,7 +222,7 @@ private:
 	};
 
 	void _plot_triangle_into_octree(GenProbesOctree *p_cell, float p_cell_size, const Vector3 *p_triangle);
-	void _gen_new_positions_from_octree(const GenProbesOctree *p_cell, float p_cell_size, const Vector<Vector3> &probe_positions, LocalVector<Vector3> &new_probe_positions, HashMap<Vector3i, bool, Vector3iHash> &positions_used, const AABB &p_bounds);
+	void _gen_new_positions_from_octree(const GenProbesOctree *p_cell, float p_cell_size, const std::vector<Vector3> &probe_positions, LocalVector<Vector3> &new_probe_positions, HashMap<Vector3i, bool, Vector3iHash> &positions_used, const AABB &p_bounds);
 
 protected:
 	void _validate_property(PropertyInfo &property) const override;
@@ -270,7 +270,7 @@ public:
 	GenerateProbes get_generate_probes() const;
 
 	AABB get_aabb() const override;
-	Vector<Face3> get_faces(uint32_t p_usage_flags) const override;
+	std::vector<Face3> get_faces(uint32_t p_usage_flags) const override;
 
 	BakeError bake(Node *p_from_node, String p_image_data_path = "", Lightmapper::BakeStepFunc p_bake_step = nullptr, void *p_bake_userdata = nullptr);
 	LightmapGI();

@@ -47,12 +47,12 @@ class AnimationCache : public Object {
 		Node *node = nullptr;
 
 		int bone_idx = -1;
-		Vector<StringName> subpath;
+		std::vector<StringName> subpath;
 		bool valid = false;
 	};
 
 	Set<Node *> connected_nodes;
-	Vector<Path> path_cache;
+	std::vector<Path> path_cache;
 
 	Node *root = nullptr;
 	Ref<Animation> animation;

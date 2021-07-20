@@ -500,14 +500,19 @@ void CodeHighlighter::add_color_region(const String &p_start_key, const String &
 	color_region.start_key = p_start_key;
 	color_region.end_key = p_end_key;
 	color_region.line_only = p_line_only || p_end_key == "";
-	color_regions.insert(at, color_region);
+
+	//todo
+	color_regions.insert(color_regions.begin() + at, color_region);
+
 	clear_highlighting_cache();
 }
 
 void CodeHighlighter::remove_color_region(const String &p_start_key) {
 	for (int i = 0; i < color_regions.size(); i++) {
 		if (color_regions[i].start_key == p_start_key) {
-			color_regions.remove(i);
+			//todo
+			color_regions.erase(color_regions.begin() + i);
+
 			break;
 		}
 	}

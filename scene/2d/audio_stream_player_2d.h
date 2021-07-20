@@ -62,7 +62,7 @@ private:
 
 	Ref<AudioStreamPlayback> stream_playback;
 	Ref<AudioStream> stream;
-	Vector<AudioFrame> mix_buffer;
+	std::vector<AudioFrame> mix_buffer;
 
 	SafeNumeric<float> setseek{ -1.0 };
 	SafeFlag active;

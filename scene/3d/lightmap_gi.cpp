@@ -31,14 +31,11 @@
 #include "lightmap_gi.h"
 
 #include "core/io/config_file.h"
-#include "core/io/dir_access.h"
-#include "core/io/file_access.h"
-#include "core/io/resource_saver.h"
 #include "core/math/camera_matrix.h"
 #include "core/math/delaunay_3d.h"
-#include "core/os/os.h"
-#include "core/templates/sort_array.h"
 #include "lightmap_probe.h"
+
+//todo std::vector.data()
 
 void LightmapGIData::add_user(const NodePath &p_path, const Rect2 &p_uv_scale, int p_slice_index, int32_t p_sub_instance) {
 	User user;
@@ -220,7 +217,7 @@ LightmapGIData::~LightmapGIData() {
 
 ///////////////////////////
 
-void LightmapGI::_find_meshes_and_lights(Node *p_at_node, Vector<MeshesFound> &meshes, Vector<LightsFound> &lights, Vector<Vector3> &probes) {
+void LightmapGI::_find_meshes_and_lights(Node *p_at_node, std::vector<MeshesFound> &meshes, std::vector<LightsFound> &lights, std::vector<Vector3> &probes) {
 	MeshInstance3D *mi = Object::cast_to<MeshInstance3D>(p_at_node);
 	if (mi && mi->get_gi_mode() == GeometryInstance3D::GI_MODE_BAKED && mi->is_visible_in_tree()) {
 		Ref<Mesh> mesh = mi->get_mesh();
@@ -320,7 +317,7 @@ void LightmapGI::_find_meshes_and_lights(Node *p_at_node, Vector<MeshesFound> &m
 	}
 }
 
-int LightmapGI::_bsp_get_simplex_side(const Vector<Vector3> &p_points, const LocalVector<BSPSimplex> &p_simplices, const Plane &p_plane, uint32_t p_simplex) const {
+int LightmapGI::_bsp_get_simplex_side(const std::vector<Vector3> &p_points, const LocalVector<BSPSimplex> &p_simplices, const Plane &p_plane, uint32_t p_simplex) const {
 	int over = 0;
 	int under = 0;
 	int coplanar = 0;
@@ -348,7 +345,7 @@ int LightmapGI::_bsp_get_simplex_side(const Vector<Vector3> &p_points, const Loc
 
 //#define DEBUG_BSP
 
-int32_t LightmapGI::_compute_bsp_tree(const Vector<Vector3> &p_points, const LocalVector<Plane> &p_planes, LocalVector<int32_t> &planes_tested, const LocalVector<BSPSimplex> &p_simplices, const LocalVector<int32_t> &p_simplex_indices, LocalVector<BSPNode> &bsp_nodes) {
+int32_t LightmapGI::_compute_bsp_tree(const std::vector<Vector3> &p_points, const LocalVector<Plane> &p_planes, LocalVector<int32_t> &planes_tested, const LocalVector<BSPSimplex> &p_simplices, const LocalVector<int32_t> &p_simplex_indices, LocalVector<BSPNode> &bsp_nodes) {
 	//if we reach here, it means there is more than one simplex
 	int32_t node_index = (int32_t)bsp_nodes.size();
 	bsp_nodes.push_back(BSPNode());
@@ -578,7 +575,7 @@ void LightmapGI::_plot_triangle_into_octree(GenProbesOctree *p_cell, float p_cel
 	}
 }
 
-void LightmapGI::_gen_new_positions_from_octree(const GenProbesOctree *p_cell, float p_cell_size, const Vector<Vector3> &probe_positions, LocalVector<Vector3> &new_probe_positions, HashMap<Vector3i, bool, Vector3iHash> &positions_used, const AABB &p_bounds) {
+void LightmapGI::_gen_new_positions_from_octree(const GenProbesOctree *p_cell, float p_cell_size, const std::vector<Vector3> &probe_positions, LocalVector<Vector3> &new_probe_positions, HashMap<Vector3i, bool, Vector3iHash> &positions_used, const AABB &p_bounds) {
 	for (int i = 0; i < 8; i++) {
 		Vector3i pos = p_cell->offset;
 		if (i & 1) {
@@ -596,7 +593,7 @@ void LightmapGI::_gen_new_positions_from_octree(const GenProbesOctree *p_cell, f
 			Vector3 real_pos = p_bounds.position + Vector3(pos) * p_cell_size;
 			//see if a user submitted probe is too close
 			int ppcount = probe_positions.size();
-			const Vector3 *pp = probe_positions.ptr();
+			const Vector3 *pp = probe_positions.data();
 			bool exists = false;
 			for (int j = 0; j < ppcount; j++) {
 				if (pp[j].distance_to(real_pos) < CMP_EPSILON) {
@@ -643,12 +640,12 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 		p_bake_step(0.0, TTR("Finding meshes, lights and probes"), p_bake_userdata, true);
 	}
 	/* STEP 1, FIND MESHES, LIGHTS AND PROBES */
-	Vector<Lightmapper::MeshData> mesh_data;
-	Vector<LightsFound> lights_found;
-	Vector<Vector3> probes_found;
+	std::vector<Lightmapper::MeshData> mesh_data;
+	std::vector<LightsFound> lights_found;
+	std::vector<Vector3> probes_found;
 	AABB bounds;
 	{
-		Vector<MeshesFound> meshes_found;
+		std::vector<MeshesFound> meshes_found;
 		_find_meshes_and_lights(p_from_node ? p_from_node : get_parent(), meshes_found, lights_found, probes_found);
 
 		if (meshes_found.size() == 0) {
@@ -663,14 +660,14 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 				p_bake_step(p * 0.1, vformat(TTR("Preparing geometry %d/%d"), m_i, meshes_found.size()), p_bake_userdata, false);
 			}
 
-			MeshesFound &mf = meshes_found.write[m_i];
+			MeshesFound &mf = meshes_found[m_i];
 
 			Size2i lightmap_size = mf.mesh->get_lightmap_size_hint() * mf.lightmap_scale;
-			Vector<RID> overrides;
+			std::vector<RID> overrides;
 			overrides.resize(mf.overrides.size());
 			for (int i = 0; i < mf.overrides.size(); i++) {
 				if (mf.overrides[i].is_valid()) {
-					overrides.write[i] = mf.overrides[i]->get_rid();
+					overrides[i] = mf.overrides[i]->get_rid();
 				}
 			}
 			TypedArray<Image> images = RS::get_singleton()->bake_render_uv2(mf.mesh->get_rid(), overrides, lightmap_size);
@@ -700,15 +697,15 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 				if (orm->get_format() != Image::FORMAT_RGBA8) {
 					orm->convert(Image::FORMAT_RGBA8);
 				}
-				Vector<uint8_t> albedo_alpha = albedo->get_data();
-				Vector<uint8_t> orm_data = orm->get_data();
+				std::vector<uint8_t> albedo_alpha = albedo->get_data();
+				std::vector<uint8_t> orm_data = orm->get_data();
 
-				Vector<uint8_t> albedom;
+				std::vector<uint8_t> albedom;
 				uint32_t len = albedo_alpha.size();
 				albedom.resize(len);
-				const uint8_t *r_aa = albedo_alpha.ptr();
-				const uint8_t *r_orm = orm_data.ptr();
-				uint8_t *w_albedo = albedom.ptrw();
+				const uint8_t *r_aa = albedo_alpha.data();
+				const uint8_t *r_orm = orm_data.data();
+				uint8_t *w_albedo = albedom.data();
 
 				for (uint32_t i = 0; i < len; i += 4) {
 					w_albedo[i + 0] = uint8_t(CLAMP(float(r_aa[i + 0]) * (1.0 - float(r_orm[i + 2] / 255.0)), 0, 255));
@@ -736,26 +733,26 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 				}
 				Array a = mf.mesh->surface_get_arrays(i);
 
-				Vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
-				const Vector3 *vr = vertices.ptr();
-				Vector<Vector2> uv = a[Mesh::ARRAY_TEX_UV2];
+				std::vector<Vector3> vertices = a[Mesh::ARRAY_VERTEX];
+				const Vector3 *vr = vertices.data();
+				std::vector<Vector2> uv = a[Mesh::ARRAY_TEX_UV2];
 				const Vector2 *uvr = nullptr;
-				Vector<Vector3> normals = a[Mesh::ARRAY_NORMAL];
+				std::vector<Vector3> normals = a[Mesh::ARRAY_NORMAL];
 				const Vector3 *nr = nullptr;
-				Vector<int> index = a[Mesh::ARRAY_INDEX];
+				std::vector<int> index = a[Mesh::ARRAY_INDEX];
 
 				ERR_CONTINUE(uv.size() == 0);
 				ERR_CONTINUE(normals.size() == 0);
 
-				uvr = uv.ptr();
-				nr = normals.ptr();
+				uvr = uv.data();
+				nr = normals.data();
 
 				int facecount;
 				const int *ir = nullptr;
 
 				if (index.size()) {
 					facecount = index.size() / 3;
-					ir = index.ptr();
+					ir = index.data();
 				} else {
 					facecount = vertices.size() / 3;
 				}
@@ -966,7 +963,7 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 
 	Ref<TextureLayered> texture;
 	{
-		Vector<Ref<Image>> images;
+		std::vector<Ref<Image>> images;
 		for (int i = 0; i < lightmapper->get_bake_texture_count(); i++) {
 			images.push_back(lightmapper->get_bake_texture(i));
 		}
@@ -1038,16 +1035,16 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 
 	{
 		// create tetrahedrons
-		Vector<Vector3> points;
-		Vector<Color> sh;
+		std::vector<Vector3> points;
+		std::vector<Color> sh;
 		points.resize(lightmapper->get_bake_probe_count());
 		sh.resize(lightmapper->get_bake_probe_count() * 9);
 		for (int i = 0; i < lightmapper->get_bake_probe_count(); i++) {
-			points.write[i] = lightmapper->get_bake_probe_point(i);
-			Vector<Color> colors = lightmapper->get_bake_probe_sh(i);
+			points[i] = lightmapper->get_bake_probe_point(i);
+			std::vector<Color> colors = lightmapper->get_bake_probe_sh(i);
 			ERR_CONTINUE(colors.size() != 9);
 			for (int j = 0; j < 9; j++) {
-				sh.write[i * 9 + j] = colors[j];
+				sh[i * 9 + j] = colors[j];
 			}
 		}
 
@@ -1056,7 +1053,7 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 		if (p_bake_step) {
 			p_bake_step(0.8, TTR("Generating Probe Volumes"), p_bake_userdata, true);
 		}
-		Vector<Delaunay3D::OutputSimplex> solved_simplices = Delaunay3D::tetrahedralize(points);
+		std::vector<Delaunay3D::OutputSimplex> solved_simplices = Delaunay3D::tetrahedralize(points);
 
 		LocalVector<BSPSimplex> bsp_simplices;
 		LocalVector<Plane> bsp_planes;
@@ -1146,8 +1143,8 @@ LightmapGI::BakeError LightmapGI::bake(Node *p_from_node, String p_image_data_pa
 		PackedInt32Array bsp_array;
 		bsp_array.resize(bsp_nodes.size() * 6); // six 32 bits values used for each BSP node
 		{
-			float *fptr = (float *)bsp_array.ptrw();
-			int32_t *iptr = (int32_t *)bsp_array.ptrw();
+			float *fptr = (float *)bsp_array.data();
+			int32_t *iptr = (int32_t *)bsp_array.data();
 			for (uint32_t i = 0; i < bsp_nodes.size(); i++) {
 				fptr[i * 6 + 0] = bsp_nodes[i].plane.normal.x;
 				fptr[i * 6 + 1] = bsp_nodes[i].plane.normal.y;
@@ -1269,8 +1266,8 @@ AABB LightmapGI::get_aabb() const {
 	return AABB();
 }
 
-Vector<Face3> LightmapGI::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> LightmapGI::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 void LightmapGI::set_use_denoiser(bool p_enable) {

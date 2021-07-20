@@ -109,9 +109,9 @@ public:
 
 	virtual bool intersect(Ray &p_ray) = 0;
 
-	virtual void intersect(Vector<Ray> &r_rays) = 0;
+	virtual void intersect(std::vector<Ray> &r_rays) = 0;
 
-	virtual void add_mesh(const Vector<Vector3> &p_vertices, const Vector<Vector3> &p_normals, const Vector<Vector2> &p_uv2s, unsigned int p_id) = 0;
+	virtual void add_mesh(const std::vector<Vector3> &p_vertices, const std::vector<Vector3> &p_normals, const std::vector<Vector2> &p_uv2s, unsigned int p_id) = 0;
 	virtual void set_mesh_alpha_texture(Ref<Image> p_alpha_texture, unsigned int p_id) = 0;
 	virtual void commit() = 0;
 
@@ -164,9 +164,9 @@ public:
 
 	struct MeshData {
 		//triangle data
-		Vector<Vector3> points;
-		Vector<Vector2> uv2;
-		Vector<Vector3> normal;
+		std::vector<Vector3> points;
+		std::vector<Vector2> uv2;
+		std::vector<Vector3> normal;
 		Ref<Image> albedo_on_uv2;
 		Ref<Image> emission_on_uv2;
 		Variant userdata;
@@ -187,7 +187,7 @@ public:
 	virtual int get_bake_mesh_texture_slice(int p_index) const = 0;
 	virtual int get_bake_probe_count() const = 0;
 	virtual Vector3 get_bake_probe_point(int p_probe) const = 0;
-	virtual Vector<Color> get_bake_probe_sh(int p_probe) const = 0;
+	virtual std::vector<Color> get_bake_probe_sh(int p_probe) const = 0;
 
 	static Ref<Lightmapper> create();
 

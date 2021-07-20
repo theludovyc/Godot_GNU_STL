@@ -64,8 +64,8 @@ private:
 	bool use_hidden_tabs_for_min_size = false;
 	int tabs_rearrange_group = -1;
 
-	Vector<Ref<TextLine>> text_buf;
-	Vector<Control *> _get_tabs() const;
+	std::vector<Ref<TextLine>> text_buf;
+	std::vector<Control *> _get_tabs() const;
 	int _get_tab_width(int p_index) const;
 	bool _theme_changing = false;
 	void _on_theme_changed();

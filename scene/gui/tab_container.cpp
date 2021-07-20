@@ -30,7 +30,6 @@
 
 #include "tab_container.h"
 
-#include "core/object/message_queue.h"
 #include "core/string/translation.h"
 
 #include "scene/gui/box_container.h"
@@ -52,7 +51,7 @@ int TabContainer::_get_top_margin() const {
 	// Font height or higher icon wins.
 	int content_height = 0;
 
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	for (int i = 0; i < tabs.size(); i++) {
 		content_height = MAX(content_height, text_buf[i]->get_size().y);
 
@@ -120,7 +119,7 @@ void TabContainer::_gui_input(const Ref<InputEvent> &p_event) {
 			return;
 		}
 
-		Vector<Control *> tabs = _get_tabs();
+		std::vector<Control *> tabs = _get_tabs();
 
 		// Handle navigation buttons.
 		if (buttons_visible_cache) {
@@ -288,7 +287,7 @@ void TabContainer::_gui_input(const Ref<InputEvent> &p_event) {
 void TabContainer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_RESIZED: {
-			Vector<Control *> tabs = _get_tabs();
+			std::vector<Control *> tabs = _get_tabs();
 			int side_margin = get_theme_constant("side_margin");
 			Ref<Texture2D> menu = get_theme_icon("menu");
 			Ref<Texture2D> increment = get_theme_icon("increment");
@@ -338,7 +337,7 @@ void TabContainer::_notification(int p_what) {
 				return;
 			}
 
-			Vector<Control *> tabs = _get_tabs();
+			std::vector<Control *> tabs = _get_tabs();
 			Ref<StyleBox> tab_unselected = get_theme_stylebox("tab_unselected");
 			Ref<StyleBox> tab_selected = get_theme_stylebox("tab_selected");
 			Ref<StyleBox> tab_disabled = get_theme_stylebox("tab_disabled");
@@ -391,7 +390,7 @@ void TabContainer::_notification(int p_what) {
 
 			// Go through the visible tabs to find the width they occupy.
 			all_tabs_width = 0;
-			Vector<int> tab_widths;
+			std::vector<int> tab_widths;
 			for (int i = first_tab_cache; i < tabs.size(); i++) {
 				if (get_tab_hidden(i)) {
 					tab_widths.push_back(0);
@@ -524,9 +523,9 @@ void TabContainer::_notification(int p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
-			Vector<Control *> tabs = _get_tabs();
+			std::vector<Control *> tabs = _get_tabs();
 			for (int i = 0; i < tabs.size(); i++) {
-				text_buf.write[i]->clear();
+				text_buf[i]->clear();
 			}
 			_theme_changing = true;
 			call_deferred("_on_theme_changed"); // Wait until all changed theme.
@@ -535,7 +534,7 @@ void TabContainer::_notification(int p_what) {
 }
 
 void TabContainer::_draw_tab(Ref<StyleBox> &p_tab_style, Color &p_font_color, int p_index, float p_x) {
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	RID canvas = get_canvas_item();
 	Ref<Font> font = get_theme_font("font");
 	Color font_outline_color = get_theme_color("font_outline_color");
@@ -578,7 +577,7 @@ void TabContainer::_draw_tab(Ref<StyleBox> &p_tab_style, Color &p_font_color, in
 
 void TabContainer::_refresh_texts() {
 	text_buf.clear();
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	bool rtl = is_layout_rtl();
 	Ref<Font> font = get_theme_font("font");
 	int font_size = get_theme_font_size("font_size");
@@ -610,7 +609,7 @@ void TabContainer::_on_theme_changed() {
 
 void TabContainer::_repaint() {
 	Ref<StyleBox> sb = get_theme_stylebox("panel");
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	for (int i = 0; i < tabs.size(); i++) {
 		Control *c = tabs[i];
 		if (i == current) {
@@ -677,8 +676,8 @@ int TabContainer::_get_tab_width(int p_index) const {
 	return width;
 }
 
-Vector<Control *> TabContainer::_get_tabs() const {
-	Vector<Control *> controls;
+std::vector<Control *> TabContainer::_get_tabs() const {
+	std::vector<Control *> controls;
 	for (int i = 0; i < get_child_count(); i++) {
 		Control *control = Object::cast_to<Control>(get_child(i));
 		if (!control || control->is_top_level_control()) {
@@ -706,7 +705,7 @@ void TabContainer::add_child_notify(Node *p_child) {
 		return;
 	}
 
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	_refresh_texts();
 
 	bool first = false;
@@ -775,7 +774,7 @@ int TabContainer::get_previous_tab() const {
 }
 
 Control *TabContainer::get_tab_control(int p_idx) const {
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	if (p_idx >= 0 && p_idx < tabs.size()) {
 		return tabs[p_idx];
 	} else {
@@ -784,7 +783,7 @@ Control *TabContainer::get_tab_control(int p_idx) const {
 }
 
 Control *TabContainer::get_current_tab_control() const {
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	if (current >= 0 && current < tabs.size()) {
 		return tabs[current];
 	} else {
@@ -807,7 +806,7 @@ void TabContainer::remove_child_notify(Node *p_child) {
 }
 
 void TabContainer::_update_current_tab() {
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	_refresh_texts();
 
 	int tc = tabs.size();
@@ -957,7 +956,7 @@ int TabContainer::get_tab_idx_at_point(const Point2 &p_point) const {
 	}
 
 	// get the tab at the point
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	px -= tabs_ofs_cache;
 	for (int i = first_tab_cache; i <= last_tab_cache; i++) {
 		int tab_width = _get_tab_width(i);
@@ -986,7 +985,7 @@ void TabContainer::set_tabs_visible(bool p_visible) {
 
 	tabs_visible = p_visible;
 
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	for (int i = 0; i < tabs.size(); i++) {
 		Control *c = tabs[i];
 		if (p_visible) {
@@ -1104,7 +1103,7 @@ bool TabContainer::get_tab_hidden(int p_tab) const {
 }
 
 void TabContainer::get_translatable_strings(List<String> *p_strings) const {
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	for (int i = 0; i < tabs.size(); i++) {
 		Control *c = tabs[i];
 
@@ -1123,7 +1122,7 @@ void TabContainer::get_translatable_strings(List<String> *p_strings) const {
 Size2 TabContainer::get_minimum_size() const {
 	Size2 ms;
 
-	Vector<Control *> tabs = _get_tabs();
+	std::vector<Control *> tabs = _get_tabs();
 	for (int i = 0; i < tabs.size(); i++) {
 		Control *c = tabs[i];
 

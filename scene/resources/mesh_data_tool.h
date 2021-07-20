@@ -44,22 +44,22 @@ class MeshDataTool : public RefCounted {
 		Plane tangent;
 		Vector2 uv;
 		Vector2 uv2;
-		Vector<int> bones;
-		Vector<float> weights;
-		Vector<int> edges;
-		Vector<int> faces;
+		std::vector<int> bones;
+		std::vector<float> weights;
+		std::vector<int> edges;
+		std::vector<int> faces;
 		Variant meta;
 	};
 
-	Vector<Vertex> vertices;
+	std::vector<Vertex> vertices;
 
 	struct Edge {
 		int vertex[2] = {};
-		Vector<int> faces;
+		std::vector<int> faces;
 		Variant meta;
 	};
 
-	Vector<Edge> edges;
+	std::vector<Edge> edges;
 
 	struct Face {
 		int v[3] = {};
@@ -67,7 +67,7 @@ class MeshDataTool : public RefCounted {
 		Variant meta;
 	};
 
-	Vector<Face> faces;
+	std::vector<Face> faces;
 
 	Ref<Material> material;
 
@@ -103,20 +103,20 @@ public:
 	Color get_vertex_color(int p_idx) const;
 	void set_vertex_color(int p_idx, const Color &p_color);
 
-	Vector<int> get_vertex_bones(int p_idx) const;
-	void set_vertex_bones(int p_idx, const Vector<int> &p_bones);
+	std::vector<int> get_vertex_bones(int p_idx) const;
+	void set_vertex_bones(int p_idx, const std::vector<int> &p_bones);
 
-	Vector<float> get_vertex_weights(int p_idx) const;
-	void set_vertex_weights(int p_idx, const Vector<float> &p_weights);
+	std::vector<float> get_vertex_weights(int p_idx) const;
+	void set_vertex_weights(int p_idx, const std::vector<float> &p_weights);
 
 	Variant get_vertex_meta(int p_idx) const;
 	void set_vertex_meta(int p_idx, const Variant &p_meta);
 
-	Vector<int> get_vertex_edges(int p_idx) const;
-	Vector<int> get_vertex_faces(int p_idx) const;
+	std::vector<int> get_vertex_edges(int p_idx) const;
+	std::vector<int> get_vertex_faces(int p_idx) const;
 
 	int get_edge_vertex(int p_edge, int p_vertex) const;
-	Vector<int> get_edge_faces(int p_edge) const;
+	std::vector<int> get_edge_faces(int p_edge) const;
 	Variant get_edge_meta(int p_idx) const;
 	void set_edge_meta(int p_idx, const Variant &p_meta);
 

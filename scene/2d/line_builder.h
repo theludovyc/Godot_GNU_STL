@@ -40,7 +40,7 @@ class LineBuilder {
 public:
 	// TODO Move in a struct and reference it
 	// Input
-	Vector<Vector2> points;
+	std::vector<Vector2> points;
 	Line2D::LineJointMode joint_mode = Line2D::LINE_JOINT_SHARP;
 	Line2D::LineCapMode begin_cap_mode = Line2D::LINE_CAP_NONE;
 	Line2D::LineCapMode end_cap_mode = Line2D::LINE_CAP_NONE;
@@ -56,10 +56,10 @@ public:
 
 	// TODO Move in a struct and reference it
 	// Output
-	Vector<Vector2> vertices;
-	Vector<Color> colors;
-	Vector<Vector2> uvs;
-	Vector<int> indices;
+	std::vector<Vector2> vertices;
+	std::vector<Color> colors;
+	std::vector<Vector2> uvs;
+	std::vector<int> indices;
 
 	LineBuilder();
 

@@ -70,7 +70,7 @@ static inline void swap(T &a, T &b) {
 	b = tmp;
 }
 
-static float calculate_total_distance(const Vector<Vector2> &points) {
+static float calculate_total_distance(const std::vector<Vector2> &points) {
 	float d = 0.f;
 	for (int i = 1; i < points.size(); ++i) {
 		d += points[i].distance_to(points[i - 1]);
