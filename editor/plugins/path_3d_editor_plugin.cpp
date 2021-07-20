@@ -31,10 +31,9 @@
 #include "path_3d_editor_plugin.h"
 
 #include "core/math/geometry_2d.h"
-#include "core/math/geometry_3d.h"
 #include "core/os/keyboard.h"
-#include "node_3d_editor_plugin.h"
-#include "scene/resources/curve.h"
+
+//todo std::vector.data()
 
 String Path3DGizmo::get_handle_name(int p_idx) const {
 	Ref<Curve3D> c = path->get_curve();
@@ -231,15 +230,15 @@ void Path3DGizmo::redraw() {
 		return;
 	}
 
-	Vector<Vector3> v3a = c->tessellate();
-	//Vector<Vector3> v3a=c->get_baked_points();
+	std::vector<Vector3> v3a = c->tessellate();
+	//std::vector<Vector3> v3a=c->get_baked_points();
 
 	int v3s = v3a.size();
 	if (v3s == 0) {
 		return;
 	}
-	Vector<Vector3> v3p;
-	const Vector3 *r = v3a.ptr();
+	std::vector<Vector3> v3p;
+	const Vector3 *r = v3a.data();
 
 	// BUG: the following won't work when v3s, avoid drawing as a temporary workaround.
 	for (int i = 0; i < v3s - 1; i++) {
@@ -256,8 +255,8 @@ void Path3DGizmo::redraw() {
 
 	if (Path3DEditorPlugin::singleton->get_edited_path() == path) {
 		v3p.clear();
-		Vector<Vector3> handles;
-		Vector<Vector3> sec_handles;
+		std::vector<Vector3> handles;
+		std::vector<Vector3> sec_handles;
 
 		for (int i = 0; i < c->get_point_count(); i++) {
 			Vector3 p = c->get_point_position(i);
@@ -318,7 +317,7 @@ bool Path3DEditorPlugin::forward_spatial_gui_input(Camera3D *p_camera, const Ref
 
 		if (mb->is_pressed() && mb->get_button_index() == MOUSE_BUTTON_LEFT && (curve_create->is_pressed() || (curve_edit->is_pressed() && mb->is_ctrl_pressed()))) {
 			//click into curve, break it down
-			Vector<Vector3> v3a = c->tessellate();
+			std::vector<Vector3> v3a = c->tessellate();
 			int idx = 0;
 			int rc = v3a.size();
 			int closest_seg = -1;
@@ -326,7 +325,7 @@ bool Path3DEditorPlugin::forward_spatial_gui_input(Camera3D *p_camera, const Ref
 			float closest_d = 1e20;
 
 			if (rc >= 2) {
-				const Vector3 *r = v3a.ptr();
+				const Vector3 *r = v3a.data();
 
 				if (p_camera->unproject_position(gt.xform(c->get_point_position(0))).distance_to(mbpos) < click_dist) {
 					return false; //nope, existing

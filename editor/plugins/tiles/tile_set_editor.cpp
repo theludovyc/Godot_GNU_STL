@@ -30,14 +30,9 @@
 
 #include "tile_set_editor.h"
 
-#include "tile_data_editors.h"
 #include "tiles_editor_plugin.h"
 
 #include "editor/editor_scale.h"
-
-#include "scene/gui/box_container.h"
-#include "scene/gui/control.h"
-#include "scene/gui/tab_container.h"
 
 TileSetEditor *TileSetEditor::singleton = nullptr;
 
@@ -53,7 +48,7 @@ void TileSetEditor::drop_data_fw(const Point2 &p_point, const Variant &p_data, C
 		int source_id = -1;
 		int added = 0;
 		Dictionary d = p_data;
-		Vector<String> files = d["files"];
+		std::vector<String> files = d["files"];
 		for (int i = 0; i < files.size(); i++) {
 			Ref<Texture2D> resource = ResourceLoader::load(files[i]);
 			if (resource.is_valid()) {
@@ -93,7 +88,7 @@ bool TileSetEditor::can_drop_data_fw(const Point2 &p_point, const Variant &p_dat
 
 		// Check if we have a Texture2D.
 		if (String(d["type"]) == "files") {
-			Vector<String> files = d["files"];
+			std::vector<String> files = d["files"];
 
 			if (files.size() == 0) {
 				return false;
@@ -321,7 +316,7 @@ void TileSetEditor::_undo_redo_inspector_callback(Object *p_undo_redo, Object *p
 #define ADD_UNDO(obj, property) undo_redo->add_undo_property(obj, property, tile_data->get(property));
 	TileSet *tile_set = Object::cast_to<TileSet>(p_edited);
 	if (tile_set) {
-		Vector<String> components = p_property.split("/", true, 3);
+		std::vector<String> components = p_property.split("/", true, 3);
 		for (int i = 0; i < tile_set->get_source_count(); i++) {
 			int source_id = tile_set->get_source_id(i);
 
