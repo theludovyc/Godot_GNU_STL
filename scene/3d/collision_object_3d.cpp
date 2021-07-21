@@ -30,8 +30,9 @@
 
 #include "collision_object_3d.h"
 
-#include "core/config/engine.h"
 #include "scene/scene_string_names.h"
+
+//todo std::vector.data()
 
 void CollisionObject3D::_notification(int p_what) {
 	switch (p_what) {
@@ -313,7 +314,7 @@ void CollisionObject3D::_update_shape_data(uint32_t p_owner) {
 void CollisionObject3D::_shape_changed(const Ref<Shape3D> &p_shape) {
 	for (Map<uint32_t, ShapeData>::Element *E = shapes.front(); E; E = E->next()) {
 		ShapeData &shapedata = E->get();
-		ShapeData::ShapeBase *shapes = shapedata.shapes.ptrw();
+		ShapeData::ShapeBase *shapes = shapedata.shapes.data();
 		for (int i = 0; i < shapedata.shapes.size(); i++) {
 			ShapeData::ShapeBase &s = shapes[i];
 			if (s.shape == p_shape && s.debug_shape.is_valid()) {
@@ -333,7 +334,7 @@ void CollisionObject3D::_update_debug_shapes() {
 	for (Set<uint32_t>::Element *shapedata_idx = debug_shapes_to_update.front(); shapedata_idx; shapedata_idx = shapedata_idx->next()) {
 		if (shapes.has(shapedata_idx->get())) {
 			ShapeData &shapedata = shapes[shapedata_idx->get()];
-			ShapeData::ShapeBase *shapes = shapedata.shapes.ptrw();
+			ShapeData::ShapeBase *shapes = shapedata.shapes.data();
 			for (int i = 0; i < shapedata.shapes.size(); i++) {
 				ShapeData::ShapeBase &s = shapes[i];
 				if (s.shape.is_null() || shapedata.disabled) {
@@ -369,7 +370,7 @@ void CollisionObject3D::_update_debug_shapes() {
 void CollisionObject3D::_clear_debug_shapes() {
 	for (Map<uint32_t, ShapeData>::Element *E = shapes.front(); E; E = E->next()) {
 		ShapeData &shapedata = E->get();
-		ShapeData::ShapeBase *shapes = shapedata.shapes.ptrw();
+		ShapeData::ShapeBase *shapes = shapedata.shapes.data();
 		for (int i = 0; i < shapedata.shapes.size(); i++) {
 			ShapeData::ShapeBase &s = shapes[i];
 			if (s.debug_shape.is_valid()) {
@@ -389,7 +390,7 @@ void CollisionObject3D::_on_transform_changed() {
 		debug_shape_old_transform = get_global_transform();
 		for (Map<uint32_t, ShapeData>::Element *E = shapes.front(); E; E = E->next()) {
 			ShapeData &shapedata = E->get();
-			const ShapeData::ShapeBase *shapes = shapedata.shapes.ptr();
+			const ShapeData::ShapeBase *shapes = shapedata.shapes.data();
 			for (int i = 0; i < shapedata.shapes.size(); i++) {
 				RS::get_singleton()->instance_set_transform(shapes[i].debug_shape, debug_shape_old_transform * shapedata.xform);
 			}
@@ -596,7 +597,7 @@ void CollisionObject3D::shape_owner_remove_shape(uint32_t p_owner, int p_shape) 
 	ERR_FAIL_COND(!shapes.has(p_owner));
 	ERR_FAIL_INDEX(p_shape, shapes[p_owner].shapes.size());
 
-	ShapeData::ShapeBase &s = shapes[p_owner].shapes.write[p_shape];
+	ShapeData::ShapeBase &s = shapes[p_owner].shapes[p_shape];
 	int index_to_remove = s.index;
 
 	if (area) {
@@ -613,12 +614,12 @@ void CollisionObject3D::shape_owner_remove_shape(uint32_t p_owner, int p_shape) 
 		--debug_shapes_count;
 	}
 
-	shapes[p_owner].shapes.remove(p_shape);
+	shapes[p_owner].shapes.erase(shapes[p_owner].shapes.begin() + p_shape);
 
 	for (Map<uint32_t, ShapeData>::Element *E = shapes.front(); E; E = E->next()) {
 		for (int i = 0; i < E->get().shapes.size(); i++) {
 			if (E->get().shapes[i].index > index_to_remove) {
-				E->get().shapes.write[i].index -= 1;
+				E->get().shapes[i].index -= 1;
 			}
 		}
 	}

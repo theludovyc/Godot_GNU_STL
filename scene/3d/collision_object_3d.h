@@ -66,7 +66,7 @@ private:
 			int index = 0;
 		};
 
-		Vector<ShapeBase> shapes;
+		std::vector<ShapeBase> shapes;
 		bool disabled = false;
 	};
 

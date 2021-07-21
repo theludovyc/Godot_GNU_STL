@@ -30,14 +30,12 @@
 
 #include "animation_player.h"
 
-#include "core/config/engine.h"
 #include "core/object/message_queue.h"
 #include "scene/scene_string_names.h"
 #include "servers/audio/audio_stream.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
-#include "editor/editor_settings.h"
 #include "scene/2d/skeleton_2d.h"
 
 void AnimatedValuesBackup::update_skeletons() {
@@ -123,9 +121,11 @@ bool AnimationPlayer::_get(const StringName &p_name, Variant &r_ret) const {
 		r_ret = animation_get_next(which);
 
 	} else if (name == "blend_times") {
-		Vector<BlendKey> keys;
+		std::vector<BlendKey> keys;
 		for (Map<BlendKey, float>::Element *E = blend_times.front(); E; E = E->next()) {
-			keys.ordered_insert(E->key());
+			auto it = std::lower_bound(keys.begin(), keys.end(), E->key());
+
+			keys.insert(it, E->key());
 		}
 
 		Array array;
@@ -244,9 +244,9 @@ void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim, Node *p_root_ov
 	p_anim->node_cache.resize(a->get_track_count());
 
 	for (int i = 0; i < a->get_track_count(); i++) {
-		p_anim->node_cache.write[i] = nullptr;
+		p_anim->node_cache[i] = nullptr;
 		RES resource;
-		Vector<StringName> leftover_path;
+		std::vector<StringName> leftover_path;
 		Node *child = parent->get_node_and_resource(a->track_get_path(i), resource, leftover_path);
 		ERR_CONTINUE_MSG(!child, "On Animation: '" + p_anim->name + "', couldn't resolve track:  '" + String(a->track_get_path(i)) + "'."); // couldn't find the child node
 		ObjectID id = resource.is_valid() ? resource->get_instance_id() : child->get_instance_id();
@@ -276,7 +276,7 @@ void AnimationPlayer::_ensure_node_caches(AnimationData *p_anim, Node *p_root_ov
 			node_cache_map[key] = TrackNodeCache();
 		}
 
-		p_anim->node_cache.write[i] = &node_cache_map[key];
+		p_anim->node_cache[i] = &node_cache_map[key];
 		p_anim->node_cache[i]->path = a->track_get_path(i);
 		p_anim->node_cache[i]->node = child;
 		p_anim->node_cache[i]->resource = resource;
@@ -546,7 +546,7 @@ void AnimationPlayer::_animation_process_animation(AnimationData *p_anim, float 
 
 				for (List<int>::Element *E = indices.front(); E; E = E->next()) {
 					StringName method = a->method_track_get_name(i, E->get());
-					Vector<Variant> params = a->method_track_get_params(i, E->get());
+					std::vector<Variant> params = a->method_track_get_params(i, E->get());
 
 					int s = params.size();
 
@@ -1109,8 +1109,8 @@ void AnimationPlayer::queue(const StringName &p_name) {
 	}
 }
 
-Vector<String> AnimationPlayer::get_queue() {
-	Vector<String> ret;
+std::vector<String> AnimationPlayer::get_queue() {
+	std::vector<String> ret;
 	for (List<StringName>::Element *E = queued.front(); E; E = E->next()) {
 		ret.push_back(E->get());
 	}

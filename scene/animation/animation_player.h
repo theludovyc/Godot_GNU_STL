@@ -42,11 +42,11 @@ class AnimatedValuesBackup : public RefCounted {
 
 	struct Entry {
 		Object *object = nullptr;
-		Vector<StringName> subpath; // Unused if bone
+		std::vector<StringName> subpath; // Unused if bone
 		int bone_idx = -1; // -1 if not a bone
 		Variant value;
 	};
-	Vector<Entry> entries;
+	std::vector<Entry> entries;
 
 	friend class AnimationPlayer;
 
@@ -115,7 +115,7 @@ private:
 		struct PropertyAnim {
 			TrackNodeCache *owner = nullptr;
 			SpecialProperty special = SP_NONE; //small optimization
-			Vector<StringName> subpath;
+			std::vector<StringName> subpath;
 			Object *object = nullptr;
 			Variant value_accum;
 			uint64_t accum_pass = 0;
@@ -125,7 +125,7 @@ private:
 		Map<StringName, PropertyAnim> property_anim;
 
 		struct BezierAnim {
-			Vector<StringName> bezier_property;
+			std::vector<StringName> bezier_property;
 			TrackNodeCache *owner = nullptr;
 			float bezier_accum = 0.0;
 			Object *object = nullptr;
@@ -167,7 +167,7 @@ private:
 	struct AnimationData {
 		String name;
 		StringName next;
-		Vector<TrackNodeCache *> node_cache;
+		std::vector<TrackNodeCache *> node_cache;
 		Ref<Animation> animation;
 	};
 
@@ -227,10 +227,10 @@ private:
 	void _stop_playing_caches();
 
 	// bind helpers
-	Vector<String> _get_animation_list() const {
+	std::vector<String> _get_animation_list() const {
 		List<StringName> animations;
 		get_animation_list(&animations);
-		Vector<String> ret;
+		std::vector<String> ret;
 		while (animations.size()) {
 			ret.push_back(animations.front()->get());
 			animations.pop_front();
@@ -277,7 +277,7 @@ public:
 	void play(const StringName &p_name = StringName(), float p_custom_blend = -1, float p_custom_scale = 1.0, bool p_from_end = false);
 	void play_backwards(const StringName &p_name = StringName(), float p_custom_blend = -1);
 	void queue(const StringName &p_name);
-	Vector<String> get_queue();
+	std::vector<String> get_queue();
 	void clear_queue();
 	void stop(bool p_reset = true);
 	bool is_playing() const;

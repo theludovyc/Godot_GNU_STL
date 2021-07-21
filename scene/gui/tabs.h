@@ -80,7 +80,7 @@ private:
 	int highlight_arrow = -1;
 	bool buttons_visible = false;
 	bool missing_right = false;
-	Vector<Tab> tabs;
+	std::vector<Tab> tabs;
 	int current = 0;
 	int previous = 0;
 	int _get_top_margin() const;
