@@ -64,7 +64,7 @@ private:
 	bool lines_dirty = true;
 	bool dirty = true;
 	RID text_rid;
-	Vector<RID> lines_rid;
+	std::vector<RID> lines_rid;
 
 	Dictionary opentype_features;
 	String language;

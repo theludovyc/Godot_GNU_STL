@@ -30,24 +30,24 @@
 
 #include "multimesh.h"
 
-#include "servers/rendering_server.h"
+//todo std::vector.data()
 
 #ifndef DISABLE_DEPRECATED
 // Kept for compatibility from 3.x to 4.0.
 
-void MultiMesh::_set_transform_array(const Vector<Vector3> &p_array) {
+void MultiMesh::_set_transform_array(const std::vector<Vector3> &p_array) {
 	if (transform_format != TRANSFORM_3D) {
 		return;
 	}
 
-	const Vector<Vector3> &xforms = p_array;
+	const std::vector<Vector3> &xforms = p_array;
 	int len = xforms.size();
 	ERR_FAIL_COND((len / 4) != instance_count);
 	if (len == 0) {
 		return;
 	}
 
-	const Vector3 *r = xforms.ptr();
+	const Vector3 *r = xforms.data();
 
 	for (int i = 0; i < len / 4; i++) {
 		Transform3D t;
@@ -60,19 +60,19 @@ void MultiMesh::_set_transform_array(const Vector<Vector3> &p_array) {
 	}
 }
 
-Vector<Vector3> MultiMesh::_get_transform_array() const {
+std::vector<Vector3> MultiMesh::_get_transform_array() const {
 	if (transform_format != TRANSFORM_3D) {
-		return Vector<Vector3>();
+		return std::vector<Vector3>();
 	}
 
 	if (instance_count == 0) {
-		return Vector<Vector3>();
+		return std::vector<Vector3>();
 	}
 
-	Vector<Vector3> xforms;
+	std::vector<Vector3> xforms;
 	xforms.resize(instance_count * 4);
 
-	Vector3 *w = xforms.ptrw();
+	Vector3 *w = xforms.data();
 
 	for (int i = 0; i < instance_count; i++) {
 		Transform3D t = get_instance_transform(i);
@@ -85,19 +85,19 @@ Vector<Vector3> MultiMesh::_get_transform_array() const {
 	return xforms;
 }
 
-void MultiMesh::_set_transform_2d_array(const Vector<Vector2> &p_array) {
+void MultiMesh::_set_transform_2d_array(const std::vector<Vector2> &p_array) {
 	if (transform_format != TRANSFORM_2D) {
 		return;
 	}
 
-	const Vector<Vector2> &xforms = p_array;
+	const std::vector<Vector2> &xforms = p_array;
 	int len = xforms.size();
 	ERR_FAIL_COND((len / 3) != instance_count);
 	if (len == 0) {
 		return;
 	}
 
-	const Vector2 *r = xforms.ptr();
+	const Vector2 *r = xforms.data();
 
 	for (int i = 0; i < len / 3; i++) {
 		Transform2D t;
@@ -109,19 +109,19 @@ void MultiMesh::_set_transform_2d_array(const Vector<Vector2> &p_array) {
 	}
 }
 
-Vector<Vector2> MultiMesh::_get_transform_2d_array() const {
+std::vector<Vector2> MultiMesh::_get_transform_2d_array() const {
 	if (transform_format != TRANSFORM_2D) {
-		return Vector<Vector2>();
+		return std::vector<Vector2>();
 	}
 
 	if (instance_count == 0) {
-		return Vector<Vector2>();
+		return std::vector<Vector2>();
 	}
 
-	Vector<Vector2> xforms;
+	std::vector<Vector2> xforms;
 	xforms.resize(instance_count * 3);
 
-	Vector2 *w = xforms.ptrw();
+	Vector2 *w = xforms.data();
 
 	for (int i = 0; i < instance_count; i++) {
 		Transform2D t = get_instance_transform_2d(i);
@@ -133,72 +133,72 @@ Vector<Vector2> MultiMesh::_get_transform_2d_array() const {
 	return xforms;
 }
 
-void MultiMesh::_set_color_array(const Vector<Color> &p_array) {
-	const Vector<Color> &colors = p_array;
+void MultiMesh::_set_color_array(const std::vector<Color> &p_array) {
+	const std::vector<Color> &colors = p_array;
 	int len = colors.size();
 	if (len == 0) {
 		return;
 	}
 	ERR_FAIL_COND(len != instance_count);
 
-	const Color *r = colors.ptr();
+	const Color *r = colors.data();
 
 	for (int i = 0; i < len; i++) {
 		set_instance_color(i, r[i]);
 	}
 }
 
-Vector<Color> MultiMesh::_get_color_array() const {
+std::vector<Color> MultiMesh::_get_color_array() const {
 	if (instance_count == 0 || !use_colors) {
-		return Vector<Color>();
+		return std::vector<Color>();
 	}
 
-	Vector<Color> colors;
+	std::vector<Color> colors;
 	colors.resize(instance_count);
 
 	for (int i = 0; i < instance_count; i++) {
-		colors.set(i, get_instance_color(i));
+		colors[i] = get_instance_color(i);
 	}
 
 	return colors;
 }
 
-void MultiMesh::_set_custom_data_array(const Vector<Color> &p_array) {
-	const Vector<Color> &custom_datas = p_array;
+void MultiMesh::_set_custom_data_array(const std::vector<Color> &p_array) {
+	const std::vector<Color> &custom_datas = p_array;
 	int len = custom_datas.size();
 	if (len == 0) {
 		return;
 	}
 	ERR_FAIL_COND(len != instance_count);
 
-	const Color *r = custom_datas.ptr();
+	const Color *r = custom_datas.data();
 
 	for (int i = 0; i < len; i++) {
 		set_instance_custom_data(i, r[i]);
 	}
 }
 
-Vector<Color> MultiMesh::_get_custom_data_array() const {
+std::vector<Color> MultiMesh::_get_custom_data_array() const {
 	if (instance_count == 0 || !use_custom_data) {
-		return Vector<Color>();
+		return std::vector<Color>();
 	}
 
-	Vector<Color> custom_datas;
+	std::vector<Color> custom_datas;
 	custom_datas.resize(instance_count);
 
 	for (int i = 0; i < instance_count; i++) {
-		custom_datas.set(i, get_instance_custom_data(i));
+		custom_datas[i] = get_instance_custom_data(i);
 	}
 
 	return custom_datas;
 }
 #endif // DISABLE_DEPRECATED
 
-void MultiMesh::set_buffer(const Vector<float> &p_buffer) {
+void MultiMesh::set_buffer(const std::vector<float> &p_buffer) {
 	RS::get_singleton()->multimesh_set_buffer(multimesh, p_buffer);
 }
 
-Vector<float> MultiMesh::get_buffer() const {
+std::vector<float> MultiMesh::get_buffer() const {
 	return RS::get_singleton()->multimesh_get_buffer(multimesh);
 }
 

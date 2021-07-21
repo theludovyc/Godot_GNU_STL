@@ -29,8 +29,7 @@
 /*************************************************************************/
 
 #include "spin_box.h"
-
-#include "core/input/input.h"
+s
 #include "core/math/expression.h"
 
 Size2 SpinBox::get_minimum_size() const {
@@ -285,8 +284,8 @@ SpinBox::SpinBox() {
 	line_edit->set_align(LineEdit::ALIGN_LEFT);
 
 	//connect("value_changed",this,"_value_changed");
-	line_edit->connect("text_submitted", callable_mp(this, &SpinBox::_text_submitted), Vector<Variant>(), CONNECT_DEFERRED);
-	line_edit->connect("focus_exited", callable_mp(this, &SpinBox::_line_edit_focus_exit), Vector<Variant>(), CONNECT_DEFERRED);
+	line_edit->connect("text_submitted", callable_mp(this, &SpinBox::_text_submitted), std::vector<Variant>(), CONNECT_DEFERRED);
+	line_edit->connect("focus_exited", callable_mp(this, &SpinBox::_line_edit_focus_exit), std::vector<Variant>(), CONNECT_DEFERRED);
 	line_edit->connect("gui_input", callable_mp(this, &SpinBox::_line_edit_input));
 
 	range_click_timer = memnew(Timer);

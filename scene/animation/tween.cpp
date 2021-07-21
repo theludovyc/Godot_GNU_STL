@@ -41,12 +41,12 @@ void Tweener::_bind_methods() {
 }
 
 void Tween::start_tweeners() {
-	if (tweeners.is_empty()) {
+	if (tweeners.empty()) {
 		dead = true;
 		ERR_FAIL_MSG("Tween without commands, aborting.");
 	}
 
-	for (List<Ref<Tweener>>::Element *E = tweeners.write[current_step].front(); E; E = E->next()) {
+	for (List<Ref<Tweener>>::Element *E = tweeners[current_step].front(); E; E = E->next()) {
 		E->get()->start();
 	}
 }
@@ -101,7 +101,7 @@ Ref<Tween> Tween::append(Ref<Tweener> p_tweener) {
 	parallel_enabled = default_parallel;
 
 	tweeners.resize(current_step + 1);
-	tweeners.write[current_step].push_back(p_tweener);
+	tweeners[current_step].push_back(p_tweener);
 
 	return this;
 }
@@ -216,7 +216,7 @@ bool Tween::custom_step(float p_delta) {
 }
 
 bool Tween::step(float p_delta) {
-	ERR_FAIL_COND_V_MSG(tweeners.is_empty(), false, "Tween started, but has no Tweeners.");
+	ERR_FAIL_COND_V_MSG(tweeners.empty(), false, "Tween started, but has no Tweeners.");
 
 	if (dead) {
 		return false;
@@ -253,7 +253,7 @@ bool Tween::step(float p_delta) {
 		float step_delta = rem_delta;
 		step_active = false;
 
-		for (List<Ref<Tweener>>::Element *E = tweeners.write[current_step].front(); E; E = E->next()) {
+		for (List<Ref<Tweener>>::Element *E = tweeners[current_step].front(); E; E = E->next()) {
 			// Modified inside Tweener.step().
 			float temp_delta = rem_delta;
 			// Turns to true if any Tweener returns true (i.e. is still not finished).

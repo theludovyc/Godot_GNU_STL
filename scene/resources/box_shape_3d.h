@@ -50,7 +50,7 @@ public:
 	void set_size(const Vector3 &p_size);
 	Vector3 get_size() const;
 
-	virtual Vector<Vector3> get_debug_mesh_lines() const override;
+	virtual std::vector<Vector3> get_debug_mesh_lines() const override;
 	virtual real_t get_enclosing_radius() const override;
 
 	BoxShape3D();

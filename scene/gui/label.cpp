@@ -36,6 +36,8 @@
 
 #include "servers/text_server.h"
 
+//todo std::vector.data()
+
 void Label::set_autowrap(bool p_autowrap) {
 	if (autowrap != p_autowrap) {
 		autowrap = p_autowrap;
@@ -100,7 +102,7 @@ void Label::_shape() {
 		}
 		lines_rid.clear();
 
-		Vector<Vector2i> lines = TS->shaped_text_get_line_breaks(text_rid, width, 0, (autowrap) ? (TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND) : TextServer::BREAK_MANDATORY);
+		std::vector<Vector2i> lines = TS->shaped_text_get_line_breaks(text_rid, width, 0, (autowrap) ? (TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND) : TextServer::BREAK_MANDATORY);
 		for (int i = 0; i < lines.size(); i++) {
 			RID line = TS->shaped_text_substr(text_rid, lines[i].x, lines[i].y - lines[i].x);
 			lines_rid.push_back(line);
@@ -123,7 +125,7 @@ void Label::_shape() {
 	if (lines_dirty) { // Fill after min_size calculation.
 		if (align == ALIGN_FILL) {
 			for (int i = 0; i < lines_rid.size(); i++) {
-				TS->shaped_text_fit_to_width(lines_rid.write[i], width);
+				TS->shaped_text_fit_to_width(lines_rid[i], width);
 			}
 		}
 		lines_dirty = false;
@@ -252,8 +254,8 @@ void Label::_notification(int p_what) {
 		if (percent_visible < 1) {
 			int total_glyphs = 0;
 			for (int i = lines_skipped; i < last_line; i++) {
-				const Vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(lines_rid[i]);
-				const TextServer::Glyph *glyphs = visual.ptr();
+				const std::vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(lines_rid[i]);
+				const TextServer::Glyph *glyphs = visual.data();
 				int gl_size = visual.size();
 				for (int j = 0; j < gl_size; j++) {
 					if ((glyphs[j].flags & TextServer::GRAPHEME_IS_VIRTUAL) != TextServer::GRAPHEME_IS_VIRTUAL) {
@@ -291,8 +293,8 @@ void Label::_notification(int p_what) {
 				} break;
 			}
 
-			const Vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(lines_rid[i]);
-			const TextServer::Glyph *glyphs = visual.ptr();
+			const std::vector<TextServer::Glyph> visual = TS->shaped_text_get_glyphs(lines_rid[i]);
+			const TextServer::Glyph *glyphs = visual.data();
 			int gl_size = visual.size();
 
 			float x = ofs.x;

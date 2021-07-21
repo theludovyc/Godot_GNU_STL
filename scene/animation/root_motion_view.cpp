@@ -30,7 +30,7 @@
 
 #include "root_motion_view.h"
 #include "scene/animation/animation_tree.h"
-#include "scene/resources/material.h"
+
 void RootMotionView::set_animation_path(const NodePath &p_path) {
 	path = p_path;
 	first = true;
@@ -161,8 +161,8 @@ AABB RootMotionView::get_aabb() const {
 	return AABB(Vector3(-radius, 0, -radius), Vector3(radius * 2, 0.001, radius * 2));
 }
 
-Vector<Face3> RootMotionView::get_faces(uint32_t p_usage_flags) const {
-	return Vector<Face3>();
+std::vector<Face3> RootMotionView::get_faces(uint32_t p_usage_flags) const {
+	return std::vector<Face3>();
 }
 
 void RootMotionView::_bind_methods() {

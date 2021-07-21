@@ -101,7 +101,7 @@ private:
 	EaseType default_ease = EaseType::EASE_IN_OUT;
 	ObjectID bound_node;
 
-	Vector<List<Ref<Tweener>>> tweeners;
+	std::vector<List<Ref<Tweener>>> tweeners;
 	int current_step = -1;
 	int loops = 1;
 	int loops_done = 0;
@@ -195,7 +195,7 @@ protected:
 
 private:
 	ObjectID target;
-	Vector<StringName> property;
+	std::vector<StringName> property;
 	Variant initial_val;
 	Variant base_final_val;
 	Variant final_val;

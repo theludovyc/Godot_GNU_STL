@@ -52,7 +52,7 @@ public:
 	void set_cull_mask(uint32_t p_cull_mask);
 	uint32_t get_cull_mask() const;
 
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const override { return Vector<Face3>(); }
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const override { return std::vector<Face3>(); }
 
 	~GPUParticlesCollision3D();
 };
@@ -276,7 +276,7 @@ public:
 	void set_directionality(float p_directionality);
 	float get_directionality() const;
 
-	virtual Vector<Face3> get_faces(uint32_t p_usage_flags) const override { return Vector<Face3>(); }
+	virtual std::vector<Face3> get_faces(uint32_t p_usage_flags) const override { return std::vector<Face3>(); }
 
 	~GPUParticlesAttractor3D();
 };

@@ -55,7 +55,7 @@ class NavigationAgent3D : public Node {
 	real_t path_max_distance = 3.0;
 
 	Vector3 target_location;
-	Vector<Vector3> navigation_path;
+	std::vector<Vector3> navigation_path;
 	int nav_path_index;
 	bool velocity_submitted = false;
 	Vector3 prev_safe_velocity;
@@ -126,7 +126,7 @@ public:
 
 	Vector3 get_next_location();
 
-	Vector<Vector3> get_nav_path() const {
+	std::vector<Vector3> get_nav_path() const {
 		return navigation_path;
 	}
 

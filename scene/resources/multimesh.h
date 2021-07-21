@@ -58,20 +58,20 @@ protected:
 
 #ifndef DISABLE_DEPRECATED
 	// Kept for compatibility from 3.x to 4.0.
-	void _set_transform_array(const Vector<Vector3> &p_array);
-	Vector<Vector3> _get_transform_array() const;
+	void _set_transform_array(const std::vector<Vector3> &p_array);
+	std::vector<Vector3> _get_transform_array() const;
 
-	void _set_transform_2d_array(const Vector<Vector2> &p_array);
-	Vector<Vector2> _get_transform_2d_array() const;
+	void _set_transform_2d_array(const std::vector<Vector2> &p_array);
+	std::vector<Vector2> _get_transform_2d_array() const;
 
-	void _set_color_array(const Vector<Color> &p_array);
-	Vector<Color> _get_color_array() const;
+	void _set_color_array(const std::vector<Color> &p_array);
+	std::vector<Color> _get_color_array() const;
 
-	void _set_custom_data_array(const Vector<Color> &p_array);
-	Vector<Color> _get_custom_data_array() const;
+	void _set_custom_data_array(const std::vector<Color> &p_array);
+	std::vector<Color> _get_custom_data_array() const;
 #endif
-	void set_buffer(const Vector<float> &p_buffer);
-	Vector<float> get_buffer() const;
+	void set_buffer(const std::vector<float> &p_buffer);
+	std::vector<float> get_buffer() const;
 
 public:
 	void set_mesh(const Ref<Mesh> &p_mesh);
